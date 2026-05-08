@@ -1,6 +1,8 @@
 from pathlib import Path
 import sys
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -10,6 +12,16 @@ from moore57.verify import verify_girth_voltage
 
 STAR = ROOT / "instances/star35/star_factor_heuristic_partial.json"
 SEED = ROOT / "instances/seed14/dfs_extend_t10_solution.json"
+
+
+def have_fixture(path: Path) -> bool:
+    return path.exists() or bool(list(path.parent.glob(path.name + ".b64.*")))
+
+
+pytestmark = pytest.mark.skipif(
+    not (have_fixture(STAR) and have_fixture(SEED)),
+    reason="large seed fixtures are not present; copy them from the scaffold tarball or provide .json.b64 chunks",
+)
 
 
 def test_seed14_girth_voltage():
