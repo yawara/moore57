@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.cnf
+*.varmap.json
+*.out
+*.log
+*.frat
+*.drat
+*.zst
