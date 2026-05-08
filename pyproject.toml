@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moore57"
+version = "0.1.0"
+description = "Local cover SAT/CSP experiments for the degree-57 Moore graph problem"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.23",
+  "scipy>=1.9"
+]
+
+[project.optional-dependencies]
+cpsat = ["ortools>=9.8"]
+test = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
