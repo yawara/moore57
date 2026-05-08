@@ -2,10 +2,20 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+*.egg-info/
+
+# Large generated artifacts (CNF / var maps / proofs)
 *.cnf
 *.varmap.json
+*.drat
+*.frat
+*.zst
+
+# Default-ignore raw solver outputs and logs;
+# whitelist the per-run schema files (see docs/result_schema.md).
 *.out
 *.log
-*.frat
-*.drat
-*.zst
+!results/runs/*/solver.out
+!results/runs/*/stdout.log
+!results/runs/*/stderr.log
+!results/runs/*/proof_check.log

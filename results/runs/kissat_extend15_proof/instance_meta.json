@@ -1,0 +1,43 @@
+{
+  "format": "moore57_extend_instance_v1",
+  "model": "extend_one_block",
+  "sheet_size": 56,
+  "existing_fibers": 14,
+  "total_fibers_after_extension": 15,
+  "new_fiber": 14,
+  "unknown_fibers": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "star_file": "instances/star35/star_factor_heuristic_partial.json",
+  "seed_file": "instances/seed14/dfs_extend_t10_solution.json",
+  "new_factor_index": 10,
+  "base_idxs": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "stats": {
+    "num_unknown_perms": 10,
+    "bool_cells_total": 31360,
+    "unary_allowed_cells": 10666,
+    "unary_forbidden_cells": 20694,
+    "pair_forbidden_templates": 32760,
+    "rowwise_pair_forbidden_clauses_upper_bound": 1834560
+  }
+}

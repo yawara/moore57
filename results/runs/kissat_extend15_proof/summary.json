@@ -1,0 +1,63 @@
+{
+  "status": "unknown",
+  "model": "extend15",
+  "seed": "instances/seed14/dfs_extend_t10_solution.json",
+  "star": "instances/star35/star_factor_heuristic_partial.json",
+  "new_factor_index": 10,
+  "cnf": "results/runs/kissat_extend15_proof/extend15.cnf",
+  "varmap": "results/runs/kissat_extend15_proof/extend15.varmap.json",
+  "cnf_stats": {
+    "encoding": "pairwise",
+    "sheet_size": 56,
+    "num_unknown_perms": 10,
+    "unknown_fibers": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "new_fiber": 14,
+    "num_vars": 10666,
+    "row_atleast": 560,
+    "row_atmost_pairwise": 97529,
+    "col_atleast": 560,
+    "col_atmost_pairwise": 97319,
+    "binary_nogoods": 225485,
+    "empty_domains": [],
+    "num_clauses": 421453
+  },
+  "solver": {
+    "name": "kissat",
+    "command": [
+      "kissat",
+      "-q",
+      "--time=3600",
+      "extend15.cnf",
+      "proof.drat"
+    ],
+    "returncode": 0,
+    "termination": "timeout (--time=3600 SIGTERM)"
+  },
+  "resources": {
+    "wall_seconds": 3600.0,
+    "user_seconds": 3573.26,
+    "sys_seconds": 22.71,
+    "peak_rss_bytes": 378503168,
+    "memory_mb": 360,
+    "instructions_retired": 23556161911966,
+    "cycles_elapsed": 11559140269298
+  },
+  "output": {
+    "solution": null,
+    "verification": null,
+    "proof": null,
+    "proof_note": "incomplete DRAT (~19.5GB) discarded; solver did not reach the empty clause"
+  },
+  "verification_ok": false
+}
