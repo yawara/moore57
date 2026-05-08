@@ -6,10 +6,10 @@ import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
-# Moore graph of degree 57 contradicts $D_{19}$ as automorphism subgroup
+# Moore graph of degree 57: the $D_{19}$ counting obstruction
 
 仮想的な Moore graph $\Gamma$ of degree $57$ and diameter $2$ について,
-$D_{19}\le\operatorname{Aut}(\Gamma)$ が不可能であることを証明する.
+$D_{19}$ 作用から導かれるべき軌道データが計数矛盾を起こすことを証明する.
 
 対応する自然言語証明は `moore57_d19_contradiction.md` に詳述されている.
 
@@ -23,18 +23,18 @@ $D_{19}\le\operatorname{Aut}(\Gamma)$ が不可能であることを証明する
   $4$-cycle 禁止から $|D_q|\le 2$ を導く.
 * `Moore57.counting_contradiction` — Section 6 の核となる抽象計数補題.
 * `Moore57.D19Hypotheses.contradiction` — `D19Hypotheses` から `False`.
-* `Moore57.D19ConcreteHypotheses.contradiction` — 具体軌道データから `False`.
-* `Moore57.no_D19_subgroup` — 主定理: $\Gamma$ に `D19Hypotheses` 型のデータが
-  存在しないことを述べる. `D_{19}\le\operatorname{Aut}(\Gamma)` が不可能で
-  あることの形式的記述.
+* `Moore57.D19ConcreteHypotheses.not_nonempty` — 具体軌道データの非存在.
+* `Moore57.no_D19_concrete_hypotheses` — Moore57 と具体軌道データが両立しないこと.
+* `Moore57.no_D19_subgroup` — $\Gamma$ に `D19Hypotheses` 型のデータが
+  存在しないことを述べる抽象版.
 
 ## 形式化方針
 
 Sections 1–3 と Section 4 の幾何・表現論データを具体軌道データへ接続する構成は
-深い議論を含むため, 現時点では `D19ConcreteHypotheses` への変換公理として受け入れる.
-ただし Higman 型跡公式は `E7Matrix` と `Matrix.trace` で Lean 内に展開し,
-Section 4 から最終計数に使う下界 `Nd_lower` 自体は, 表現論側の
-`TraceCharacterData` と寄与公式から Lean 内で証明する.
+未形式化であるため, 本ファイルでは `D19ActsOnMoore57 → False` を公理的に主張しない.
+代わりに, Section 4 から最終計数に使う下界 `Nd_lower` を, Higman 型跡公式
+(`E7Matrix` と `Matrix.trace`)・表現論側の `TraceCharacterData`・寄与公式から
+Lean 内で証明し, そこから具体軌道データそのものの非存在を導く.
 
 それに対し, Section 5 の $4$-cycle 障害および Section 6 の計数論証は
 組合せ的・初等的であり, ここで完全に形式化する.
@@ -99,6 +99,195 @@ theorem no_four_cycle {V : Type*} [Fintype V] [DecidableEq V]
       simp [h13]
     exact hcardpair ▸ Finset.card_le_card hpair_subset
   omega
+
+end IsMoore57
+
+/-! ### Section 2: 固定点まわりの枝と fiber -/
+
+/-- 中心 `u` の隣接頂点 `b` に対応する fiber.
+
+自然言語証明の `L_b` に対応し, `b` の近傍から中心 `u` を除いた有限集合である.
+`u ~ b` のとき, 三角形禁止により各元は自動的に `u` と非隣接になる. -/
+def branchFiber {V : Type*} [Fintype V] [DecidableEq V]
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (u b : V) : Finset V :=
+  (Γ.neighborFinset b).erase u
+
+@[simp] theorem mem_branchFiber {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] {u b x : V} :
+    x ∈ branchFiber Γ u b ↔ x ≠ u ∧ Γ.Adj b x := by
+  rw [branchFiber, Finset.mem_erase, SimpleGraph.mem_neighborFinset]
+
+namespace IsMoore57
+
+/-- Moore57 では各枝 fiber のサイズは `56`. -/
+theorem branchFiber_card {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b : V} (hub : Γ.Adj u b) :
+    (branchFiber Γ u b).card = 56 := by
+  rw [branchFiber, Finset.card_erase_of_mem]
+  · rw [SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular.degree_eq b]
+  · simpa [SimpleGraph.mem_neighborFinset] using hub.symm
+
+/-- 枝 fiber の元は中心 `u` とは隣接しない. -/
+theorem not_adj_center_of_mem_branchFiber {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b x : V} (hub : Γ.Adj u b)
+    (hx : x ∈ branchFiber Γ u b) :
+    ¬ Γ.Adj u x := by
+  intro hux
+  exact hΓ.no_triangle hub (mem_branchFiber.mp hx).2 hux.symm
+
+/-- 中心 `u` の相異なる二つの枝は互いに隣接しない. -/
+theorem not_adj_of_center_neighbors {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b c : V}
+    (hub : Γ.Adj u b) (huc : Γ.Adj u c) (_hbc : b ≠ c) :
+    ¬ Γ.Adj b c := by
+  intro hbcAdj
+  exact hΓ.no_triangle hub hbcAdj huc.symm
+
+/-- 中心 `u` と非隣接な頂点は, 一意の枝 fiber に属する. -/
+theorem existsUnique_branch_of_not_adj_center
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u x : V}
+    (hux : u ≠ x) (hnot : ¬ Γ.Adj u x) :
+    ∃! b : V, Γ.Adj u b ∧ x ∈ branchFiber Γ u b := by
+  have hcard : Fintype.card (Γ.commonNeighbors u x) = 1 :=
+    hΓ.of_not_adj hux hnot
+  rcases Fintype.card_eq_one_iff.mp hcard with ⟨b, hb_unique⟩
+  have hb_mem : (b : V) ∈ Γ.commonNeighbors u x := b.property
+  have hb_adj : Γ.Adj u (b : V) ∧ Γ.Adj x (b : V) := by
+    rw [SimpleGraph.mem_commonNeighbors] at hb_mem
+    exact hb_mem
+  refine ⟨b, ?_, ?_⟩
+  · refine ⟨hb_adj.1, ?_⟩
+    rw [mem_branchFiber]
+    exact ⟨hux.symm, hb_adj.2.symm⟩
+  · intro y hy
+    have hy_mem : y ∈ Γ.commonNeighbors u x := by
+      rw [SimpleGraph.mem_commonNeighbors]
+      exact ⟨hy.1, (mem_branchFiber.mp hy.2).2.symm⟩
+    exact congrArg Subtype.val (hb_unique ⟨y, hy_mem⟩)
+
+/-- `L_b` の点は, 別の枝 `c` とは隣接しない. -/
+theorem not_adj_other_branch_of_mem_branchFiber
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b c x : V}
+    (hub : Γ.Adj u b) (huc : Γ.Adj u c) (hbc : b ≠ c)
+    (hx : x ∈ branchFiber Γ u b) :
+    ¬ Γ.Adj x c := by
+  intro hxc
+  have hx_not_adj_u : ¬ Γ.Adj u x :=
+    hΓ.not_adj_center_of_mem_branchFiber hub hx
+  have hcard : Fintype.card (Γ.commonNeighbors u x) = 1 :=
+    hΓ.of_not_adj (mem_branchFiber.mp hx).1.symm hx_not_adj_u
+  have hpair_subset : ({b, c} : Finset V) ⊆ (Γ.commonNeighbors u x).toFinset := by
+    intro y hy
+    rw [Set.mem_toFinset]
+    rw [SimpleGraph.mem_commonNeighbors]
+    rw [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl
+    · exact ⟨hub, (mem_branchFiber.mp hx).2.symm⟩
+    · exact ⟨huc, hxc⟩
+  have htwo : 2 ≤ Fintype.card (Γ.commonNeighbors u x) := by
+    rw [← Set.toFinset_card]
+    have hcardpair : ({b, c} : Finset V).card = 2 := by
+      simp [hbc]
+    exact hcardpair ▸ Finset.card_le_card hpair_subset
+  omega
+
+/-- 異なる枝の fiber 間では, 片側の各点に対して反対側の隣接点が一意に存在する.
+
+これは自然言語証明の「異なる fiber 間には完全マッチングが入る」の片方向版である.
+逆方向は `b` と `c` を入れ替えることで得られる. -/
+theorem existsUnique_adjacent_in_branchFiber
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b c x : V}
+    (hub : Γ.Adj u b) (huc : Γ.Adj u c) (hbc : b ≠ c)
+    (hx : x ∈ branchFiber Γ u b) :
+    ∃! y : V, y ∈ branchFiber Γ u c ∧ Γ.Adj x y := by
+  have hxc_not_adj : ¬ Γ.Adj x c :=
+    hΓ.not_adj_other_branch_of_mem_branchFiber hub huc hbc hx
+  have hxc_ne : x ≠ c := by
+    intro hxc_eq
+    exact hΓ.not_adj_of_center_neighbors hub huc hbc
+      (by simpa [hxc_eq] using (mem_branchFiber.mp hx).2)
+  have hcard : Fintype.card (Γ.commonNeighbors x c) = 1 :=
+    hΓ.of_not_adj hxc_ne hxc_not_adj
+  rcases Fintype.card_eq_one_iff.mp hcard with ⟨w, hw_unique⟩
+  have hw_mem : (w : V) ∈ Γ.commonNeighbors x c := w.property
+  have hw_adj : Γ.Adj x (w : V) ∧ Γ.Adj c (w : V) := by
+    rw [SimpleGraph.mem_commonNeighbors] at hw_mem
+    exact hw_mem
+  refine ⟨w, ?_, ?_⟩
+  · refine ⟨?_, hw_adj.1⟩
+    rw [mem_branchFiber]
+    refine ⟨?_, hw_adj.2⟩
+    intro hwu
+    have hux : Γ.Adj u x := by
+      simpa [hwu] using hw_adj.1.symm
+    exact hΓ.not_adj_center_of_mem_branchFiber hub hx hux
+  · intro y hy
+    have hy_mem : y ∈ Γ.commonNeighbors x c := by
+      rw [SimpleGraph.mem_commonNeighbors]
+      exact ⟨hy.2, (mem_branchFiber.mp hy.1).2⟩
+    exact congrArg Subtype.val (hw_unique ⟨y, hy_mem⟩)
+
+/-- 異なる枝の fiber 間では, 右側の各点に対して左側の隣接点も一意に存在する. -/
+theorem existsUnique_adjacent_in_branchFiber_left
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b c y : V}
+    (hub : Γ.Adj u b) (huc : Γ.Adj u c) (hbc : b ≠ c)
+    (hy : y ∈ branchFiber Γ u c) :
+    ∃! x : V, x ∈ branchFiber Γ u b ∧ Γ.Adj x y := by
+  rcases hΓ.existsUnique_adjacent_in_branchFiber huc hub hbc.symm hy with ⟨x, hx, huniq⟩
+  refine ⟨x, ⟨hx.1, hx.2.symm⟩, ?_⟩
+  intro z hz
+  exact huniq z ⟨hz.1, hz.2.symm⟩
+
+/-- 異なる枝の fiber 間の完全マッチングを, 両側の一意性としてまとめた形. -/
+theorem existsUnique_adjacent_between_branchFibers
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b c : V}
+    (hub : Γ.Adj u b) (huc : Γ.Adj u c) (hbc : b ≠ c) :
+    (∀ x : V, x ∈ branchFiber Γ u b →
+      ∃! y : V, y ∈ branchFiber Γ u c ∧ Γ.Adj x y) ∧
+    (∀ y : V, y ∈ branchFiber Γ u c →
+      ∃! x : V, x ∈ branchFiber Γ u b ∧ Γ.Adj x y) := by
+  exact ⟨
+    fun x hx => hΓ.existsUnique_adjacent_in_branchFiber hub huc hbc hx,
+    fun y hy => hΓ.existsUnique_adjacent_in_branchFiber_left hub huc hbc hy⟩
+
+/-- 固定した左側の点に隣接する右側 fiber の点は高々一つ. -/
+theorem eq_of_mem_branchFiber_of_adj
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b c x y z : V}
+    (hub : Γ.Adj u b) (huc : Γ.Adj u c) (hbc : b ≠ c)
+    (hx : x ∈ branchFiber Γ u b)
+    (hy : y ∈ branchFiber Γ u c) (hz : z ∈ branchFiber Γ u c)
+    (hxy : Γ.Adj x y) (hxz : Γ.Adj x z) :
+    y = z := by
+  rcases hΓ.existsUnique_adjacent_in_branchFiber hub huc hbc hx with ⟨w, _hw, huniq⟩
+  exact (huniq y ⟨hy, hxy⟩).trans (huniq z ⟨hz, hxz⟩).symm
+
+/-- 固定した右側の点に隣接する左側 fiber の点は高々一つ. -/
+theorem eq_of_mem_branchFiber_of_adj_left
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) {u b c x z y : V}
+    (hub : Γ.Adj u b) (huc : Γ.Adj u c) (hbc : b ≠ c)
+    (hx : x ∈ branchFiber Γ u b) (hz : z ∈ branchFiber Γ u b)
+    (hy : y ∈ branchFiber Γ u c)
+    (hxy : Γ.Adj x y) (hzy : Γ.Adj z y) :
+    x = z := by
+  rcases hΓ.existsUnique_adjacent_in_branchFiber_left hub huc hbc hy with ⟨w, _hw, huniq⟩
+  exact (huniq x ⟨hx, hxy⟩).trans (huniq z ⟨hz, hzy⟩).symm
 
 end IsMoore57
 
@@ -1014,13 +1203,14 @@ theorem Nd_lower (hΓ : IsMoore57 Γ) (h : D19ConcreteHypotheses Γ) :
     intro d hd
     simpa [D] using h.a1_contribution d hd)
 
-/-- 具体軌道データからの矛盾. Section 5 の上界と Section 6 の計数を組み合わせる. -/
-theorem contradiction (hΓ : IsMoore57 Γ) (h : D19ConcreteHypotheses Γ) : False :=
-  counting_contradiction_zmod h.D (fun q => h.D_zero q) (h.Dq_le_two hΓ) (h.Nd_lower hΓ)
+/-- 具体軌道データは存在しない. Section 5 の上界と Section 6 の計数を組み合わせる. -/
+theorem not_nonempty (hΓ : IsMoore57 Γ) : ¬ Nonempty (D19ConcreteHypotheses Γ) := by
+  rintro ⟨h⟩
+  exact counting_contradiction_zmod h.D (fun q => h.D_zero q) (h.Dq_le_two hΓ) (h.Nd_lower hΓ)
 
 end D19ConcreteHypotheses
 
-/-! ## 主定理: $D_{19}\le\operatorname{Aut}(\Gamma)$ は不可能 -/
+/-! ## 主定理: 計数データの非存在 -/
 
 /-- 主定理 (定理 6.1) の「抽象版」.
 
@@ -1035,6 +1225,19 @@ end D19ConcreteHypotheses
 -/
 theorem no_D19_subgroup : ¬ Nonempty D19Hypotheses := by
   rintro ⟨h⟩; exact h.contradiction
+
+/-! ### 具体版: Moore graph と具体軌道データの両立不能性 -/
+
+/-- Moore57 上では Section 5/6 用の具体軌道データは存在しない.
+
+これは `D19ConcreteHypotheses` を主定理の仮定として使う代わりに, その非存在を
+直接述べる形である. `D_{19}` 作用そのものからこのデータを構成する Sections 1–4 の
+幾何的部分は, ここではまだ主張しない. -/
+theorem no_D19_concrete_hypotheses
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) : ¬ Nonempty (D19ConcreteHypotheses Γ) :=
+  D19ConcreteHypotheses.not_nonempty hΓ
 
 /-! ### 具体版: Moore graph + $D_{19}$ 作用との接続 -/
 
@@ -1231,23 +1434,25 @@ theorem fixedVertexCount_rotation_lt_card
 
 end D19ActsOnMoore57
 
-/-- 具体軌道データつきの主矛盾.
+/-- `D19ActsOnMoore57` から得られる Moore57 仮定の下で,
+`D19ConcreteHypotheses` は存在しない.
 
-未形式化の Sections 1–4 を隠さず, そこから構成されるべき
-`D19ConcreteHypotheses` を明示引数として受け取る形にしている. -/
+この定理は `D19ConcreteHypotheses` を前提に取らない. 作用から具体軌道データを
+構成する橋渡しは未形式化なので, 結論は `False` ではなく具体軌道データの非存在として
+止めている. -/
 theorem no_D19_acts_on_Moore57
     {V : Type*} [Fintype V] [DecidableEq V]
     {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
-    (h : D19ActsOnMoore57 V Γ) (hyp : D19ConcreteHypotheses Γ) : False :=
-  hyp.contradiction h.isMoore
+    (h : D19ActsOnMoore57 V Γ) : ¬ Nonempty (D19ConcreteHypotheses Γ) :=
+  no_D19_concrete_hypotheses h.isMoore
 
-/-- **系 6.2**: $\operatorname{Aut}(\Gamma)\simeq D_{19}$ は不可能.
+/-- 系 6.2 に向けた具体データ非存在版.
 
-具体軌道データが得られている場合の条件付き版. -/
+現時点の Lean 版では, 作用から得られるはずの具体軌道データの非存在として述べる. -/
 theorem no_aut_iso_D19
     {V : Type*} [Fintype V] [DecidableEq V]
     {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
-    (h : D19ActsOnMoore57 V Γ) (hyp : D19ConcreteHypotheses Γ) : False :=
-  no_D19_acts_on_Moore57 h hyp
+    (h : D19ActsOnMoore57 V Γ) : ¬ Nonempty (D19ConcreteHypotheses Γ) :=
+  no_D19_acts_on_Moore57 h
 
 end Moore57
