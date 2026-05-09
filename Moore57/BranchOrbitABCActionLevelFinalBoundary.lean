@@ -73,6 +73,48 @@ noncomputable def toLeanAwareFixedStarFinalBoundary
     boundary.cardOneBase_ne_zero boundary.cardOneBase_ne_one
     boundary.not_all_support_subset_exception
 
+/-- Constructor for the action-level package when the reference-solution
+support-complement input is derived from the reference matching pipeline and an
+exception-case boundary. -/
+noncomputable def of_referenceMatching_caseBoundary
+    (starCounts : ReflectionFixedNeighborStarCounts h)
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (middle :
+      BranchOrbitABCReflectionLabeling.ReflectionFixedStarMiddleBoundary
+        starCounts.toReflectionFixedStarBoundary labeling)
+    (aFixing :
+      BranchOrbitABCReflectionLabeling.ReflectionFixedStarAFixingBoundary
+        starCounts.toReflectionFixedStarBoundary labeling)
+    (referenceMatching :
+      BranchOrbitABCReflectionLabeling.ReferenceMatchingPipelineBoundary labeling)
+    (caseBoundary :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportCaseBoundary
+        labeling)
+    (exceptionDoubling :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionDoublingBoundary labeling)
+    {cardOneBase : ZMod 19} (cardOneBase_ne_zero : cardOneBase ≠ 0)
+    (cardOneBase_ne_one :
+      (labeling.midpointExceptionAFixingSupportIntersection
+        cardOneBase cardOneBase_ne_zero).card ≠ 1)
+    (not_all_support_subset_exception :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ¬ labeling.aFiberReflectionSupport ⊆
+          labeling.midpointExceptionSet (midpointOf d)
+            (midpointOf_ne_zero hd)) :
+    BranchOrbitABCActionLevelFinalBoundary h where
+  starCounts := starCounts
+  labeling := labeling
+  middle := middle
+  aFixing := aFixing
+  referenceSolutionSupportCompl :=
+    caseBoundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+      referenceMatching
+  exceptionDoubling := exceptionDoubling
+  cardOneBase := cardOneBase
+  cardOneBase_ne_zero := cardOneBase_ne_zero
+  cardOneBase_ne_one := cardOneBase_ne_one
+  not_all_support_subset_exception := not_all_support_subset_exception
+
 end BranchOrbitABCActionLevelFinalBoundary
 
 /-- No action-level final package can coexist with the representation component
