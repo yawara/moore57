@@ -42,6 +42,21 @@ theorem toBFiberRotationEquivariance
   AFiberCoordinates.ofRotationOrbitOfMoved_rotationEquivariance
     h data.u data.b0 data.u_fixed data.b0_adj (by decide) data.b0_moved
 
+/-- The `C`-side fiber coordinates generated from the `c0` branch orbit. -/
+noncomputable def toCFiberCoordinates
+    (data : BranchOrbitABCFromCenter h) :
+    AFiberCoordinates.{u, u} Γ :=
+  AFiberCoordinates.ofRotationOrbitOfMoved
+    h data.u data.c0 data.u_fixed data.c0_adj
+    (d := 1) (by decide) data.c0_moved
+
+/-- The `C`-side fiber coordinates are rotation equivariant. -/
+theorem toCFiberRotationEquivariance
+    (data : BranchOrbitABCFromCenter h) :
+    AFiberRotationEquivariance h data.toCFiberCoordinates :=
+  AFiberCoordinates.ofRotationOrbitOfMoved_rotationEquivariance
+    h data.u data.c0 data.u_fixed data.c0_adj (by decide) data.c0_moved
+
 /-- The `Fin 56` moved orbit-base selection generated from the `B`-branch
 fiber coordinates associated to fixed-center A/B/C data. -/
 noncomputable def toOrbitBaseSelectionInputFromBFibers

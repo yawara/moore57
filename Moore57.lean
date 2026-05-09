@@ -3,6 +3,7 @@ import Moore57.D19Contradiction
 import Moore57.FixedPointBasics
 import Moore57.BranchFiberAction
 import Moore57.BranchFiberMatching
+import Moore57.BranchFiberPartition
 import Moore57.FixedCommonNeighbors
 import Moore57.FixedNeighborCounts
 import Moore57.FixedSetDegreeConstraints
@@ -138,6 +139,7 @@ import Moore57.AFiberCoordinateRotation
 import Moore57.AFiberRotationMatchingCardinality
 import Moore57.AFiberCoordinateOrbit
 import Moore57.BranchOrbitABCFromCenter
+import Moore57.BranchOrbitBCSelectionCover
 import Moore57.BranchOrbitABCData
 import Moore57.BranchOrbitABCDataFromCenter
 import Moore57.AFiberMatchingFixedCountSupport
