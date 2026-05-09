@@ -147,6 +147,7 @@ import Moore57.BranchOrbitABCDataFromCenter
 import Moore57.ReflectionFixedCenterLeafBoundary
 import Moore57.AFiberMatchingFixedCountSupport
 import Moore57.AFiberMatchingSupportEquations
+import Moore57.AFiberMatchingExceptionSetBoundary
 import Moore57.AFiberContributionRotationInvariance
 import Moore57.AFiberAllFibersCardinalityBoundary
 import Moore57.AFiberOrbitCardinalityBoundary
