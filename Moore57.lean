@@ -47,6 +47,7 @@ import Moore57.RotationFixedUpperBoundInputs
 import Moore57.D19ReducedMain
 import Moore57.D19GeometricInputs
 import Moore57.CharacterInputPackaging
+import Moore57.D19RepresentationCharacterBoundary
 import Moore57.FixedUpperBoundCriteria
 import Moore57.OrbitBaseSelectionCriteria
 import Moore57.D19FinalInputs
@@ -69,6 +70,7 @@ import Moore57.D19FinalLinearUniqueReflection
 import Moore57.D19FinalLinearFixedEnumerationReflection
 import Moore57.RotationFixedCountUnique
 import Moore57.RotationFixedCenter
+import Moore57.RotationFixedCenterNeighbors
 import Moore57.AdjacentMovedReflectionConstantResidual
 import Moore57.RotationFixedEnumerationFromCount
 import Moore57.D19FinalLinearCountReflection
