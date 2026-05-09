@@ -16,6 +16,7 @@ import Moore57.RotationFixedRegularity
 import Moore57.RotationFixedDataBridge
 import Moore57.RotationOrbitInjectivity
 import Moore57.RotationOrbitFinset
+import Moore57.RotationOrbitFinsetBasic
 import Moore57.RotationOrbitInternalDiff
 import Moore57.RotationBranchFiberPerm
 import Moore57.ZMod19Lemmas
