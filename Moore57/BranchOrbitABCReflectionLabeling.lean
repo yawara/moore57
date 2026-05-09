@@ -73,6 +73,87 @@ theorem reflection_smul_center_neighbor_base_mem_rotationOrbitFinset
   rcases (h.mem_orbitFamilyUnion base y).mp hyUnion with ⟨r, i, hi⟩
   exact ⟨r, (h.mem_rotationOrbitFinset (base r) y).mpr ⟨i, hi⟩⟩
 
+/-- The target center-neighbor orbit of a reflected selected base point is
+unique, provided the three selected orbits are pairwise disjoint. -/
+theorem reflection_smul_center_neighbor_base_orbit_index_unique
+    (base : Fin 3 → V)
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    {k : ZMod 19} {q r s : Fin 3}
+    (hr :
+      h.smul (DihedralGroup.sr k) (base q) ∈
+        h.rotationOrbitFinset (base r))
+    (hs :
+      h.smul (DihedralGroup.sr k) (base q) ∈
+        h.rotationOrbitFinset (base s)) :
+    r = s := by
+  by_contra hrs
+  exact (Finset.disjoint_left.mp (base_pairwise_disjoint r s hrs)) hr hs
+
+/-- The index of the center-neighbor rotation orbit containing the reflected
+image of `base q`. -/
+noncomputable def reflectionCenterNeighborOrbitIndex
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    (k : ZMod 19) (q : Fin 3) : Fin 3 :=
+  Classical.choose
+    (reflection_smul_center_neighbor_base_mem_rotationOrbitFinset
+      (h := h) base base_adj base_cover k q)
+
+/-- The reflected selected base point lies in the orbit indexed by
+`reflectionCenterNeighborOrbitIndex`. -/
+theorem reflectionCenterNeighborOrbitIndex_mem
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    (k : ZMod 19) (q : Fin 3) :
+    h.smul (DihedralGroup.sr k) (base q) ∈
+      h.rotationOrbitFinset
+        (base (reflectionCenterNeighborOrbitIndex
+          (h := h) base base_adj base_cover k q)) :=
+  Classical.choose_spec
+    (reflection_smul_center_neighbor_base_mem_rotationOrbitFinset
+      (h := h) base base_adj base_cover k q)
+
+/-- Any orbit-membership witness identifies the reflected-orbit index. -/
+theorem reflectionCenterNeighborOrbitIndex_eq_of_mem
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    {k : ZMod 19} {q r : Fin 3}
+    (hr :
+      h.smul (DihedralGroup.sr k) (base q) ∈
+        h.rotationOrbitFinset (base r)) :
+    reflectionCenterNeighborOrbitIndex (h := h) base base_adj base_cover k q =
+      r :=
+  reflection_smul_center_neighbor_base_orbit_index_unique
+    (h := h) base base_pairwise_disjoint
+    (reflectionCenterNeighborOrbitIndex_mem
+      (h := h) base base_adj base_cover k q)
+    hr
+
+/-- Among three indices, if `b` and `c` are distinct there is a remaining
+index distinct from both. -/
+theorem exists_fin3_ne_ne {b c : Fin 3} (hbc : b ≠ c) :
+    ∃ a : Fin 3, a ≠ b ∧ a ≠ c := by
+  fin_cases b <;> fin_cases c <;> simp at hbc ⊢
+  · exact ⟨2, by decide, by decide⟩
+  · exact ⟨1, by decide, by decide⟩
+  · exact ⟨2, by decide, by decide⟩
+  · exact ⟨0, by decide, by decide⟩
+  · exact ⟨1, by decide, by decide⟩
+  · exact ⟨0, by decide, by decide⟩
+
 /-- Pack the standard three-orbit center-neighbor decomposition together with
 the fact that every reflection preserves the set of these three quotient
 orbits. -/
@@ -277,6 +358,38 @@ noncomputable def hasLabeledReflectionPair_ofNeighborOrbitBaseReflectionPair
     ofNeighborOrbitBaseReflectionPair (h := h) base base_adj
       base_pairwise_disjoint a b c hab hac hbc k hrefOrbit
   exact ⟨labeling.data, labeling.k, labeling.reflection_b0_mem_c0_orbit⟩
+
+/-- If the induced reflected-orbit index moves one of the three
+center-neighbor orbits, then the minimal labeled reflection-pair boundary
+holds.  This is the finite quotient action form of the remaining reflection
+gap. -/
+noncomputable def hasLabeledReflectionPair_of_reflectionCenterNeighborOrbitIndex_ne
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    {k : ZMod 19} {b : Fin 3}
+    (hmove :
+      reflectionCenterNeighborOrbitIndex
+        (h := h) base base_adj base_cover k b ≠ b) :
+    HasLabeledReflectionPair h := by
+  classical
+  let c : Fin 3 :=
+    reflectionCenterNeighborOrbitIndex (h := h) base base_adj base_cover k b
+  have hbc : b ≠ c := by
+    intro hbc_eq
+    exact hmove hbc_eq.symm
+  rcases exists_fin3_ne_ne hbc with ⟨a, hab, hac⟩
+  exact hasLabeledReflectionPair_ofNeighborOrbitBaseReflectionPair
+    (h := h) base base_adj base_pairwise_disjoint a b c hab hac hbc k
+    (by
+      simpa [c] using
+        reflectionCenterNeighborOrbitIndex_mem
+          (h := h) base base_adj base_cover k b)
 
 end BranchOrbitABCReflectionLabeling
 
