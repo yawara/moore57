@@ -118,6 +118,7 @@ import Moore57.FixedResidualContributionZero
 import Moore57.AFiberContributionOnlyCriteria
 import Moore57.AFiberOnlyContributionConstant
 import Moore57.AFiberCardinalityBoundary
+import Moore57.AFiberCardinalityContributionBoundary
 import Moore57.TraceCoreCharacterBoundary
 import Moore57.RotationOneFixedBoundBoundary
 import Moore57.RotationOneFixedBoundBoundaryNonempty
@@ -141,3 +142,5 @@ import Moore57.D19FinalExposedHybridBoundary
 import Moore57.D19FinalInputCriterionBoundary
 import Moore57.D19FinalCharacterCriterionBoundary
 import Moore57.D19FinalInputCriterionReducedBridge
+import Moore57.D19FinalCharacterAFiberBoundary
+import Moore57.D19FinalCriterionPublic

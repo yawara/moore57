@@ -1,0 +1,172 @@
+import Moore57.D19FinalInputs
+import Moore57.OrbitBaseSelectionInputBridge
+import Moore57.AFiberHybridBoundaryFromCriteria
+
+/-!
+# Final D19 inputs from direct character and A-fiber boundary data
+
+This file gives a thinner final entry point than
+`D19FinalCharacterCriterionBoundaryInputs`: the adjacent-moved side is supplied
+by reflected-base avoidance, the moving/A-fiber inclusions, and the direct
+`AFiberCardinality38Boundary`, rather than by a criterion that already contains
+the full residual-contribution equation.
+-/
+
+namespace Moore57
+
+open Finset
+
+universe u uP
+
+variable {V : Type u} [Fintype V] [DecidableEq V]
+variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- Final direct-character/A-fiber boundary inputs.
+
+The adjacent-moved side keeps only reflected avoidance, the canonical
+moving/A-fiber inclusions, and the direct A-fiber cardinality boundary. -/
+structure D19FinalCharacterAFiberBoundaryInputs
+    (h : D19ActsOnMoore57 V Γ) where
+  /-- Split final character input: representation data plus fixed-count bound. -/
+  character : D19FinalCharacterInputs h
+  /-- Downstream orbit-base selection input. -/
+  orbitInput : OrbitBaseSelectionInput h
+  /-- Reflected-copy parameter. -/
+  k : ZMod 19
+  /-- Reflected selected bases avoid the selected orbit-family union. -/
+  reflection_not_mem_orbitFamilyUnion :
+    ∀ r : Fin 56,
+      h.smul (DihedralGroup.sr k) (orbitInput.base r) ∉
+        orbitInput.orbitFamilyUnion
+  /-- A coordinate system for the A-side fibers. -/
+  coords : AFiberCoordinates.{u, uP} Γ
+  /-- The A-side fiber indices used in the moving residual. -/
+  indices : Finset (ZMod 19)
+  /-- The moving residual complement is contained in the selected A-fiber union. -/
+  moving_subset_aFiber :
+    rotationOneMovingResidualPart h orbitInput k ⊆
+      coords.fiberUnion indices
+  /-- The selected A-fiber union is contained in the moving residual complement. -/
+  aFiber_subset_moving :
+    coords.fiberUnion indices ⊆
+      rotationOneMovingResidualPart h orbitInput k
+  /-- Packaged final-boundary A-fiber-side filtered cardinality statement. -/
+  aFiberCardinality :
+    AFiberCardinality38Boundary h coords indices
+
+namespace D19FinalCharacterAFiberBoundaryInputs
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- The inclusion-form hypotheses recover the canonical moving/A-fiber
+equality. -/
+theorem moving_eq_aFiber
+    (data : D19FinalCharacterAFiberBoundaryInputs h) :
+    rotationOneMovingResidualPart h data.orbitInput data.k =
+      data.coords.fiberUnion data.indices :=
+  Finset.Subset.antisymm
+    data.moving_subset_aFiber
+    data.aFiber_subset_moving
+
+/-- Build the existing split-avoidance witness from the thin A-fiber boundary.
+
+The residual contribution is derived here from the fixed-residual zero theorem
+and the direct `AFiberCardinality38Boundary` field. -/
+noncomputable def toAvoidanceSplit38Witness
+    (data : D19FinalCharacterAFiberBoundaryInputs h) :
+    AdjacentMovedReflectionAvoidanceSplit38Witness h data.orbitInput where
+  k := data.k
+  reflection_not_mem_orbitFamilyUnion :=
+    data.reflection_not_mem_orbitFamilyUnion
+  fixedPart := rotationOneFixedResidualPart h data.orbitInput data.k
+  aPart := data.coords.fiberUnion data.indices
+  parts_disjoint := by
+    rw [Finset.disjoint_left]
+    intro y hyFixed hyAFiber
+    exact Finset.disjoint_left.mp
+      (rotationOneFixedResidualPart_disjoint_movingResidualPart
+        h data.orbitInput data.k)
+      hyFixed
+      (data.aFiber_subset_moving hyAFiber)
+  residual_eq := by
+    rw [reflectionCopyResidual_eq_rotationOneFixed_union_moving
+      h data.orbitInput data.k, data.moving_eq_aFiber]
+  residual_contribution := by
+    intro d hd
+    have hfixed :
+        ((rotationOneFixedResidualPart h data.orbitInput data.k).filter fun y =>
+          Γ.Adj y (h.rotation d y)).card = 0 :=
+      rotationOneFixedResidualPart_filter_adjacent_rotation_card_eq_zero
+        h data.orbitInput data.k d hd
+    have haFiber :
+        ((data.coords.fiberUnion data.indices).filter fun y =>
+          Γ.Adj y (h.rotation d y)).card = 38 := by
+      simpa [fixedAFiberAFiberCard] using
+        data.aFiberCardinality.card_eq_thirtyEight d hd
+    simp [hfixed, haFiber]
+
+/-- Forget the direct-character/A-fiber boundary presentation down to the
+final input record. -/
+noncomputable def toD19FinalInputs
+    (data : D19FinalCharacterAFiberBoundaryInputs h) :
+    D19FinalInputs h where
+  character := data.character
+  orbitBase := data.orbitInput.toWitness
+  fixedOrAContribution := fixedOrAContribution38
+  fixed_or_A_contribution := by
+    intro d hd
+    rfl
+  adjacentMovedDecomposition := by
+    simpa [OrbitBaseSelectionInput.toWitness] using
+      data.toAvoidanceSplit38Witness.toDecomposition
+
+/-- Direct-character/A-fiber boundary final inputs cannot exist. -/
+theorem not_nonempty (h : D19ActsOnMoore57 V Γ) :
+    ¬ Nonempty
+      (D19FinalCharacterAFiberBoundaryInputs.{u, uP} h) := by
+  rintro ⟨data⟩
+  exact D19FinalInputs.not_nonempty h ⟨data.toD19FinalInputs⟩
+
+/-- Constructor from the equality-form canonical A-fiber criterion. -/
+noncomputable def of_canonicalAFiberCriteria
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (adjacentMoved :
+      AdjacentMovedReflectionCanonicalAFiberCriteria38Witness.{u, uP}
+        h orbitInput) :
+    D19FinalCharacterAFiberBoundaryInputs h where
+  character := character
+  orbitInput := orbitInput
+  k := adjacentMoved.k
+  reflection_not_mem_orbitFamilyUnion :=
+    adjacentMoved.reflection_not_mem_orbitFamilyUnion
+  coords := adjacentMoved.coords
+  indices := adjacentMoved.indices
+  moving_subset_aFiber := adjacentMoved.moving_subset_aFiber
+  aFiber_subset_moving := adjacentMoved.aFiber_subset_moving
+  aFiberCardinality :=
+    adjacentMoved.toAFiberCardinality38Boundary
+
+/-- Constructor from the inclusion-form canonical A-fiber criterion. -/
+noncomputable def of_canonicalAFiberInclusionCriteria
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (adjacentMoved :
+      AdjacentMovedReflectionCanonicalAFiberInclusionCriteria38Witness.{u, uP}
+        h orbitInput) :
+    D19FinalCharacterAFiberBoundaryInputs h where
+  character := character
+  orbitInput := orbitInput
+  k := adjacentMoved.k
+  reflection_not_mem_orbitFamilyUnion :=
+    adjacentMoved.reflection_not_mem_orbitFamilyUnion
+  coords := adjacentMoved.coords
+  indices := adjacentMoved.indices
+  moving_subset_aFiber := adjacentMoved.moving_subset_aFiber
+  aFiber_subset_moving := adjacentMoved.aFiber_subset_moving
+  aFiberCardinality :=
+    adjacentMoved.toAFiberCardinality38Boundary
+
+end D19FinalCharacterAFiberBoundaryInputs
+
+end Moore57
