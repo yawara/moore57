@@ -5,12 +5,11 @@ import Moore57.D19RepresentationCharacterDataBridge
 /-!
 # Canonical branch all-fiber final boundary
 
-This file packages the current top-level frontier after the rotation fixed
-point and fixed-center neighbor-orbit work.  The branch data is constructed
-canonically from the D19 action; the remaining fields are exactly the
-representation-character component boundary, reflected-copy avoidance,
-semantic residual classification, all-A-fiber residual containment, and the
-local matching-equation cardinality condition.
+This file packages a diagnostic top-level boundary obtained by using the
+A-fiber-generated orbit-base selection as the canonical branch data.  It is a
+useful normalization target, but `AFiberOrbitBaseSelectionCover` shows that
+this particular orbit-base selection covers the A-fibers themselves, so it is
+not the final non-residual orbit-base choice needed for the full proof.
 -/
 
 namespace Moore57
@@ -44,8 +43,10 @@ local instance instD19CanonicalBranchAllFibersBoundaryDecidableEq
     (α : Type*) : DecidableEq α :=
   Classical.decEq α
 
-/-- Current top-level boundary package for the canonical branch/all-A-fiber
-route to the D19 contradiction. -/
+/-- Diagnostic top-level boundary package for the canonical branch/all-A-fiber
+route.  The `allFibers_subset_residual` field is intentionally exposed: for
+the A-fiber-generated orbit-base selection this is an overconstraining
+condition, not a theorem expected from the final geometry. -/
 structure D19CanonicalBranchAllFibersBoundaryInputs
     (h : D19ActsOnMoore57 V Γ) where
   /-- Representation-character data, exposed as arithmetic components and the

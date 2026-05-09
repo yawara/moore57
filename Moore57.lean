@@ -146,6 +146,7 @@ import Moore57.AFiberAllFibersCardinalityBoundary
 import Moore57.AFiberOrbitCardinalityBoundary
 import Moore57.AFiberOrbitMoved
 import Moore57.AFiberOrbitBaseSelection
+import Moore57.AFiberOrbitBaseSelectionCover
 import Moore57.AFiberOrbitBaseSelectionMoved
 import Moore57.AFiberMatchingStepBound
 import Moore57.AFiberOrbitMovingResidual
