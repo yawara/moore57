@@ -1,5 +1,6 @@
 import Moore57.D19FinalCharacterAFiberBoundary
 import Moore57.D19FinalCharacterCriterionBoundary
+import Moore57.D19FinalNoFixedBoundBoundary
 
 /-!
 # Public final-criterion nonexistence aliases
@@ -39,5 +40,19 @@ theorem no_D19_final_character_aFiber_boundary
     (h : D19ActsOnMoore57 V Γ) :
     ¬ Nonempty (D19FinalCharacterAFiberBoundaryInputs.{u, uP} h) :=
   D19FinalCharacterAFiberBoundaryInputs.not_nonempty h
+
+/-- Public alias: direct-character/A-fiber final-boundary inputs, with the
+rotation fixed-count bound supplied automatically, cannot exist. -/
+theorem no_D19_final_character_aFiber_no_fixed_boundary
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ Nonempty (D19FinalCharacterAFiberNoFixedBoundaryInputs.{u, uP} h) :=
+  D19FinalCharacterAFiberNoFixedBoundaryInputs.not_nonempty h
+
+/-- Public alias: trace-core hybrid final-boundary inputs, with the rotation
+fixed-count bound supplied automatically, cannot exist. -/
+theorem no_D19_final_trace_hybrid_no_fixed_boundary
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ Nonempty (D19FinalTraceHybridNoFixedBoundaryInputs.{u, uP} h) :=
+  D19FinalTraceHybridNoFixedBoundaryInputs.not_nonempty h
 
 end Moore57

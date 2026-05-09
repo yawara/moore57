@@ -11,6 +11,8 @@ import Moore57.FixedInducedDegree
 import Moore57.RotationFixedSets
 import Moore57.RotationFixedCardEquality
 import Moore57.RotationFixedCardConstraints
+import Moore57.RotationFixedCardEqOne
+import Moore57.RotationFixedRegularity
 import Moore57.RotationFixedDataBridge
 import Moore57.RotationOrbitInjectivity
 import Moore57.RotationOrbitFinset
@@ -128,10 +130,12 @@ import Moore57.AFiberRotationTransport
 import Moore57.AFiberCoordinateRotation
 import Moore57.AFiberRotationMatchingCardinality
 import Moore57.AFiberCoordinateOrbit
+import Moore57.BranchOrbitABCData
 import Moore57.AFiberMatchingFixedCountSupport
 import Moore57.AFiberMatchingSupportEquations
 import Moore57.AFiberOrbitCardinalityBoundary
 import Moore57.AFiberOrbitMoved
+import Moore57.AFiberOrbitBaseSelection
 import Moore57.AFiberMatchingStepBound
 import Moore57.AFiberOrbitMovingResidual
 import Moore57.AFiberResidualSplitBridge
@@ -160,4 +164,6 @@ import Moore57.D19FinalInputCriterionBoundary
 import Moore57.D19FinalCharacterCriterionBoundary
 import Moore57.D19FinalInputCriterionReducedBridge
 import Moore57.D19FinalCharacterAFiberBoundary
+import Moore57.D19FinalNoFixedBoundBoundary
+import Moore57.D19FinalNoFixedResidualContainmentBoundary
 import Moore57.D19FinalCriterionPublic

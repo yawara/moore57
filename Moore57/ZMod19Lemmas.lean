@@ -13,9 +13,55 @@ theorem two_ne_zero_zmod19 : (2 : ZMod 19) ≠ 0 := by
 theorem two_is_unit_zmod19 : IsUnit (2 : ZMod 19) := by
   exact isUnit_iff_ne_zero.mpr two_ne_zero_zmod19
 
+theorem two_pow_ne_zero_zmod19 (k : Nat) :
+    ((2 : ZMod 19) ^ k) ≠ 0 := by
+  exact pow_ne_zero k two_ne_zero_zmod19
+
+theorem two_pow_nine_zmod19 :
+    ((2 : ZMod 19) ^ 9) = -1 := by
+  norm_num
+  change ((512 : Int) : ZMod 19) = ((-1 : Int) : ZMod 19)
+  rw [ZMod.intCast_eq_intCast_iff]
+  norm_num [Int.ModEq]
+
+theorem two_pow_eighteen_zmod19 :
+    ((2 : ZMod 19) ^ 18) = 1 := by
+  norm_num
+  change ((262144 : Int) : ZMod 19) = ((1 : Int) : ZMod 19)
+  rw [ZMod.intCast_eq_intCast_iff]
+  norm_num [Int.ModEq]
+
+theorem two_pow_add_nine_zmod19 (k : Nat) :
+    ((2 : ZMod 19) ^ (k + 9)) = -((2 : ZMod 19) ^ k) := by
+  rw [pow_add, two_pow_nine_zmod19, mul_neg_one]
+
+theorem two_pow_add_eighteen_zmod19 (k : Nat) :
+    ((2 : ZMod 19) ^ (k + 18)) = ((2 : ZMod 19) ^ k) := by
+  rw [pow_add, two_pow_eighteen_zmod19, mul_one]
+
 theorem two_mul_ne_zero_zmod19 {a : ZMod 19} (ha : a ≠ 0) :
     (2 : ZMod 19) * a ≠ 0 := by
   exact mul_ne_zero two_ne_zero_zmod19 ha
+
+theorem two_pow_mul_ne_zero_zmod19 {a : ZMod 19} (ha : a ≠ 0) (k : Nat) :
+    ((2 : ZMod 19) ^ k) * a ≠ 0 := by
+  exact mul_ne_zero (two_pow_ne_zero_zmod19 k) ha
+
+theorem two_pow_nine_mul_zmod19 (a : ZMod 19) :
+    ((2 : ZMod 19) ^ 9) * a = -a := by
+  rw [two_pow_nine_zmod19, neg_one_mul]
+
+theorem two_pow_eighteen_mul_zmod19 (a : ZMod 19) :
+    ((2 : ZMod 19) ^ 18) * a = a := by
+  rw [two_pow_eighteen_zmod19, one_mul]
+
+theorem two_pow_add_nine_mul_zmod19 (k : Nat) (a : ZMod 19) :
+    ((2 : ZMod 19) ^ (k + 9)) * a = -(((2 : ZMod 19) ^ k) * a) := by
+  rw [two_pow_add_nine_zmod19, neg_mul]
+
+theorem two_pow_add_eighteen_mul_zmod19 (k : Nat) (a : ZMod 19) :
+    ((2 : ZMod 19) ^ (k + 18)) * a = ((2 : ZMod 19) ^ k) * a := by
+  rw [two_pow_add_eighteen_zmod19]
 
 theorem add_self_ne_zero_zmod19 {a : ZMod 19} (ha : a ≠ 0) :
     a + a ≠ 0 := by
