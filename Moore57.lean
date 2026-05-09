@@ -204,6 +204,7 @@ import Moore57.BranchOrbitABCAFixingReflectionSupportBoundary
 import Moore57.BranchOrbitABCReferenceMatchingPipeline
 import Moore57.BranchOrbitABCSupportComplementSumBoundary
 import Moore57.BranchOrbitABCFixedStarFinalBridge
+import Moore57.BranchOrbitABCLeanAwareFinalBoundary
 import Moore57.BranchOrbitBCSelection
 import Moore57.BranchOrbitABCPartition
 import Moore57.CenterNeighborContributionZero
