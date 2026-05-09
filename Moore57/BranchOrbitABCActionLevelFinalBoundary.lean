@@ -42,8 +42,8 @@ structure BranchOrbitABCActionLevelFinalBoundary
   aFixing :
     BranchOrbitABCReflectionLabeling.ReflectionFixedStarAFixingBoundary
       starCounts.toReflectionFixedStarBoundary labeling
-  referenceSolutionVertexFixed :
-    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionVertexFixedBoundary
+  referenceSolutionSupportCompl :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
       labeling
   no_card_one :
     ∀ d : ZMod 19, ∀ hd : d ≠ 0,
@@ -63,8 +63,9 @@ noncomputable def toLeanAwareFixedStarFinalBoundary
     (boundary : BranchOrbitABCActionLevelFinalBoundary h) :
     BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary
       boundary.starCounts.toReflectionFixedStarBoundary boundary.labeling :=
-  BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary.of_aFixingCenter
-    boundary.middle boundary.aFixing boundary.referenceSolutionVertexFixed
+  BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary.of_aFixingCenter_referenceSupportCompl
+    boundary.middle boundary.aFixing
+    boundary.referenceSolutionSupportCompl
     boundary.no_card_one boundary.no_card_two
 
 end BranchOrbitABCActionLevelFinalBoundary

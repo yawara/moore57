@@ -1,5 +1,6 @@
 import Moore57.BranchOrbitABCFixedStarFinalBridge
 import Moore57.BranchOrbitABCExceptionCaseBoundary
+import Moore57.BranchOrbitABCReferenceSolutionGeometryBoundary
 import Moore57.BranchOrbitABCSupportComplementSumBoundary
 
 /-!
@@ -109,6 +110,26 @@ noncomputable def of_aFixingCenter
         aFixing.toAFixingReflectionFixedNeighborCardBoundary
       no_card_one := no_card_one
       no_card_two := no_card_two }
+
+/-- Variant of `of_aFixingCenter` using the more finite-set oriented boundary
+that reference matching solutions lie outside the A-fixing moving support. -/
+noncomputable def of_aFixingCenter_referenceSupportCompl
+    (middle : ReflectionFixedStarMiddleBoundary star labeling)
+    (aFixing : ReflectionFixedStarAFixingBoundary star labeling)
+    (referenceSolutionSupportCompl :
+      ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling)
+    (no_card_one :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        (labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf d) (midpointOf_ne_zero hd)).card ≠ 1)
+    (no_card_two :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        (labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf d) (midpointOf_ne_zero hd)).card ≠ 2) :
+    LeanAwareFixedStarFinalBoundary star labeling :=
+  of_aFixingCenter middle aFixing
+    referenceSolutionSupportCompl.toReferenceRotationMatchingSolutionVertexFixedBoundary
+    no_card_one no_card_two
 
 end LeanAwareFixedStarFinalBoundary
 
