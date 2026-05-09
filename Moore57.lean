@@ -196,6 +196,7 @@ import Moore57.BranchOrbitABCResidualSplit
 import Moore57.BranchOrbitABCResidualContribution
 import Moore57.BranchOrbitABCReflectionChoice
 import Moore57.BranchOrbitABCReflectionLabeling
+import Moore57.BranchOrbitABCMidpointReflection
 import Moore57.BranchOrbitBCSelection
 import Moore57.BranchOrbitABCPartition
 import Moore57.CenterNeighborContributionZero
