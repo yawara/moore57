@@ -3,6 +3,8 @@ import Moore57.BranchOrbitABCExceptionCaseBoundary
 import Moore57.BranchOrbitABCExceptionDoublingBoundary
 import Moore57.BranchOrbitABCExceptionCardTwoBoundary
 import Moore57.BranchOrbitABCReferenceSolutionGeometryBoundary
+import Moore57.BranchOrbitABCExceptionCardOneBoundary
+import Moore57.BranchOrbitABCExceptionAllSupportBoundary
 import Moore57.BranchOrbitABCSupportComplementSumBoundary
 
 /-!
@@ -155,6 +157,26 @@ noncomputable def of_aFixingCenter_doubling_notAllSupport
     (doubling.no_card_one_of_card_ne_one hbaseOne hne_one)
     ((MidpointExceptionAFixingSupportNoCardTwoBoundary.mk
       not_all_support_subset_exception).no_card_two
+        aFixing.toAFixingReflectionFixedNeighborCardBoundary)
+
+/-- Variant using the card-one singleton-fixed boundary and an endpoint-adjacency
+negation for the card-two case. -/
+noncomputable def of_aFixingCenter_doubling_singletonFixed_noAllEndpointAdj
+    (middle : ReflectionFixedStarMiddleBoundary star labeling)
+    (aFixing : ReflectionFixedStarAFixingBoundary star labeling)
+    (referenceSolutionSupportCompl :
+      ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling)
+    (singletonFixed :
+      MidpointExceptionAFixingSupportSingletonFixedBoundary labeling)
+    (noAllEndpointAdj :
+      MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary star labeling :=
+  of_aFixingCenter_referenceSupportCompl middle aFixing
+    referenceSolutionSupportCompl
+    singletonFixed.no_card_one
+    ((noAllEndpointAdj.toMidpointExceptionAFixingSupportNoCardTwoBoundary
+      (labeling.midpointReflectionCriterionBoundary_of_fixedCenterLeaf
+        star.toReflectionFixedCenterLeafBoundary)).no_card_two
         aFixing.toAFixingReflectionFixedNeighborCardBoundary)
 
 end LeanAwareFixedStarFinalBoundary
