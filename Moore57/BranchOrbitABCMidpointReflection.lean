@@ -1,6 +1,7 @@
 import Moore57.BranchOrbitABCReflectionLabeling
 import Moore57.AFiberMatchingExceptionSetBoundary
 import Moore57.AFiberMidpointReflectionCriterion
+import Moore57.ReflectionFixedCenterLeafBoundary
 
 /-!
 # Midpoint reflections for reflection-compatible A/B/C labelings
@@ -267,6 +268,171 @@ theorem midpointEquationSet_subset_midpointExceptionSet
       p
       ((labeling.mem_midpointEquationSet m hm p).1 hp)
 
+/-- The geometric midpoint input follows from a center-neighbor fixed-branch
+classification: if the midpoint reflection fixes only the middle A-branch
+among center-neighbors, then any fixed common neighbor of the reflected endpoint
+pair lies in the middle A-fiber. -/
+theorem midpoint_fixedCommon_mem_middle_of_fixed_center_neighbor_eq_middle
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (m : ZMod 19) (hm : m ≠ 0)
+    (hfixedBranch :
+      ∀ {b : V},
+        Γ.Adj labeling.data.toAFiberCoordinates.u b →
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b = b →
+        b = labeling.data.toAFiberCoordinates.a (0 + m))
+    (p : labeling.data.toAFiberCoordinates.P) {w : V}
+    (hwfix :
+      h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) w = w)
+    (hxw :
+      Γ.Adj
+        (((labeling.data.toAFiberCoordinates.coord 0 p :
+          {x : V // x ∈
+            branchFiber Γ labeling.data.toAFiberCoordinates.u
+              (labeling.data.toAFiberCoordinates.a 0)}) : V)) w)
+    (hyw :
+      Γ.Adj
+        (((labeling.data.toAFiberCoordinates.coord (0 + (m + m))
+            (labeling.midpointReflectionCoordPerm m p) :
+          {x : V // x ∈
+            branchFiber Γ labeling.data.toAFiberCoordinates.u
+              (labeling.data.toAFiberCoordinates.a (0 + (m + m)))}) : V)) w) :
+    w ∈ labeling.data.toAFiberCoordinates.fiber (0 + m) := by
+  let coords := labeling.data.toAFiberCoordinates
+  let x : V :=
+    ((coords.coord 0 p :
+      {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)
+  let y : V :=
+    ((coords.coord (0 + (m + m)) (labeling.midpointReflectionCoordPerm m p) :
+      {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + (m + m)))}) : V)
+  have hxmem : x ∈ branchFiber Γ coords.u (coords.a 0) := by
+    exact coords.coord_mem 0 p
+  have hx_ne_u : x ≠ coords.u := (mem_branchFiber.mp hxmem).1
+  have hx_not_adj_u : ¬ Γ.Adj coords.u x :=
+    h.isMoore.not_adj_center_of_mem_branchFiber (coords.hub 0) hxmem
+  have hw_ne_u : w ≠ coords.u := by
+    intro hwu
+    exact hx_not_adj_u (by simpa [x, coords, hwu] using hxw.symm)
+  have hw_not_adj_u : ¬ Γ.Adj coords.u w := by
+    intro huw
+    have hx_branch_over_w :
+        x ∈ branchFiber Γ coords.u w := by
+      rw [mem_branchFiber]
+      exact ⟨hx_ne_u, hxw.symm⟩
+    rcases h.isMoore.existsUnique_branch_of_not_adj_center
+        hx_ne_u.symm hx_not_adj_u with
+      ⟨b, hb, huniq⟩
+    have hw_eq_a0 : w = coords.a 0 :=
+      (huniq w ⟨huw, hx_branch_over_w⟩).trans
+        (huniq (coords.a 0) ⟨coords.hub 0, hxmem⟩).symm
+    have hymem :
+        y ∈ branchFiber Γ coords.u (coords.a (0 + (m + m))) := by
+      simpa [y, coords] using
+        coords.coord_mem (0 + (m + m)) (labeling.midpointReflectionCoordPerm m p)
+    have hy_not_adj_a0 :
+        ¬ Γ.Adj y (coords.a 0) :=
+      h.isMoore.not_adj_other_branch_of_mem_branchFiber
+        (coords.hub (0 + (m + m))) (coords.hub 0)
+        (coords.a_ne (by
+          intro hidx
+          exact (add_self_ne_zero_zmod19 hm) (by simpa using hidx)))
+        hymem
+    exact hy_not_adj_a0 (by simpa [y, coords, hw_eq_a0] using hyw)
+  rcases h.isMoore.existsUnique_branch_of_not_adj_center
+      hw_ne_u.symm hw_not_adj_u with
+    ⟨b, hb, huniq⟩
+  have href_u :
+      h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m))
+          coords.u = coords.u :=
+    (labeling.toAFiberMidpointReflectionEquivariance m).reflection_u
+  have hb_ref_adj :
+      Γ.Adj coords.u
+        (h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b) := by
+    have hAdj :=
+      (h.smul_adj (DihedralGroup.sr (labeling.midpointReflectionIndex m))
+        coords.u b).mp hb.1
+    simpa [href_u] using hAdj
+  have hb_ref_mem :
+      w ∈ branchFiber Γ coords.u
+        (h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b) := by
+    have hmem :
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) w ∈
+          branchFiber Γ coords.u
+            (h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b) :=
+      (h.smul_mem_branchFiber_iff
+        (DihedralGroup.sr (labeling.midpointReflectionIndex m))
+        (u := coords.u) (b := b) (x := w) href_u).2 hb.2
+    simpa [hwfix] using hmem
+  have hb_fixed :
+      h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b = b :=
+    huniq _ ⟨hb_ref_adj, hb_ref_mem⟩
+  have hb_middle : b = coords.a (0 + m) :=
+    hfixedBranch hb.1 (by simpa [coords] using hb_fixed)
+  simpa [AFiberCoordinates.fiber, coords, hb_middle] using hb.2
+
+/-- If the midpoint reflection has at most one fixed center-neighbor, then any
+fixed center-neighbor is the middle A-branch. -/
+theorem midpoint_fixed_center_neighbor_eq_middle_of_fixedCenterNeighbors_card_le_one
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (m : ZMod 19)
+    (hfixedCenterNeighbors_le_one :
+      ((Γ.neighborFinset labeling.data.toAFiberCoordinates.u).filter fun b =>
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b = b).card ≤ 1)
+    {b : V}
+    (hb_adj : Γ.Adj labeling.data.toAFiberCoordinates.u b)
+    (hb_fixed :
+      h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b = b) :
+    b = labeling.data.toAFiberCoordinates.a (0 + m) := by
+  classical
+  let coords := labeling.data.toAFiberCoordinates
+  have hb_mem :
+      b ∈ (Γ.neighborFinset coords.u).filter fun c =>
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) c = c := by
+    rw [Finset.mem_filter]
+    exact ⟨by simpa [SimpleGraph.mem_neighborFinset] using hb_adj, hb_fixed⟩
+  have hmid_fixed :
+      h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m))
+          (coords.a (0 + m)) =
+        coords.a (0 + m) := by
+    have hraw :=
+      (labeling.toAFiberMidpointReflectionEquivariance m).reflection_a (0 + m)
+    have hidx : (2 : ZMod 19) * m - m = m := by
+      ring
+    simpa [coords, hidx] using hraw
+  have hmid_mem :
+      coords.a (0 + m) ∈
+        (Γ.neighborFinset coords.u).filter fun c =>
+          h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) c = c := by
+    rw [Finset.mem_filter]
+    exact
+      ⟨by
+        simpa [SimpleGraph.mem_neighborFinset] using coords.hub (0 + m),
+        hmid_fixed⟩
+  exact
+    (Finset.card_le_one_iff.mp hfixedCenterNeighbors_le_one)
+      hb_mem hmid_mem
+
+/-- The fixed-star leaf boundary supplies the fixed center-neighbor uniqueness
+needed to identify the middle A-branch. -/
+theorem midpoint_fixed_center_neighbor_eq_middle_of_fixedCenterLeaf
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (fixedCenterLeaf : ReflectionFixedCenterLeafBoundary h)
+    (m : ZMod 19) {b : V}
+    (hb_adj : Γ.Adj labeling.data.toAFiberCoordinates.u b)
+    (hb_fixed :
+      h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b = b) :
+    b = labeling.data.toAFiberCoordinates.a (0 + m) := by
+  have hle :
+      ((Γ.neighborFinset labeling.data.toAFiberCoordinates.u).filter fun b =>
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b = b).card ≤
+        1 := by
+    rw [BranchOrbitABCFromCenter.toAFiberCoordinates_u,
+      labeling.data.u_eq_rotationFixedCenter]
+    exact fixedCenterLeaf.fixed_center_neighbors_card_le_one
+      (labeling.midpointReflectionIndex m)
+  exact
+    labeling.midpoint_fixed_center_neighbor_eq_middle_of_fixedCenterNeighbors_card_le_one
+      m hle hb_adj hb_fixed
+
 /-- Reverse midpoint criterion after isolating the remaining geometric input:
 any fixed common neighbor of the reflected endpoint pair must lie in the
 middle A-fiber. -/
@@ -393,6 +559,33 @@ noncomputable def midpointReflectionCriterionBoundary_of_fixedCommon_mem_middle
       exact
         (labeling.midpointExceptionSet_subset_midpointEquationSet_of_fixedCommon_mem_middle
           m hm (hfixedCommon_mem_middle m hm)) hp
+
+/-- Build the full midpoint-reflection criterion from the smaller
+center-neighbor statement that the midpoint reflection fixes only the middle
+A-branch among center-neighbors. -/
+noncomputable def midpointReflectionCriterionBoundary_of_fixed_center_neighbor_eq_middle
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (hfixedBranch :
+      ∀ m : ZMod 19, ∀ _hm : m ≠ 0, ∀ {b : V},
+        Γ.Adj labeling.data.toAFiberCoordinates.u b →
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) b = b →
+        b = labeling.data.toAFiberCoordinates.a (0 + m)) :
+    MidpointReflectionCriterionBoundary labeling :=
+  labeling.midpointReflectionCriterionBoundary_of_fixedCommon_mem_middle
+    (fun m hm p {_w} hwfix hxw hyw =>
+      labeling.midpoint_fixedCommon_mem_middle_of_fixed_center_neighbor_eq_middle
+        m hm (hfixedBranch m hm) p hwfix hxw hyw)
+
+/-- Build the full midpoint-reflection criterion from the existing fixed-star
+leaf boundary for reflections. -/
+noncomputable def midpointReflectionCriterionBoundary_of_fixedCenterLeaf
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (fixedCenterLeaf : ReflectionFixedCenterLeafBoundary h) :
+    MidpointReflectionCriterionBoundary labeling :=
+  labeling.midpointReflectionCriterionBoundary_of_fixed_center_neighbor_eq_middle
+    (fun m _hm =>
+      labeling.midpoint_fixed_center_neighbor_eq_middle_of_fixedCenterLeaf
+        fixedCenterLeaf m)
 
 namespace MidpointReflectionCriterionBoundary
 
