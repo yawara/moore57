@@ -179,6 +179,46 @@ theorem no_D19_reflection_labeled_branch_compact_split_boundary
     ¬ Nonempty (D19ReflectionLabeledBranchCompactSplitBoundaryInputs h) :=
   D19ReflectionLabeledBranchCompactSplitBoundaryInputs.not_nonempty h
 
+/-- Public no-go statement exposing the current reflection-labeled path as
+three raw remaining inputs: representation components, a minimal labeled
+reflection pair, and the reference-fiber matching equation with two solutions. -/
+theorem no_D19_hasLabeledReflectionPair_referenceFiberMatchingEquation_boundary
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ _representationComponents :
+          D19ActsOnMoore57.RepresentationCharacterComponentsBoundary h,
+        ∃ hp : BranchOrbitABCReflectionLabeling.HasLabeledReflectionPair h,
+          let labeling :=
+            BranchOrbitABCReflectionLabeling.ofHasLabeledReflectionPair
+              (h := h) hp
+          ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+            ((Finset.univ :
+                Finset
+                  labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+              AFiberCoordinates.matchingEquiv h.isMoore
+                  labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+                  0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+                (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+                  d 0 p).card =
+              2 := by
+  rintro ⟨representationComponents, hp, referenceMatchingEquationCardTwo⟩
+  let labeling :=
+    BranchOrbitABCReflectionLabeling.ofHasLabeledReflectionPair (h := h) hp
+  have hreference :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ((Finset.univ :
+            Finset
+              labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+          AFiberCoordinates.matchingEquiv h.isMoore
+              labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+              0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+            (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+              d 0 p).card =
+          2 := by
+    simpa [labeling] using referenceMatchingEquationCardTwo
+  exact no_D19_reflection_labeled_branch_compact_split_boundary h
+    ⟨D19ReflectionLabeledBranchCompactSplitBoundaryInputs.ofReferenceFiberMatchingEquationTwo
+      representationComponents labeling hreference⟩
+
 end
 
 end Moore57
