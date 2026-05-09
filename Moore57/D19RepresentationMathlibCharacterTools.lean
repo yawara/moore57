@@ -70,6 +70,34 @@ theorem dimension_eq_of_finrank_eq_of_character_eq
         norm_num
   exact_mod_cast hdimℚ
 
+/-- A function on `D19` agrees with `d19LinearCharacter` once its values are
+known on the identity, nontrivial rotations, and reflections. -/
+theorem character_eq_d19Linear_of_values
+    (χ : DihedralGroup 19 → ℚ)
+    (alpha beta gamma : ℕ)
+    (one_value :
+      χ (1 : DihedralGroup 19) =
+        (alpha : ℚ) + (beta : ℚ) + 18 * (gamma : ℚ))
+    (rotation_value :
+      ∀ d : ZMod 19, d ≠ 0 →
+        χ (DihedralGroup.r d) =
+          (alpha : ℚ) + (beta : ℚ) - (gamma : ℚ))
+    (reflection_value :
+      ∀ k : ZMod 19,
+        χ (DihedralGroup.sr k) = (alpha : ℚ) - (beta : ℚ)) :
+    ∀ g : DihedralGroup 19,
+      χ g = (d19LinearCharacter alpha beta gamma g : ℚ) := by
+  intro g
+  cases g with
+  | r d =>
+      by_cases hd : d = 0
+      · subst d
+        simpa [DihedralGroup.r_zero, d19LinearCharacter_one] using one_value
+      · simpa [d19LinearCharacter_rotation_ne alpha beta gamma hd] using
+          rotation_value d hd
+  | sr k =>
+      simpa [d19LinearCharacter_reflection] using reflection_value k
+
 namespace TraceMultiplicityData
 
 /-- Build the project multiplicity record when the dimension field is supplied
@@ -99,6 +127,32 @@ def ofMathlibCharacter
       ρ alpha beta gamma finrank_eq character_eq_d19Linear
   minus8_trivial_nonneg := minus8_trivial_nonneg
   minus8_sign_nonneg := minus8_sign_nonneg
+
+/-- Build the project multiplicity record from class-value data on identity,
+nontrivial rotations, and reflections. -/
+def ofMathlibCharacterValues
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (one_value :
+      ρ.character (1 : DihedralGroup 19) =
+        (alpha : ℚ) + (beta : ℚ) + 18 * (gamma : ℚ))
+    (rotation_value :
+      ∀ d : ZMod 19, d ≠ 0 →
+        ρ.character (DihedralGroup.r d) =
+          (alpha : ℚ) + (beta : ℚ) - (gamma : ℚ))
+    (reflection_value :
+      ∀ k : ZMod 19,
+        ρ.character (DihedralGroup.sr k) = (alpha : ℚ) - (beta : ℚ))
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58) :
+    TraceMultiplicityData :=
+  ofMathlibCharacter ρ alpha beta gamma finrank_eq
+    (character_eq_d19Linear_of_values ρ.character alpha beta gamma
+      one_value rotation_value reflection_value)
+    reflection minus8_trivial_nonneg minus8_sign_nonneg
 
 @[simp] theorem ofMathlibCharacter_alpha
     {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
@@ -188,6 +242,37 @@ noncomputable def ofRepresentationCharacterComponents
       simpa [TraceMultiplicityData.ofMathlibCharacter] using
         character_eq_d19Linear g)
 
+/-- Build the full linear-character input from class-value data on identity,
+nontrivial rotations, and reflections. -/
+noncomputable def ofRepresentationCharacterValues
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (one_value :
+      ρ.character (1 : DihedralGroup 19) =
+        (alpha : ℚ) + (beta : ℚ) + 18 * (gamma : ℚ))
+    (rotation_value :
+      ∀ d : ZMod 19, d ≠ 0 →
+        ρ.character (DihedralGroup.r d) =
+          (alpha : ℚ) + (beta : ℚ) - (gamma : ℚ))
+    (reflection_value :
+      ∀ k : ZMod 19,
+        ρ.character (DihedralGroup.sr k) = (alpha : ℚ) - (beta : ℚ))
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58) :
+    D19LinearCharacterInput h :=
+  ofRepresentationCharacterComponents (h := h) ρ alpha beta gamma
+    finrank_eq trace_eq_character
+    (character_eq_d19Linear_of_values ρ.character alpha beta gamma
+      one_value rotation_value reflection_value)
+    reflection minus8_trivial_nonneg minus8_sign_nonneg
+
 @[simp] theorem ofRepresentationCharacterComponents_multiplicity
     {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
     (ρ : Representation ℚ (DihedralGroup 19) W)
@@ -238,6 +323,38 @@ theorem representationCharacterComponentsBoundary_of_representationCharacterComp
       ρ alpha beta gamma finrank_eq trace_eq_character
       character_eq_d19Linear reflection minus8_trivial_nonneg
       minus8_sign_nonneg)
+    |>.representationCharacterComponentsBoundary
+
+/-- Direct component-boundary constructor from class-value data on identity,
+nontrivial rotations, and reflections. -/
+theorem representationCharacterComponentsBoundary_of_representationCharacterValues
+    (h : D19ActsOnMoore57 V Γ)
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (one_value :
+      ρ.character (1 : DihedralGroup 19) =
+        (alpha : ℚ) + (beta : ℚ) + 18 * (gamma : ℚ))
+    (rotation_value :
+      ∀ d : ZMod 19, d ≠ 0 →
+        ρ.character (DihedralGroup.r d) =
+          (alpha : ℚ) + (beta : ℚ) - (gamma : ℚ))
+    (reflection_value :
+      ∀ k : ZMod 19,
+        ρ.character (DihedralGroup.sr k) = (alpha : ℚ) - (beta : ℚ))
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58) :
+    RepresentationCharacterComponentsBoundary h :=
+  (D19LinearCharacterInput.ofRepresentationCharacterValues (h := h)
+      ρ alpha beta gamma finrank_eq trace_eq_character
+      one_value rotation_value reflection_value reflection
+      minus8_trivial_nonneg minus8_sign_nonneg)
     |>.representationCharacterComponentsBoundary
 
 end D19ActsOnMoore57

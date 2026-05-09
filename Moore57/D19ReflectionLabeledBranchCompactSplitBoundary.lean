@@ -324,6 +324,69 @@ theorem no_D19_mathlibCharacter_reflectionIndex_referenceFiberMatchingEquation_b
     ⟨hp, by
       simpa [hp, labeling] using hreference⟩
 
+/-- Version of
+`no_D19_mathlibCharacter_reflectionIndex_referenceFiberMatchingEquation_boundary`
+whose character input is only the values on identity, nontrivial rotations,
+and reflections. -/
+theorem no_D19_mathlibCharacterValues_reflectionIndex_referenceFiberMatchingEquation_boundary
+    (h : D19ActsOnMoore57 V Γ)
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (one_value :
+      ρ.character (1 : DihedralGroup 19) =
+        (alpha : ℚ) + (beta : ℚ) + 18 * (gamma : ℚ))
+    (rotation_value :
+      ∀ d : ZMod 19, d ≠ 0 →
+        ρ.character (DihedralGroup.r d) =
+          (alpha : ℚ) + (beta : ℚ) - (gamma : ℚ))
+    (reflection_value :
+      ∀ k : ZMod 19,
+        ρ.character (DihedralGroup.sr k) = (alpha : ℚ) - (beta : ℚ))
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58)
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base) :
+    ¬ ∃ k : ZMod 19, ∃ b : Fin 3,
+        ∃ hmove :
+          BranchOrbitABCReflectionLabeling.reflectionCenterNeighborOrbitIndex
+            (h := h) base base_adj base_cover k b ≠ b,
+          let hp :=
+            BranchOrbitABCReflectionLabeling.hasLabeledReflectionPair_of_reflectionCenterNeighborOrbitIndex_ne
+              (h := h) base base_adj base_pairwise_disjoint base_cover
+              hmove
+          let labeling :=
+            BranchOrbitABCReflectionLabeling.ofHasLabeledReflectionPair
+              (h := h) hp
+          ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+            ((Finset.univ :
+                Finset
+                  labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+              AFiberCoordinates.matchingEquiv h.isMoore
+                  labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+                  0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+                (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+                  d 0 p).card =
+              2 := by
+  exact no_D19_mathlibCharacter_reflectionIndex_referenceFiberMatchingEquation_boundary
+    h ρ alpha beta gamma finrank_eq trace_eq_character
+    (character_eq_d19Linear_of_values ρ.character alpha beta gamma
+      one_value rotation_value reflection_value)
+    reflection minus8_trivial_nonneg minus8_sign_nonneg
+    base base_adj base_pairwise_disjoint base_cover
+
 end
 
 end Moore57
