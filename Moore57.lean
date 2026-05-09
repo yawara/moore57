@@ -144,6 +144,7 @@ import Moore57.BranchOrbitABCData
 import Moore57.BranchOrbitABCDataFromCenter
 import Moore57.AFiberMatchingFixedCountSupport
 import Moore57.AFiberMatchingSupportEquations
+import Moore57.AFiberContributionRotationInvariance
 import Moore57.AFiberAllFibersCardinalityBoundary
 import Moore57.AFiberOrbitCardinalityBoundary
 import Moore57.AFiberOrbitMoved
@@ -189,6 +190,7 @@ import Moore57.BranchOrbitABCResidualGeometry
 import Moore57.BranchOrbitABCResidualSplit
 import Moore57.BranchOrbitABCResidualContribution
 import Moore57.BranchOrbitABCReflectionChoice
+import Moore57.BranchOrbitABCReflectionLabeling
 import Moore57.BranchOrbitBCSelection
 import Moore57.BranchOrbitABCPartition
 import Moore57.CenterNeighborContributionZero
