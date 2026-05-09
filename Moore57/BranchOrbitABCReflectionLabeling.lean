@@ -44,6 +44,70 @@ def HasLabeledReflectionPair (h : D19ActsOnMoore57 V Γ) : Prop :=
   ∃ data : BranchOrbitABCFromCenter h, ∃ k : ZMod 19,
     h.smul (DihedralGroup.sr k) data.b0 ∈ h.rotationOrbitFinset data.c0
 
+/-- Any reflection sends a selected center-neighbor rotation orbit into one of
+the three selected center-neighbor rotation orbits.  This is the quotient-level
+permutation statement; proving that it is nontrivial for some reflection is
+the remaining reflection-pair gap. -/
+theorem reflection_smul_center_neighbor_base_mem_rotationOrbitFinset
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    (k : ZMod 19) (q : Fin 3) :
+    ∃ r : Fin 3,
+      h.smul (DihedralGroup.sr k) (base q) ∈
+        h.rotationOrbitFinset (base r) := by
+  classical
+  let y : V := h.smul (DihedralGroup.sr k) (base q)
+  have hyAdj : Γ.Adj h.rotationFixedCenter y := by
+    have hAdj :
+        Γ.Adj (h.smul (DihedralGroup.sr k) h.rotationFixedCenter)
+          (h.smul (DihedralGroup.sr k) (base q)) :=
+      (h.smul_adj (DihedralGroup.sr k) h.rotationFixedCenter (base q)).mp
+        (base_adj q)
+    simpa [y, h.reflection_smul_rotationFixedCenter k] using hAdj
+  have hyNeighbor : y ∈ Γ.neighborFinset h.rotationFixedCenter := by
+    simpa [SimpleGraph.mem_neighborFinset] using hyAdj
+  have hyUnion : y ∈ h.orbitFamilyUnion base := by
+    simpa [base_cover] using hyNeighbor
+  rcases (h.mem_orbitFamilyUnion base y).mp hyUnion with ⟨r, i, hi⟩
+  exact ⟨r, (h.mem_rotationOrbitFinset (base r) y).mpr ⟨i, hi⟩⟩
+
+/-- Pack the standard three-orbit center-neighbor decomposition together with
+the fact that every reflection preserves the set of these three quotient
+orbits. -/
+theorem exists_three_center_neighbor_orbits_reflection_smul_mem_rotationOrbitFinset
+    (h : D19ActsOnMoore57 V Γ) :
+    ∃ base : Fin 3 → V,
+      (∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q)) ∧
+      (∀ q : Fin 3, (h.rotationOrbitFinset (base q)).card = 19) ∧
+      (∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r))) ∧
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base ∧
+      ∀ k : ZMod 19, ∀ q : Fin 3,
+        ∃ r : Fin 3,
+          h.smul (DihedralGroup.sr k) (base q) ∈
+            h.rotationOrbitFinset (base r) := by
+  classical
+  rcases h.exists_three_rotationOrbitFinset_neighbors_rotationFixedCenter with
+    ⟨base, base_adj, base_card, base_pairwise_disjoint, base_cover⟩
+  exact
+    ⟨base, base_adj, base_card, base_pairwise_disjoint, base_cover, by
+      intro k q
+      exact reflection_smul_center_neighbor_base_mem_rotationOrbitFinset
+        (h := h) base base_adj base_cover k q⟩
+
+/-- The exact reflection equality stored in a reflection-compatible labeling
+implies the orbit-level reflection-pair condition. -/
+theorem reflection_b0_mem_c0_orbit
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    h.smul (DihedralGroup.sr labeling.k) labeling.data.b0 ∈
+      h.rotationOrbitFinset labeling.data.c0 := by
+  rw [labeling.reflection_b0_eq_c0]
+  exact (h.mem_rotationOrbitFinset labeling.data.c0 labeling.data.c0).mpr
+    ⟨0, by simp⟩
+
 /-- Package an orbit-level reflected B/C statement into exact representative
 equality by shifting the reflection parameter. -/
 noncomputable def ofReflectionOrbit
@@ -191,6 +255,28 @@ noncomputable def ofNeighborOrbitBaseReflectionPair
     { data := data
       k := k
       reflection_b0_eq_c0 := rfl }
+
+/-- The explicit reflected-orbit constructor also supplies the minimal
+`HasLabeledReflectionPair` boundary. -/
+noncomputable def hasLabeledReflectionPair_ofNeighborOrbitBaseReflectionPair
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    (a b c : Fin 3)
+    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
+    (k : ZMod 19)
+    (hrefOrbit :
+      h.smul (DihedralGroup.sr k) (base b) ∈
+        h.rotationOrbitFinset (base c)) :
+    HasLabeledReflectionPair h := by
+  classical
+  let labeling :=
+    ofNeighborOrbitBaseReflectionPair (h := h) base base_adj
+      base_pairwise_disjoint a b c hab hac hbc k hrefOrbit
+  exact ⟨labeling.data, labeling.k, labeling.reflection_b0_mem_c0_orbit⟩
 
 end BranchOrbitABCReflectionLabeling
 
