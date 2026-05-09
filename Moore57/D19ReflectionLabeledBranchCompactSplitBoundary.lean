@@ -2,7 +2,7 @@ import Moore57.BranchOrbitABCReflectionLabeling
 import Moore57.BranchOrbitABCResidualContribution
 import Moore57.BranchOrbitABCAllFibersFinalBridge
 import Moore57.AFiberContributionRotationInvariance
-import Moore57.D19RepresentationCharacterDataBridge
+import Moore57.D19RepresentationMathlibCharacterTools
 import Moore57.D19FinalRepresentationUpperBoundCompactSplit
 
 /-!
@@ -218,6 +218,50 @@ theorem no_D19_hasLabeledReflectionPair_referenceFiberMatchingEquation_boundary
   exact no_D19_reflection_labeled_branch_compact_split_boundary h
     ⟨D19ReflectionLabeledBranchCompactSplitBoundaryInputs.ofReferenceFiberMatchingEquationTwo
       representationComponents labeling hreference⟩
+
+/-- Same no-go statement as
+`no_D19_hasLabeledReflectionPair_referenceFiberMatchingEquation_boundary`, but
+with the representation component boundary supplied from a mathlib
+representation character.  The dimension equation is supplied internally by
+`Representation.char_one`. -/
+theorem no_D19_mathlibCharacter_hasLabeledReflectionPair_referenceFiberMatchingEquation_boundary
+    (h : D19ActsOnMoore57 V Γ)
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (character_eq_d19Linear :
+      ∀ g : DihedralGroup 19,
+        ρ.character g =
+          (d19LinearCharacter alpha beta gamma g : ℚ))
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58) :
+    ¬ ∃ hp : BranchOrbitABCReflectionLabeling.HasLabeledReflectionPair h,
+        let labeling :=
+          BranchOrbitABCReflectionLabeling.ofHasLabeledReflectionPair
+            (h := h) hp
+        ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+          ((Finset.univ :
+              Finset
+                labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore
+                labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+                0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+              (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+                d 0 p).card =
+            2 := by
+  intro hgeometry
+  exact no_D19_hasLabeledReflectionPair_referenceFiberMatchingEquation_boundary h
+    ⟨D19ActsOnMoore57.representationCharacterComponentsBoundary_of_representationCharacterComponents
+      h ρ alpha beta gamma finrank_eq trace_eq_character
+      character_eq_d19Linear reflection minus8_trivial_nonneg
+      minus8_sign_nonneg,
+      hgeometry⟩
 
 end
 
