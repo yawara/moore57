@@ -53,6 +53,13 @@ def toRotationFixedData (hin : RotationFixedUpperBoundInput h) :
     RotationFixedData h.rotation :=
   h.toRotationFixedData_of_le_nineteen hin.fixed_le_nineteen
 
+/-- The coarse upper-bound input implies that rotation by `1` has exactly one
+fixed vertex. -/
+theorem rotation_one_fixed_count_eq_one
+    (hin : RotationFixedUpperBoundInput h) :
+    fixedVertexCount (h.rotation 1) = 1 :=
+  hin.toRotationFixedData.rotation_fixed 1 (by decide)
+
 /-- Bounds by `< 20` package into the coarse upper-bound input. -/
 def of_lt_twenty
     (hlt : ∀ d : ZMod 19, d ≠ 0 → fixedVertexCount (h.rotation d) < 20) :
