@@ -1,4 +1,4 @@
-import Moore57.BranchOrbitABCMidpointExceptionSetBoundary
+import Moore57.BranchOrbitABCReflectionFixedStarBoundary
 
 /-!
 # Branch-orbit reference matching pipeline
@@ -68,6 +68,46 @@ noncomputable def toReferenceFiberMatchingExceptionSetTwo
   ReferenceFiberMatchingExceptionSetTwo.of_midpointReflectionBoundary
     labeling criterion cardTwo rhs
 
+/-- Fixed-star/reflection inputs in the form that now feeds the reference
+matching pipeline.  The remaining geometric content is explicit:
+the midpoint middle A-vertex is the fixed-star center, and reference solutions
+are fixed by the A-fixing reflection. -/
+structure FixedStarReferenceMatchingPipelineBoundary
+    (star : ReflectionFixedStarBoundary h)
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  middle : ReflectionFixedStarMiddleBoundary star labeling
+  referenceSolutionFixed : ReferenceRotationEquationAFixingFixedBoundary labeling
+
+namespace FixedStarReferenceMatchingPipelineBoundary
+
+variable {star : ReflectionFixedStarBoundary h}
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Convert the fixed-star version of the midpoint/reflection inputs to the
+generic reference matching pipeline boundary. -/
+noncomputable def toReferenceMatchingPipelineBoundary
+    (boundary : FixedStarReferenceMatchingPipelineBoundary star labeling) :
+    ReferenceMatchingPipelineBoundary labeling where
+  criterion :=
+    labeling.midpointReflectionCriterionBoundary_of_fixedCenterLeaf
+      star.toReflectionFixedCenterLeafBoundary
+  midpointSupportCardTwo :=
+    boundary.middle.toMidpointMiddleFixedNeighborCardBoundary
+      |>.toMidpointMiddleSupportCardTwoBoundary
+  referenceToMidpoint :=
+    ReferenceRotationToMidpointReflectionBoundary.of_aFixingFixed
+      boundary.referenceSolutionFixed
+
+/-- The fixed-star inputs give the two-point reference exception-set boundary. -/
+noncomputable def toReferenceFiberMatchingExceptionSetTwo
+    (boundary : FixedStarReferenceMatchingPipelineBoundary star labeling) :
+    ReferenceFiberMatchingExceptionSetTwo
+      labeling.data.toAFiberRotationEquivariance :=
+  boundary.toReferenceMatchingPipelineBoundary
+    |>.toReferenceFiberMatchingExceptionSetTwo
+
+end FixedStarReferenceMatchingPipelineBoundary
+
 /-- Pipeline inputs for the full A-fiber cardinality boundary.  The final
 `supportCompl_sum_ge` field is the lower-bound input required by
 `AFiberCardinality38Boundary.of_allFibers_referenceMatchingExceptionSetTwo_of_sum_ge`. -/
@@ -126,6 +166,46 @@ noncomputable def toAFiberCardinality38Boundary_of_referenceMatching
     labeling.data.toAFiberRotationEquivariance
     (labeling.toReferenceFiberMatchingExceptionSetTwo criterion cardTwo rhs)
     hsum_ge
+
+/-- Fixed-star version of the full cardinality pipeline: fixed-star/midpoint
+inputs produce the reference two-exception boundary, and the support-complement
+sum lower bound feeds the existing A-fiber cardinality constructor. -/
+structure FixedStarReferenceMatchingCardinalityPipelineBoundary
+    (star : ReflectionFixedStarBoundary h)
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  referenceMatching : FixedStarReferenceMatchingPipelineBoundary star labeling
+  supportCompl_sum_ge :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      38 ≤
+        ∑ i ∈ (Finset.univ : Finset (ZMod 19)),
+          (labeling.data.toAFiberRotationEquivariance.matchingRotationPerm
+            d i hd).supportᶜ.card
+
+namespace FixedStarReferenceMatchingCardinalityPipelineBoundary
+
+variable {star : ReflectionFixedStarBoundary h}
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Forget the fixed-star packaging after deriving the generic reference
+matching inputs. -/
+noncomputable def toReferenceMatchingCardinalityPipelineBoundary
+    (boundary :
+      FixedStarReferenceMatchingCardinalityPipelineBoundary star labeling) :
+    ReferenceMatchingCardinalityPipelineBoundary labeling where
+  referenceMatching :=
+    boundary.referenceMatching.toReferenceMatchingPipelineBoundary
+  supportCompl_sum_ge := boundary.supportCompl_sum_ge
+
+/-- Final A-fiber cardinality boundary obtained from fixed-star packaged inputs. -/
+noncomputable def toAFiberCardinality38Boundary
+    (boundary :
+      FixedStarReferenceMatchingCardinalityPipelineBoundary star labeling) :
+  AFiberCardinality38Boundary h labeling.data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  boundary.toReferenceMatchingCardinalityPipelineBoundary
+    |>.toAFiberCardinality38Boundary
+
+end FixedStarReferenceMatchingCardinalityPipelineBoundary
 
 end BranchOrbitABCReflectionLabeling
 
