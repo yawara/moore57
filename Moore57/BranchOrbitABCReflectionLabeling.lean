@@ -226,6 +226,95 @@ theorem reflection_b0_mem_c0_orbit
   exact (h.mem_rotationOrbitFinset labeling.data.c0 labeling.data.c0).mpr
     ⟨0, by simp⟩
 
+/-- In a reflection-compatible labeling, the reflection preserving the exact
+B/C representatives necessarily preserves the remaining A rotation orbit. -/
+theorem reflection_a0_mem_a0_orbit
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    h.smul (DihedralGroup.sr labeling.k) labeling.data.a0 ∈
+      h.rotationOrbitFinset labeling.data.a0 := by
+  classical
+  let data := labeling.data
+  let y : V := h.smul (DihedralGroup.sr labeling.k) data.a0
+  have hyAdj : Γ.Adj h.rotationFixedCenter y := by
+    have hAdj :
+        Γ.Adj (h.smul (DihedralGroup.sr labeling.k) data.u)
+          (h.smul (DihedralGroup.sr labeling.k) data.a0) :=
+      (h.smul_adj (DihedralGroup.sr labeling.k) data.u data.a0).mp
+        data.a0_adj
+    simpa [y, data.u_eq_rotationFixedCenter,
+      h.reflection_smul_rotationFixedCenter labeling.k] using hAdj
+  have hyNeighbor : y ∈ Γ.neighborFinset h.rotationFixedCenter := by
+    simpa [SimpleGraph.mem_neighborFinset] using hyAdj
+  have hcover0 :
+      Γ.neighborFinset h.rotationFixedCenter =
+        h.orbitFamilyUnion data.base := by
+    rw [← data.u_eq_rotationFixedCenter]
+    simpa [BranchOrbitABCFromCenter.base] using data.cover_neighbors
+  have hyUnion : y ∈ h.orbitFamilyUnion data.base := by
+    simpa [hcover0] using hyNeighbor
+  rcases (h.mem_orbitFamilyUnion data.base y).mp hyUnion with ⟨q, i, hi⟩
+  have hyOrbit :
+      y ∈ h.rotationOrbitFinset (data.base q) :=
+    (h.mem_rotationOrbitFinset (data.base q) y).mpr ⟨i, hi⟩
+  fin_cases q
+  · simpa [data, y] using hyOrbit
+  · rcases (h.mem_rotationOrbitFinset data.b0 y).mp (by
+        simpa [data] using hyOrbit) with ⟨j, hj⟩
+    have ha0_eq :
+        h.rotation (-j) data.c0 = data.a0 := by
+      calc
+        h.rotation (-j) data.c0
+            = h.smul (DihedralGroup.sr labeling.k) (h.rotation j data.b0) := by
+              simpa [data, labeling.reflection_b0_eq_c0] using
+                h.rotation_neg_reflection_smul labeling.k j data.b0
+        _ = h.smul (DihedralGroup.sr labeling.k) y := by
+              rw [hj]
+        _ = data.a0 := by
+              simpa [data, y] using
+                h.reflection_smul_reflection_smul labeling.k data.a0
+    have ha0_mem_a :
+        data.a0 ∈ h.rotationOrbitFinset data.a0 :=
+      (h.mem_rotationOrbitFinset data.a0 data.a0).mpr ⟨0, by simp⟩
+    have ha0_mem_c :
+        data.a0 ∈ h.rotationOrbitFinset data.c0 :=
+      (h.mem_rotationOrbitFinset data.c0 data.a0).mpr ⟨-j, ha0_eq⟩
+    have hdis :
+        Disjoint (h.rotationOrbitFinset data.a0)
+          (h.rotationOrbitFinset data.c0) := by
+      simpa [BranchOrbitABCFromCenter.base] using
+        data.pairwise_disjoint 0 2 (by decide)
+    exact False.elim ((Finset.disjoint_left.mp hdis) ha0_mem_a ha0_mem_c)
+  · rcases (h.mem_rotationOrbitFinset data.c0 y).mp (by
+        simpa [data] using hyOrbit) with ⟨j, hj⟩
+    have href_c0 :
+        h.smul (DihedralGroup.sr labeling.k) data.c0 = data.b0 :=
+      data.reflection_smul_c0_eq_b0_of_reflection_smul_b0_eq_c0
+        labeling.reflection_b0_eq_c0
+    have ha0_eq :
+        h.rotation (-j) data.b0 = data.a0 := by
+      calc
+        h.rotation (-j) data.b0
+            = h.smul (DihedralGroup.sr labeling.k) (h.rotation j data.c0) := by
+              simpa [href_c0] using
+                h.rotation_neg_reflection_smul labeling.k j data.c0
+        _ = h.smul (DihedralGroup.sr labeling.k) y := by
+              rw [hj]
+        _ = data.a0 := by
+              simpa [data, y] using
+                h.reflection_smul_reflection_smul labeling.k data.a0
+    have ha0_mem_a :
+        data.a0 ∈ h.rotationOrbitFinset data.a0 :=
+      (h.mem_rotationOrbitFinset data.a0 data.a0).mpr ⟨0, by simp⟩
+    have ha0_mem_b :
+        data.a0 ∈ h.rotationOrbitFinset data.b0 :=
+      (h.mem_rotationOrbitFinset data.b0 data.a0).mpr ⟨-j, ha0_eq⟩
+    have hdis :
+        Disjoint (h.rotationOrbitFinset data.a0)
+          (h.rotationOrbitFinset data.b0) := by
+      simpa [BranchOrbitABCFromCenter.base] using
+        data.pairwise_disjoint 0 1 (by decide)
+    exact False.elim ((Finset.disjoint_left.mp hdis) ha0_mem_a ha0_mem_b)
+
 /-- Package an orbit-level reflected B/C statement into exact representative
 equality by shifting the reflection parameter. -/
 noncomputable def ofReflectionOrbit

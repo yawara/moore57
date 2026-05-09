@@ -162,6 +162,78 @@ theorem character_eq_d19Linear
 
 end D19CharacterValueBoundary
 
+/-- Character class data in the form closest to the natural-language
+representation argument: the dimension equation, values on nontrivial
+rotations, and one reflection representative.  The identity character value is
+derived from mathlib's `Representation.char_one`. -/
+structure D19CharacterClassBoundary
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ) where
+  dimension : alpha + beta + 18 * gamma = 1729
+  rotation_value :
+    ∀ d : ZMod 19, d ≠ 0 →
+      ρ.character (DihedralGroup.r d) =
+        (alpha : ℚ) + (beta : ℚ) - (gamma : ℚ)
+  reflection_zero :
+    ρ.character (DihedralGroup.sr 0) = (alpha : ℚ) - (beta : ℚ)
+
+namespace D19CharacterClassBoundary
+
+variable {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+variable {ρ : Representation ℚ (DihedralGroup 19) W}
+variable {alpha beta gamma : ℕ}
+
+/-- The identity value follows from `Representation.char_one`, the ambient
+finrank, and the stored dimension equation. -/
+theorem one_value
+    (boundary : D19CharacterClassBoundary ρ alpha beta gamma)
+    (finrank_eq : Module.finrank ℚ W = 1729) :
+    ρ.character (1 : DihedralGroup 19) =
+      (alpha : ℚ) + (beta : ℚ) + 18 * (gamma : ℚ) := by
+  have hdimℚ :
+      ((alpha + beta + 18 * gamma : ℕ) : ℚ) = (1729 : ℚ) := by
+    exact_mod_cast boundary.dimension
+  calc
+    ρ.character (1 : DihedralGroup 19)
+        = (Module.finrank ℚ W : ℚ) :=
+      representationCharacter_one_eq_finrank ρ
+    _ = (1729 : ℚ) := by
+      rw [finrank_eq]
+      norm_num
+    _ = ((alpha + beta + 18 * gamma : ℕ) : ℚ) :=
+      hdimℚ.symm
+    _ = (alpha : ℚ) + (beta : ℚ) + 18 * (gamma : ℚ) := by
+      norm_num
+
+/-- Extend the stored reflection representative value to every reflection. -/
+theorem reflection_value
+    (boundary : D19CharacterClassBoundary ρ alpha beta gamma)
+    (k : ZMod 19) :
+    ρ.character (DihedralGroup.sr k) = (alpha : ℚ) - (beta : ℚ) := by
+  rw [representationCharacter_reflection_eq_reflection_zero ρ k]
+  exact boundary.reflection_zero
+
+/-- Convert class-boundary data to the value-boundary structure used by the
+existing constructors. -/
+def toValueBoundary
+    (boundary : D19CharacterClassBoundary ρ alpha beta gamma)
+    (finrank_eq : Module.finrank ℚ W = 1729) :
+    D19CharacterValueBoundary ρ alpha beta gamma where
+  one_value := boundary.one_value finrank_eq
+  rotation_value := boundary.rotation_value
+  reflection_zero := boundary.reflection_zero
+
+/-- Convert class-boundary data to pointwise `d19LinearCharacter` equality. -/
+theorem character_eq_d19Linear
+    (boundary : D19CharacterClassBoundary ρ alpha beta gamma)
+    (finrank_eq : Module.finrank ℚ W = 1729) :
+    ∀ g : DihedralGroup 19,
+      ρ.character g = (d19LinearCharacter alpha beta gamma g : ℚ) :=
+  (boundary.toValueBoundary finrank_eq).character_eq_d19Linear
+
+end D19CharacterClassBoundary
+
 namespace TraceMultiplicityData
 
 /-- Build the project multiplicity record when the dimension field is supplied
@@ -232,6 +304,22 @@ def ofMathlibCharacterValueBoundary
     TraceMultiplicityData :=
   ofMathlibCharacter ρ alpha beta gamma finrank_eq
     characterValues.character_eq_d19Linear reflection
+    minus8_trivial_nonneg minus8_sign_nonneg
+
+/-- Build the project multiplicity record from class-boundary data, deriving
+the identity character value through mathlib. -/
+def ofMathlibCharacterClassBoundary
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (characterClass : D19CharacterClassBoundary ρ alpha beta gamma)
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58) :
+    TraceMultiplicityData :=
+  ofMathlibCharacter ρ alpha beta gamma finrank_eq
+    (characterClass.character_eq_d19Linear finrank_eq) reflection
     minus8_trivial_nonneg minus8_sign_nonneg
 
 @[simp] theorem ofMathlibCharacter_alpha
@@ -373,6 +461,27 @@ noncomputable def ofRepresentationCharacterValueBoundary
     finrank_eq trace_eq_character characterValues.character_eq_d19Linear
     reflection minus8_trivial_nonneg minus8_sign_nonneg
 
+/-- Build the full linear-character input from class-boundary data, deriving
+the identity value through `Representation.char_one`. -/
+noncomputable def ofRepresentationCharacterClassBoundary
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (characterClass : D19CharacterClassBoundary ρ alpha beta gamma)
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58) :
+    D19LinearCharacterInput h :=
+  ofRepresentationCharacterComponents (h := h) ρ alpha beta gamma
+    finrank_eq trace_eq_character
+    (characterClass.character_eq_d19Linear finrank_eq)
+    reflection minus8_trivial_nonneg minus8_sign_nonneg
+
 @[simp] theorem ofRepresentationCharacterComponents_multiplicity
     {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
     (ρ : Representation ℚ (DihedralGroup 19) W)
@@ -476,6 +585,27 @@ theorem representationCharacterComponentsBoundary_of_representationCharacterValu
     RepresentationCharacterComponentsBoundary h :=
   (D19LinearCharacterInput.ofRepresentationCharacterValueBoundary (h := h)
       ρ alpha beta gamma finrank_eq trace_eq_character characterValues
+      reflection minus8_trivial_nonneg minus8_sign_nonneg)
+    |>.representationCharacterComponentsBoundary
+
+/-- Direct component-boundary constructor from class-boundary data. -/
+theorem representationCharacterComponentsBoundary_of_representationCharacterClassBoundary
+    (h : D19ActsOnMoore57 V Γ)
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (characterClass : D19CharacterClassBoundary ρ alpha beta gamma)
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58) :
+    RepresentationCharacterComponentsBoundary h :=
+  (D19LinearCharacterInput.ofRepresentationCharacterClassBoundary (h := h)
+      ρ alpha beta gamma finrank_eq trace_eq_character characterClass
       reflection minus8_trivial_nonneg minus8_sign_nonneg)
     |>.representationCharacterComponentsBoundary
 

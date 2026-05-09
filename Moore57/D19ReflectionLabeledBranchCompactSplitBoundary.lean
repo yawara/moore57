@@ -533,6 +533,68 @@ theorem no_D19_characterValueBoundary_fixedNeighborBound_referenceFiberMatchingE
     minus8_sign_nonneg base base_adj base_pairwise_disjoint base_cover
     fixedNeighbor_le_one
 
+/-- Same fixed-neighbor-bound no-go, with the representation side in the
+class-boundary form closest to the natural-language character argument. -/
+theorem no_D19_characterClassBoundary_fixedNeighborBound_referenceFiberMatchingEquation_boundary
+    (h : D19ActsOnMoore57 V Γ)
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (alpha beta gamma : ℕ)
+    (finrank_eq : Module.finrank ℚ W = 1729)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (characterClass : D19CharacterClassBoundary ρ alpha beta gamma)
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58)
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    (fixedNeighbor_le_one :
+      ∀ k : ZMod 19,
+        ((Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+          h.smul (DihedralGroup.sr k) y = y).card ≤ 1) :
+    ¬ ∃ k : ZMod 19,
+        let hb :=
+          BranchOrbitABCReflectionLabeling.exists_reflectionCenterNeighborOrbitIndex_ne_of_fixed_neighbors_card_le_one
+            (h := h) base base_adj base_pairwise_disjoint base_cover k
+            (fixedNeighbor_le_one k)
+        let b : Fin 3 :=
+          Classical.choose
+            hb
+        let hmove :
+          BranchOrbitABCReflectionLabeling.reflectionCenterNeighborOrbitIndex
+            (h := h) base base_adj base_cover k b ≠ b :=
+          Classical.choose_spec hb
+        let hp :=
+          BranchOrbitABCReflectionLabeling.hasLabeledReflectionPair_of_reflectionCenterNeighborOrbitIndex_ne
+            (h := h) base base_adj base_pairwise_disjoint base_cover hmove
+        let labeling :=
+          BranchOrbitABCReflectionLabeling.ofHasLabeledReflectionPair
+            (h := h) hp
+        ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+          ((Finset.univ :
+              Finset
+                labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore
+                labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+                0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+              (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+                d 0 p).card =
+            2 := by
+  exact no_D19_characterValueBoundary_fixedNeighborBound_referenceFiberMatchingEquation_boundary
+    h ρ alpha beta gamma finrank_eq trace_eq_character
+    (characterClass.toValueBoundary finrank_eq) reflection
+    minus8_trivial_nonneg minus8_sign_nonneg base base_adj
+    base_pairwise_disjoint base_cover fixedNeighbor_le_one
+
 end
 
 end Moore57
