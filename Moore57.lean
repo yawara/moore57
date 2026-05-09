@@ -182,4 +182,5 @@ import Moore57.BranchOrbitABCFinalBridge
 import Moore57.BranchOrbitABCResidualBridge
 import Moore57.BranchOrbitABCAllFibersFinalBridge
 import Moore57.BranchOrbitABCResidualGeometry
+import Moore57.D19CanonicalBranchAllFibersBoundary
 import Moore57.D19FinalCriterionPublic

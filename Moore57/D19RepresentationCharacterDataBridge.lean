@@ -113,6 +113,15 @@ def RepresentationCharacterComponentsBoundary
             Matrix.trace (E7Matrix Γ * permMatrix (h.rotation d)) =
               (alpha : ℚ) + (beta : ℚ) - (gamma : ℚ)
 
+/-- The action and Moore57 hypothesis determine the Higman trace expression in
+terms of the fixed count and the action-defined `a1`.  What is not supplied by
+`h` alone is the representation-character rewrite to `alpha + beta - gamma`. -/
+theorem rotation_trace_eq_fixed_a1
+    (h : D19ActsOnMoore57 V Γ) (d : ZMod 19) :
+    Matrix.trace (E7Matrix Γ * permMatrix (h.rotation d)) =
+      (8 * (fixedVertexCount (h.rotation d) : ℚ) + (h.a1 d : ℚ) - 65) / 15 := by
+  rw [h.isMoore.higman_trace_formula (h.rotation d), h.rotation_a1_def d]
+
 /-- The component boundary is the same as multiplicity data plus the
 nontrivial-rotation character identity. -/
 theorem representationCharacterComponentsBoundary_iff_exists_traceMultiplicityData
