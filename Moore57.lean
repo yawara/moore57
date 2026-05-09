@@ -129,6 +129,7 @@ import Moore57.AFiberCoordinateRotation
 import Moore57.AFiberRotationMatchingCardinality
 import Moore57.AFiberCoordinateOrbit
 import Moore57.AFiberMatchingFixedCountSupport
+import Moore57.AFiberOrbitCardinalityBoundary
 import Moore57.TraceCoreCharacterBoundary
 import Moore57.RotationOneFixedBoundBoundary
 import Moore57.RotationOneFixedBoundBoundaryNonempty
