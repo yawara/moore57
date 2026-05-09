@@ -92,6 +92,31 @@ theorem reflection_preimage_rotationOrbitFinset
       simpa [← h.reflection_image_rotationOrbitFinset k x] using
         Finset.mem_image_of_mem (h.smulEquiv (DihedralGroup.sr k)) hy)
 
+/-- If a reflection sends a point into its rotation orbit, then some reflection
+in the same dihedral coset fixes that point exactly. -/
+theorem exists_reflection_smul_fixed_of_reflection_mem_rotationOrbitFinset
+    (h : D19ActsOnMoore57 V Γ) {k : ZMod 19} {x : V}
+    (hrefOrbit :
+      h.smul (DihedralGroup.sr k) x ∈ h.rotationOrbitFinset x) :
+    ∃ k' : ZMod 19, h.smul (DihedralGroup.sr k') x = x := by
+  rcases (h.mem_rotationOrbitFinset x
+      (h.smul (DihedralGroup.sr k) x)).mp hrefOrbit with ⟨j, hj⟩
+  refine ⟨k + j, ?_⟩
+  calc
+    h.smul (DihedralGroup.sr (k + j)) x
+        = h.smul (DihedralGroup.sr k) (h.rotation j x) := by
+          change h.smul (DihedralGroup.sr (k + j)) x =
+            h.smul (DihedralGroup.sr k) (h.smul (DihedralGroup.r j) x)
+          rw [← h.mul_smul, DihedralGroup.sr_mul_r]
+    _ = h.rotation (-j) (h.smul (DihedralGroup.sr k) x) := by
+          exact (h.rotation_neg_reflection_smul k j x).symm
+    _ = h.rotation (-j) (h.rotation j x) := by
+          rw [← hj]
+    _ = x := by
+          simpa [Equiv.Perm.mul_apply] using
+            congrArg (fun σ : Equiv.Perm V => σ x)
+              (h.rotation_add (-j) j).symm
+
 /-- Reflection identifies the adjacent-moved filter on an orbit for `d` with
 the reflected orbit filter for `-d`. -/
 theorem reflection_image_filter_adjacent_rotation_moved

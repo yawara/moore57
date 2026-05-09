@@ -315,6 +315,17 @@ theorem reflection_a0_mem_a0_orbit
         data.pairwise_disjoint 0 1 (by decide)
     exact False.elim ((Finset.disjoint_left.mp hdis) ha0_mem_a ha0_mem_b)
 
+/-- After shifting the reflection parameter inside its dihedral reflection
+coset, the chosen reflection-compatible labeling has a reflection fixing the
+A representative exactly. -/
+theorem exists_reflection_smul_a0_eq_a0
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    ∃ k' : ZMod 19,
+      h.smul (DihedralGroup.sr k') labeling.data.a0 =
+        labeling.data.a0 :=
+  h.exists_reflection_smul_fixed_of_reflection_mem_rotationOrbitFinset
+    (labeling.reflection_a0_mem_a0_orbit)
+
 /-- Package an orbit-level reflected B/C statement into exact representative
 equality by shifting the reflection parameter. -/
 noncomputable def ofReflectionOrbit
