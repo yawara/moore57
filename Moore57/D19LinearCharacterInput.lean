@@ -1,4 +1,5 @@
 import Moore57.CharacterInputPackaging
+import Mathlib.RepresentationTheory.Character
 
 /-!
 # Linear-character criteria for D19 representation inputs
@@ -34,6 +35,46 @@ structure D19LinearCharacterInput (h : D19ActsOnMoore57 V Γ) where
 namespace D19LinearCharacterInput
 
 variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Build the full D19 linear-character witness from a mathlib
+`Representation.character`.  The two hypotheses isolate the graph trace
+identification and the D19-specific character decomposition. -/
+noncomputable def ofRepresentationCharacter
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (multiplicity : TraceMultiplicityData)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (character_eq_d19Linear :
+      ∀ g : DihedralGroup 19,
+        ρ.character g =
+          (d19LinearCharacter multiplicity.alpha multiplicity.beta
+            multiplicity.gamma g : ℚ)) :
+    D19LinearCharacterInput h where
+  multiplicity := multiplicity
+  linear_character := by
+    intro g
+    exact (trace_eq_character g).trans (character_eq_d19Linear g)
+
+@[simp] theorem ofRepresentationCharacter_multiplicity
+    {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
+    (ρ : Representation ℚ (DihedralGroup 19) W)
+    (multiplicity : TraceMultiplicityData)
+    (trace_eq_character :
+      ∀ g : DihedralGroup 19,
+        Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+          ρ.character g)
+    (character_eq_d19Linear :
+      ∀ g : DihedralGroup 19,
+        ρ.character g =
+          (d19LinearCharacter multiplicity.alpha multiplicity.beta
+            multiplicity.gamma g : ℚ)) :
+    (ofRepresentationCharacter (h := h) ρ multiplicity
+        trace_eq_character character_eq_d19Linear).multiplicity =
+      multiplicity :=
+  rfl
 
 /-- Restrict the full linear-character witness to a rotation. -/
 theorem rotation_linear_character
