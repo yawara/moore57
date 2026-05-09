@@ -1,4 +1,5 @@
 import Moore57.BranchOrbitABCReflectionChoice
+import Moore57.AFiberCoordinateReflection
 import Moore57.FixedInducedDegree
 import Moore57.ZMod19Lemmas
 
@@ -325,6 +326,112 @@ theorem exists_reflection_smul_a0_eq_a0
         labeling.data.a0 :=
   h.exists_reflection_smul_fixed_of_reflection_mem_rotationOrbitFinset
     (labeling.reflection_a0_mem_a0_orbit)
+
+/-- A selected reflection parameter, in the same dihedral reflection coset,
+that fixes the A representative exactly. -/
+noncomputable def aFixingReflectionIndex
+    (labeling : BranchOrbitABCReflectionLabeling h) : ZMod 19 :=
+  Classical.choose labeling.exists_reflection_smul_a0_eq_a0
+
+/-- The selected A-fixing reflection parameter fixes `a0`. -/
+theorem aFixingReflectionIndex_spec
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+        labeling.data.a0 =
+      labeling.data.a0 :=
+  Classical.choose_spec labeling.exists_reflection_smul_a0_eq_a0
+
+/-- The A-fixing reflection acts on the A branch orbit by `i ↦ -i`, hence
+induces reflection equivariance on the A-fiber coordinate system. -/
+noncomputable def toAFiberReflectionEquivariance
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    AFiberReflectionEquivariance h labeling.data.toAFiberCoordinates
+      labeling.aFixingReflectionIndex (fun i : ZMod 19 => -i) where
+  reflection_u := by
+    rw [BranchOrbitABCFromCenter.toAFiberCoordinates_u,
+      labeling.data.u_eq_rotationFixedCenter]
+    exact h.reflection_smul_rotationFixedCenter labeling.aFixingReflectionIndex
+  reflection_a := by
+    intro i
+    calc
+      h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+          (labeling.data.toAFiberCoordinates.a i)
+          = h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+              (h.rotation i labeling.data.a0) := by
+                rfl
+      _ = h.rotation (-i)
+            (h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+              labeling.data.a0) :=
+              h.reflection_smul_rotation
+                labeling.aFixingReflectionIndex i labeling.data.a0
+      _ = h.rotation (-i) labeling.data.a0 := by
+              rw [labeling.aFixingReflectionIndex_spec]
+      _ = labeling.data.toAFiberCoordinates.a (-i) := by
+              rfl
+
+/-- The A-fixing reflection-induced coordinate permutation on the reference
+A-fiber over index `0`. -/
+noncomputable def aFiberReflectionCoordPerm
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    Equiv.Perm labeling.data.toAFiberCoordinates.P :=
+  (labeling.toAFiberReflectionEquivariance).coordPerm 0
+
+/-- The support of the A-fixing reflection-induced coordinate permutation on
+the reference A-fiber. -/
+noncomputable def aFiberReflectionSupport
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    Finset labeling.data.toAFiberCoordinates.P := by
+  classical
+  letI := labeling.data.toAFiberCoordinates.P_fintype
+  exact (labeling.toAFiberReflectionEquivariance).supportAt 0
+
+@[simp] theorem mem_aFiberReflectionSupport
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (p : labeling.data.toAFiberCoordinates.P) :
+    p ∈ labeling.aFiberReflectionSupport ↔
+      labeling.aFiberReflectionCoordPerm p ≠ p := by
+  classical
+  letI := labeling.data.toAFiberCoordinates.P_fintype
+  simp [aFiberReflectionSupport, aFiberReflectionCoordPerm,
+    AFiberReflectionEquivariance.supportAt]
+
+/-- Reading the reference chart after the A-fixing reflection coordinate
+permutation gives the reflected underlying vertex. -/
+@[simp] theorem coord_aFiberReflectionCoordPerm_apply_val
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (p : labeling.data.toAFiberCoordinates.P) :
+    ((labeling.data.toAFiberCoordinates.coord 0
+        (labeling.aFiberReflectionCoordPerm p) :
+      {x : V // x ∈
+        branchFiber Γ labeling.data.toAFiberCoordinates.u
+          (labeling.data.toAFiberCoordinates.a 0)}) : V) =
+      h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+        (((labeling.data.toAFiberCoordinates.coord 0 p :
+          {x : V // x ∈
+            branchFiber Γ labeling.data.toAFiberCoordinates.u
+              (labeling.data.toAFiberCoordinates.a 0)}) : V)) := by
+  simpa [aFiberReflectionCoordPerm] using
+    AFiberReflectionEquivariance.coord_coordPerm_apply_val
+      (ref := labeling.toAFiberReflectionEquivariance) (i := 0) (p := p)
+
+/-- Coordinate equality for the A-fixing reflection permutation is equivalent
+to equality of the reflected reference-fiber representatives. -/
+theorem aFiberReflectionCoordPerm_eq_iff
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (p q : labeling.data.toAFiberCoordinates.P) :
+    labeling.aFiberReflectionCoordPerm p = q ↔
+      h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+          (((labeling.data.toAFiberCoordinates.coord 0 p :
+            {x : V // x ∈
+              branchFiber Γ labeling.data.toAFiberCoordinates.u
+                (labeling.data.toAFiberCoordinates.a 0)}) : V)) =
+        (((labeling.data.toAFiberCoordinates.coord 0 q :
+          {x : V // x ∈
+            branchFiber Γ labeling.data.toAFiberCoordinates.u
+              (labeling.data.toAFiberCoordinates.a 0)}) : V)) := by
+  simpa [aFiberReflectionCoordPerm] using
+    AFiberReflectionEquivariance.coordPerm_eq_iff
+      (ref := labeling.toAFiberReflectionEquivariance) (i := 0) p q
 
 /-- Package an orbit-level reflected B/C statement into exact representative
 equality by shifting the reflection parameter. -/
