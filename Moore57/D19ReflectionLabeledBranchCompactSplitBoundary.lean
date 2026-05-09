@@ -116,6 +116,31 @@ noncomputable def ofReferenceFiberMatchingSupportTwo
         referenceSupportCardTwo
     simpa using hboundary
 
+/-- Constructor from the explicit matching equation on the reference A-fiber
+`0`.  This is the coordinate-equation spelling of
+`ofReferenceFiberMatchingSupportTwo`. -/
+noncomputable def ofReferenceFiberMatchingEquationTwo
+    (representationComponents :
+      D19ActsOnMoore57.RepresentationCharacterComponentsBoundary h)
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceMatchingEquationCardTwo :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ((Finset.univ :
+            Finset
+              labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+          AFiberCoordinates.matchingEquiv h.isMoore
+              labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+              0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+            (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+              d 0 p).card =
+          2) :
+    D19ReflectionLabeledBranchCompactSplitBoundaryInputs h :=
+  ofReferenceFiberMatchingSupportTwo representationComponents labeling (by
+    intro d hd
+    rw [AFiberRotationEquivariance.matchingRotationPerm_support_compl_card_eq_filter_card
+      labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance d 0 hd]
+    exact referenceMatchingEquationCardTwo d hd)
+
 /-- Convert the reflection-labeled compact-split boundary to the already
 refuted final compact-split representation boundary. -/
 noncomputable def toD19FinalRepresentationUpperBoundCompactSplitInputs
