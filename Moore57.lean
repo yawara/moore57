@@ -49,6 +49,7 @@ import Moore57.D19ReducedMain
 import Moore57.D19GeometricInputs
 import Moore57.CharacterInputPackaging
 import Moore57.D19RepresentationCharacterBoundary
+import Moore57.D19RepresentationCharacterDataBridge
 import Moore57.FixedUpperBoundCriteria
 import Moore57.OrbitBaseSelectionCriteria
 import Moore57.D19FinalInputs
@@ -138,6 +139,7 @@ import Moore57.AFiberRotationMatchingCardinality
 import Moore57.AFiberCoordinateOrbit
 import Moore57.BranchOrbitABCFromCenter
 import Moore57.BranchOrbitABCData
+import Moore57.BranchOrbitABCDataFromCenter
 import Moore57.AFiberMatchingFixedCountSupport
 import Moore57.AFiberMatchingSupportEquations
 import Moore57.AFiberAllFibersCardinalityBoundary
@@ -179,4 +181,5 @@ import Moore57.D19FinalNoFixedAllFibersBoundary
 import Moore57.BranchOrbitABCFinalBridge
 import Moore57.BranchOrbitABCResidualBridge
 import Moore57.BranchOrbitABCAllFibersFinalBridge
+import Moore57.BranchOrbitABCResidualGeometry
 import Moore57.D19FinalCriterionPublic
