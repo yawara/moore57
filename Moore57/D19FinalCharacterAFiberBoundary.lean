@@ -2,6 +2,7 @@ import Moore57.D19FinalInputs
 import Moore57.OrbitBaseSelectionInputBridge
 import Moore57.AFiberHybridBoundaryFromCriteria
 import Moore57.AFiberOrbitMovingResidual
+import Moore57.AFiberMatchingSupportEquations
 
 /-!
 # Final D19 inputs from direct character and A-fiber boundary data
@@ -17,10 +18,20 @@ namespace Moore57
 
 open Finset
 
+noncomputable section
+
 universe u uP
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+local instance instD19FinalCharacterAFiberBoundaryPFintype
+    (coords : AFiberCoordinates.{u, uP} Γ) : Fintype coords.P :=
+  coords.P_fintype
+
+local instance instD19FinalCharacterAFiberBoundaryDecidableEq
+    (α : Type*) : DecidableEq α :=
+  Classical.decEq α
 
 /-- Final direct-character/A-fiber boundary inputs.
 
@@ -162,6 +173,41 @@ noncomputable def of_equivariantAFiberResidual
       orbitInput k indices aFiber_subset_residual
   aFiberCardinality := aFiberCardinality
 
+/-- Constructor from residual containment and explicit matching-equation
+filter sums for rotation-equivariant A-fiber coordinates.  The matching sums
+build the A-fiber cardinality boundary, and equivariance supplies the
+moving-side inclusion. -/
+noncomputable def of_equivariantAFiberResidualMatchingEquationSum
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (k : ZMod 19)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (orbitInput.base r) ∉
+          orbitInput.orbitFamilyUnion)
+    (coords : AFiberCoordinates.{u, uP} Γ)
+    (indices : Finset (ZMod 19))
+    (rot : AFiberRotationEquivariance h coords)
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h orbitInput k ⊆
+        coords.fiberUnion indices)
+    (aFiber_subset_residual :
+      coords.fiberUnion indices ⊆
+        reflectionCopyResidual h orbitInput.base k)
+    (matchingEquationSum :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∑ i ∈ indices,
+          ((Finset.univ : Finset coords.P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore coords i (i + d)
+                (index_ne_add_of_ne_zero hd) p =
+              rot.coordPerm d i p).card = 38) :
+    D19FinalCharacterAFiberBoundaryInputs h :=
+  of_equivariantAFiberResidual
+    character orbitInput k reflection_not_mem_orbitFamilyUnion
+    coords indices rot moving_subset_aFiber aFiber_subset_residual
+    (AFiberCardinality38Boundary.of_matchingEquationFilterCardSum
+      rot matchingEquationSum)
+
 /-- Constructor specialized to moved-branch rotation-orbit A-fiber
 coordinates.  The moved-branch constructor gives the required equivariance. -/
 noncomputable def of_rotationOrbitOfMovedAFiberResidual
@@ -208,6 +254,52 @@ noncomputable def of_rotationOrbitOfMovedAFiberResidual
       aFiber_subset_residual
   aFiberCardinality := aFiberCardinality
 
+/-- Moved-branch rotation-orbit constructor from residual containment and
+explicit matching-equation filter sums. -/
+noncomputable def of_rotationOrbitOfMovedAFiberResidualMatchingEquationSum
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (k : ZMod 19)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (orbitInput.base r) ∉
+          orbitInput.orbitFamilyUnion)
+    (u a0 : V)
+    (hu : ∀ d : ZMod 19, h.rotation d u = u)
+    (hub0 : Γ.Adj u a0)
+    {d0 : ZMod 19} (hd0 : d0 ≠ 0)
+    (hmove : h.rotation d0 a0 ≠ a0)
+    (indices : Finset (ZMod 19))
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h orbitInput k ⊆
+        (AFiberCoordinates.ofRotationOrbitOfMoved
+          h u a0 hu hub0 hd0 hmove).fiberUnion indices)
+    (aFiber_subset_residual :
+      (AFiberCoordinates.ofRotationOrbitOfMoved
+          h u a0 hu hub0 hd0 hmove).fiberUnion indices ⊆
+        reflectionCopyResidual h orbitInput.base k)
+    (matchingEquationSum :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∑ i ∈ indices,
+          ((Finset.univ :
+              Finset
+                (AFiberCoordinates.ofRotationOrbitOfMoved
+                  h u a0 hu hub0 hd0 hmove).P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore
+                (AFiberCoordinates.ofRotationOrbitOfMoved
+                  h u a0 hu hub0 hd0 hmove)
+                i (i + d) (index_ne_add_of_ne_zero hd) p =
+              (AFiberCoordinates.ofRotationOrbitOfMoved_rotationEquivariance
+                h u a0 hu hub0 hd0 hmove).coordPerm d i p).card = 38) :
+    D19FinalCharacterAFiberBoundaryInputs.{u, u} h :=
+  of_equivariantAFiberResidualMatchingEquationSum
+    character orbitInput k reflection_not_mem_orbitFamilyUnion
+    (AFiberCoordinates.ofRotationOrbitOfMoved h u a0 hu hub0 hd0 hmove)
+    indices
+    (AFiberCoordinates.ofRotationOrbitOfMoved_rotationEquivariance
+      h u a0 hu hub0 hd0 hmove)
+    moving_subset_aFiber aFiber_subset_residual matchingEquationSum
+
 /-- Constructor from the equality-form canonical A-fiber criterion. -/
 noncomputable def of_canonicalAFiberCriteria
     (character : D19FinalCharacterInputs h)
@@ -249,5 +341,7 @@ noncomputable def of_canonicalAFiberInclusionCriteria
     adjacentMoved.toAFiberCardinality38Boundary
 
 end D19FinalCharacterAFiberBoundaryInputs
+
+end
 
 end Moore57
