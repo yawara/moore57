@@ -188,6 +188,7 @@ import Moore57.D19FinalCharacterAFiberBoundary
 import Moore57.D19FinalNoFixedBoundBoundary
 import Moore57.D19FinalNoFixedResidualContainmentBoundary
 import Moore57.D19FinalNoFixedAllFibersBoundary
+import Moore57.ZMod19DoublingOrbitBoundary
 import Moore57.BranchOrbitABCFinalBridge
 import Moore57.BranchOrbitABCResidualBridge
 import Moore57.BranchOrbitABCAllFibersFinalBridge
@@ -209,6 +210,7 @@ import Moore57.BranchOrbitABCFixedStarFinalBridge
 import Moore57.BranchOrbitABCLeanAwareFinalBoundary
 import Moore57.ReflectionFixedStarFromActionBoundary
 import Moore57.BranchOrbitABCActionLevelFinalBoundary
+import Moore57.BranchOrbitABCReferenceSolutionGeometryBoundary
 import Moore57.BranchOrbitBCSelection
 import Moore57.BranchOrbitABCPartition
 import Moore57.CenterNeighborContributionZero
