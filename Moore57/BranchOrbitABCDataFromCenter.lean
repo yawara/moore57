@@ -9,7 +9,9 @@ This file closes the packaging gap between the three rotation orbits on the
 neighbors of the rotation-fixed center and the downstream `BranchOrbitABCData`.
 The three center-neighbor orbits provide the A/B/C branch representatives.  The
 remaining `Fin 56` moved orbit-base input is generated canonically from the
-A-branch fiber coordinates already constructed by `BranchOrbitABCFromCenter`.
+`B`-branch fiber coordinates, as in the natural-language proof: choose the
+56 points of `L_{b0}`, rotate them through the `B` branch orbit, and use the
+reflection copy for the `C` side downstream.
 -/
 
 namespace Moore57
@@ -25,24 +27,40 @@ namespace BranchOrbitABCFromCenter
 
 variable {h : D19ActsOnMoore57 V Γ}
 
-/-- The `Fin 56` moved orbit-base selection generated from the A-branch
-coordinates associated to fixed-center A/B/C data. -/
-noncomputable def toOrbitBaseSelectionInputFromCoordinates
+/-- The `B`-side fiber coordinates generated from the `b0` branch orbit. -/
+noncomputable def toBFiberCoordinates
+    (data : BranchOrbitABCFromCenter h) :
+    AFiberCoordinates.{u, u} Γ :=
+  AFiberCoordinates.ofRotationOrbitOfMoved
+    h data.u data.b0 data.u_fixed data.b0_adj
+    (d := 1) (by decide) data.b0_moved
+
+/-- The `B`-side fiber coordinates are rotation equivariant. -/
+theorem toBFiberRotationEquivariance
+    (data : BranchOrbitABCFromCenter h) :
+    AFiberRotationEquivariance h data.toBFiberCoordinates :=
+  AFiberCoordinates.ofRotationOrbitOfMoved_rotationEquivariance
+    h data.u data.b0 data.u_fixed data.b0_adj (by decide) data.b0_moved
+
+/-- The `Fin 56` moved orbit-base selection generated from the `B`-branch
+fiber coordinates associated to fixed-center A/B/C data. -/
+noncomputable def toOrbitBaseSelectionInputFromBFibers
     (data : BranchOrbitABCFromCenter h) :
     OrbitBaseSelectionInput h :=
-  data.toAFiberCoordinates.toOrbitBaseSelectionInputOfMoore
-    data.toAFiberRotationEquivariance
+  data.toBFiberCoordinates.toOrbitBaseSelectionInputOfMoore
+    data.toBFiberRotationEquivariance
 
 /-- Promote fixed-center A/B/C branch data to the downstream
 `BranchOrbitABCData`.
 
 The branch representatives come directly from the three center-neighbor
-rotation orbits.  The `Fin 56` orbit-base fields are supplied by the canonical
-selection obtained from the A-branch coordinate system. -/
+rotation orbits.  The `Fin 56` orbit-base fields are supplied by the
+natural-language selected base: the canonical enumeration of `L_{b0}` and its
+rotation orbit family. -/
 noncomputable def toBranchOrbitABCData
     (data : BranchOrbitABCFromCenter h) :
     BranchOrbitABCData h :=
-  let input := data.toOrbitBaseSelectionInputFromCoordinates
+  let input := data.toOrbitBaseSelectionInputFromBFibers
   { u := data.u
     a0 := data.a0
     b0 := data.b0
@@ -90,11 +108,11 @@ noncomputable def toBranchOrbitABCData
   rfl
 
 /-- The orbit-base input stored in the promoted `BranchOrbitABCData` is the
-one generated from the A-branch coordinates. -/
+one generated from the `B`-branch fiber coordinates. -/
 @[simp] theorem toBranchOrbitABCData_toOrbitBaseSelectionInput
     (data : BranchOrbitABCFromCenter h) :
     data.toBranchOrbitABCData.toOrbitBaseSelectionInput =
-      data.toOrbitBaseSelectionInputFromCoordinates := by
+      data.toOrbitBaseSelectionInputFromBFibers := by
   rfl
 
 end BranchOrbitABCFromCenter
