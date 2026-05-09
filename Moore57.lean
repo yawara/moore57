@@ -173,5 +173,7 @@ import Moore57.D19FinalInputCriterionReducedBridge
 import Moore57.D19FinalCharacterAFiberBoundary
 import Moore57.D19FinalNoFixedBoundBoundary
 import Moore57.D19FinalNoFixedResidualContainmentBoundary
+import Moore57.D19FinalNoFixedAllFibersBoundary
 import Moore57.BranchOrbitABCFinalBridge
+import Moore57.BranchOrbitABCResidualBridge
 import Moore57.D19FinalCriterionPublic
