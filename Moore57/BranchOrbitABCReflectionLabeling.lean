@@ -1,4 +1,5 @@
 import Moore57.BranchOrbitABCReflectionChoice
+import Moore57.ZMod19Lemmas
 
 /-!
 # Reflection-compatible A/B/C branch labeling
@@ -141,6 +142,41 @@ theorem reflectionCenterNeighborOrbitIndex_eq_of_mem
     (reflectionCenterNeighborOrbitIndex_mem
       (h := h) base base_adj base_cover k q)
     hr
+
+/-- If a reflection sends a point into its own rotation orbit, then that
+rotation orbit contains a point fixed by the reflection.  Algebraically, if
+`sr k • x = r^i • x`, the midpoint `r^(i/2) • x` is fixed. -/
+theorem exists_reflection_fixed_point_mem_rotationOrbitFinset_of_mem
+    {k : ZMod 19} {x : V}
+    (hrefOrbit :
+      h.smul (DihedralGroup.sr k) x ∈ h.rotationOrbitFinset x) :
+    ∃ y : V, y ∈ h.rotationOrbitFinset x ∧
+      h.smul (DihedralGroup.sr k) y = y := by
+  rcases (h.mem_rotationOrbitFinset x (h.smul (DihedralGroup.sr k) x)).mp
+      hrefOrbit with ⟨i, hi⟩
+  let t : ZMod 19 := (2 : ZMod 19)⁻¹ * i
+  have htwo_t : (2 : ZMod 19) * t = i := by
+    dsimp [t]
+    rw [← mul_assoc, mul_inv_cancel₀ two_ne_zero_zmod19, one_mul]
+  have ht_add : t + t = i := by
+    rw [← two_mul, htwo_t]
+  have hneg_add : -t + i = t := by
+    rw [← ht_add]
+    abel
+  refine ⟨h.rotation t x, ?_, ?_⟩
+  · exact (h.mem_rotationOrbitFinset x (h.rotation t x)).mpr ⟨t, rfl⟩
+  · calc
+      h.smul (DihedralGroup.sr k) (h.rotation t x)
+          = h.rotation (-t) (h.smul (DihedralGroup.sr k) x) := by
+              exact h.reflection_smul_rotation k t x
+      _ = h.rotation (-t) (h.rotation i x) := by
+              rw [← hi]
+      _ = h.rotation ((-t) + i) x := by
+              simpa [Equiv.Perm.mul_apply] using
+                congrArg (fun σ : Equiv.Perm V => σ x)
+                  (h.rotation_add (-t) i).symm
+      _ = h.rotation t x := by
+              rw [hneg_add]
 
 /-- Among three indices, if `b` and `c` are distinct there is a remaining
 index distinct from both. -/
@@ -390,6 +426,120 @@ noncomputable def hasLabeledReflectionPair_of_reflectionCenterNeighborOrbitIndex
       simpa [c] using
         reflectionCenterNeighborOrbitIndex_mem
           (h := h) base base_adj base_cover k b)
+
+/-- If a reflection has at most one fixed neighbor of the rotation-fixed
+center, then it must move at least one of the three center-neighbor rotation
+orbits. -/
+theorem exists_reflectionCenterNeighborOrbitIndex_ne_of_fixed_neighbors_card_le_one
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    (k : ZMod 19)
+    (hfixed_le :
+      ((Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+        h.smul (DihedralGroup.sr k) y = y).card ≤ 1) :
+    ∃ b : Fin 3,
+      reflectionCenterNeighborOrbitIndex
+        (h := h) base base_adj base_cover k b ≠ b := by
+  classical
+  by_contra hnone
+  have hsame :
+      ∀ q : Fin 3,
+        reflectionCenterNeighborOrbitIndex
+          (h := h) base base_adj base_cover k q = q := by
+    intro q
+    by_contra hneq
+    exact hnone ⟨q, hneq⟩
+  have hrefOrbit :
+      ∀ q : Fin 3,
+        h.smul (DihedralGroup.sr k) (base q) ∈
+          h.rotationOrbitFinset (base q) := by
+    intro q
+    simpa [hsame q] using
+      reflectionCenterNeighborOrbitIndex_mem
+        (h := h) base base_adj base_cover k q
+  let fixedPoint : Fin 3 → V := fun q =>
+    Classical.choose
+      (exists_reflection_fixed_point_mem_rotationOrbitFinset_of_mem
+        (h := h) (hrefOrbit q))
+  have fixedPoint_mem_orbit :
+      ∀ q : Fin 3, fixedPoint q ∈ h.rotationOrbitFinset (base q) := by
+    intro q
+    exact
+      (Classical.choose_spec
+        (exists_reflection_fixed_point_mem_rotationOrbitFinset_of_mem
+          (h := h) (hrefOrbit q))).1
+  have fixedPoint_fixed :
+      ∀ q : Fin 3,
+        h.smul (DihedralGroup.sr k) (fixedPoint q) = fixedPoint q := by
+    intro q
+    exact
+      (Classical.choose_spec
+        (exists_reflection_fixed_point_mem_rotationOrbitFinset_of_mem
+          (h := h) (hrefOrbit q))).2
+  have fixedPoint_mem_filter :
+      ∀ q : Fin 3,
+        fixedPoint q ∈
+          (Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+            h.smul (DihedralGroup.sr k) y = y := by
+    intro q
+    have hneighbor :
+        fixedPoint q ∈ Γ.neighborFinset h.rotationFixedCenter :=
+      h.rotationOrbitFinset_subset_neighborFinset_rotationFixedCenter
+        (base_adj q) (fixedPoint_mem_orbit q)
+    exact Finset.mem_filter.mpr ⟨hneighbor, fixedPoint_fixed q⟩
+  have fixedPoint_injective : Function.Injective fixedPoint := by
+    intro q r hqr
+    by_contra hqne
+    exact
+      (Finset.disjoint_left.mp (base_pairwise_disjoint q r hqne))
+        (fixedPoint_mem_orbit q)
+        (by simpa [hqr] using fixedPoint_mem_orbit r)
+  have himage_subset :
+      (Finset.univ.image fixedPoint) ⊆
+        (Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+          h.smul (DihedralGroup.sr k) y = y := by
+    intro y hy
+    rcases Finset.mem_image.mp hy with ⟨q, _hq, rfl⟩
+    exact fixedPoint_mem_filter q
+  have himage_card : (Finset.univ.image fixedPoint).card = 3 := by
+    rw [Finset.card_image_of_injective _ fixedPoint_injective]
+    simp
+  have hthree :
+      3 ≤ ((Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+        h.smul (DihedralGroup.sr k) y = y).card := by
+    rw [← himage_card]
+    exact Finset.card_le_card himage_subset
+  omega
+
+/-- Uniform fixed-neighbor bound form of
+`exists_reflectionCenterNeighborOrbitIndex_ne_of_fixed_neighbors_card_le_one`. -/
+theorem forall_exists_reflectionCenterNeighborOrbitIndex_ne_of_fixed_neighbors_card_le_one
+    (base : Fin 3 → V)
+    (base_adj : ∀ q : Fin 3, Γ.Adj h.rotationFixedCenter (base q))
+    (base_pairwise_disjoint :
+      ∀ q r : Fin 3, q ≠ r →
+        Disjoint (h.rotationOrbitFinset (base q))
+          (h.rotationOrbitFinset (base r)))
+    (base_cover :
+      Γ.neighborFinset h.rotationFixedCenter = h.orbitFamilyUnion base)
+    (hfixed_le :
+      ∀ k : ZMod 19,
+        ((Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+          h.smul (DihedralGroup.sr k) y = y).card ≤ 1) :
+    ∀ k : ZMod 19,
+      ∃ b : Fin 3,
+        reflectionCenterNeighborOrbitIndex
+          (h := h) base base_adj base_cover k b ≠ b := by
+  intro k
+  exact exists_reflectionCenterNeighborOrbitIndex_ne_of_fixed_neighbors_card_le_one
+    (h := h) base base_adj base_pairwise_disjoint base_cover k
+    (hfixed_le k)
 
 end BranchOrbitABCReflectionLabeling
 
