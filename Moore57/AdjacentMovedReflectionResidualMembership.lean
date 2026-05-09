@@ -1,7 +1,7 @@
 import Moore57.AdjacentMovedReflectionComplementResidual
 
--- Expanding `reflectionCopyBase` through `Fin 2` cases and orbit-family
--- membership creates nested finset/orbit equivalences.
+-- The theorem statements below expand through nested indexed finset unions
+-- over `Fin 2 × Fin 56` and rotation orbit membership.
 set_option maxRecDepth 10000
 
 /-!
@@ -29,7 +29,26 @@ theorem mem_reflectionCopyUnion_iff
       ∃ side : Fin 2, ∃ q : Fin 56, ∃ i : ZMod 19,
         h.rotation i (reflectionCopyBase h base k (side, q)) = y := by
   classical
-  simp [reflectionCopyUnion, h.mem_rotationOrbitFinset]
+  constructor
+  · intro hy
+    change y ∈
+      (Finset.univ : Finset (Fin 2 × Fin 56)).biUnion
+        (fun sideq =>
+          h.rotationOrbitFinset (reflectionCopyBase h base k sideq)) at hy
+    rcases Finset.mem_biUnion.mp hy with ⟨sideq, _hsideq, hyOrbit⟩
+    rcases sideq with ⟨side, q⟩
+    rcases (h.mem_rotationOrbitFinset
+        (reflectionCopyBase h base k (side, q)) y).mp hyOrbit with ⟨i, hi⟩
+    exact ⟨side, q, i, hi⟩
+  · rintro ⟨side, q, i, hi⟩
+    change y ∈
+      (Finset.univ : Finset (Fin 2 × Fin 56)).biUnion
+        (fun sideq =>
+          h.rotationOrbitFinset (reflectionCopyBase h base k sideq))
+    exact Finset.mem_biUnion.mpr
+      ⟨(side, q), Finset.mem_univ _,
+        (h.mem_rotationOrbitFinset
+          (reflectionCopyBase h base k (side, q)) y).mpr ⟨i, hi⟩⟩
 
 /-- Membership in the reflection-copy union, split into original and reflected
 orbit families. -/
