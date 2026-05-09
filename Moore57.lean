@@ -68,6 +68,7 @@ import Moore57.AdjacentMovedReflectionCopyCriteria
 import Moore57.D19FinalLinearUniqueReflection
 import Moore57.D19FinalLinearFixedEnumerationReflection
 import Moore57.RotationFixedCountUnique
+import Moore57.RotationFixedCenter
 import Moore57.AdjacentMovedReflectionConstantResidual
 import Moore57.RotationFixedEnumerationFromCount
 import Moore57.D19FinalLinearCountReflection
@@ -136,6 +137,7 @@ import Moore57.AFiberMatchingSupportEquations
 import Moore57.AFiberOrbitCardinalityBoundary
 import Moore57.AFiberOrbitMoved
 import Moore57.AFiberOrbitBaseSelection
+import Moore57.AFiberOrbitBaseSelectionMoved
 import Moore57.AFiberMatchingStepBound
 import Moore57.AFiberOrbitMovingResidual
 import Moore57.AFiberResidualSplitBridge
@@ -166,4 +168,5 @@ import Moore57.D19FinalInputCriterionReducedBridge
 import Moore57.D19FinalCharacterAFiberBoundary
 import Moore57.D19FinalNoFixedBoundBoundary
 import Moore57.D19FinalNoFixedResidualContainmentBoundary
+import Moore57.BranchOrbitABCFinalBridge
 import Moore57.D19FinalCriterionPublic
