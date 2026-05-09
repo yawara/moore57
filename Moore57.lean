@@ -72,6 +72,7 @@ import Moore57.D19FinalLinearFixedEnumerationReflection
 import Moore57.RotationFixedCountUnique
 import Moore57.RotationFixedCenter
 import Moore57.RotationFixedCenterNeighbors
+import Moore57.RotationFixedCenterNeighborOrbits
 import Moore57.AdjacentMovedReflectionConstantResidual
 import Moore57.RotationFixedEnumerationFromCount
 import Moore57.D19FinalLinearCountReflection
