@@ -154,6 +154,56 @@ noncomputable def of_matchingEquationFilterCardSum
       rot indices d hd]
     exact hsum d hd)
 
+/-- Build the boundary package when each selected matching-rotation
+permutation has exactly two fixed coordinates. -/
+noncomputable def of_matchingRotationPerm_support_compl_card_eq_two
+    (rot : AFiberRotationEquivariance h coords)
+    (hindices : indices.card = 19)
+    (hfixed :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0, ∀ i : ZMod 19,
+        i ∈ indices → (rot.matchingRotationPerm d i hd).supportᶜ.card = 2) :
+    AFiberCardinality38Boundary h coords indices :=
+  of_matchingSupportComplSum rot (by
+    intro d hd
+    calc
+      ∑ i ∈ indices, (rot.matchingRotationPerm d i hd).supportᶜ.card =
+          ∑ i ∈ indices, 2 := by
+            refine Finset.sum_congr rfl ?_
+            intro i hi
+            exact hfixed d hd i hi
+      _ = 38 := by
+            rw [Finset.sum_const, hindices]
+            norm_num)
+
+/-- Build the boundary package when each selected explicit coordinate equation
+has exactly two solutions. -/
+noncomputable def of_matchingEquationFilterCard_eq_two
+    (rot : AFiberRotationEquivariance h coords)
+    (hindices : indices.card = 19)
+    (hfixed :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0, ∀ i : ZMod 19,
+        i ∈ indices →
+          ((Finset.univ : Finset coords.P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore coords i (i + d)
+                (index_ne_add_of_ne_zero hd) p =
+              rot.coordPerm d i p).card = 2) :
+    AFiberCardinality38Boundary h coords indices :=
+  of_matchingEquationFilterCardSum rot (by
+    intro d hd
+    calc
+      ∑ i ∈ indices,
+          ((Finset.univ : Finset coords.P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore coords i (i + d)
+                (index_ne_add_of_ne_zero hd) p =
+              rot.coordPerm d i p).card =
+          ∑ i ∈ indices, 2 := by
+            refine Finset.sum_congr rfl ?_
+            intro i hi
+            exact hfixed d hd i hi
+      _ = 38 := by
+            rw [Finset.sum_const, hindices]
+            norm_num)
+
 end AFiberCardinality38Boundary
 
 end

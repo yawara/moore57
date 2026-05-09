@@ -3,6 +3,7 @@ import Moore57.OrbitBaseSelectionInputBridge
 import Moore57.AFiberHybridBoundaryFromCriteria
 import Moore57.AFiberOrbitMovingResidual
 import Moore57.AFiberMatchingSupportEquations
+import Moore57.AFiberResidualSplitBridge
 
 /-!
 # Final D19 inputs from direct character and A-fiber boundary data
@@ -207,6 +208,79 @@ noncomputable def of_equivariantAFiberResidualMatchingEquationSum
     coords indices rot moving_subset_aFiber aFiber_subset_residual
     (AFiberCardinality38Boundary.of_matchingEquationFilterCardSum
       rot matchingEquationSum)
+
+/-- Constructor from a residual split equality, rotation equivariance, and
+explicit matching-equation filter sums.  The split equality supplies the
+forward moving/A-fiber inclusion, equivariance supplies the reverse inclusion,
+and the matching sums supply the A-fiber cardinality boundary. -/
+noncomputable def of_residualSplitMatchingEquationSum
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (k : ZMod 19)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (orbitInput.base r) ∉
+          orbitInput.orbitFamilyUnion)
+    (coords : AFiberCoordinates.{u, uP} Γ)
+    (indices : Finset (ZMod 19))
+    (rot : AFiberRotationEquivariance h coords)
+    (residual_eq_fixed_union :
+      reflectionCopyResidual h orbitInput.base k =
+        rotationOneFixedResidualPart h orbitInput k ∪
+          coords.fiberUnion indices)
+    (matchingEquationSum :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∑ i ∈ indices,
+          ((Finset.univ : Finset coords.P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore coords i (i + d)
+                (index_ne_add_of_ne_zero hd) p =
+              rot.coordPerm d i p).card = 38) :
+    D19FinalCharacterAFiberBoundaryInputs h :=
+  of_equivariantAFiberResidualMatchingEquationSum
+    character orbitInput k reflection_not_mem_orbitFamilyUnion
+    coords indices rot
+    (rotationOneMovingResidualPart_subset_of_residual_eq_fixed_union
+      residual_eq_fixed_union)
+    (aFiber_subset_residual_of_residual_eq_fixed_union
+      residual_eq_fixed_union)
+    matchingEquationSum
+
+/-- Constructor from a residual split equality, rotation equivariance, and the
+local statement that each selected matching equation has exactly two
+solutions. -/
+noncomputable def of_residualSplitMatchingEquationTwo
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (k : ZMod 19)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (orbitInput.base r) ∉
+          orbitInput.orbitFamilyUnion)
+    (coords : AFiberCoordinates.{u, uP} Γ)
+    (indices : Finset (ZMod 19))
+    (rot : AFiberRotationEquivariance h coords)
+    (residual_eq_fixed_union :
+      reflectionCopyResidual h orbitInput.base k =
+        rotationOneFixedResidualPart h orbitInput k ∪
+          coords.fiberUnion indices)
+    (indices_card : indices.card = 19)
+    (matchingEquationCardTwo :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0, ∀ i : ZMod 19,
+        i ∈ indices →
+          ((Finset.univ : Finset coords.P).filter fun p =>
+            AFiberCoordinates.matchingEquiv h.isMoore coords i (i + d)
+                (index_ne_add_of_ne_zero hd) p =
+              rot.coordPerm d i p).card = 2) :
+    D19FinalCharacterAFiberBoundaryInputs h :=
+  of_equivariantAFiberResidual
+    character orbitInput k reflection_not_mem_orbitFamilyUnion
+    coords indices rot
+    (rotationOneMovingResidualPart_subset_of_residual_eq_fixed_union
+      residual_eq_fixed_union)
+    (aFiber_subset_residual_of_residual_eq_fixed_union
+      residual_eq_fixed_union)
+    (AFiberCardinality38Boundary.of_matchingEquationFilterCard_eq_two
+      rot indices_card matchingEquationCardTwo)
 
 /-- Constructor specialized to moved-branch rotation-orbit A-fiber
 coordinates.  The moved-branch constructor gives the required equivariance. -/
