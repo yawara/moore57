@@ -1,4 +1,5 @@
 import Moore57.BranchOrbitABCReflectionChoice
+import Moore57.FixedInducedDegree
 import Moore57.ZMod19Lemmas
 
 /-!
@@ -540,6 +541,49 @@ theorem forall_exists_reflectionCenterNeighborOrbitIndex_ne_of_fixed_neighbors_c
   exact exists_reflectionCenterNeighborOrbitIndex_ne_of_fixed_neighbors_card_le_one
     (h := h) base base_adj base_pairwise_disjoint base_cover k
     (hfixed_le k)
+
+/-- A fixed-induced-degree bound at the rotation fixed center supplies the
+fixed-neighbor bound used to force nontrivial action on the three
+center-neighbor rotation orbits. -/
+theorem reflection_fixed_center_neighbors_card_le_one_of_fixedInducedDegree_le_one
+    (k : ZMod 19)
+    (hdegree :
+      (h.fixedInducedGraph (DihedralGroup.sr k)).degree
+          ⟨h.rotationFixedCenter, by
+            change h.smul (DihedralGroup.sr k) h.rotationFixedCenter =
+              h.rotationFixedCenter
+            exact h.reflection_smul_rotationFixedCenter k⟩ ≤ 1) :
+    ((Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+        h.smul (DihedralGroup.sr k) y = y).card ≤ 1 := by
+  let x : fixedVertexSet (h.smulEquiv (DihedralGroup.sr k)) :=
+    ⟨h.rotationFixedCenter, by
+      change h.smul (DihedralGroup.sr k) h.rotationFixedCenter =
+        h.rotationFixedCenter
+      exact h.reflection_smul_rotationFixedCenter k⟩
+  have hdeg_eq :
+      (h.fixedInducedGraph (DihedralGroup.sr k)).degree x =
+        ((Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+          h.smul (DihedralGroup.sr k) y = y).card := by
+    simpa [x, D19ActsOnMoore57.smulEquiv] using
+      h.fixedInducedGraph_degree_eq_fixedNeighborFinset_card
+        (DihedralGroup.sr k) x
+  exact hdeg_eq ▸ hdegree
+
+/-- Uniform fixed-induced-degree bound form. -/
+theorem fixed_center_neighbors_card_le_one_of_forall_fixedInducedDegree_le_one
+    (hdegree :
+      ∀ k : ZMod 19,
+        (h.fixedInducedGraph (DihedralGroup.sr k)).degree
+            ⟨h.rotationFixedCenter, by
+              change h.smul (DihedralGroup.sr k) h.rotationFixedCenter =
+                h.rotationFixedCenter
+              exact h.reflection_smul_rotationFixedCenter k⟩ ≤ 1) :
+    ∀ k : ZMod 19,
+      ((Γ.neighborFinset h.rotationFixedCenter).filter fun y =>
+        h.smul (DihedralGroup.sr k) y = y).card ≤ 1 := by
+  intro k
+  exact reflection_fixed_center_neighbors_card_le_one_of_fixedInducedDegree_le_one
+    (h := h) k (hdegree k)
 
 end BranchOrbitABCReflectionLabeling
 
