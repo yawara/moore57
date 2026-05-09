@@ -1,5 +1,7 @@
 import Moore57.BranchOrbitABCFixedStarFinalBridge
 import Moore57.BranchOrbitABCExceptionCaseBoundary
+import Moore57.BranchOrbitABCExceptionDoublingBoundary
+import Moore57.BranchOrbitABCExceptionCardTwoBoundary
 import Moore57.BranchOrbitABCReferenceSolutionGeometryBoundary
 import Moore57.BranchOrbitABCSupportComplementSumBoundary
 
@@ -130,6 +132,30 @@ noncomputable def of_aFixingCenter_referenceSupportCompl
   of_aFixingCenter middle aFixing
     referenceSolutionSupportCompl.toReferenceRotationMatchingSolutionVertexFixedBoundary
     no_card_one no_card_two
+
+/-- Variant using doubling propagation to supply the `no_card_one` field and
+non-containment of `E` in `S_(d/2)` to exclude the card-two case. -/
+noncomputable def of_aFixingCenter_doubling_notAllSupport
+    (middle : ReflectionFixedStarMiddleBoundary star labeling)
+    (aFixing : ReflectionFixedStarAFixingBoundary star labeling)
+    (referenceSolutionSupportCompl :
+      ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling)
+    (doubling : MidpointExceptionDoublingBoundary labeling)
+    {baseOne : ZMod 19} (hbaseOne : baseOne ≠ 0)
+    (hne_one :
+      (labeling.midpointExceptionAFixingSupportIntersection
+        baseOne hbaseOne).card ≠ 1)
+    (not_all_support_subset_exception :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ¬ labeling.aFiberReflectionSupport ⊆
+          labeling.midpointExceptionSet (midpointOf d) (midpointOf_ne_zero hd)) :
+    LeanAwareFixedStarFinalBoundary star labeling :=
+  of_aFixingCenter_referenceSupportCompl middle aFixing
+    referenceSolutionSupportCompl
+    (doubling.no_card_one_of_card_ne_one hbaseOne hne_one)
+    ((MidpointExceptionAFixingSupportNoCardTwoBoundary.mk
+      not_all_support_subset_exception).no_card_two
+        aFixing.toAFixingReflectionFixedNeighborCardBoundary)
 
 end LeanAwareFixedStarFinalBoundary
 

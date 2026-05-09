@@ -45,14 +45,17 @@ structure BranchOrbitABCActionLevelFinalBoundary
   referenceSolutionSupportCompl :
     BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
       labeling
-  no_card_one :
+  exceptionDoubling :
+    BranchOrbitABCReflectionLabeling.MidpointExceptionDoublingBoundary labeling
+  cardOneBase : ZMod 19
+  cardOneBase_ne_zero : cardOneBase ≠ 0
+  cardOneBase_ne_one :
+    (labeling.midpointExceptionAFixingSupportIntersection
+      cardOneBase cardOneBase_ne_zero).card ≠ 1
+  not_all_support_subset_exception :
     ∀ d : ZMod 19, ∀ hd : d ≠ 0,
-      (labeling.midpointExceptionAFixingSupportIntersection
-        (midpointOf d) (midpointOf_ne_zero hd)).card ≠ 1
-  no_card_two :
-    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
-      (labeling.midpointExceptionAFixingSupportIntersection
-        (midpointOf d) (midpointOf_ne_zero hd)).card ≠ 2
+      ¬ labeling.aFiberReflectionSupport ⊆
+        labeling.midpointExceptionSet (midpointOf d) (midpointOf_ne_zero hd)
 
 namespace BranchOrbitABCActionLevelFinalBoundary
 
@@ -63,10 +66,12 @@ noncomputable def toLeanAwareFixedStarFinalBoundary
     (boundary : BranchOrbitABCActionLevelFinalBoundary h) :
     BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary
       boundary.starCounts.toReflectionFixedStarBoundary boundary.labeling :=
-  BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary.of_aFixingCenter_referenceSupportCompl
+  BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary.of_aFixingCenter_doubling_notAllSupport
     boundary.middle boundary.aFixing
     boundary.referenceSolutionSupportCompl
-    boundary.no_card_one boundary.no_card_two
+    boundary.exceptionDoubling
+    boundary.cardOneBase_ne_zero boundary.cardOneBase_ne_one
+    boundary.not_all_support_subset_exception
 
 end BranchOrbitABCActionLevelFinalBoundary
 
