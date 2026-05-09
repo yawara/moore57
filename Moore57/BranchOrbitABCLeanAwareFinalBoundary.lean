@@ -5,6 +5,7 @@ import Moore57.BranchOrbitABCExceptionCardTwoBoundary
 import Moore57.BranchOrbitABCReferenceSolutionGeometryBoundary
 import Moore57.BranchOrbitABCExceptionCardOneBoundary
 import Moore57.BranchOrbitABCExceptionAllSupportBoundary
+import Moore57.BranchOrbitABCReferenceSolutionFromExceptions
 import Moore57.BranchOrbitABCSupportComplementSumBoundary
 
 /-!
@@ -178,6 +179,19 @@ noncomputable def of_aFixingCenter_doubling_singletonFixed_noAllEndpointAdj
       (labeling.midpointReflectionCriterionBoundary_of_fixedCenterLeaf
         star.toReflectionFixedCenterLeafBoundary)).no_card_two
         aFixing.toAFixingReflectionFixedNeighborCardBoundary)
+
+/-- Variant where the reference-solution fixedness is derived from the same
+finite exception-case boundary used for the support-complement lower bound. -/
+noncomputable def of_referenceMatching_aFixingCenter_cases
+    (middle : ReflectionFixedStarMiddleBoundary star labeling)
+    (aFixing : ReflectionFixedStarAFixingBoundary star labeling)
+    (referenceMatching : ReferenceMatchingPipelineBoundary labeling)
+    (caseBoundary : MidpointExceptionAFixingSupportCaseBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary star labeling :=
+  of_aFixingCenter_referenceSupportCompl middle aFixing
+    (caseBoundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+      referenceMatching)
+    caseBoundary.no_card_one caseBoundary.no_card_two
 
 end LeanAwareFixedStarFinalBoundary
 
