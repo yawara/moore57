@@ -267,6 +267,46 @@ theorem midpointEquationSet_subset_midpointExceptionSet
       p
       ((labeling.mem_midpointEquationSet m hm p).1 hp)
 
+/-- Reverse midpoint criterion after isolating the remaining geometric input:
+any fixed common neighbor of the reflected endpoint pair must lie in the
+middle A-fiber. -/
+theorem midpointExceptionSet_subset_midpointEquationSet_of_fixedCommon_mem_middle
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (m : ZMod 19) (hm : m ≠ 0)
+    (hfixedCommon_mem_middle :
+      ∀ p : labeling.data.toAFiberCoordinates.P, ∀ {w : V},
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) w = w →
+        Γ.Adj
+          (((labeling.data.toAFiberCoordinates.coord 0 p :
+            {x : V // x ∈
+              branchFiber Γ labeling.data.toAFiberCoordinates.u
+                (labeling.data.toAFiberCoordinates.a 0)}) : V)) w →
+        Γ.Adj
+          (((labeling.data.toAFiberCoordinates.coord (0 + (m + m))
+              (labeling.midpointReflectionCoordPerm m p) :
+            {x : V // x ∈
+              branchFiber Γ labeling.data.toAFiberCoordinates.u
+                (labeling.data.toAFiberCoordinates.a (0 + (m + m)))}) : V)) w →
+        w ∈ labeling.data.toAFiberCoordinates.fiber (0 + m)) :
+    labeling.midpointExceptionSet m hm ⊆
+      labeling.midpointEquationSet m hm := by
+  classical
+  letI := labeling.data.toAFiberCoordinates.P_fintype
+  intro p hp
+  rw [mem_midpointEquationSet]
+  apply
+    AFiberReflectionEquivariance.midpoint_mate_mem_support_imp_matching_eq_reflection_of_fixedCommon_mem_middle
+      (ref := labeling.toAFiberMidpointReflectionEquivariance m)
+      (m := m) (hm := hm)
+      (hsigma0 := by ring)
+      (hsigmam := by ring)
+      (p := p)
+  · intro p w hwfix hxw hyw
+    exact hfixedCommon_mem_middle p hwfix hxw
+      (by simpa [midpointReflectionCoordPerm] using hyw)
+  · simpa [midpointMiddleSupport] using
+      ((labeling.mem_midpointExceptionSet m hm p).1 hp)
+
 /-- The exception set is the preimage of the middle support under a matching
 equivalence, so it has the same cardinality as that support. -/
 theorem midpointExceptionSet_card_eq_midpointMiddleSupport_card
@@ -322,6 +362,37 @@ structure MidpointReflectionCriterionBoundary
       ∀ p : labeling.data.toAFiberCoordinates.P,
         p ∈ labeling.midpointEquationSet m hm ↔
           p ∈ labeling.midpointExceptionSet m hm
+
+/-- Build the full midpoint-reflection criterion once the remaining geometric
+fixed-common-neighbor input has been supplied. -/
+noncomputable def midpointReflectionCriterionBoundary_of_fixedCommon_mem_middle
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (hfixedCommon_mem_middle :
+      ∀ m : ZMod 19, ∀ _hm : m ≠ 0,
+        ∀ p : labeling.data.toAFiberCoordinates.P, ∀ {w : V},
+          h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) w = w →
+          Γ.Adj
+            (((labeling.data.toAFiberCoordinates.coord 0 p :
+              {x : V // x ∈
+                branchFiber Γ labeling.data.toAFiberCoordinates.u
+                  (labeling.data.toAFiberCoordinates.a 0)}) : V)) w →
+          Γ.Adj
+            (((labeling.data.toAFiberCoordinates.coord (0 + (m + m))
+                (labeling.midpointReflectionCoordPerm m p) :
+              {x : V // x ∈
+                branchFiber Γ labeling.data.toAFiberCoordinates.u
+                  (labeling.data.toAFiberCoordinates.a (0 + (m + m)))}) : V)) w →
+          w ∈ labeling.data.toAFiberCoordinates.fiber (0 + m)) :
+    MidpointReflectionCriterionBoundary labeling where
+  midpoint_equation_iff_exception := by
+    intro m hm p
+    constructor
+    · intro hp
+      exact labeling.midpointEquationSet_subset_midpointExceptionSet m hm hp
+    · intro hp
+      exact
+        (labeling.midpointExceptionSet_subset_midpointEquationSet_of_fixedCommon_mem_middle
+          m hm (hfixedCommon_mem_middle m hm)) hp
 
 namespace MidpointReflectionCriterionBoundary
 

@@ -83,5 +83,23 @@ theorem exists_fixed_commonNeighbor_of_not_adj
     exact hz_mem
   exact ⟨z, h.fixed_commonNeighbor_of_not_adj g hx hy hxy hnadj hz_adj, hz_adj⟩
 
+/-- Existence form: if a group element swaps two non-adjacent vertices, their
+unique common neighbor is fixed by that group element. -/
+theorem exists_fixed_commonNeighbor_of_swap_not_adj
+    (h : D19ActsOnMoore57 V Γ) (g : DihedralGroup 19)
+    {x y : V}
+    (hgx : h.smul g x = y) (hgy : h.smul g y = x)
+    (hxy : x ≠ y) (hnadj : ¬ Γ.Adj x y) :
+    ∃ z, h.smul g z = z ∧ Γ.Adj x z ∧ Γ.Adj y z := by
+  have hcard : Fintype.card (Γ.commonNeighbors x y) = 1 :=
+    h.isMoore.of_not_adj hxy hnadj
+  rcases Fintype.card_eq_one_iff.mp hcard with ⟨z, _hz_unique⟩
+  have hz_mem : (z : V) ∈ Γ.commonNeighbors x y := z.property
+  have hz_adj : Γ.Adj x (z : V) ∧ Γ.Adj y (z : V) := by
+    rw [SimpleGraph.mem_commonNeighbors] at hz_mem
+    exact hz_mem
+  exact ⟨z, h.fixed_commonNeighbor_of_swap_not_adj g hgx hgy hxy hnadj hz_adj,
+    hz_adj⟩
+
 end D19ActsOnMoore57
 end Moore57
