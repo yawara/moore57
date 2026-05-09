@@ -119,6 +119,8 @@ import Moore57.AFiberContributionOnlyCriteria
 import Moore57.AFiberOnlyContributionConstant
 import Moore57.AFiberCardinalityBoundary
 import Moore57.AFiberCardinalityContributionBoundary
+import Moore57.AFiberMatchingPerm
+import Moore57.AFiberFiberUnionCardinality
 import Moore57.TraceCoreCharacterBoundary
 import Moore57.RotationOneFixedBoundBoundary
 import Moore57.RotationOneFixedBoundBoundaryNonempty
