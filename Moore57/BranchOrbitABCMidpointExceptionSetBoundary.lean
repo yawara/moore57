@@ -277,6 +277,170 @@ structure ReferenceRotationToMidpointReflectionBoundary
           labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p) ⊆
         labeling.midpointEquationSet (midpointOf d) (midpointOf_ne_zero hd)
 
+theorem midpointReflection_smul_eq_rotation_aFixingReflection_smul
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (m : ZMod 19) (x : V) :
+    h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) x =
+      h.rotation (m + m)
+        (h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex) x) := by
+  change h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m)) x =
+    h.smul (DihedralGroup.r (m + m))
+      (h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex) x)
+  rw [← h.mul_smul]
+  congr 1
+  rw [DihedralGroup.r_mul_sr]
+  congr 1
+  simp [BranchOrbitABCReflectionLabeling.midpointReflectionIndex]
+  ring
+
+theorem midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (m : ZMod 19) (p : labeling.data.toAFiberCoordinates.P) :
+    labeling.midpointReflectionCoordPerm m p =
+      labeling.data.toAFiberRotationEquivariance.coordPerm (m + m) 0
+        (labeling.aFiberReflectionCoordPerm p) := by
+  classical
+  let coords := labeling.data.toAFiberCoordinates
+  apply (coords.coord (0 + (m + m))).injective
+  ext
+  have hmid :
+      ((coords.coord (0 + (m + m))
+          (labeling.midpointReflectionCoordPerm m p) :
+        {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + (m + m)))}) :
+        V) =
+        h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m))
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+    have hidx : (2 : ZMod 19) * m - 0 = 0 + (m + m) := by
+      ring
+    have hraw :
+        ((coords.coord ((2 : ZMod 19) * m - 0)
+            (labeling.midpointReflectionCoordPerm m p) :
+          {x : V // x ∈ branchFiber Γ coords.u
+            (coords.a ((2 : ZMod 19) * m - 0))}) : V) =
+          h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m))
+            (((coords.coord 0 p :
+              {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+      simpa [coords, midpointReflectionCoordPerm] using
+        AFiberReflectionEquivariance.coord_coordPerm_apply_val
+          (ref := labeling.toAFiberMidpointReflectionEquivariance m)
+          (i := 0) (p := p)
+    rw [hidx] at hraw
+    simpa [coords] using hraw
+  have href :
+      ((coords.coord 0 (labeling.aFiberReflectionCoordPerm p) :
+        {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V) =
+        h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+    simpa [coords] using labeling.coord_aFiberReflectionCoordPerm_apply_val p
+  have hrot :
+      ((coords.coord (0 + (m + m))
+          (labeling.data.toAFiberRotationEquivariance.coordPerm (m + m) 0
+            (labeling.aFiberReflectionCoordPerm p)) :
+        {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + (m + m)))}) :
+        V) =
+        h.rotation (m + m)
+          (((coords.coord 0 (labeling.aFiberReflectionCoordPerm p) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+    simpa [coords] using
+      AFiberRotationEquivariance.coord_coordPerm_apply_val
+        (rot := labeling.data.toAFiberRotationEquivariance)
+        (d := m + m) (i := 0)
+        (p := labeling.aFiberReflectionCoordPerm p)
+  calc
+    ((coords.coord (0 + (m + m))
+        (labeling.midpointReflectionCoordPerm m p) :
+      {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + (m + m)))}) :
+      V)
+        = h.smul (DihedralGroup.sr (labeling.midpointReflectionIndex m))
+            (((coords.coord 0 p :
+              {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := hmid
+    _ = h.rotation (m + m)
+        (h.smul (DihedralGroup.sr labeling.aFixingReflectionIndex)
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) ) := by
+          rw [labeling.midpointReflection_smul_eq_rotation_aFixingReflection_smul]
+    _ = h.rotation (m + m)
+        (((coords.coord 0 (labeling.aFiberReflectionCoordPerm p) :
+          {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+          rw [← href]
+    _ = ((coords.coord (0 + (m + m))
+        (labeling.data.toAFiberRotationEquivariance.coordPerm (m + m) 0
+          (labeling.aFiberReflectionCoordPerm p)) :
+      {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + (m + m)))}) :
+      V) := hrot.symm
+
+theorem rotationCoordPerm_eq_midpointReflectionCoordPerm_iff_aFiberReflection_fixed
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (m : ZMod 19) (p : labeling.data.toAFiberCoordinates.P) :
+    labeling.data.toAFiberRotationEquivariance.coordPerm (m + m) 0 p =
+      labeling.midpointReflectionCoordPerm m p ↔
+        labeling.aFiberReflectionCoordPerm p = p := by
+  rw [labeling.midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+    m p]
+  constructor
+  · intro hp
+    exact
+      ((labeling.data.toAFiberRotationEquivariance.coordPerm (m + m) 0).injective
+        hp).symm
+  · intro hp
+    rw [hp]
+
+theorem rotationCoordPerm_eq_midpointReflectionCoordPerm_midpointOf_iff
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (d : ZMod 19) (p : labeling.data.toAFiberCoordinates.P) :
+    labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p =
+      labeling.midpointReflectionCoordPerm (midpointOf d) p ↔
+        labeling.aFiberReflectionCoordPerm p = p := by
+  have hdd : midpointOf d + midpointOf d = d := midpointOf_add_self d
+  simpa [hdd] using
+    labeling.rotationCoordPerm_eq_midpointReflectionCoordPerm_iff_aFiberReflection_fixed
+      (midpointOf d) p
+
+/-- Boundary saying every solution of the reference rotation equation is fixed
+by the A-fixing reflection on the reference coordinate fiber. -/
+structure ReferenceRotationEquationAFixingFixedBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  reference_solution_fixed :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p →
+        labeling.aFiberReflectionCoordPerm p = p
+
+namespace ReferenceRotationToMidpointReflectionBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- The A-fixing fixedness boundary implies the direct RHS-comparison boundary
+used by the reference exception-set constructor. -/
+noncomputable def of_aFixingFixed
+    (fixed : ReferenceRotationEquationAFixingFixedBoundary labeling) :
+    ReferenceRotationToMidpointReflectionBoundary labeling where
+  reference_matching_subset_midpoint_equation := by
+    intro d hd p hp
+    rw [mem_midpointEquationSet]
+    have hmatch :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p :=
+      (Finset.mem_filter.mp hp).2
+    have hfixed : labeling.aFiberReflectionCoordPerm p = p :=
+      fixed.reference_solution_fixed d hd p hmatch
+    have hrhs :
+        labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p =
+          labeling.midpointReflectionCoordPerm (midpointOf d) p :=
+      (labeling.rotationCoordPerm_eq_midpointReflectionCoordPerm_midpointOf_iff
+        d p).2 hfixed
+    have hdd : midpointOf d + midpointOf d = d := midpointOf_add_self d
+    simpa [hdd] using hmatch.trans hrhs
+
+end ReferenceRotationToMidpointReflectionBoundary
+
 end BranchOrbitABCReflectionLabeling
 
 namespace ReferenceFiberMatchingExceptionSetTwo
@@ -312,6 +476,25 @@ noncomputable def of_midpointReflectionBoundary
     exact
       (criterion.midpoint_equation_iff_exception
         (midpointOf d) (midpointOf_ne_zero hd) p).1 hpEq
+
+/-- Variant of `of_midpointReflectionBoundary` using the more geometric
+A-fixing fixedness boundary for reference-equation solutions. -/
+noncomputable def of_midpointReflection_aFixingFixed
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (criterion :
+      BranchOrbitABCReflectionLabeling.MidpointReflectionCriterionBoundary
+        labeling)
+    (cardTwo :
+      BranchOrbitABCReflectionLabeling.MidpointMiddleSupportCardTwoBoundary
+        labeling)
+    (fixed :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationEquationAFixingFixedBoundary
+        labeling) :
+    ReferenceFiberMatchingExceptionSetTwo
+      labeling.data.toAFiberRotationEquivariance :=
+  of_midpointReflectionBoundary labeling criterion cardTwo
+    (BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary.of_aFixingFixed
+      (labeling := labeling) fixed)
 
 end ReferenceFiberMatchingExceptionSetTwo
 
