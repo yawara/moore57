@@ -1,3 +1,4 @@
+import Moore57.BranchOrbitABCReferenceSolutionFixedBoundary
 import Moore57.BranchOrbitABCReflectionFixedStarBoundary
 
 /-!
@@ -82,6 +83,18 @@ namespace FixedStarReferenceMatchingPipelineBoundary
 
 variable {star : ReflectionFixedStarBoundary h}
 variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Build the fixed-star reference matching package from the more geometric
+statement that reference matching solutions are fixed as vertices in the
+reference A-fiber. -/
+noncomputable def of_vertexFixed
+    (middle : ReflectionFixedStarMiddleBoundary star labeling)
+    (referenceSolutionVertexFixed :
+      ReferenceRotationMatchingSolutionVertexFixedBoundary labeling) :
+    FixedStarReferenceMatchingPipelineBoundary star labeling where
+  middle := middle
+  referenceSolutionFixed :=
+    referenceSolutionVertexFixed.toReferenceRotationEquationAFixingFixedBoundary
 
 /-- Convert the fixed-star version of the midpoint/reflection inputs to the
 generic reference matching pipeline boundary. -/
@@ -185,6 +198,24 @@ namespace FixedStarReferenceMatchingCardinalityPipelineBoundary
 
 variable {star : ReflectionFixedStarBoundary h}
 variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Build the fixed-star cardinality pipeline from vertex-fixed reference
+solutions and the support-complement sum lower bound. -/
+noncomputable def of_vertexFixed
+    (middle : ReflectionFixedStarMiddleBoundary star labeling)
+    (referenceSolutionVertexFixed :
+      ReferenceRotationMatchingSolutionVertexFixedBoundary labeling)
+    (supportCompl_sum_ge :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        38 ≤
+          ∑ i ∈ (Finset.univ : Finset (ZMod 19)),
+            (labeling.data.toAFiberRotationEquivariance.matchingRotationPerm
+              d i hd).supportᶜ.card) :
+    FixedStarReferenceMatchingCardinalityPipelineBoundary star labeling where
+  referenceMatching :=
+    FixedStarReferenceMatchingPipelineBoundary.of_vertexFixed
+      middle referenceSolutionVertexFixed
+  supportCompl_sum_ge := supportCompl_sum_ge
 
 /-- Forget the fixed-star packaging after deriving the generic reference
 matching inputs. -/
