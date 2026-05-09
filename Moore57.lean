@@ -132,6 +132,7 @@ import Moore57.AFiberMatchingFixedCountSupport
 import Moore57.AFiberMatchingSupportEquations
 import Moore57.AFiberOrbitCardinalityBoundary
 import Moore57.AFiberOrbitMoved
+import Moore57.AFiberMatchingStepBound
 import Moore57.AFiberOrbitMovingResidual
 import Moore57.AFiberResidualSplitBridge
 import Moore57.AdjacentMovedCanonicalAFiberResidualBridge
