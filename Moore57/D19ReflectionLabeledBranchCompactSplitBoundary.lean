@@ -1,6 +1,7 @@
 import Moore57.BranchOrbitABCReflectionLabeling
 import Moore57.BranchOrbitABCResidualContribution
 import Moore57.BranchOrbitABCAllFibersFinalBridge
+import Moore57.AFiberContributionRotationInvariance
 import Moore57.D19RepresentationCharacterDataBridge
 import Moore57.D19FinalRepresentationUpperBoundCompactSplit
 
@@ -89,6 +90,30 @@ noncomputable def ofMatchingEquationCardTwo
       labeling.data.toBranchOrbitABCData
         |>.toAllFibersCardinalityFromMatchingEquationTwo
           matchingEquationCardTwo
+    simpa using hboundary
+
+/-- Constructor from checking the matching-rotation fixed count only on the
+reference A-fiber `0`.  Rotation equivariance promotes this to all fibers. -/
+noncomputable def ofReferenceFiberMatchingSupportTwo
+    (representationComponents :
+      D19ActsOnMoore57.RepresentationCharacterComponentsBoundary h)
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceSupportCardTwo :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ((labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance)
+          |>.matchingRotationPerm d 0 hd).supportᶜ.card =
+          2) :
+    D19ReflectionLabeledBranchCompactSplitBoundaryInputs h where
+  representationComponents := representationComponents
+  labeling := labeling
+  aFiberCardinality := by
+    have hboundary :
+      AFiberCardinality38Boundary h
+          labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+          (Finset.univ : Finset (ZMod 19)) :=
+      AFiberCardinality38Boundary.of_allFibers_matchingRotationPerm_zero_support_compl_card_eq_two
+        labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance
+        referenceSupportCardTwo
     simpa using hboundary
 
 /-- Convert the reflection-labeled compact-split boundary to the already
