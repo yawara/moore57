@@ -1,4 +1,5 @@
 import Moore57.BranchOrbitABCFixedStarFinalBridge
+import Moore57.BranchOrbitABCExceptionDisjointBoundary
 import Moore57.BranchOrbitABCSupportComplementSumBoundary
 
 /-!
@@ -48,8 +49,8 @@ structure LeanAwareFixedStarFinalBoundary
   middle : ReflectionFixedStarMiddleBoundary star labeling
   referenceSolutionVertexFixed :
     ReferenceRotationMatchingSolutionVertexFixedBoundary labeling
-  supportComplAtLeastTwo :
-    AllFibersSupportComplementAtLeastTwoBoundary labeling
+  midpointExceptionDisjointAFixingSupport :
+    MidpointExceptionDisjointAFixingSupportBoundary labeling
 
 namespace LeanAwareFixedStarFinalBoundary
 
@@ -63,7 +64,25 @@ noncomputable def toFixedStarReferenceMatchingCardinalityPipelineBoundary
     FixedStarReferenceMatchingCardinalityPipelineBoundary star labeling :=
   FixedStarReferenceMatchingCardinalityPipelineBoundary.of_vertexFixed
     boundary.middle boundary.referenceSolutionVertexFixed
-    boundary.supportComplAtLeastTwo.supportCompl_sum_ge
+    (boundary.midpointExceptionDisjointAFixingSupport
+      |>.toAllFibersSupportComplementAtLeastTwoBoundary
+        (labeling.midpointReflectionCriterionBoundary_of_fixedCenterLeaf
+          star.toReflectionFixedCenterLeafBoundary)
+        (boundary.middle.toMidpointMiddleFixedNeighborCardBoundary
+          |>.toMidpointMiddleSupportCardTwoBoundary)
+      |>.supportCompl_sum_ge)
+
+/-- Expose the all-fibers lower-bound boundary derived from the midpoint
+exception/A-fixing support disjointness field. -/
+noncomputable def toAllFibersSupportComplementAtLeastTwoBoundary
+    (boundary : LeanAwareFixedStarFinalBoundary star labeling) :
+    AllFibersSupportComplementAtLeastTwoBoundary labeling :=
+  boundary.midpointExceptionDisjointAFixingSupport
+    |>.toAllFibersSupportComplementAtLeastTwoBoundary
+      (labeling.midpointReflectionCriterionBoundary_of_fixedCenterLeaf
+        star.toReflectionFixedCenterLeafBoundary)
+      (boundary.middle.toMidpointMiddleFixedNeighborCardBoundary
+        |>.toMidpointMiddleSupportCardTwoBoundary)
 
 end LeanAwareFixedStarFinalBoundary
 
