@@ -1,5 +1,6 @@
 import Moore57.D19CanonicalBranchAllFibersBoundary
 import Moore57.BranchOrbitABCResidualContribution
+import Moore57.BranchOrbitABCReflectionChoice
 import Moore57.D19FinalRepresentationUpperBoundCompactSplit
 
 /-!
@@ -112,6 +113,35 @@ noncomputable def ofMatchingEquationCardTwo
       centerData.toBranchOrbitABCData
         |>.toAllFibersCardinalityFromMatchingEquationTwo matchingEquationCardTwo
     simpa [centerData] using hboundary
+
+/-- Constructor using the weaker orbit-level reflection statement.  The
+reflection parameter is adjusted internally so that the reflected B
+representative is exactly `c0`. -/
+noncomputable def ofReflectionOrbit
+    (representationComponents :
+      D19ActsOnMoore57.RepresentationCharacterComponentsBoundary h)
+    (k : ZMod 19)
+    (reflection_b0_mem_c0_orbit :
+      h.smul (DihedralGroup.sr k) h.canonicalBranchABCFromCenter.b0 ∈
+        h.rotationOrbitFinset h.canonicalBranchABCFromCenter.c0)
+    (aFiberCardinality :
+      AFiberCardinality38Boundary h
+        h.canonicalBranchABCFromCenter.toAFiberCoordinates
+        (Finset.univ : Finset (ZMod 19))) :
+    D19CanonicalBranchCompactSplitBoundaryInputs h := by
+  let centerData := h.canonicalBranchABCFromCenter
+  let hexists :=
+    centerData
+      |>.exists_reflection_smul_b0_eq_c0_of_reflection_smul_b0_mem_c0_orbit
+        reflection_b0_mem_c0_orbit
+  let k' : ZMod 19 := Classical.choose hexists
+  have hk' : h.smul (DihedralGroup.sr k') centerData.b0 = centerData.c0 :=
+    Classical.choose_spec hexists
+  exact
+    { representationComponents := representationComponents
+      k := k'
+      reflection_b0_eq_c0 := hk'
+      aFiberCardinality := aFiberCardinality }
 
 /-- Convert the canonical branch compact-split boundary to the already refuted
 final compact-split representation boundary. -/
