@@ -1,5 +1,5 @@
 import Moore57.BranchOrbitABCFixedStarFinalBridge
-import Moore57.BranchOrbitABCExceptionDisjointBoundary
+import Moore57.BranchOrbitABCExceptionCaseBoundary
 import Moore57.BranchOrbitABCSupportComplementSumBoundary
 
 /-!
@@ -10,7 +10,7 @@ smallest boundary shape produced by the midpoint-reflection work:
 
 * the midpoint middle A-vertex is the fixed-star center;
 * reference matching solutions are fixed by the A-fixing reflection;
-* each A-fiber contributes at least two matching fixed coordinates.
+* the `S_h ∩ E` cardinality cases `1` and `2` are excluded.
 
 The file contains only wiring.  It does not prove those three remaining
 geometric inputs.
@@ -49,8 +49,8 @@ structure LeanAwareFixedStarFinalBoundary
   middle : ReflectionFixedStarMiddleBoundary star labeling
   referenceSolutionVertexFixed :
     ReferenceRotationMatchingSolutionVertexFixedBoundary labeling
-  midpointExceptionDisjointAFixingSupport :
-    MidpointExceptionDisjointAFixingSupportBoundary labeling
+  midpointExceptionAFixingSupportCase :
+    MidpointExceptionAFixingSupportCaseBoundary labeling
 
 namespace LeanAwareFixedStarFinalBoundary
 
@@ -64,7 +64,8 @@ noncomputable def toFixedStarReferenceMatchingCardinalityPipelineBoundary
     FixedStarReferenceMatchingCardinalityPipelineBoundary star labeling :=
   FixedStarReferenceMatchingCardinalityPipelineBoundary.of_vertexFixed
     boundary.middle boundary.referenceSolutionVertexFixed
-    (boundary.midpointExceptionDisjointAFixingSupport
+    (boundary.midpointExceptionAFixingSupportCase
+      |>.toMidpointExceptionDisjointAFixingSupportBoundary
       |>.toAllFibersSupportComplementAtLeastTwoBoundary
         (labeling.midpointReflectionCriterionBoundary_of_fixedCenterLeaf
           star.toReflectionFixedCenterLeafBoundary)
@@ -73,16 +74,41 @@ noncomputable def toFixedStarReferenceMatchingCardinalityPipelineBoundary
       |>.supportCompl_sum_ge)
 
 /-- Expose the all-fibers lower-bound boundary derived from the midpoint
-exception/A-fixing support disjointness field. -/
+exception/A-fixing support case boundary. -/
 noncomputable def toAllFibersSupportComplementAtLeastTwoBoundary
     (boundary : LeanAwareFixedStarFinalBoundary star labeling) :
     AllFibersSupportComplementAtLeastTwoBoundary labeling :=
-  boundary.midpointExceptionDisjointAFixingSupport
+  boundary.midpointExceptionAFixingSupportCase
+    |>.toMidpointExceptionDisjointAFixingSupportBoundary
     |>.toAllFibersSupportComplementAtLeastTwoBoundary
       (labeling.midpointReflectionCriterionBoundary_of_fixedCenterLeaf
         star.toReflectionFixedCenterLeafBoundary)
       (boundary.middle.toMidpointMiddleFixedNeighborCardBoundary
         |>.toMidpointMiddleSupportCardTwoBoundary)
+
+/-- Build the lean-aware final package from the A-fixing fixed-star-center
+identification and the two remaining positive-cardinality exclusions. -/
+noncomputable def of_aFixingCenter
+    (middle : ReflectionFixedStarMiddleBoundary star labeling)
+    (aFixing : ReflectionFixedStarAFixingBoundary star labeling)
+    (referenceSolutionVertexFixed :
+      ReferenceRotationMatchingSolutionVertexFixedBoundary labeling)
+    (no_card_one :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        (labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf d) (midpointOf_ne_zero hd)).card ≠ 1)
+    (no_card_two :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        (labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf d) (midpointOf_ne_zero hd)).card ≠ 2) :
+    LeanAwareFixedStarFinalBoundary star labeling where
+  middle := middle
+  referenceSolutionVertexFixed := referenceSolutionVertexFixed
+  midpointExceptionAFixingSupportCase :=
+    { support_card_boundary :=
+        aFixing.toAFixingReflectionFixedNeighborCardBoundary
+      no_card_one := no_card_one
+      no_card_two := no_card_two }
 
 end LeanAwareFixedStarFinalBoundary
 
