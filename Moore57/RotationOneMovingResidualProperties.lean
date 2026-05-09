@@ -33,6 +33,45 @@ theorem rotationOneMovingResidualPart_subset_residual
   intro y hy
   exact (mem_rotationOneMovingResidualPart_iff.mp hy).1
 
+/-- A residual vertex moved by `rotation 1` lies in the moving residual part. -/
+theorem mem_rotationOneMovingResidualPart_of_mem_residual_and_moved
+    {h : D19ActsOnMoore57 V Γ} {input : OrbitBaseSelectionInput h}
+    {k : ZMod 19} {y : V}
+    (hres : y ∈ reflectionCopyResidual h input.base k)
+    (hmoved : h.rotation 1 y ≠ y) :
+    y ∈ rotationOneMovingResidualPart h input k := by
+  exact mem_rotationOneMovingResidualPart_iff.mpr
+    ⟨hres, by
+      intro hyfixed
+      exact hmoved (mem_fixedVertexSet.mp hyfixed)⟩
+
+/-- Membership in the moving residual part is residual membership together
+with being moved by `rotation 1`. -/
+theorem mem_rotationOneMovingResidualPart_iff_mem_residual_and_moved
+    {h : D19ActsOnMoore57 V Γ} {input : OrbitBaseSelectionInput h}
+    {k : ZMod 19} {y : V} :
+    y ∈ rotationOneMovingResidualPart h input k ↔
+      y ∈ reflectionCopyResidual h input.base k ∧ h.rotation 1 y ≠ y := by
+  constructor
+  · intro hy
+    exact ⟨(mem_rotationOneMovingResidualPart_iff.mp hy).1,
+      rotation_one_moved_of_not_mem_fixedVertexSet
+        (mem_rotationOneMovingResidualPart_iff.mp hy).2⟩
+  · rintro ⟨hres, hmoved⟩
+    exact mem_rotationOneMovingResidualPart_of_mem_residual_and_moved hres hmoved
+
+/-- A finite set contained in the residual whose vertices are all moved by
+`rotation 1` is contained in the moving residual part. -/
+theorem subset_rotationOneMovingResidualPart_of_subset_residual_and_moved
+    {h : D19ActsOnMoore57 V Γ} {input : OrbitBaseSelectionInput h}
+    {k : ZMod 19} (s : Finset V)
+    (hsub : s ⊆ reflectionCopyResidual h input.base k)
+    (hmoved : ∀ ⦃y⦄, y ∈ s → h.rotation 1 y ≠ y) :
+    s ⊆ rotationOneMovingResidualPart h input k := by
+  intro y hy
+  exact mem_rotationOneMovingResidualPart_of_mem_residual_and_moved
+    (hsub hy) (hmoved hy)
+
 /-- Membership in the moving residual part, with the residual condition
 expanded into avoidance of the original and reflected orbit-family unions. -/
 theorem mem_rotationOneMovingResidualPart_iff_not_orbitFamilyUnion_and_not_reflectionOrbitFamilyUnion_and_not_fixed
