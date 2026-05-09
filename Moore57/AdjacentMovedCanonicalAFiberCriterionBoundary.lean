@@ -1,4 +1,5 @@
 import Moore57.AFiberHybridBoundaryFromCriteria
+import Moore57.AdjacentMovedCanonicalAFiberResidualBridge
 
 /-!
 # Boundary bridges for the canonical adjacent-moved A-fiber criterion
@@ -17,6 +18,38 @@ universe u uP
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+namespace AFiberCardinality38Boundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+variable {coords : AFiberCoordinates.{u, uP} Γ}
+variable {indices : Finset (ZMod 19)}
+
+/-- The direct A-fiber-cardinality boundary gives the full split residual
+contribution because the canonical fixed residual side contributes zero. -/
+theorem residual_contribution
+    (boundary : AFiberCardinality38Boundary h coords indices)
+    (input : OrbitBaseSelectionInput h) (k : ZMod 19) :
+    ∀ d : ZMod 19, ∀ _hd : d ≠ 0,
+      ((rotationOneFixedResidualPart h input k).filter fun y =>
+          Γ.Adj y (h.rotation d y)).card +
+        ((coords.fiberUnion indices).filter fun y =>
+          Γ.Adj y (h.rotation d y)).card =
+        38 := by
+  intro d hd
+  have hfixed :
+      ((rotationOneFixedResidualPart h input k).filter fun y =>
+          Γ.Adj y (h.rotation d y)).card = 0 :=
+    rotationOneFixedResidualPart_filter_adjacent_rotation_card_eq_zero
+      h input k d hd
+  have haFiber :
+      ((coords.fiberUnion indices).filter fun y =>
+          Γ.Adj y (h.rotation d y)).card = 38 := by
+    simpa [fixedAFiberAFiberCard] using
+      boundary.card_eq_thirtyEight d hd
+  simp [hfixed, haFiber]
+
+end AFiberCardinality38Boundary
 
 namespace AdjacentMovedReflectionCanonicalAFiberCriteria38Witness
 
@@ -164,6 +197,58 @@ theorem nonempty_of_aFiberCardinalityBoundary
         h input) :=
   ⟨of_aFiberCardinalityBoundary boundary
     reflection_not_mem_orbitFamilyUnion moving_eq_aFiber⟩
+
+/-- Build the canonical criterion from a direct A-fiber-cardinality boundary
+and residual containment.  The residual bridge derives the reverse
+A-fiber/moving-residual inclusion from residual containment plus rotation
+equivariance. -/
+noncomputable def of_aFiberCardinalityBoundary_residualContainment
+    {k : ZMod 19} {coords : AFiberCoordinates.{u, uP} Γ}
+    {indices : Finset (ZMod 19)}
+    (boundary : AFiberCardinality38Boundary h coords indices)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (input.base r) ∉
+          input.orbitFamilyUnion)
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h input k ⊆
+        coords.fiberUnion indices)
+    (aFiber_subset_residual :
+      coords.fiberUnion indices ⊆
+        reflectionCopyResidual h input.base k)
+    (rot : AFiberRotationEquivariance h coords) :
+    AdjacentMovedReflectionCanonicalAFiberCriteria38Witness.{u, uP}
+      h input :=
+  AdjacentMovedReflectionCanonicalAFiberCriteria38Witness.of_residualContainment
+    (h := h) (input := input) (k := k) (coords := coords)
+    (indices := indices)
+    reflection_not_mem_orbitFamilyUnion moving_subset_aFiber
+    aFiber_subset_residual rot
+    (boundary.residual_contribution input k)
+
+/-- Nonempty wrapper for
+`of_aFiberCardinalityBoundary_residualContainment`. -/
+theorem nonempty_of_aFiberCardinalityBoundary_residualContainment
+    {k : ZMod 19} {coords : AFiberCoordinates.{u, uP} Γ}
+    {indices : Finset (ZMod 19)}
+    (boundary : AFiberCardinality38Boundary h coords indices)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (input.base r) ∉
+          input.orbitFamilyUnion)
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h input k ⊆
+        coords.fiberUnion indices)
+    (aFiber_subset_residual :
+      coords.fiberUnion indices ⊆
+        reflectionCopyResidual h input.base k)
+    (rot : AFiberRotationEquivariance h coords) :
+    Nonempty
+      (AdjacentMovedReflectionCanonicalAFiberCriteria38Witness.{u, uP}
+        h input) :=
+  ⟨of_aFiberCardinalityBoundary_residualContainment boundary
+    reflection_not_mem_orbitFamilyUnion moving_subset_aFiber
+    aFiber_subset_residual rot⟩
 
 /-- A branch-coordinate constructor for the canonical criterion. -/
 noncomputable def ofBranches_contributionData
@@ -314,6 +399,55 @@ namespace AdjacentMovedReflectionCanonicalAFiberInclusionCriteria38Witness
 
 variable {h : D19ActsOnMoore57 V Γ}
 variable {input : OrbitBaseSelectionInput h}
+
+/-- Build the inclusion-form canonical criterion from a direct
+A-fiber-cardinality boundary and residual containment. -/
+noncomputable def of_aFiberCardinalityBoundary_residualContainment
+    {k : ZMod 19} {coords : AFiberCoordinates.{u, uP} Γ}
+    {indices : Finset (ZMod 19)}
+    (boundary : AFiberCardinality38Boundary h coords indices)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (input.base r) ∉
+          input.orbitFamilyUnion)
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h input k ⊆
+        coords.fiberUnion indices)
+    (aFiber_subset_residual :
+      coords.fiberUnion indices ⊆
+        reflectionCopyResidual h input.base k)
+    (rot : AFiberRotationEquivariance h coords) :
+    AdjacentMovedReflectionCanonicalAFiberInclusionCriteria38Witness.{u, uP}
+      h input :=
+  AdjacentMovedReflectionCanonicalAFiberInclusionCriteria38Witness.of_residualContainment
+    (h := h) (input := input) (k := k) (coords := coords)
+    (indices := indices)
+    reflection_not_mem_orbitFamilyUnion moving_subset_aFiber
+    aFiber_subset_residual rot
+    (boundary.residual_contribution input k)
+
+/-- Nonempty wrapper for the inclusion-form residual-containment constructor. -/
+theorem nonempty_of_aFiberCardinalityBoundary_residualContainment
+    {k : ZMod 19} {coords : AFiberCoordinates.{u, uP} Γ}
+    {indices : Finset (ZMod 19)}
+    (boundary : AFiberCardinality38Boundary h coords indices)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (input.base r) ∉
+          input.orbitFamilyUnion)
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h input k ⊆
+        coords.fiberUnion indices)
+    (aFiber_subset_residual :
+      coords.fiberUnion indices ⊆
+        reflectionCopyResidual h input.base k)
+    (rot : AFiberRotationEquivariance h coords) :
+    Nonempty
+      (AdjacentMovedReflectionCanonicalAFiberInclusionCriteria38Witness.{u, uP}
+        h input) :=
+  ⟨of_aFiberCardinalityBoundary_residualContainment boundary
+    reflection_not_mem_orbitFamilyUnion moving_subset_aFiber
+    aFiber_subset_residual rot⟩
 
 /-- Symmetric spelling of the canonical/inclusion `Nonempty` bridge. -/
 theorem nonempty_iff_canonicalAFiberCriteria38Witness :
