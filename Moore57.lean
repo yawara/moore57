@@ -191,4 +191,5 @@ import Moore57.BranchOrbitBCSelection
 import Moore57.BranchOrbitABCPartition
 import Moore57.CenterNeighborContributionZero
 import Moore57.D19CanonicalBranchAllFibersBoundary
+import Moore57.D19CanonicalBranchCompactSplitBoundary
 import Moore57.D19FinalCriterionPublic
