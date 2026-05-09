@@ -96,6 +96,19 @@ theorem matchingRotationPerm_support_compl_card_eq_filter_card
   rw [mem_matchingRotationPerm_support_compl_iff]
   simp
 
+/-- A local support-complement upper bound gives the same upper bound for the
+explicit matching-equation solution set. -/
+theorem matchingEquationFilter_card_le_two_of_support_compl_card_le_two
+    (rot : AFiberRotationEquivariance h coords)
+    (d i : ZMod 19) (hd : d ≠ 0)
+    (hle : (rot.matchingRotationPerm d i hd).supportᶜ.card ≤ 2) :
+    ((Finset.univ : Finset coords.P).filter fun p =>
+      AFiberCoordinates.matchingEquiv h.isMoore coords i (i + d)
+          (index_ne_add_of_ne_zero hd) p =
+        rot.coordPerm d i p).card ≤ 2 := by
+  rw [← matchingRotationPerm_support_compl_card_eq_filter_card rot d i hd]
+  exact hle
+
 end AFiberRotationEquivariance
 
 theorem fiber_filter_adjacent_rotation_card_eq_matchingRotationPerm_filter_card
@@ -174,6 +187,37 @@ noncomputable def of_matchingRotationPerm_support_compl_card_eq_two
       _ = 38 := by
             rw [Finset.sum_const, hindices]
             norm_num)
+
+/-- Build the boundary package from the weaker local condition that each
+selected matching-rotation permutation has at most two fixed coordinates,
+together with a matching lower bound on the support-complement sum. -/
+noncomputable def of_matchingRotationPerm_support_compl_card_le_two_of_sum_ge
+    (rot : AFiberRotationEquivariance h coords)
+    (hindices : indices.card = 19)
+    (hfixed_le :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0, ∀ i : ZMod 19,
+        i ∈ indices → (rot.matchingRotationPerm d i hd).supportᶜ.card ≤ 2)
+    (hsum_ge :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        38 ≤
+          ∑ i ∈ indices,
+            (rot.matchingRotationPerm d i hd).supportᶜ.card) :
+    AFiberCardinality38Boundary h coords indices :=
+  of_matchingSupportComplSum rot (by
+    intro d hd
+    have hsum_le :
+        ∑ i ∈ indices, (rot.matchingRotationPerm d i hd).supportᶜ.card ≤
+          38 := by
+      calc
+        ∑ i ∈ indices, (rot.matchingRotationPerm d i hd).supportᶜ.card ≤
+            ∑ i ∈ indices, 2 := by
+              refine Finset.sum_le_sum ?_
+              intro i hi
+              exact hfixed_le d hd i hi
+        _ = 38 := by
+              rw [Finset.sum_const, hindices]
+              norm_num
+    exact le_antisymm hsum_le (hsum_ge d hd))
 
 /-- Build the boundary package when each selected explicit coordinate equation
 has exactly two solutions. -/
