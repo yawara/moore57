@@ -121,8 +121,10 @@ import Moore57.AFiberCardinalityBoundary
 import Moore57.AFiberCardinalityContributionBoundary
 import Moore57.AFiberMatchingPerm
 import Moore57.AFiberMatchingPermAdjacency
+import Moore57.AFiberMatchingPermSymmetry
 import Moore57.AFiberFiberUnionCardinality
 import Moore57.AFiberUnionFilterCardinality
+import Moore57.AFiberRotationTransport
 import Moore57.TraceCoreCharacterBoundary
 import Moore57.RotationOneFixedBoundBoundary
 import Moore57.RotationOneFixedBoundBoundaryNonempty
