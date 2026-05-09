@@ -132,6 +132,7 @@ import Moore57.AFiberMatchingFixedCountSupport
 import Moore57.AFiberOrbitCardinalityBoundary
 import Moore57.AFiberOrbitMoved
 import Moore57.AFiberOrbitMovingResidual
+import Moore57.AdjacentMovedCanonicalAFiberResidualBridge
 import Moore57.TraceCoreCharacterBoundary
 import Moore57.RotationOneFixedBoundBoundary
 import Moore57.RotationOneFixedBoundBoundaryNonempty

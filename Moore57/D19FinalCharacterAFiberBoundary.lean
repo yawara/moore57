@@ -1,6 +1,7 @@
 import Moore57.D19FinalInputs
 import Moore57.OrbitBaseSelectionInputBridge
 import Moore57.AFiberHybridBoundaryFromCriteria
+import Moore57.AFiberOrbitMovingResidual
 
 /-!
 # Final D19 inputs from direct character and A-fiber boundary data
@@ -126,6 +127,86 @@ theorem not_nonempty (h : D19ActsOnMoore57 V Γ) :
       (D19FinalCharacterAFiberBoundaryInputs.{u, uP} h) := by
   rintro ⟨data⟩
   exact D19FinalInputs.not_nonempty h ⟨data.toD19FinalInputs⟩
+
+/-- Constructor from residual containment for rotation-equivariant A-fiber
+coordinates.  Equivariance supplies the moving-side inclusion. -/
+noncomputable def of_equivariantAFiberResidual
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (k : ZMod 19)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (orbitInput.base r) ∉
+          orbitInput.orbitFamilyUnion)
+    (coords : AFiberCoordinates.{u, uP} Γ)
+    (indices : Finset (ZMod 19))
+    (rot : AFiberRotationEquivariance h coords)
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h orbitInput k ⊆
+        coords.fiberUnion indices)
+    (aFiber_subset_residual :
+      coords.fiberUnion indices ⊆
+        reflectionCopyResidual h orbitInput.base k)
+    (aFiberCardinality : AFiberCardinality38Boundary h coords indices) :
+    D19FinalCharacterAFiberBoundaryInputs h where
+  character := character
+  orbitInput := orbitInput
+  k := k
+  reflection_not_mem_orbitFamilyUnion :=
+    reflection_not_mem_orbitFamilyUnion
+  coords := coords
+  indices := indices
+  moving_subset_aFiber := moving_subset_aFiber
+  aFiber_subset_moving :=
+    rot.fiberUnion_subset_movingResidual_of_subset_residual
+      orbitInput k indices aFiber_subset_residual
+  aFiberCardinality := aFiberCardinality
+
+/-- Constructor specialized to moved-branch rotation-orbit A-fiber
+coordinates.  The moved-branch constructor gives the required equivariance. -/
+noncomputable def of_rotationOrbitOfMovedAFiberResidual
+    (character : D19FinalCharacterInputs h)
+    (orbitInput : OrbitBaseSelectionInput h)
+    (k : ZMod 19)
+    (reflection_not_mem_orbitFamilyUnion :
+      ∀ r : Fin 56,
+        h.smul (DihedralGroup.sr k) (orbitInput.base r) ∉
+          orbitInput.orbitFamilyUnion)
+    (u a0 : V)
+    (hu : ∀ d : ZMod 19, h.rotation d u = u)
+    (hub0 : Γ.Adj u a0)
+    {d0 : ZMod 19} (hd0 : d0 ≠ 0)
+    (hmove : h.rotation d0 a0 ≠ a0)
+    (indices : Finset (ZMod 19))
+    (moving_subset_aFiber :
+      rotationOneMovingResidualPart h orbitInput k ⊆
+        (AFiberCoordinates.ofRotationOrbitOfMoved
+          h u a0 hu hub0 hd0 hmove).fiberUnion indices)
+    (aFiber_subset_residual :
+      (AFiberCoordinates.ofRotationOrbitOfMoved
+          h u a0 hu hub0 hd0 hmove).fiberUnion indices ⊆
+        reflectionCopyResidual h orbitInput.base k)
+    (aFiberCardinality :
+      AFiberCardinality38Boundary h
+        (AFiberCoordinates.ofRotationOrbitOfMoved
+          h u a0 hu hub0 hd0 hmove)
+        indices) :
+    D19FinalCharacterAFiberBoundaryInputs.{u, u} h where
+  character := character
+  orbitInput := orbitInput
+  k := k
+  reflection_not_mem_orbitFamilyUnion :=
+    reflection_not_mem_orbitFamilyUnion
+  coords :=
+    AFiberCoordinates.ofRotationOrbitOfMoved
+      h u a0 hu hub0 hd0 hmove
+  indices := indices
+  moving_subset_aFiber := moving_subset_aFiber
+  aFiber_subset_moving :=
+    AFiberCoordinates.ofRotationOrbitOfMoved_fiberUnion_subset_movingResidual_of_subset_residual
+      h u a0 hu hub0 hd0 hmove orbitInput k indices
+      aFiber_subset_residual
+  aFiberCardinality := aFiberCardinality
 
 /-- Constructor from the equality-form canonical A-fiber criterion. -/
 noncomputable def of_canonicalAFiberCriteria
