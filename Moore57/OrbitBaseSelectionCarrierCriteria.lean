@@ -59,7 +59,7 @@ theorem coordToCarrier_card_eq
       Fintype.card { y : V // y ∈ w.carrier } := by
   calc
     Fintype.card (Fin 56 × ZMod 19) = 1064 := by
-      native_decide
+      simp [Fintype.card_prod, ZMod.card]
     _ = Fintype.card { y : V // y ∈ w.carrier } := by
       simp [w.carrier_card]
 
