@@ -91,3 +91,4 @@ import Moore57.D19FinalRepresentationUpperBoundCompactSplit
 import Moore57.AdjacentMovedReflectionAvoidance
 import Moore57.AdjacentMovedReflectionAvoidanceCriteria
 import Moore57.D19FinalRepresentationUpperBoundAvoidance
+import Moore57.AdjacentMovedReflectionResidualMembership
