@@ -21,6 +21,7 @@ import Moore57.RotationOrbitFinsetBasic
 import Moore57.RotationOrbitInternalDiff
 import Moore57.RotationBranchFiberPerm
 import Moore57.ZMod19Lemmas
+import Moore57.ZMod19AvoidanceBoundary
 import Moore57.BranchFiberFixedPointBounds
 import Moore57.FixedVertexOrbitComplement
 import Moore57.AFiberCoordinates
