@@ -1,6 +1,7 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after commit `074c3ce`.
+Snapshot: 2026-05-10, after adding
+`ReflectionInvolutionK155FromActionBoundary`.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -30,9 +31,22 @@ InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr dt))
 ```
 
 Once this is available, Lean can convert it to the fixed-star reflection-count
-input used downstream.  The missing part is the raw geometric proof that a
-reflection in a hypothetical `D19` action has the required `K_{1,55}` fixed-star
-shape.
+input used downstream.  The first constructive bridge is now present:
+
+```lean
+D19ActsOnMoore57.involutionK155OfReflectionFixedNeighborCenterCount
+```
+
+This proves that a reflection fixed vertex with exactly `55` fixed neighbors,
+together with the total reflection fixed count `56`, determines an explicit
+`InvolutionK155`.  The remaining hard part is therefore sharper:
+
+- construct a reflection fixed center with `55` fixed neighbors from the raw
+  action, preferably as `ReflectionFixedNeighborStarCenterData`;
+- derive or route the exact reflection fixed count `56`;
+- keep in mind that existing fixed-star/count boundaries are Prop-valued, so
+  they yield `Nonempty (InvolutionK155 ...)`, not reusable Type-valued witness
+  data.
 
 ### 3. Raw action to default-base / branch-orbit frontier
 
@@ -49,6 +63,10 @@ particular, Lean still needs routes producing the data behind
 - `support_card_boundary`
 - `no_card_one`
 - `noAllEndpointAdj`
+
+The new K155 bridge reduces one route through this frontier to constructing
+explicit fixed-neighbor centers for reflections and the reflection fixed count
+`56`.
 
 ### 4. A-fiber midpoint reflection and support-card case split
 
@@ -104,3 +122,9 @@ main missing work is still:
 2. derive `InvolutionK155` from a raw reflection;
 3. construct a default-base / branch-orbit frontier wrapper from the raw action.
 
+The current best decomposition of item 2 is:
+
+1. raw reflection geometry -> constructive fixed-neighbor center data
+   (`55` fixed neighbors);
+2. raw/reflection trace data -> reflection fixed count `56`;
+3. the existing Lean bridge -> `InvolutionK155`.
