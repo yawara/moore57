@@ -2,6 +2,7 @@
 import Moore57.D19Contradiction
 import Moore57.FixedPointBasics
 import Moore57.InvolutionCountParity
+import Moore57.HigmanTraceCongruence
 import Moore57.BranchFiberAction
 import Moore57.BranchFiberMatching
 import Moore57.BranchFiberPartition

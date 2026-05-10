@@ -73,6 +73,8 @@ D19ActsOnMoore57.D19LinearCharacterInput.nonempty_involutionK155_of_adjacentMove
 two_dvd_card_sub_fixedVertexCount_of_involutive
 two_dvd_adjacentMovedCount_of_involutive
 D19ActsOnMoore57.two_dvd_reflection_adjacentMovedCount
+IsMoore57.higman_trace_int_natModEq
+D19ActsOnMoore57.D19LinearCharacterInput.reflection_higman_natModEq
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -108,7 +110,10 @@ parity constraints are now available: non-fixed vertices and adjacent-moved
 vertices come in swapped pairs, so `Fintype.card V - fixedVertexCount σ` and
 `adjacentMovedCount Γ σ` are even.  These are not enough by themselves to prove
 Macaj-Siran Lemma 2, but they are reusable arithmetic constraints for the
-remaining count argument.
+remaining count argument.  Higman's Lemma 3 congruence is also separated out:
+if the `E7` trace is integer-valued, then
+`adjacentMovedCount Γ σ ≡ 7 * fixedVertexCount σ + 5 [MOD 15]`; packaged
+`D19LinearCharacterInput` supplies this congruence for every reflection.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
