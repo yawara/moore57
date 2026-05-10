@@ -327,6 +327,23 @@ themselves contradict the small candidates.  The next genuinely needed input
 is a global count/character/Burnside constraint, or a stronger geometric
 argument that forces a lower bound past `46`.
 
+Adding the automatic E7 involution trace parity/range constraints gives one
+more reduction.  The regular `fixedVertexCount = 2` candidate is impossible
+because its Higman numerator is not divisible by `15`; the regular branch
+therefore collapses to `fixedVertexCount = 10`:
+
+```lean
+D19ActsOnMoore57.reflection_regular_fixedVertexCount_ne_two
+D19ActsOnMoore57.fixedVertexCount_reflection_regular_eq_ten
+D19ActsOnMoore57.fixedVertexCount_reflection_trace_refined_raw_candidates
+```
+
+The same trace constraints do not eliminate the star candidates or the
+regular `10` candidate.  Lean records this arithmetic outcome explicitly in
+`ReflectionSmallCandidateCharacterConstraints`: star candidates
+`6,16,26,36,46,56` survive with E7 traces `193,161,129,97,65,33`, and the
+regular `10` case survives with E7 trace `181`.
+
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
 stronger `D19RepresentationCharacterInput`) from the raw D19 action using
