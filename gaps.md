@@ -374,6 +374,34 @@ burnside_constraint_all_raw_small_candidates
 Since all remaining candidates are even, Burnside gives no additional
 exclusion beyond already-known involution parity.
 
+The remaining non-`56` candidates are now routed into a geometry split.  For a
+single reflection, a non-`56` trace-compatible candidate gives either a local
+fixed-center leaf condition or the regular-`10` all-center-neighbor-orbits
+preserved boundary:
+
+```lean
+ReflectionTraceRemainingNon56Candidate
+ReflectionFixedCenterLeafAt
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved
+D19ActsOnMoore57.reflection_remaining_non56_candidate_geometry
+```
+
+Globally, if every reflection is kept non-`56`, Lean proves either the existing
+`ReflectionFixedCenterLeafBoundary` or the regular-`10` all-preserved boundary
+for some reflection:
+
+```lean
+D19ActsOnMoore57.reflection_remaining_non56_global_geometry
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_remaining_non56_no_regularTenPreserved
+D19ActsOnMoore57.exists_regularTenPreserved_of_remaining_non56_no_fixedCenterLeaf
+```
+
+The leaf side is connected to the existing reflected-index matching-equation
+no-go frontier, but still needs the reference-fiber matching equation for the
+induced labeled pair.  The regular-`10` all-preserved boundary currently has
+no downstream no-go consumer; it is the cleanest remaining geometric boundary
+to attack.
+
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
 stronger `D19RepresentationCharacterInput`) from the raw D19 action using
