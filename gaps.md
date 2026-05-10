@@ -78,6 +78,8 @@ D19ActsOnMoore57.fixedInducedGraph_isStrongZeroOne
 D19ActsOnMoore57.fixedInducedGraph_isSRGWith_of_regular
 not_isSRGWith_56_k_0_1
 D19ActsOnMoore57.fixedInducedGraph_not_regular_of_fixedVertexCount_eq_56
+D19ActsOnMoore57.reflectionFixedInducedStarDegrees_of_reflectionFixedSetStar56
+D19ActsOnMoore57.reflectionFixedStarBoundary_of_reflectionFixedSetStar56
 ```
 
 The first theorem records the paper-level common-neighbor condition directly:
@@ -88,6 +90,11 @@ into mathlib's `IsSRGWith` API once constant degree is available.  The
 `(λ, μ) = (0, 1)` fixed induced graph, so the remaining classification work is
 the genuinely non-regular fixed-star step: prove that the fixed induced graph
 has a degree-`55` center and all other fixed vertices are leaves.
+
+If the paper-shaped fixed-star theorem is available for every reflection, and
+one separately knows that `rotationFixedCenter` is not the paper-star center,
+Lean can now convert this directly into `ReflectionFixedInducedStarDegrees`
+and the older `ReflectionFixedStarBoundary`.
 
 ### 3. Raw action to default-base / branch-orbit frontier
 
