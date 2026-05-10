@@ -22,6 +22,7 @@ import Moore57.FixedPointBasics
 import Moore57.GroupAction.FixedPoints
 import Moore57.GroupAction.InvolutionParity
 import Moore57.GraphTheory.AdjacentMovedCount
+import Moore57.LinearAlgebra.InvolutionTrace
 import Moore57.InvolutionCountParity
 import Moore57.InvolutionFixedDegreeParity
 import Moore57.HigmanTraceCongruence
@@ -291,6 +292,8 @@ import Moore57.ReflectionFixedSetStarTraceBridge
 import Moore57.ReflectionFixedSetStarHigmanArithmeticBridge
 import Moore57.FixedInducedStarEdgeFormula
 import Moore57.ReflectionFixedSetStarTraceBoundsBridge
+import Moore57.ReflectionTraceIntegrality
+import Moore57.ReflectionFixedCountBoundsBridge
 import Moore57.ReflectionRegularBranchExclusion
 import Moore57.ReflectionLinearRawReflectionK155Bridge
 import Moore57.BranchOrbitABCActionLevelCaseBoundary
