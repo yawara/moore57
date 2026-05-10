@@ -1,46 +1,7 @@
 import Moore57.D19Contradiction
+import Moore57.GroupAction.FixedPoints
 
 namespace Moore57
-
-/-- The set of fixed vertices of a permutation. -/
-noncomputable def fixedVertexSet {V : Type*} (σ : Equiv.Perm V) : Set V :=
-  {v | σ v = v}
-
-instance fixedVertexSet.fintype {V : Type*} [Fintype V] [DecidableEq V]
-    (σ : Equiv.Perm V) : Fintype (fixedVertexSet σ) := by
-  dsimp [fixedVertexSet]
-  infer_instance
-
-@[simp] theorem mem_fixedVertexSet {V : Type*} {σ : Equiv.Perm V} {v : V} :
-    v ∈ fixedVertexSet σ ↔ σ v = v := by
-  rfl
-
-@[simp] theorem fixedVertexSet_one {V : Type*} :
-    fixedVertexSet (1 : Equiv.Perm V) = Set.univ := by
-  ext v
-  simp [fixedVertexSet]
-
-theorem fixedVertexSet_toFinset_eq_filter
-    {V : Type*} [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) :
-    (fixedVertexSet σ).toFinset =
-      (Finset.univ : Finset V).filter (fun v => σ v = v) := by
-  classical
-  ext v
-  simp [fixedVertexSet]
-
-/-- The earlier fixed-point count is the cardinality of the fixed-point set. -/
-theorem fixedVertexCount_eq_card_fixedVertexSet
-    {V : Type*} [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) :
-    fixedVertexCount σ = Fintype.card (fixedVertexSet σ) := by
-  classical
-  rw [← Set.toFinset_card, fixedVertexSet_toFinset_eq_filter]
-  rfl
-
-theorem fixedVertexSet_eq_support_compl
-    {V : Type*} [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) :
-    fixedVertexSet σ = (σ.supportᶜ : Set V) := by
-  ext v
-  simp [fixedVertexSet, Equiv.Perm.support]
 
 namespace D19ActsOnMoore57
 

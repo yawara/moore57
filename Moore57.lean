@@ -7,6 +7,7 @@ import Moore57.E7Minus8PaperFixedStarConnectors
 import Moore57.E7Minus8PaperFixedStarNoGoConnectors
 import Moore57.E7Minus8RawReflectionStarConnectors
 import Moore57.E7Minus8InversePairTraceBoundaryBridge
+import Moore57.E7Minus8InversePairTraceRawReflectionStarConnectors
 import Moore57.E7Minus8TraceBoundaryBridge
 import Moore57.E7Minus8TraceNoGoConnectors
 import Moore57.E7MatrixIdempotent
@@ -17,6 +18,7 @@ import Moore57.E7ProjectionDimension
 import Moore57.E7ProjectionRepresentationSkeleton
 import Moore57.E7ProjectionTraceBridge
 import Moore57.FixedPointBasics
+import Moore57.GroupAction.FixedPoints
 import Moore57.InvolutionCountParity
 import Moore57.InvolutionFixedDegreeParity
 import Moore57.HigmanTraceCongruence

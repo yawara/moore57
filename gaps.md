@@ -292,6 +292,10 @@ D19CharacterClassBoundary.ofE7ProjectionTraceBoundary
 D19CharacterValueBoundary.ofMinus8ProjectionTraceBoundary
 E7ProjectionInversePairTraceBoundary.toCharacterClassBoundary
 Minus8ProjectionInversePairTraceBoundary.toCharacterValueBoundary
+D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8InversePairTraceBoundariesAndPaperFixedStar56_raw_reflection
+D19ActsOnMoore57.nonempty_involutionK155_of_E7AndMinus8InversePairTraceBoundariesAndPaperFixedStar56_raw_reflection
+D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8InversePairTraceBoundariesAndInvolutionK155_raw_reflection
+D19ActsOnMoore57.nonempty_involutionK155_of_E7AndMinus8InversePairTraceBoundariesAndInvolutionK155_raw_reflection
 no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8TraceBoundariesAndPaperFixedStar56
 no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8TraceBoundariesAndInvolutionK155
 ```
@@ -313,13 +317,15 @@ prove the finite list of D19 trace values for the two concrete projection
 representations, rather than constructing the representations themselves.
 
 The domain split has also started.  Pure D19 character functions and
-inverse-pair conjugacy reductions live under `Moore57/GroupTheory/`, while
-the strong `(λ, μ) = (0, 1)` graph/star classification lives under
+inverse-pair conjugacy reductions live under `Moore57/GroupTheory/`, generic
+fixed-point counting for group actions lives under `Moore57/GroupAction/`,
+and the strong `(λ, μ) = (0, 1)` graph/star classification lives under
 `Moore57/GraphTheory/`:
 
 ```lean
 Moore57.GroupTheory.Dihedral19LinearCharacter
 Moore57.GroupTheory.Dihedral19CharacterValueReduction
+Moore57.GroupAction.FixedPoints
 Moore57.GraphTheory.StrongZeroOne
 ```
 

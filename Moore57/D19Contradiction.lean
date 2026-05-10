@@ -4,6 +4,7 @@ import Mathlib.Data.Matrix.PEquiv
 import Mathlib.GroupTheory.SpecificGroups.Dihedral
 import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Moore57.GroupAction.FixedPoints
 import Moore57.GroupTheory.Dihedral19LinearCharacter
 
 /-!
@@ -326,10 +327,6 @@ theorem compl_adjMatrix_eq_allOnes_sub_one_sub_adjMatrix
     · simp [allOnesMatrix, hvw, hadj]
 
 variable [Fintype V]
-
-/-- 置換の固定頂点数. -/
-def fixedVertexCount (σ : Equiv.Perm V) : ℕ :=
-  ((Finset.univ : Finset V).filter fun v => σ v = v).card
 
 /-- `σ` が頂点を隣接頂点に送る頂点数. これは論文中の `a₁(σ)`. -/
 def adjacentMovedCount (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V) : ℕ :=
