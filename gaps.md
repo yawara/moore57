@@ -293,6 +293,40 @@ range from scratch to excluding the residual small candidates
 `2, 6, 10, 16, 26, 36, 46`, or equivalently proving a lower bound strong
 enough to force the final candidate `56`.
 
+The residual candidates are now structurally separated further.  For the
+regular branch, Lean proves the constant fixed-induced degree is exactly `1`
+or `3`, corresponding to fixed counts `2` or `10`:
+
+```lean
+D19ActsOnMoore57.reflection_regular_degree_fixedVertexCount_candidates
+```
+
+The `2` case is packaged as a `K₂`-shaped fixed-induced graph at
+`rotationFixedCenter`, with one preserved center-neighbor orbit and one moved
+pair of center-neighbor orbits.  The `10` case is packaged as the degree-`3`
+case where all three center-neighbor rotation orbits are preserved and each
+contains exactly one reflection-fixed vertex:
+
+```lean
+D19ActsOnMoore57.reflection_regular_fixedVertexCount_eq_two_K2_consequences
+D19ActsOnMoore57.reflection_regular_fixedVertexCount_eq_ten_center_orbits_preserved
+```
+
+For the non-regular star branch, every candidate star has at least six fixed
+vertices, so `rotationFixedCenter` cannot be the star center; it is a leaf and
+has exactly one fixed neighbor:
+
+```lean
+D19ActsOnMoore57.fixedInducedGraph_reflection_rotationFixedCenter_degree_eq_one_of_fixedInduced_isStarWithCenter
+D19ActsOnMoore57.reflectionFixedNeighborFinset_rotationFixedCenter_card_eq_one_of_fixedInduced_isStarWithCenter
+```
+
+These refinements show that the current local parity, fixed-induced
+strong `(0,1)`, center-degree, and center-neighbor orbit lemmas do not by
+themselves contradict the small candidates.  The next genuinely needed input
+is a global count/character/Burnside constraint, or a stronger geometric
+argument that forces a lower bound past `46`.
+
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
 stronger `D19RepresentationCharacterInput`) from the raw D19 action using

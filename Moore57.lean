@@ -21,6 +21,7 @@ import Moore57.E7ProjectionTraceBridge
 import Moore57.FixedPointBasics
 import Moore57.GroupAction.FixedPoints
 import Moore57.GroupAction.InvolutionParity
+import Moore57.GroupAction.FixedPointConjugacy
 import Moore57.GraphTheory.AdjacentMovedCount
 import Moore57.LinearAlgebra.InvolutionTrace
 import Moore57.InvolutionCountParity
@@ -298,6 +299,9 @@ import Moore57.ReflectionFixedCenterDegreeBounds
 import Moore57.ReflectionFixedCountStarCandidates
 import Moore57.ReflectionRegularBranchRaw
 import Moore57.ReflectionFixedCountRawCandidates
+import Moore57.ReflectionConjugacy
+import Moore57.ReflectionRegularSmallCandidateExclusion
+import Moore57.ReflectionStarSmallCandidateExclusion
 import Moore57.ReflectionRegularBranchExclusion
 import Moore57.ReflectionLinearRawReflectionK155Bridge
 import Moore57.BranchOrbitABCActionLevelCaseBoundary
