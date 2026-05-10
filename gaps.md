@@ -521,9 +521,11 @@ class-boundary and a `(-8)` value-boundary into the concrete
 `α - β = 33` fields derived by the existing character arithmetic.  The latest
 bridge also builds the packaged E7/minus-8 reflection-count boundary directly
 from `TraceRepresentationData h.a1` plus either a `(-8)` value-boundary or
-explicit complementary `(-8)` projection trace values.  From there it exposes
-the bare `D19LinearCharacterInput`, raw-reflection fixed-star/K155 outputs,
-the fixed-center leaf split, representation component boundary, and current
+explicit complementary `(-8)` projection trace values; there are also
+inverse-pair trace variants for the `(-8)` rotation obligations and constructors
+one step further upstream from `D19TraceInput h`.  From there it exposes the
+bare `D19LinearCharacterInput`, raw-reflection fixed-star/K155 outputs, the
+fixed-center leaf split, representation component boundary, and current
 final-gap no-go.  The paper-star and explicit `K_{1,55}` downstream connectors
 are also now exposed:
 
@@ -538,12 +540,28 @@ D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationD
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndReflectionStar
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8ProjectionTraceBoundary
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8ProjectionTraceBoundaryAndReflectionStar
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8InversePairTraceBoundary
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8InversePairTraceBoundaryAndReflectionStar
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8Values
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8ValuesAndReflectionStar
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8ProjectionTraceBoundaryAndReflectionStar
 D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataAndMinus8Values
 D19ActsOnMoore57.involutionFixedSetStar56_of_traceRepresentationDataAndMinus8Values
 D19ActsOnMoore57.nonempty_involutionK155_of_traceRepresentationDataAndMinus8Values
 D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_traceRepresentationDataAndMinus8Values
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_traceRepresentationDataAndMinus8Values
 D19ActsOnMoore57.no_currentFinalGapBoundary_of_traceRepresentationDataAndMinus8Values
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.involutionFixedSetStar56_of_traceRepresentationDataAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.nonempty_involutionK155_of_traceRepresentationDataAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_traceRepresentationDataAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_traceRepresentationDataAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_traceRepresentationDataAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataAndMinus8InversePairTraceBoundary
+D19ActsOnMoore57.involutionFixedSetStar56_of_traceRepresentationDataAndMinus8InversePairTraceBoundary_raw_reflection
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_d19TraceInputAndMinus8Values
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_d19TraceInputAndMinus8ProjectionTraceBoundary
 D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataAndMinus8ValuesAndReflectionStar
 D19ActsOnMoore57.involutionFixedSetStar56_of_traceRepresentationDataAndMinus8ValuesAndReflectionStar
 D19ActsOnMoore57.nonempty_involutionK155_of_traceRepresentationDataAndMinus8ValuesAndReflectionStar
@@ -669,9 +687,9 @@ circular, because the raw-reflection fixed-star theorem itself consumes the
 resulting `D19LinearCharacterInput`.  The remaining representation-theoretic
 gap is therefore sharply isolated: prove the finite list of D19 trace values
 for the concrete projection representations, especially the complementary
-`(-8)` projection trace/value boundary and the raw-action inputs feeding
-`TraceRepresentationData h.a1`, rather than constructing the projection
-representations themselves.
+`(-8)` projection trace/value boundary.  On the E7 side, it now suffices to
+feed the existing `D19TraceInput h`/`TraceRepresentationData h.a1` surfaces,
+rather than constructing the projection representations themselves.
 
 The domain split has also started.  Pure D19 character functions and
 inverse-pair conjugacy reductions live under `Moore57/GroupTheory/`, generic
