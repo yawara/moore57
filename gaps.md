@@ -10,22 +10,23 @@ to prove, with no extra assumptions and depending only on mathlib, that no
 
 ## Gap List By Difficulty
 
-### 1. Hardest: prove `h7` and `hMinus8` from the raw action
+### 1. Hardest: derive E7 trace data and standard count inputs from the raw action
 
-Many no-go routes currently consume the following character identities as
-inputs:
+Many no-go routes now consume the following upstream package, plus the standard
+reflection count inputs:
 
-- `h7`: the `E7Matrix` trace agrees with a `d19LinearCharacter`.
-- `hMinus8`: the complementary minus-8 trace also agrees with a
-  `d19LinearCharacter`.
+- `TraceRepresentationData h.a1`, or the slightly richer `D19TraceInput h`;
+- fixed count `56` and adjacent-moved count `112` for one reflection
+  representative.
 
 The remaining work is to derive these from the raw `D19ActsOnMoore57` action,
 using mathlib representation theory as much as possible and avoiding a custom
-representation-theory reimplementation.  The projection representations
-themselves are already constructed; the hard residue is the finite list of
-trace/value data that proves their characters are the required D19 rational
-characters, together with the raw-action count inputs used by the packaged
-bridges.
+representation-theory reimplementation.  The `(-8)` character boundary is no
+longer an independent representation-decomposition gap: once
+`TraceRepresentationData h.a1` is available, Lean derives the complementary
+`(-8)` values from the existing projection-character formula.  The hard residue
+is now the finite E7 trace data and the raw-action count inputs used by the
+packaged bridges.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 
@@ -546,6 +547,33 @@ D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationD
 D19ActsOnMoore57.minus8ProjectionRepresentation_characterValueBoundary_of_traceRepresentationDataComplement
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataComplement
 D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataComplement
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputComplement
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputComplementAndReflectionStar
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_d19TraceInputComplement
+D19ActsOnMoore57.involutionFixedSetStar56_of_d19TraceInputComplement_raw_reflection
+D19ActsOnMoore57.nonempty_involutionK155_of_d19TraceInputComplement_raw_reflection
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_d19TraceInputComplement
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_d19TraceInputComplement
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_d19TraceInputComplement
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_d19TraceInputComplementAndReflectionStar
+D19ActsOnMoore57.involutionFixedSetStar56_of_d19TraceInputComplementAndReflectionStar_raw_reflection
+D19ActsOnMoore57.nonempty_involutionK155_of_d19TraceInputComplementAndReflectionStar_raw_reflection
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_d19TraceInputComplementAndReflectionStar
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_d19TraceInputComplementAndReflectionStar
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_d19TraceInputComplementAndReflectionStar
+D19ActsOnMoore57.involutionFixedSetStar56_of_traceRepresentationDataComplement
+D19ActsOnMoore57.nonempty_involutionK155_of_traceRepresentationDataComplement
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelFinalBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelLocalObstructionBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelReducedCoordinateWitnessBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelSetInvariantWitnessBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelCommonNeighborReducedBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelMinimalRemainingBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelMinimalRemainingRefinedBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.no_actionLevelMinimalRemainingRefinedMatchingBoundary_of_traceRepresentationDataComplement
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8Values
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8ValuesAndReflectionStar
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8ProjectionTraceBoundary
@@ -705,11 +733,14 @@ A direct route from the two concrete
 character boundaries alone to raw-reflection fixed stars would currently be
 circular, because the raw-reflection fixed-star theorem itself consumes the
 resulting `D19LinearCharacterInput`.  The remaining representation-theoretic
-gap is therefore sharply isolated: on the E7 side, feed the existing
-`D19TraceInput h`/`TraceRepresentationData h.a1` surfaces from the raw action.
-The complementary `(-8)` character values then follow automatically from that
-E7 data and no longer need to be supplied as a separate representation
-decomposition hypothesis.
+gap is therefore sharply isolated: derive the existing `D19TraceInput h` or
+`TraceRepresentationData h.a1` surfaces from the raw action, together with the
+standard reflection count inputs.  From `D19TraceInput h`, the complementary
+route now goes straight to fixed-star, `K_{1,55}`, fixed-center leaf,
+representation-component, current-gap, and action-level no-go frontiers.  The
+complementary `(-8)` character values follow automatically from the E7 data and
+no longer need to be supplied as a separate representation decomposition
+hypothesis.
 
 The domain split has also started.  Pure D19 character functions and
 inverse-pair conjugacy reductions live under `Moore57/GroupTheory/`, generic
