@@ -38,7 +38,12 @@ paper fixed-star statement and then derives `adjacentMovedCount = 112`.  For
 the count route, Lean now also has the non-circular local theorem
 `fixedVertexCount_reflection_eq_56_of_E7_trace_eq_33`: if the E7 trace of a
 single reflection is `33`, the regular-`10` branch contradicts its trace value
-`181`, and the nonregular star-edge branch forces fixed count `56`.
+`181`, and the nonregular star-edge branch forces fixed count `56`.  The
+complementary route can now consume `TraceCoreCharacterBoundary h` or
+`RepresentationCharacterComponentsBoundary h` plus the uniform reflection trace
+condition `∀ k, trace(E7 * P_{sr k}) = 33`; the remaining representation-side
+gap is proving this reflection trace condition from mathlib's character
+decomposition of the concrete E7 projection representation.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 
