@@ -452,6 +452,29 @@ regular-branch target is a stronger representation-theoretic or geometric
 contradiction with trace `181` or with all default center-neighbor orbits
 preserved.
 
+The representation-theoretic side of that obstruction is now explicit: if the
+E7 trace is packaged as a full D19 linear character, regular-`10` forces
+`alpha - beta = 181`, contradicting the packaged reflection equation
+`alpha - beta = 33`.
+
+```lean
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.alpha_sub_beta_eq_181_of_e7_linear_character
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.not_d19LinearCharacterInput
+D19ActsOnMoore57.reflectionRegularTen_not_d19LinearCharacterInput
+```
+
+So once the raw action supplies `D19LinearCharacterInput` from mathlib
+representation theory, the regular-`10` boundary is eliminated automatically.
+Lean also records the fixed-induced graph shape of the branch as the
+strongly-regular `(10,3,0,1)` graph, with triangle-free and unique common
+neighbor consequences:
+
+```lean
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.fixedInducedGraph_isSRGWith_10_3_0_1
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.fixedInducedGraph_triangleFree
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.fixedInducedGraph_existsUnique_commonNeighbor_of_not_adj
+```
+
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
 stronger `D19RepresentationCharacterInput`) from the raw D19 action using
