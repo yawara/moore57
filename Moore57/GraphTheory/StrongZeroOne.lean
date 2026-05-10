@@ -64,6 +64,62 @@ theorem not_isSRGWith_56_k_0_1 {V : Type*} [Fintype V]
     have hk_ge8_int : (8 : ℤ) ≤ k := by exact_mod_cast hk_ge8
     nlinarith
 
+/-- There is no regular strongly-regular graph with parameters
+`(n, k, λ, μ) = (n, k, 0, 1)` when `52 ≤ n ≤ 56`.  In this range the parameter
+equation would force `k^2 = n - 1`, but no integer square lies between `51`
+and `55`. -/
+theorem not_isSRGWith_n_k_0_1_of_card_between_52_56
+    {V : Type*} [Fintype V]
+    {G : SimpleGraph V} [DecidableRel G.Adj] (n k : ℕ)
+    (hn_lower : 52 ≤ n) (hn_upper : n ≤ 56) :
+    ¬ G.IsSRGWith n k 0 1 := by
+  intro hG
+  have hn_pos : 0 < n := by omega
+  have hparam := SimpleGraph.IsSRGWith.param_eq G hG hn_pos
+  have hcard : Fintype.card V = n := hG.card
+  have hnonempty : Nonempty V := by
+    rw [← Fintype.card_pos_iff, hcard]
+    exact hn_pos
+  rcases hnonempty with ⟨v⟩
+  have hk_lt : k < n := by
+    have hdegree := G.degree_lt_card_verts v
+    simpa [hG.regular.degree_eq v, hcard] using hdegree
+  have hk_le : k ≤ n := Nat.le_of_lt hk_lt
+  have hparam_nat : k * (k - 1) = n - k - 1 := by
+    simpa using hparam
+  by_cases hk_zero : k = 0
+  · subst k
+    omega
+  · have hk_pos : 1 ≤ k := Nat.succ_le_of_lt (Nat.pos_of_ne_zero hk_zero)
+    have hsub_pos : 1 ≤ n - k := by omega
+    have hparam_int := congrArg (fun m : ℕ => (m : ℤ)) hparam_nat
+    change ((k * (k - 1) : ℕ) : ℤ) = ((n - k - 1 : ℕ) : ℤ) at hparam_int
+    rw [Nat.cast_mul, Nat.cast_sub hk_pos, Nat.cast_sub hsub_pos,
+      Nat.cast_sub hk_le] at hparam_int
+    norm_num at hparam_int
+    have hsquare : (k : ℤ) * (k : ℤ) = (n : ℤ) - 1 := by
+      calc
+        (k : ℤ) * (k : ℤ) =
+            (k : ℤ) * ((k : ℤ) - 1) + (k : ℤ) := by ring
+        _ = (n : ℤ) - 1 := by
+          rw [hparam_int]
+          ring
+    have hn_lower_cast : (52 : ℤ) ≤ (n : ℤ) := by
+      exact_mod_cast hn_lower
+    have hn_upper_cast : (n : ℤ) ≤ 56 := by
+      exact_mod_cast hn_upper
+    have hn_lower_int : (51 : ℤ) ≤ (n : ℤ) - 1 := by
+      linarith
+    have hn_upper_int : (n : ℤ) - 1 ≤ (55 : ℤ) := by
+      linarith
+    by_cases hk_le7 : k ≤ 7
+    · have hk_nonneg_int : 0 ≤ (k : ℤ) := by exact_mod_cast Nat.zero_le k
+      have hk_le7_int : (k : ℤ) ≤ 7 := by exact_mod_cast hk_le7
+      nlinarith
+    · have hk_ge8 : 8 ≤ k := by omega
+      have hk_ge8_int : (8 : ℤ) ≤ k := by exact_mod_cast hk_ge8
+      nlinarith
+
 universe u
 
 variable {V : Type u} [Fintype V] [DecidableEq V]

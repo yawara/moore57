@@ -137,5 +137,19 @@ theorem fixedInducedGraph_not_regular_of_fixedVertexCount_eq_56
     simpa [hfix] using hsrg
   exact not_isSRGWith_56_k_0_1 k hsrg56
 
+/-- If a fixed induced graph has between `52` and `56` vertices, it cannot be
+regular with common-neighbor parameters `(λ, μ) = (0, 1)`. -/
+theorem fixedInducedGraph_not_regular_of_fixedVertexCount_between_52_56
+    (h : D19ActsOnMoore57 V Γ) (g : DihedralGroup 19)
+    (hfixed_lower : 52 ≤ fixedVertexCount (h.smulEquiv g))
+    (hfixed_upper : fixedVertexCount (h.smulEquiv g) ≤ 56) :
+    ¬ ∃ k : ℕ, ∀ x : fixedVertexSet (h.smulEquiv g),
+      (fixedInducedGraph h g).degree x = k := by
+  rintro ⟨k, hreg⟩
+  exact
+    not_isSRGWith_n_k_0_1_of_card_between_52_56
+      (fixedVertexCount (h.smulEquiv g)) k hfixed_lower hfixed_upper
+      (h.fixedInducedGraph_isSRGWith_of_regular g k hreg)
+
 end D19ActsOnMoore57
 end Moore57

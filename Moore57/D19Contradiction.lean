@@ -5,6 +5,7 @@ import Mathlib.GroupTheory.SpecificGroups.Dihedral
 import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Moore57.GroupAction.FixedPoints
+import Moore57.GraphTheory.AdjacentMovedCount
 import Moore57.GroupTheory.Dihedral19LinearCharacter
 
 /-!
@@ -327,10 +328,6 @@ theorem compl_adjMatrix_eq_allOnes_sub_one_sub_adjMatrix
     · simp [allOnesMatrix, hvw, hadj]
 
 variable [Fintype V]
-
-/-- `σ` が頂点を隣接頂点に送る頂点数. これは論文中の `a₁(σ)`. -/
-def adjacentMovedCount (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V) : ℕ :=
-  ((Finset.univ : Finset V).filter fun v => Γ.Adj v (σ v)).card
 
 /-- Moore graph パラメータから得る隣接行列関係
 `A^2 = 56 I - A + J`. -/

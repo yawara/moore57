@@ -90,6 +90,10 @@ IsMoore57.starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.reflection_starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
 D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_trace_starEdgeCountFormula_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_starEdgeCountFormula_bounds
+not_isSRGWith_n_k_0_1_of_card_between_52_56
+D19ActsOnMoore57.fixedInducedGraph_not_regular_of_fixedVertexCount_between_52_56
+D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_trace_fixedVertexCount_bounds
+D19ActsOnMoore57.nonempty_involutionK155_of_reflection_trace_fixedVertexCount_bounds
 adjacentMovedCount_eq_involution_fixed_edge_formula
 fixed_neighbor_sum_eq_twice_fixed_induced_edges
 fixed_to_moved_edge_count_eq
@@ -224,9 +228,12 @@ not yet the full fixed-count theorem, but they are raw-reflection consequences
 that narrow the remaining fixed-induced classification and count work.
 
 There is also now a direct Higman-arithmetic bridge from `trace integer +
-star-edge formula + 52..56 fixed-count bounds` to
-`InvolutionFixedSetStar56`.  The fixed-induced edge-count formula itself is
-now formalized for any involutive automorphism of a Moore57 graph:
+52..56 fixed-count bounds` to `InvolutionFixedSetStar56`.  The bounds alone
+exclude the regular fixed-induced branch by the SRG parameter equation
+`k^2 = a₀ - 1`, since no square lies between `51` and `55`; the non-regular
+strong `(0,1)` branch supplies the star, and the raw involution edge-count
+formula supplies the star-edge formula.  The fixed-induced edge-count formula
+itself is now formalized for any involutive automorphism of a Moore57 graph:
 `a₁ = 3250 - 58*a₀ + 2*e`, where `e` is the fixed-induced edge count.  The
 star specialization is also formalized: if the fixed-induced graph is a star,
 then `e = a₀ - 1`, and the packaged character bridge reaches
@@ -298,6 +305,8 @@ D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8InversePairTraceBoundari
 D19ActsOnMoore57.nonempty_involutionK155_of_E7AndMinus8InversePairTraceBoundariesAndInvolutionK155_raw_reflection
 no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8TraceBoundariesAndPaperFixedStar56
 no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8TraceBoundariesAndInvolutionK155
+no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8InversePairTraceBoundariesAndPaperFixedStar56
+no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8InversePairTraceBoundariesAndInvolutionK155
 ```
 
 These are thin wrappers around existing mathlib-facing `Representation.character`
@@ -326,6 +335,8 @@ and the strong `(λ, μ) = (0, 1)` graph/star classification lives under
 Moore57.GroupTheory.Dihedral19LinearCharacter
 Moore57.GroupTheory.Dihedral19CharacterValueReduction
 Moore57.GroupAction.FixedPoints
+Moore57.GroupAction.InvolutionParity
+Moore57.GraphTheory.AdjacentMovedCount
 Moore57.GraphTheory.StrongZeroOne
 ```
 

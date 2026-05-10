@@ -7,6 +7,7 @@ import Moore57.E7Minus8PaperFixedStarConnectors
 import Moore57.E7Minus8PaperFixedStarNoGoConnectors
 import Moore57.E7Minus8RawReflectionStarConnectors
 import Moore57.E7Minus8InversePairTraceBoundaryBridge
+import Moore57.E7Minus8InversePairTraceNoGoConnectors
 import Moore57.E7Minus8InversePairTraceRawReflectionStarConnectors
 import Moore57.E7Minus8TraceBoundaryBridge
 import Moore57.E7Minus8TraceNoGoConnectors
@@ -19,6 +20,8 @@ import Moore57.E7ProjectionRepresentationSkeleton
 import Moore57.E7ProjectionTraceBridge
 import Moore57.FixedPointBasics
 import Moore57.GroupAction.FixedPoints
+import Moore57.GroupAction.InvolutionParity
+import Moore57.GraphTheory.AdjacentMovedCount
 import Moore57.InvolutionCountParity
 import Moore57.InvolutionFixedDegreeParity
 import Moore57.HigmanTraceCongruence
@@ -287,6 +290,7 @@ import Moore57.FixedInducedStrongStarBridge
 import Moore57.ReflectionFixedSetStarTraceBridge
 import Moore57.ReflectionFixedSetStarHigmanArithmeticBridge
 import Moore57.FixedInducedStarEdgeFormula
+import Moore57.ReflectionFixedSetStarTraceBoundsBridge
 import Moore57.ReflectionRegularBranchExclusion
 import Moore57.ReflectionLinearRawReflectionK155Bridge
 import Moore57.BranchOrbitABCActionLevelCaseBoundary
