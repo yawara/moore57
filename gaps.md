@@ -147,6 +147,10 @@ E7Matrix_toLin'_isIdempotentElem
 trace_restrict_E7Range_permMatrix_toLin'_eq_matrix_trace
 D19ActsOnMoore57.trace_restrict_E7Range_smulEquiv_toLin'_eq_matrix_trace
 D19ActsOnMoore57.e7ProjectionRepresentation_character_eq_matrix_trace
+D19ActsOnMoore57.finrank_E7Range_eq_1729
+D19ActsOnMoore57.finrank_e7ProjectionRepresentation_eq_1729
+D19ActsOnMoore57.D19LinearCharacterInput.ofE7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7ProjectionCharacterClassBoundary
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -245,6 +249,9 @@ from the Moore57 adjacency identities, transported through mathlib's
 `LinearMap.range (E7Matrix Γ).toLin'`.  Its character is exactly the Higman
 matrix trace:
 `D19ActsOnMoore57.e7ProjectionRepresentation_character_eq_matrix_trace`.
+The same representation now has finrank `1729` by `Representation.char_one`,
+and an E7-specific constructor routes any class-boundary decomposition of
+`h.e7ProjectionRepresentation` directly to `D19LinearCharacterInput`.
 The next representation-theoretic step is no longer construction of the E7
 representation, but decomposition of this rational D19 representation into
 the expected D19 linear-character multiplicities, yielding the `h7` field of

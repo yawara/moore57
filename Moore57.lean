@@ -2,7 +2,9 @@
 import Moore57.D19Contradiction
 import Moore57.E7MatrixIdempotent
 import Moore57.E7MatrixPermutationCommutation
+import Moore57.E7LinearCharacterInputBridge
 import Moore57.E7ProjectionCharacterBridge
+import Moore57.E7ProjectionDimension
 import Moore57.E7ProjectionRepresentationSkeleton
 import Moore57.E7ProjectionTraceBridge
 import Moore57.FixedPointBasics
