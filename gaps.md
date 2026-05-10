@@ -463,6 +463,7 @@ ReflectionRegularTenAllCenterNeighborOrbitsPreserved.not_d19LinearCharacterInput
 D19ActsOnMoore57.reflectionRegularTen_not_d19LinearCharacterInput
 D19ActsOnMoore57.D19LinearCharacterInput.no_reflectionRegularTenAllCenterNeighborOrbitsPreserved
 D19ActsOnMoore57.D19LinearCharacterInput.reflectionFixedCenterLeafBoundary
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_nonempty_linearCharacterInput
 ```
 
 So once the raw action supplies `D19LinearCharacterInput` from mathlib
@@ -515,6 +516,14 @@ paper-star and explicit `K_{1,55}` downstream connectors are also now exposed:
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7ProjectionCharacterClassBoundary
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7AndMinus8CharacterBoundaries
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundaries
+D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7AndMinus8InversePairTraceBoundaries
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8InversePairTraceBoundaries
+D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8CharacterBoundariesAndReflectionCounts_raw_reflection
+D19ActsOnMoore57.nonempty_involutionK155_of_E7AndMinus8CharacterBoundariesAndReflectionCounts_raw_reflection
+D19ActsOnMoore57.involutionFixedSetStar56_of_nonempty_linearCharacterInput_raw_reflection
+D19ActsOnMoore57.nonempty_involutionK155_of_nonempty_linearCharacterInput_raw_reflection
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_nonempty_linearCharacterInput_raw_reflection
+D19ActsOnMoore57.adjacentMovedCount_reflection_eq_112_of_nonempty_linearCharacterInput_raw_reflection
 D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndPaperFixedStar56
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56
 D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndInvolutionK155
@@ -547,7 +556,9 @@ paper-star/K155/count input needed to build `D19LinearCharacterInput`.  The
 latest wrappers also expose the bare `Nonempty (D19LinearCharacterInput h)`
 consequence of the E7 and E7/minus-8 boundary packages, so later modules can
 consume the representation input without choosing the concrete record
-manually.  The
+manually.  That `Nonempty` boundary now has direct reflection consumers for
+fixed-star, `K_{1,55}`, fixed-count, adjacent-moved count, and the
+fixed-center leaf split.  The
 rotation obligations have also been reduced conservatively to one
 representative from each inverse pair, using only the group-theoretic fact that
 `r d` is conjugate to `r (-d)` in `D19`; nonzero rotations are not all conjugate.
