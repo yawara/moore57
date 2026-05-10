@@ -198,6 +198,13 @@ theorem nonempty_iff_componentsBoundary
   (nonempty_iff_exists_traceMultiplicityData h).trans
     (representationCharacterComponentsBoundary_iff_exists_traceMultiplicityData h).symm
 
+/-- Repackage a representation-character input as the component boundary
+consumed by the branch-orbit no-go frontiers. -/
+theorem representationCharacterComponentsBoundary
+    (input : D19RepresentationCharacterInput h) :
+    RepresentationCharacterComponentsBoundary h :=
+  (nonempty_iff_componentsBoundary _).mp ⟨input⟩
+
 /-- Repackage a representation-character input as the final trace-core
 boundary.  The `rotation_a1` field is supplied by `h` when lowering further to
 `TraceCharacterCoreData`. -/
@@ -307,6 +314,13 @@ theorem nonempty_iff_componentsBoundary
       RepresentationCharacterComponentsBoundary h :=
   (nonempty_iff_d19RepresentationCharacterInput h).trans
     (D19RepresentationCharacterInput.nonempty_iff_componentsBoundary h)
+
+/-- Repackage a trace-core character boundary as the component boundary
+consumed by the branch-orbit no-go frontiers. -/
+theorem representationCharacterComponentsBoundary
+    (data : TraceCoreCharacterBoundary h) :
+    RepresentationCharacterComponentsBoundary h :=
+  (nonempty_iff_componentsBoundary _).mp ⟨data⟩
 
 end TraceCoreCharacterBoundary
 
