@@ -2,7 +2,8 @@
 
 Snapshot: 2026-05-10, after routing E7 projection character-class data with
 `alpha - beta = 33` through the trace-core, reflection trace `33`, fixed-star,
-and current-final-gap no-go frontiers.
+and current-final-gap no-go frontiers, and after adding the first substantive
+D19 representation-theory split on the rotation-invariant summand.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -46,6 +47,24 @@ representation-character, data-package, and direct `TraceRepresentationData
 h.a1` levels, the adjacent-moved count `112` is no longer an independent input
 once the standard reflection fixed count `56` is available: Lean derives the
 paper fixed-star statement and then derives `adjacentMovedCount = 112`.
+
+The first non-wrapper representation-theory component is now in Lean:
+
+```lean
+d19RotationInvariantSubmodule
+reflectionZeroOnRotationInvariants
+reflectionZeroOnRotationInvariants_sq
+exists_nat_trace_reflectionZeroOnRotationInvariants
+```
+
+This formalizes the trivial/sign split on the rotation-invariant part of any
+rational `D19` representation: the restriction of `sr 0` to the subspace fixed
+by all rotations is an involution, and its trace is the difference of two
+natural multiplicities.  The remaining hard representation-theory work is to
+connect this split to the E7 projection representation's character values,
+handle the nontrivial 18-dimensional rotation part (`gamma`), and derive the
+specific E7 arithmetic `alpha - beta = 33`, `alpha ≤ 113`, and `beta ≤ 58`
+from the raw action rather than assuming them.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 

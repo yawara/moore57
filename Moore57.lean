@@ -70,6 +70,7 @@ import Moore57.FixedSetDegreeConstraints
 import Moore57.GraphTheory.StrongZeroOne
 import Moore57.GroupTheory.Dihedral19LinearCharacter
 import Moore57.GroupTheory.Dihedral19CharacterValueReduction
+import Moore57.GroupTheory.D19RotationInvariantTrace
 import Moore57.FixedInducedSubgraph
 import Moore57.FixedInducedDegree
 import Moore57.RotationFixedSets
