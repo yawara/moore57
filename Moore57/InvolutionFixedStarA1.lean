@@ -264,4 +264,134 @@ end D19LinearCharacterInput
 
 end D19ActsOnMoore57
 
+/-- An explicit `K_{1,55}` star description for the fixed set of an involutive
+automorphism `σ`: a center plus 55 leaves with the canonical adjacency
+pattern. -/
+structure InvolutionK155
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
+    (σ : Equiv.Perm V) where
+  involutive : Function.Involutive σ
+  automorphism : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)
+  center : V
+  leaves : Finset V
+  center_notMem : center ∉ leaves
+  leaves_card : leaves.card = 55
+  fixed_iff : ∀ v, σ v = v ↔ v = center ∨ v ∈ leaves
+  center_adj_leaves : ∀ l ∈ leaves, Γ.Adj center l
+  leaves_pairwise_not_adj :
+    ∀ ⦃l₁⦄, l₁ ∈ leaves → ∀ ⦃l₂⦄, l₂ ∈ leaves → ¬ Γ.Adj l₁ l₂
+
+namespace InvolutionK155
+
+variable {σ : Equiv.Perm V}
+
+private theorem fixedFinset_eq (hK : InvolutionK155 Γ σ) :
+    fixedFinset σ = insert hK.center hK.leaves := by
+  ext v
+  simp only [mem_fixedFinset, Finset.mem_insert]
+  exact hK.fixed_iff v
+
+private theorem fixedFinset_card_eq_56 (hK : InvolutionK155 Γ σ) :
+    (fixedFinset σ).card = 56 := by
+  rw [hK.fixedFinset_eq, Finset.card_insert_of_notMem hK.center_notMem,
+    hK.leaves_card]
+
+/-- The neighborhood of the center inside the fixed set is exactly the leaves. -/
+private theorem center_neighbors_inter_fixed
+    (hK : InvolutionK155 Γ σ) :
+    (Γ.neighborFinset hK.center) ∩ fixedFinset σ = hK.leaves := by
+  ext v
+  simp only [Finset.mem_inter, SimpleGraph.mem_neighborFinset,
+    hK.fixedFinset_eq, Finset.mem_insert]
+  constructor
+  · rintro ⟨hAdj, h | h⟩
+    · exact (Γ.loopless.irrefl (a := hK.center) (h ▸ hAdj)).elim
+    · exact h
+  · intro hv
+    exact ⟨hK.center_adj_leaves v hv, Or.inr hv⟩
+
+/-- The neighborhood of a leaf inside the fixed set is exactly the center. -/
+private theorem leaf_neighbors_inter_fixed
+    (hK : InvolutionK155 Γ σ) {l : V} (hl : l ∈ hK.leaves) :
+    (Γ.neighborFinset l) ∩ fixedFinset σ = {hK.center} := by
+  ext v
+  simp only [Finset.mem_inter, SimpleGraph.mem_neighborFinset,
+    hK.fixedFinset_eq, Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hAdj, hcase | hcase⟩
+    · exact hcase
+    · exact (hK.leaves_pairwise_not_adj hl hcase hAdj).elim
+  · rintro rfl
+    exact ⟨(hK.center_adj_leaves l hl).symm, Or.inl rfl⟩
+
+private theorem center_bipartite_edges
+    (hΓ : IsMoore57 Γ) (hK : InvolutionK155 Γ σ) :
+    ((Γ.neighborFinset hK.center) \ fixedFinset σ).card = 2 := by
+  classical
+  have hdeg : (Γ.neighborFinset hK.center).card = 57 := by
+    rw [SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular.degree_eq]
+  have hinter : ((Γ.neighborFinset hK.center) ∩ fixedFinset σ).card = 55 := by
+    rw [hK.center_neighbors_inter_fixed, hK.leaves_card]
+  have hsum := Finset.card_sdiff_add_card_inter
+    (Γ.neighborFinset hK.center) (fixedFinset σ)
+  omega
+
+private theorem leaf_bipartite_edges
+    (hΓ : IsMoore57 Γ) (hK : InvolutionK155 Γ σ) {l : V} (hl : l ∈ hK.leaves) :
+    ((Γ.neighborFinset l) \ fixedFinset σ).card = 56 := by
+  classical
+  have hdeg : (Γ.neighborFinset l).card = 57 := by
+    rw [SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular.degree_eq]
+  have hinter : ((Γ.neighborFinset l) ∩ fixedFinset σ).card = 1 := by
+    rw [hK.leaf_neighbors_inter_fixed hl, Finset.card_singleton]
+  have hsum := Finset.card_sdiff_add_card_inter
+    (Γ.neighborFinset l) (fixedFinset σ)
+  omega
+
+/-- The bipartite edge count from a `K_{1,55}` star is `2 + 55·56 = 3082`. -/
+private theorem bipartite_edges_eq_3082
+    (hΓ : IsMoore57 Γ) (hK : InvolutionK155 Γ σ) :
+    (∑ f ∈ fixedFinset σ, ((Γ.neighborFinset f) \ fixedFinset σ).card) =
+      3082 := by
+  classical
+  -- Per-vertex contributions: 2 at the center, 56 at each leaf.
+  have hPerVertex : ∀ f ∈ fixedFinset σ,
+      ((Γ.neighborFinset f) \ fixedFinset σ).card =
+        (if f = hK.center then 2 else 56) := by
+    intro f hf
+    rw [mem_fixedFinset] at hf
+    rcases (hK.fixed_iff f).mp hf with rfl | hfLeaf
+    · simp [hK.center_bipartite_edges hΓ]
+    · have hne : f ≠ hK.center := fun heq => hK.center_notMem (heq ▸ hfLeaf)
+      simp [hne, hK.leaf_bipartite_edges hΓ hfLeaf]
+  rw [Finset.sum_congr rfl hPerVertex]
+  -- Σ over (insert center leaves) of (if · = center then 2 else 56) = 2 + 55·56.
+  rw [hK.fixedFinset_eq, Finset.sum_insert hK.center_notMem]
+  rw [if_pos rfl]
+  have hLeavesConst : ∀ l ∈ hK.leaves,
+      (if l = hK.center then (2 : ℕ) else 56) = 56 := by
+    intro l hl
+    have : l ≠ hK.center := fun heq => hK.center_notMem (heq ▸ hl)
+    simp [this]
+  rw [Finset.sum_congr rfl hLeavesConst, Finset.sum_const, hK.leaves_card]
+  ring
+
+/-- An explicit `K_{1,55}` star yields the bipartite-count abstraction
+`InvolutionFixedStar55`. -/
+theorem toInvolutionFixedStar55
+    (hΓ : IsMoore57 Γ) (hK : InvolutionK155 Γ σ) :
+    InvolutionFixedStar55 Γ σ where
+  involutive := hK.involutive
+  automorphism := hK.automorphism
+  fixed_card := hK.fixedFinset_card_eq_56
+  bipartite_edges := hK.bipartite_edges_eq_3082 hΓ
+
+/-- An explicit `K_{1,55}` star directly gives `a₁(σ) = 112`. -/
+theorem adjacentMovedCount_eq_112
+    (hΓ : IsMoore57 Γ) (hK : InvolutionK155 Γ σ) :
+    adjacentMovedCount Γ σ = 112 :=
+  (hK.toInvolutionFixedStar55 hΓ).adjacentMovedCount_eq_112 hΓ
+
+end InvolutionK155
+
 end Moore57
