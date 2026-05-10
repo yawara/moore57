@@ -93,6 +93,28 @@ theorem reflection_eq_of_linear_character
     rw [← hkey]; push_cast; norm_num
   exact_mod_cast hℚ
 
+/-- Conversely, the full linear-character equality and the multiplicity
+reflection equation force the standard reflection fixed count as soon as the
+reflection adjacent-moved count is `112`. -/
+theorem fixedVertexCount_reflection_eq_56_of_linear_character
+    (alpha beta gamma : ℕ)
+    (hlin : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    (hreflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    {d : ZMod 19}
+    (ha1 : adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr d)) = 112) :
+    fixedVertexCount (h.smulEquiv (DihedralGroup.sr d)) = 56 := by
+  have hkey := hlin (DihedralGroup.sr d)
+  rw [h.isMoore.higman_trace_formula, ha1, d19LinearCharacter_reflection] at hkey
+  have hreflectionℚ : (((alpha : ℤ) - (beta : ℤ) : ℤ) : ℚ) = 33 := by
+    exact_mod_cast hreflection
+  rw [hreflectionℚ] at hkey
+  have hcountℚ :
+      (fixedVertexCount (h.smulEquiv (DihedralGroup.sr d)) : ℚ) = 56 := by
+    linarith
+  exact_mod_cast hcountℚ
+
 namespace D19LinearCharacterInput
 
 /-- A `D19LinearCharacterInput` automatically witnesses the dimension equation
@@ -113,6 +135,17 @@ theorem reflection_of_counts
     (ha1 : adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr d)) = 112) :
     (hin.multiplicity.alpha : ℤ) - (hin.multiplicity.beta : ℤ) = 33 :=
   reflection_eq_of_linear_character _ _ _ hin.linear_character ha0 ha1
+
+/-- A `D19LinearCharacterInput` recovers the standard reflection fixed count
+from the standard reflection adjacent-moved count. -/
+theorem fixedVertexCount_reflection_eq_56_of_adjacentMovedCount_eq_112
+    (hin : D19LinearCharacterInput h)
+    {d : ZMod 19}
+    (ha1 : adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr d)) = 112) :
+    fixedVertexCount (h.smulEquiv (DihedralGroup.sr d)) = 56 :=
+  fixedVertexCount_reflection_eq_56_of_linear_character
+    hin.multiplicity.alpha hin.multiplicity.beta hin.multiplicity.gamma
+    hin.linear_character hin.multiplicity.reflection ha1
 
 /-- Build `D19LinearCharacterInput` from the linear-character equality, the
 standard involution counts at one reflection, and the `(-8)`-eigenspace bounds

@@ -42,8 +42,12 @@ together with the total reflection fixed count `56`, determines an explicit
 `InvolutionK155`.  The remaining hard part is therefore sharper:
 
 - construct a reflection fixed center with `55` fixed neighbors from the raw
-  action, preferably as `ReflectionFixedNeighborStarCenterData`;
+  action, preferably as `ReflectionFixedNeighborStarCenterData`, or construct
+  an induced fixed-graph degree-`55` center as
+  `ReflectionFixedInducedStarCenterData`;
 - derive or route the exact reflection fixed count `56`;
+- prove the selected center is not `rotationFixedCenter` when routing onward to
+  `ReflectionFixedCenterLeafBoundary`;
 - keep in mind that existing fixed-star/count boundaries are Prop-valued, so
   they yield `Nonempty (InvolutionK155 ...)`, not reusable Type-valued witness
   data.
@@ -125,6 +129,7 @@ main missing work is still:
 The current best decomposition of item 2 is:
 
 1. raw reflection geometry -> constructive fixed-neighbor center data
-   (`55` fixed neighbors);
+   (`55` fixed neighbors), or constructive induced degree-`55` center data;
 2. raw/reflection trace data -> reflection fixed count `56`;
-3. the existing Lean bridge -> `InvolutionK155`.
+3. center separation from `rotationFixedCenter` for the fixed-center-leaf route;
+4. the existing Lean bridge -> `InvolutionK155` and downstream frontiers.

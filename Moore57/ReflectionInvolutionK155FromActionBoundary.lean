@@ -1,4 +1,5 @@
 import Moore57.ReflectionFixedStarFromActionBoundary
+import Moore57.ReflectionFixedCenterLeafActionFrontier
 import Moore57.InvolutionFixedStarA1
 
 /-!
@@ -149,6 +150,84 @@ def toInvolutionK155
     k (input.center k) (input.center_count k) (hfix k)
 
 end ReflectionFixedNeighborStarCenterData
+
+/-- Constructive, Type-valued induced-degree center data: for each reflection,
+an explicit fixed center of degree `55` in the induced fixed graph. -/
+structure ReflectionFixedInducedStarCenterData
+    (h : D19ActsOnMoore57 V Γ) where
+  center : ∀ k : ZMod 19, reflectionFixedVertex h k
+  center_degree :
+    ∀ k : ZMod 19,
+      (h.fixedInducedGraph (DihedralGroup.sr k)).degree (center k) = 55
+
+namespace ReflectionFixedInducedStarCenterData
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Convert constructive induced-degree center data to constructive
+fixed-neighbor center data. -/
+def toReflectionFixedNeighborStarCenterData
+    (input : ReflectionFixedInducedStarCenterData h) :
+    ReflectionFixedNeighborStarCenterData h where
+  center := input.center
+  center_count := by
+    intro k
+    have hdegree :=
+      h.fixedInducedGraph_degree_eq_fixedNeighborFinset_card
+        (DihedralGroup.sr k) (input.center k)
+    simpa [reflectionFixedNeighborFinset] using
+      hdegree.symm.trans (input.center_degree k)
+
+/-- Construct explicit per-reflection `K_{1,55}` witnesses from constructive
+induced-degree center data and the reflection fixed-count `56`. -/
+def toInvolutionK155
+    (input : ReflectionFixedInducedStarCenterData h)
+    (hfix : ∀ k : ZMod 19,
+      fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56) :
+    ∀ k : ZMod 19, InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr k)) :=
+  input.toReflectionFixedNeighborStarCenterData.toInvolutionK155 hfix
+
+end ReflectionFixedInducedStarCenterData
+
+namespace ReflectionFixedNeighborStarCenterData
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Constructive fixed-neighbor center data gives the fixed-center-leaf boundary
+once the reflection fixed-count is `56` and the selected star center is known
+not to be `rotationFixedCenter`. -/
+def toReflectionFixedCenterLeafBoundary
+    (input : ReflectionFixedNeighborStarCenterData h)
+    (hfix : ∀ k : ZMod 19,
+      fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56)
+    (hcenter_ne : ∀ k : ZMod 19,
+      h.rotationFixedCenter ≠ (input.center k : V)) :
+    ReflectionFixedCenterLeafBoundary h :=
+  h.reflectionFixedCenterLeafBoundary_of_involutionK155
+    (input.toInvolutionK155 hfix)
+    (by
+      intro k
+      simpa using hcenter_ne k)
+
+end ReflectionFixedNeighborStarCenterData
+
+namespace ReflectionFixedInducedStarCenterData
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Constructive induced-degree center data gives the fixed-center-leaf boundary
+under the same fixed-count and center-separation hypotheses. -/
+def toReflectionFixedCenterLeafBoundary
+    (input : ReflectionFixedInducedStarCenterData h)
+    (hfix : ∀ k : ZMod 19,
+      fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56)
+    (hcenter_ne : ∀ k : ZMod 19,
+      h.rotationFixedCenter ≠ (input.center k : V)) :
+    ReflectionFixedCenterLeafBoundary h :=
+  input.toReflectionFixedNeighborStarCenterData.toReflectionFixedCenterLeafBoundary
+    hfix hcenter_ne
+
+end ReflectionFixedInducedStarCenterData
 
 namespace ReflectionFixedNeighborStarCounts
 
