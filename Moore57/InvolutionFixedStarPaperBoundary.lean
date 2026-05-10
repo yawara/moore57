@@ -125,6 +125,51 @@ theorem adjacentMovedCount_eq_112
 
 end InvolutionFixedSetStar56
 
+namespace InvolutionK155
+
+variable {σ : Equiv.Perm V}
+
+/-- An explicit `K_{1,55}` fixed-set witness is exactly a paper-shaped
+`56`-vertex fixed star. -/
+theorem toInvolutionFixedSetStar56
+    (hK : InvolutionK155 Γ σ) :
+    InvolutionFixedSetStar56 Γ σ := by
+  classical
+  have hcenter_fixed : σ hK.center = hK.center :=
+    (hK.fixed_iff hK.center).mpr (Or.inl rfl)
+  refine
+    { involutive := hK.involutive
+      automorphism := hK.automorphism
+      fixed_card := ?_
+      exists_center := ?_ }
+  · have hfixed_eq : fixedFinset σ = insert hK.center hK.leaves := by
+      ext v
+      simp only [mem_fixedFinset, Finset.mem_insert]
+      exact hK.fixed_iff v
+    rw [hfixed_eq, Finset.card_insert_of_notMem hK.center_notMem,
+      hK.leaves_card]
+  · refine ⟨hK.center, ?_⟩
+    refine
+      { center_fixed := hcenter_fixed
+        center_adj_fixed := ?_
+        fixed_noncenter_not_adj := ?_ }
+    · intro v hv hv_ne
+      rcases (hK.fixed_iff v).mp hv with hv_center | hv_leaf
+      · exact (hv_ne hv_center).elim
+      · exact hK.center_adj_leaves v hv_leaf
+    · intro v hv hv_ne w hw hw_ne
+      have hv_leaf : v ∈ hK.leaves := by
+        rcases (hK.fixed_iff v).mp hv with hv_center | hv_leaf
+        · exact (hv_ne hv_center).elim
+        · exact hv_leaf
+      have hw_leaf : w ∈ hK.leaves := by
+        rcases (hK.fixed_iff w).mp hw with hw_center | hw_leaf
+        · exact (hw_ne hw_center).elim
+        · exact hw_leaf
+      exact hK.leaves_pairwise_not_adj hv_leaf hw_leaf
+
+end InvolutionK155
+
 namespace D19ActsOnMoore57
 
 variable {h : D19ActsOnMoore57 V Γ}

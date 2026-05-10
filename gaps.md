@@ -60,6 +60,10 @@ InvolutionFixedSetStar56
 InvolutionFixedSetStar56.fixedVertexCount_eq_56
 InvolutionFixedSetStar56.adjacentMovedCount_eq_112
 InvolutionFixedSetStar56.nonempty_involutionK155
+InvolutionK155.toInvolutionFixedSetStar56
+D19ActsOnMoore57.reflection_smulEquiv_involutive
+D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_and_fixedSetStarWithCenter
+D19ActsOnMoore57.involutionFixedSetStar56OfReflectionFixedNeighborCenterCount
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -69,6 +73,13 @@ This matches the Makhnev-Paduchikh/Higman formulation more directly than the
 constructive center-count records.  It is still a boundary: the proof that a
 raw reflection satisfies `InvolutionFixedSetStar56` is the Higman/Cameron
 fixed-star theorem and remains to be formalized.
+
+The raw-reflection automatic fields are now separated out: a reflection in a
+`D19ActsOnMoore57` action is already an involutive graph automorphism.  Thus
+the direct paper-star constructor only needs the exact reflection fixed count
+`56` and the existence of a `FixedSetStarWithCenter`.  The existing constructive
+fixed-neighbor center count route also now reaches `InvolutionFixedSetStar56`
+through `InvolutionK155.toInvolutionFixedSetStar56`.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
