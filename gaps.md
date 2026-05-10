@@ -79,9 +79,17 @@ D19ActsOnMoore57.rotationFixedCenter_fixed_reflection
 D19ActsOnMoore57.exists_three_rotation_orbits_on_rotationFixedCenter_neighbors
 D19ActsOnMoore57.reflection_fixed_points_in_rotationOrbitFinset_card_eq_one_of_mem
 D19ActsOnMoore57.reflection_fixed_center_neighbor_orbit_card_eq_one_of_index_eq
+fixedNeighborFinsetOf_card_odd_of_moore57
+D19ActsOnMoore57.reflectionFixedNeighborFinset_card_odd
+D19ActsOnMoore57.fixedInducedGraph_reflection_degree_odd
+BranchOrbitABCReflectionLabeling.reflectionCenterNeighborOrbitIndex_involutive
+BranchOrbitABCReflectionLabeling.exists_reflectionCenterNeighborOrbitIndex_eq_self
+D19ActsOnMoore57.exists_reflection_fixed_center_neighbor_orbit_card_eq_one
 InvolutionHigmanCountArithmetic.starEdgeCountFormula_a0_eq_56_of_bounds
 IsMoore57.starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.reflection_starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
+D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_trace_starEdgeCountFormula_bounds
+D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_starEdgeCountFormula_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -132,8 +140,20 @@ The local reflection action around `rotationFixedCenter` is also recorded:
 each reflection fixes `rotationFixedCenter`, the center-neighbor set splits
 into three 19-point rotation orbits, and any center-neighbor rotation orbit
 preserved by a reflection contains exactly one reflection-fixed vertex.  The
-remaining geometric choice is to control the induced permutation of these
-three neighbor orbits strongly enough to feed the fixed-star/count argument.
+induced action on these three orbit indices is now an involution, hence fixes
+at least one orbit; consequently every reflection fixes exactly one vertex in
+at least one center-neighbor rotation orbit.  Separately, every fixed vertex
+of a Moore57 involution has an odd number of fixed neighbors, so every degree
+in the fixed-induced reflection graph is odd.  These local constraints are
+not yet the full fixed-count theorem, but they are raw-reflection consequences
+that narrow the remaining fixed-induced classification and count work.
+
+There is also now a direct Higman-arithmetic bridge from `trace integer +
+star-edge formula + 52..56 fixed-count bounds` to
+`InvolutionFixedSetStar56`.  The missing geometric theorem is therefore
+sharper: prove the fixed-induced edge-count formula
+`a₁ = 3250 - 58*a₀ + 2*e`, then identify `e = a₀ - 1` or otherwise supply
+the star-edge formula and bounds from the raw reflection geometry.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
