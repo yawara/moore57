@@ -77,6 +77,7 @@ import Moore57.D19LinearCharacterMinus8
 import Moore57.D19LinearCharacterDimensionConnectors
 import Moore57.D19LinearCharacterMinus8Connectors
 import Moore57.InvolutionFixedStarA1
+import Moore57.InvolutionEdgeCountFormula
 import Moore57.InvolutionFixedStarPaperBoundary
 import Moore57.D19LinearCharacterPaperFixedStarConnectors
 import Moore57.D19PhaseEBundle
@@ -260,6 +261,7 @@ import Moore57.ReflectionInvolutionFixedSetStarFromActionBoundary
 import Moore57.FixedInducedStrongStarBridge
 import Moore57.ReflectionFixedSetStarTraceBridge
 import Moore57.ReflectionFixedSetStarHigmanArithmeticBridge
+import Moore57.FixedInducedStarEdgeFormula
 import Moore57.BranchOrbitABCActionLevelCaseBoundary
 import Moore57.BranchOrbitABCActionLevelFinalBoundary
 import Moore57.BranchOrbitABCActionLevelLocalObstructionBoundary

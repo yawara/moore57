@@ -90,6 +90,13 @@ IsMoore57.starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.reflection_starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
 D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_trace_starEdgeCountFormula_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_starEdgeCountFormula_bounds
+adjacentMovedCount_eq_involution_fixed_edge_formula
+fixed_neighbor_sum_eq_twice_fixed_induced_edges
+fixed_to_moved_edge_count_eq
+IsStarWithCenter.card_edgeFinset_eq_card_sub_one
+D19ActsOnMoore57.fixedInducedGraph_card_edgeFinset_eq_fixedVertexCount_sub_one_of_isStarWithCenter
+D19ActsOnMoore57.reflection_starEdgeCountFormula_of_fixedInduced_isStarWithCenter
+D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_fixedInduced_starEdgeCountFormula_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -150,10 +157,17 @@ that narrow the remaining fixed-induced classification and count work.
 
 There is also now a direct Higman-arithmetic bridge from `trace integer +
 star-edge formula + 52..56 fixed-count bounds` to
-`InvolutionFixedSetStar56`.  The missing geometric theorem is therefore
-sharper: prove the fixed-induced edge-count formula
-`a₁ = 3250 - 58*a₀ + 2*e`, then identify `e = a₀ - 1` or otherwise supply
-the star-edge formula and bounds from the raw reflection geometry.
+`InvolutionFixedSetStar56`.  The fixed-induced edge-count formula itself is
+now formalized for any involutive automorphism of a Moore57 graph:
+`a₁ = 3250 - 58*a₀ + 2*e`, where `e` is the fixed-induced edge count.  The
+star specialization is also formalized: if the fixed-induced graph is a star,
+then `e = a₀ - 1`, and the packaged character bridge reaches
+`InvolutionFixedSetStar56` from that star plus the `52..56` bounds.
+
+The remaining non-paper-count bottleneck has therefore shifted again:
+derive the fixed-induced star/non-regular branch and the fixed-count bounds
+`52 ≤ a₀ ≤ 56` from the raw reflection geometry, or prove the exact
+Macaj-Siran/Higman count `a₀ = 56` directly.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
