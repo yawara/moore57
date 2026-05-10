@@ -344,6 +344,36 @@ regular `10` candidate.  Lean records this arithmetic outcome explicitly in
 `6,16,26,36,46,56` survive with E7 traces `193,161,129,97,65,33`, and the
 regular `10` case survives with E7 trace `181`.
 
+As a result, the fixed-count lower-bound target is also weaker than the
+earlier paper range.  A lower bound of `47` already forces the exact count
+`56` and hence `InvolutionFixedSetStar56`:
+
+```lean
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_ge_fortySeven
+D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_ge_fortySeven
+D19ActsOnMoore57.ReflectionFixedCountLower47
+```
+
+So the current raw-reflection-to-star gap can be stated as: prove, from the
+raw D19 action and Moore57 axioms alone, that every reflection fixes at least
+`47` vertices; equivalently, exclude the remaining trace-compatible candidates
+`6,10,16,26,36,46`.
+
+Burnside's lemma has also been checked in Lean.  Using the exact nontrivial
+rotation fixed count and the fact that all reflections are conjugate, the
+Burnside sum reduces to a divisibility condition
+`38 ∣ 3268 + 19 * c`, where `c` is the common reflection fixed count.  This is
+exactly the statement that `c` is even:
+
+```lean
+D19ActsOnMoore57.thirtyEight_dvd_3268_add_nineteen_mul_reflection_zero
+D19ActsOnMoore57.reflection_zero_fixedVertexCount_even
+burnside_constraint_all_raw_small_candidates
+```
+
+Since all remaining candidates are even, Burnside gives no additional
+exclusion beyond already-known involution parity.
+
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
 stronger `D19RepresentationCharacterInput`) from the raw D19 action using
