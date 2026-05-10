@@ -52,6 +52,19 @@ together with the total reflection fixed count `56`, determines an explicit
   they yield `Nonempty (InvolutionK155 ...)`, not reusable Type-valued witness
   data.
 
+The paper-shaped statement "the fixed set of an involution is a star with
+`56` vertices" is now represented by:
+
+```lean
+InvolutionFixedSetStar56
+InvolutionFixedSetStar56.nonempty_involutionK155
+```
+
+This matches the Makhnev-Paduchikh/Higman formulation more directly than the
+constructive center-count records.  It is still a boundary: the proof that a
+raw reflection satisfies `InvolutionFixedSetStar56` is the Higman/Cameron
+fixed-star theorem and remains to be formalized.
+
 ### 3. Raw action to default-base / branch-orbit frontier
 
 The no-go side is now broad: default-base, endpoint, fixed-star, current-gap,

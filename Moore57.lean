@@ -72,6 +72,7 @@ import Moore57.D19LinearCharacterMinus8
 import Moore57.D19LinearCharacterDimensionConnectors
 import Moore57.D19LinearCharacterMinus8Connectors
 import Moore57.InvolutionFixedStarA1
+import Moore57.InvolutionFixedStarPaperBoundary
 import Moore57.D19PhaseEBundle
 import Moore57.ReflectionOrbitTools
 import Moore57.D19ConstructiveFinalLinearUnique
@@ -331,6 +332,7 @@ import Moore57.D19NonRepresentationFrontierK155NoGo
 import Moore57.D19K155EndpointCombinedNoGo
 import Moore57.D19EndpointFrontierK155Aliases
 import Moore57.D19FixedCenterLeafReplacementK155NoGo
+import Moore57.D19NonemptyK155NoGoConnectors
 import Moore57.D19ActionLevelBoundaryNoGoConnectors
 import Moore57.D19CurrentGapBoundaryNoGoConnectors
 import Moore57.D19FixedStarBoundaryNoGoConnectors
