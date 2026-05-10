@@ -4,6 +4,7 @@ import Mathlib.Data.Matrix.PEquiv
 import Mathlib.GroupTheory.SpecificGroups.Dihedral
 import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Moore57.GroupTheory.Dihedral19LinearCharacter
 
 /-!
 # Moore graph of degree 57: the $D_{19}$ counting obstruction
@@ -728,82 +729,6 @@ def toTraceRepresentationData
       (h.rotation_fixed d hd) (h.rotation_a1 d hd) (h.rotation_character d hd)
 
 end TraceCharacterData
-
-/-! ### $D_{19}$ の小さな指標値関数
-
-ここでは mathlib の重い表現論 API に入らず, 自然言語証明で使う三つの有理既約指標
-`1`, `ε`, `ρ` の値だけを class-function 風の関数として置く. -/
-
-/-- $D_{19}$ の自明指標. -/
-def d19TrivCharacter (_g : DihedralGroup 19) : ℤ :=
-  1
-
-/-- $D_{19}$ の符号指標. 回転で `1`, 反射で `-1`. -/
-def d19SignCharacter : DihedralGroup 19 → ℤ
-  | DihedralGroup.r _ => 1
-  | DihedralGroup.sr _ => -1
-
-/-- $D_{19}$ の 18 次元有理既約指標.
-
-値は `ρ(1)=18`, 非自明回転で `-1`, 反射で `0`. -/
-def d19RhoCharacter : DihedralGroup 19 → ℤ
-  | DihedralGroup.r d => if d = 0 then 18 else -1
-  | DihedralGroup.sr _ => 0
-
-/-- `α⋅1 + β⋅ε + γ⋅ρ` の指標値関数. -/
-def d19LinearCharacter (alpha beta gamma : ℕ) (g : DihedralGroup 19) : ℤ :=
-  (alpha : ℤ) * d19TrivCharacter g
-    + (beta : ℤ) * d19SignCharacter g
-    + (gamma : ℤ) * d19RhoCharacter g
-
-@[simp] theorem d19TrivCharacter_apply (g : DihedralGroup 19) :
-    d19TrivCharacter g = 1 :=
-  rfl
-
-@[simp] theorem d19SignCharacter_rotation (d : ZMod 19) :
-    d19SignCharacter (DihedralGroup.r d) = 1 :=
-  rfl
-
-@[simp] theorem d19SignCharacter_reflection (d : ZMod 19) :
-    d19SignCharacter (DihedralGroup.sr d) = -1 :=
-  rfl
-
-@[simp] theorem d19RhoCharacter_one :
-    d19RhoCharacter (DihedralGroup.r (0 : ZMod 19)) = 18 := by
-  simp [d19RhoCharacter]
-
-@[simp] theorem d19RhoCharacter_rotation_ne {d : ZMod 19} (hd : d ≠ 0) :
-    d19RhoCharacter (DihedralGroup.r d) = -1 := by
-  simp [d19RhoCharacter, hd]
-
-@[simp] theorem d19RhoCharacter_reflection (d : ZMod 19) :
-    d19RhoCharacter (DihedralGroup.sr d) = 0 :=
-  rfl
-
-/-- 線形結合指標の単位元での値. -/
-theorem d19LinearCharacter_one (alpha beta gamma : ℕ) :
-    d19LinearCharacter alpha beta gamma (1 : DihedralGroup 19) =
-      (alpha : ℤ) + (beta : ℤ) + 18 * (gamma : ℤ) := by
-  change d19LinearCharacter alpha beta gamma (DihedralGroup.r (0 : ZMod 19)) =
-    (alpha : ℤ) + (beta : ℤ) + 18 * (gamma : ℤ)
-  simp only [d19LinearCharacter, d19TrivCharacter_apply,
-    d19SignCharacter_rotation, d19RhoCharacter_one]
-  ring_nf
-
-/-- 線形結合指標の反射での値. -/
-theorem d19LinearCharacter_reflection (alpha beta gamma : ℕ) (d : ZMod 19) :
-    d19LinearCharacter alpha beta gamma (DihedralGroup.sr d) =
-      (alpha : ℤ) - (beta : ℤ) := by
-  simp [d19LinearCharacter]
-  ring_nf
-
-/-- 線形結合指標の非自明回転での値. -/
-theorem d19LinearCharacter_rotation_ne
-    (alpha beta gamma : ℕ) {d : ZMod 19} (hd : d ≠ 0) :
-    d19LinearCharacter alpha beta gamma (DihedralGroup.r d) =
-      (alpha : ℤ) + (beta : ℤ) - (gamma : ℤ) := by
-  simp [d19LinearCharacter, d19RhoCharacter_rotation_ne hd]
-  ring_nf
 
 /-- Section 4.5 の最終算術.
 

@@ -288,20 +288,40 @@ no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8CharacterBoundariesAndInvol
 no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56
 D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56_raw_reflection
 D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8CharacterBoundariesAndInvolutionK155_raw_reflection
+D19CharacterClassBoundary.ofE7ProjectionTraceBoundary
+D19CharacterValueBoundary.ofMinus8ProjectionTraceBoundary
+E7ProjectionInversePairTraceBoundary.toCharacterClassBoundary
+Minus8ProjectionInversePairTraceBoundary.toCharacterValueBoundary
+no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8TraceBoundariesAndPaperFixedStar56
+no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8TraceBoundariesAndInvolutionK155
 ```
 
 These are thin wrappers around existing mathlib-facing `Representation.character`
 bridges and the existing fixed-star/no-go APIs; they add no new linear-algebra
-or representation-theory assumptions beyond the two concrete D19 character
-boundaries and the explicit reflection-side paper-star/K155/count input needed
-to build `D19LinearCharacterInput`.  A direct route from the two concrete
+or representation-theory assumptions beyond concrete trace/value boundaries
+for the two projection representations and the explicit reflection-side
+paper-star/K155/count input needed to build `D19LinearCharacterInput`.  The
+rotation obligations have also been reduced conservatively to one
+representative from each inverse pair, using only the group-theoretic fact that
+`r d` is conjugate to `r (-d)` in `D19`; nonzero rotations are not all conjugate.
+A direct route from the two concrete
 character boundaries alone to raw-reflection fixed stars would currently be
 circular, because the raw-reflection fixed-star theorem itself consumes the
 resulting `D19LinearCharacterInput`.  The
 remaining representation-theoretic gap is therefore sharply isolated:
-prove the D19 rational character class-boundaries for the two concrete
-projection representations, rather than constructing the representations
-themselves.
+prove the finite list of D19 trace values for the two concrete projection
+representations, rather than constructing the representations themselves.
+
+The domain split has also started.  Pure D19 character functions and
+inverse-pair conjugacy reductions live under `Moore57/GroupTheory/`, while
+the strong `(λ, μ) = (0, 1)` graph/star classification lives under
+`Moore57/GraphTheory/`:
+
+```lean
+Moore57.GroupTheory.Dihedral19LinearCharacter
+Moore57.GroupTheory.Dihedral19CharacterValueReduction
+Moore57.GraphTheory.StrongZeroOne
+```
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:

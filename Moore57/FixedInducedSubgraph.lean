@@ -1,67 +1,9 @@
 import Moore57.FixedPointBasics
 import Moore57.FixedCommonNeighbors
+import Moore57.GraphTheory.StrongZeroOne
 import Mathlib.Tactic.Linarith.Frontend
 
 namespace Moore57
-
-/-- Non-regular strong graph condition with parameters `λ = 0`, `μ = 1`.
-This is the exact paper-level condition used before the fixed graph is
-classified as either a Moore graph or a star. -/
-structure IsStrongZeroOne {V : Type*} [Fintype V] [DecidableEq V]
-    (G : SimpleGraph V) [DecidableRel G.Adj] : Prop where
-  of_adj : ∀ v w : V, G.Adj v w → Fintype.card (G.commonNeighbors v w) = 0
-  of_not_adj :
-    ∀ v w : V, v ≠ w → ¬ G.Adj v w →
-      Fintype.card (G.commonNeighbors v w) = 1
-
-/-- There is no regular strongly-regular graph with parameters
-`(n, k, λ, μ) = (56, k, 0, 1)`.  This is the arithmetic obstruction behind the
-paper's fixed-graph classification once the fixed graph is assumed regular
-with `56` vertices. -/
-theorem not_isSRGWith_56_k_0_1 {V : Type*} [Fintype V]
-    {G : SimpleGraph V} [DecidableRel G.Adj] (k : ℕ) :
-    ¬ G.IsSRGWith 56 k 0 1 := by
-  intro hG
-  have hparam := SimpleGraph.IsSRGWith.param_eq G hG (by norm_num)
-  have hcard : Fintype.card V = 56 := hG.card
-  have hnonempty : Nonempty V := by
-    rw [← Fintype.card_pos_iff, hcard]
-    norm_num
-  rcases hnonempty with ⟨v⟩
-  have hk_lt : k < 56 := by
-    have hdegree := G.degree_lt_card_verts v
-    simpa [hG.regular.degree_eq v, hcard] using hdegree
-  have hk_le : k ≤ 55 := by omega
-  by_cases hk_zero : k = 0
-  · subst k
-    norm_num at hparam
-  have hk_pos : 1 ≤ k := Nat.succ_le_of_lt (Nat.pos_of_ne_zero hk_zero)
-  have hk_le56 : k ≤ 56 := by omega
-  have hsub_pos : 1 ≤ 56 - k := by omega
-  have hparam_int : (k : ℤ) * ((k : ℤ) - 1) = 56 - (k : ℤ) - 1 := by
-    have hparam_nat : k * (k - 1) = 56 - k - 1 := by
-      simpa using hparam
-    have hparam_cast :
-        ((k * (k - 1) : ℕ) : ℤ) = ((56 - k - 1 : ℕ) : ℤ) := by
-      exact_mod_cast hparam_nat
-    rw [Nat.cast_mul, Int.ofNat_sub hk_pos,
-      Int.ofNat_sub hsub_pos, Int.ofNat_sub hk_le56] at hparam_cast
-    norm_num at hparam_cast ⊢
-    exact hparam_cast
-  have hsquare : (k : ℤ) * (k : ℤ) = 55 := by
-    calc
-      (k : ℤ) * (k : ℤ) =
-          (k : ℤ) * ((k : ℤ) - 1) + (k : ℤ) := by ring
-      _ = 55 := by
-        rw [hparam_int]
-        ring
-  by_cases hk_le7 : k ≤ 7
-  · have hk_nonneg_int : 0 ≤ (k : ℤ) := by exact_mod_cast Nat.zero_le k
-    have hk_le7_int : (k : ℤ) ≤ 7 := by exact_mod_cast hk_le7
-    nlinarith
-  · have hk_ge8 : 8 ≤ k := by omega
-    have hk_ge8_int : (8 : ℤ) ≤ k := by exact_mod_cast hk_ge8
-    nlinarith
 
 namespace D19ActsOnMoore57
 

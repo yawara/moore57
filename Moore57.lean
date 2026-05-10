@@ -1,10 +1,14 @@
 -- This module serves as the root of the `Moore57` library.
 import Moore57.D19Contradiction
+import Moore57.D19CharacterBoundaryConstructors
 import Moore57.E7Minus8CharacterInputBridge
 import Moore57.E7Minus8K155NoGoConnectors
 import Moore57.E7Minus8PaperFixedStarConnectors
 import Moore57.E7Minus8PaperFixedStarNoGoConnectors
 import Moore57.E7Minus8RawReflectionStarConnectors
+import Moore57.E7Minus8InversePairTraceBoundaryBridge
+import Moore57.E7Minus8TraceBoundaryBridge
+import Moore57.E7Minus8TraceNoGoConnectors
 import Moore57.E7MatrixIdempotent
 import Moore57.E7MatrixPermutationCommutation
 import Moore57.E7LinearCharacterInputBridge
@@ -23,8 +27,10 @@ import Moore57.BranchFiberPartition
 import Moore57.FixedCommonNeighbors
 import Moore57.FixedNeighborCounts
 import Moore57.FixedSetDegreeConstraints
+import Moore57.GraphTheory.StrongZeroOne
+import Moore57.GroupTheory.Dihedral19LinearCharacter
+import Moore57.GroupTheory.Dihedral19CharacterValueReduction
 import Moore57.FixedInducedSubgraph
-import Moore57.StrongZeroOneStar
 import Moore57.FixedInducedDegree
 import Moore57.RotationFixedSets
 import Moore57.RotationFixedCardEquality
