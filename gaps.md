@@ -107,6 +107,12 @@ D19ActsOnMoore57.D19LinearCharacterInput.reflection_regular_fixedVertexCount_eq_
 D19ActsOnMoore57.D19LinearCharacterInput.reflection_regular_fixedInduced_degree_cubic
 D19ActsOnMoore57.D19LinearCharacterInput.reflection_fixedInducedGraph_not_regular
 D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_raw_reflection
+D19ActsOnMoore57.D19LinearCharacterInput.nonempty_involutionK155_of_raw_reflection
+D19ActsOnMoore57.D19LinearCharacterInput.fixedVertexCount_reflection_eq_56_of_raw_reflection
+D19ActsOnMoore57.D19LinearCharacterInput.adjacentMovedCount_reflection_eq_112_of_raw_reflection
+D19ActsOnMoore57.D19LinearCharacterInput.nonempty_involutionFixedStar55_of_raw_reflection
+PermutationRepresentationCharacter.trace_permutationRepresentation
+PermutationRepresentationCharacter.character_permutationRepresentation
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -182,12 +188,17 @@ the trace equation and the raw involution edge-count formula give
 `a₀ * (50 - d) = 2690`, regular strong `(0,1)` parameters give
 `a₀ = d^2 + 1`, and the resulting cubic has no root for `d ≤ 57`.  Therefore
 the trace-assisted raw-reflection bridge is now closed:
-`D19LinearCharacterInput.involutionFixedSetStar56_of_raw_reflection`.
+`D19LinearCharacterInput.involutionFixedSetStar56_of_raw_reflection`.  Thin
+downstream aliases also expose this as `Nonempty (InvolutionK155 ...)`, the
+exact reflection fixed count, `a₁ = 112`, and `InvolutionFixedStar55`.
 
 The remaining main gap for the no-assumptions final theorem is now the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
 stronger `D19RepresentationCharacterInput`) from the raw D19 action using
 mathlib, rather than taking the character decomposition as an assumption.
+The first reusable mathlib-side trace lemma is now available for ordinary
+permutation representations: `Representation.ofMulAction` has character equal
+to the number of fixed points.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
