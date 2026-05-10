@@ -1,5 +1,5 @@
 import Moore57.BranchOrbitABCRemainingGapAfterAllOffsets
-import Moore57.BranchOrbitABCEndpointPairedFinalBoundary
+import Moore57.BranchOrbitABCAllOffsetsClosedFrontier
 
 /-!
 # Remaining raw-action frontier for public D19 no-go surfaces
@@ -8,10 +8,11 @@ This diagnostic file audits the public `no_D19...` theorem surfaces after the
 all-offset card-two work.
 
 The all-offset closure removed the old need for a representation component in
-two report-level contradictions:
+these report-level contradictions:
 
 * `BranchOrbitABCActionLevelDoublingEquationSupportBoundary`
 * `BranchOrbitABCCurrentFinalGapBoundary`
+* `BranchOrbitABCEndpointPairedFinalBoundary`
 
 The remaining assumptions are connector packages: records or predicates that
 must still be constructed from a raw `D19ActsOnMoore57` action, or supplied by
@@ -94,49 +95,64 @@ theorem no_remainingPublicFinalBoundaryConnector
 
 /-! ## All-offset report-level surfaces -/
 
-/-- Report-level connector packages that are already closed by the all-offset
-card-two obstruction, without representation data. -/
+/-- Endpoint-paired final report surface.  This is now closed directly by the
+all-offset common-neighbor obstruction, without representation data. -/
+abbrev RemainingEndpointPairedConnector
+    (h : D19ActsOnMoore57 V Γ) : Prop :=
+  Nonempty (BranchOrbitABCEndpointPairedFinalBoundary h)
+
+/-- Public alias for the endpoint-paired all-offset no-go surface. -/
+theorem no_remainingEndpointPairedConnector
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ RemainingEndpointPairedConnector h :=
+  not_endpointPairedFinalBoundary_allOffsetsCommonNeighbor h
+
+/-- Endpoint-obstruction final report surface.  The endpoint-obstruction data
+is also unused by the all-offset support-subset contradiction. -/
+abbrev RemainingEndpointObstructionConnector
+    (h : D19ActsOnMoore57 V Γ) : Prop :=
+  Nonempty (BranchOrbitABCEndpointObstructionFinalBoundary h)
+
+/-- Public alias for the endpoint-obstruction all-offset no-go surface. -/
+theorem no_remainingEndpointObstructionConnector
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ RemainingEndpointObstructionConnector h :=
+  not_endpointObstructionFinalBoundary_allOffsetsCommonNeighbor h
+
+/-- Report-level/final connector packages that are already closed by the
+all-offset card-two obstruction, without representation data. -/
 abbrev RemainingAllOffsetClosedConnector
     (h : D19ActsOnMoore57 V Γ) : Prop :=
   RemainingActionLevelAllOffsetsSupportPackage h ∨
-  RemainingCurrentFinalGapReportPackage h
+  RemainingCurrentFinalGapReportPackage h ∨
+  RemainingEndpointPairedConnector h ∨
+  RemainingEndpointObstructionConnector h
 
-/-- The all-offset report-level connector packages cannot exist. -/
+/-- The all-offset report-level/final connector packages cannot exist. -/
 theorem no_remainingAllOffsetClosedConnector
     (h : D19ActsOnMoore57 V Γ) :
     ¬ RemainingAllOffsetClosedConnector h := by
   intro hfrontier
-  rcases hfrontier with hSupport | hReport
+  rcases hfrontier with hSupport | hReport | hEndpoint | hObstruction
   · exact no_remaining_actionLevelAllOffsetsSupportPackage h hSupport
   · exact no_remaining_currentFinalGapReportPackage h hReport
+  · exact no_remainingEndpointPairedConnector h hEndpoint
+  · exact no_remainingEndpointObstructionConnector h hObstruction
 
 /-! ## Branch/reflection geometry surfaces -/
 
-/-- Endpoint-paired final report surface, including the representation
-component boundary still required by the public theorem. -/
-abbrev RemainingEndpointPairedConnector
-    (h : D19ActsOnMoore57 V Γ) : Prop :=
-  ∃ _representationComponents : RemainingRepresentationComponents h,
-    Nonempty (BranchOrbitABCEndpointPairedFinalBoundary h)
-
-/-- Public alias for the endpoint-paired no-go surface. -/
-theorem no_remainingEndpointPairedConnector
-    (h : D19ActsOnMoore57 V Γ) :
-    ¬ RemainingEndpointPairedConnector h :=
-  no_D19_endpointPairedFinalBoundary h
-
 /-- Branch/reflection connector packages still visible in public no-go
 surfaces.  The first three records contain representation components
-internally; the fixed-star and endpoint-paired surfaces expose that component
-boundary explicitly. -/
+internally; the fixed-star surfaces expose that component boundary explicitly.
+Endpoint-paired and endpoint-obstruction final reports are classified above as
+all-offset closed surfaces. -/
 abbrev RemainingBranchReflectionConnector
     (h : D19ActsOnMoore57 V Γ) : Prop :=
   RemainingCanonicalAllFibersPackage h ∨
   RemainingCanonicalCompactSplitPackage h ∨
   RemainingReflectionLabeledCompactSplitPackage h ∨
   RemainingFixedStarReferenceMatchingPackage h ∨
-  RemainingLeanAwareFixedStarPackage h ∨
-  RemainingEndpointPairedConnector h
+  RemainingLeanAwareFixedStarPackage h
 
 /-- The public branch/reflection connector package surfaces are all already
 refuted once supplied. -/
@@ -145,13 +161,12 @@ theorem no_remainingBranchReflectionConnector
     ¬ RemainingBranchReflectionConnector h := by
   intro hfrontier
   rcases hfrontier with
-    hAllFibers | hCompact | hLabeled | hFixedStar | hLeanAware | hEndpoint
+    hAllFibers | hCompact | hLabeled | hFixedStar | hLeanAware
   · exact no_remaining_canonicalAllFibersPackage h hAllFibers
   · exact no_remaining_canonicalCompactSplitPackage h hCompact
   · exact no_remaining_reflectionLabeledCompactSplitPackage h hLabeled
   · exact no_remaining_fixedStarReferenceMatchingPackage h hFixedStar
   · exact no_remaining_leanAwareFixedStarPackage h hLeanAware
-  · exact no_remainingEndpointPairedConnector h hEndpoint
 
 /-! ## Mathlib-character-to-raw-geometry surface -/
 
