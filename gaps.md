@@ -374,10 +374,10 @@ burnside_constraint_all_raw_small_candidates
 Since all remaining candidates are even, Burnside gives no additional
 exclusion beyond already-known involution parity.
 
-The remaining non-`56` candidates are now routed into a geometry split.  For a
-single reflection, a non-`56` trace-compatible candidate gives either a local
-fixed-center leaf condition or the regular-`10` all-center-neighbor-orbits
-preserved boundary:
+The remaining candidate geometry is now routed through a stronger raw split.
+For a single reflection, the trace-compatible non-`56` candidates give either
+a local fixed-center leaf condition or the regular-`10`
+all-center-neighbor-orbits preserved boundary:
 
 ```lean
 ReflectionTraceRemainingNon56Candidate
@@ -386,21 +386,47 @@ ReflectionRegularTenAllCenterNeighborOrbitsPreserved
 D19ActsOnMoore57.reflection_remaining_non56_candidate_geometry
 ```
 
-Globally, if every reflection is kept non-`56`, Lean proves either the existing
-`ReflectionFixedCenterLeafBoundary` or the regular-`10` all-preserved boundary
-for some reflection:
+The `56` candidate also lands on the leaf side, because the existing
+fixed-count-`56` bridge makes the fixed-induced graph a star and shows
+`rotationFixedCenter` is a leaf.  Therefore every raw reflection now satisfies
+a uniform split:
 
 ```lean
-D19ActsOnMoore57.reflection_remaining_non56_global_geometry
-D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_remaining_non56_no_regularTenPreserved
-D19ActsOnMoore57.exists_regularTenPreserved_of_remaining_non56_no_fixedCenterLeaf
+D19ActsOnMoore57.reflectionFixedCenterLeafAt_of_fixedVertexCount_eq_56
+D19ActsOnMoore57.reflectionFixedCenterLeafAt_or_regularTenAllCenterNeighborOrbitsPreserved
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_or_exists_regularTenAllCenterNeighborOrbitsPreserved
+D19ActsOnMoore57.exists_regularTenAllCenterNeighborOrbitsPreserved_of_not_reflectionFixedCenterLeafBoundary
 ```
 
-The leaf side is connected to the existing reflected-index matching-equation
-no-go frontier, but still needs the reference-fiber matching equation for the
-induced labeled pair.  The regular-`10` all-preserved boundary currently has
-no downstream no-go consumer; it is the cleanest remaining geometric boundary
-to attack.
+The leaf side now has canonical local connectors from
+`ReflectionFixedCenterLeafAt h k` to the existing reflected-index
+matching-equation no-go frontier, with reference-matching/disjointness,
+midpoint-disjointness, and local-obstruction variants:
+
+```lean
+ReflectionFixedCenterLeafAt.remainingCenterNeighborBaseMovedIndex
+ReflectionFixedCenterLeafAt.remainingCenterNeighborBasePair
+RemainingNon56FixedCenterLeafReferenceConnector
+RemainingNon56FixedCenterLeafMidpointDisjointnessConnector
+RemainingNon56FixedCenterLeafLocalObstructionConnector
+no_remainingNon56FixedCenterLeafReferenceConnector_of_components
+no_remainingNon56FixedCenterLeafMidpointDisjointnessConnector_of_components
+no_remainingNon56FixedCenterLeafLocalObstructionConnector_of_components
+```
+
+The regular-`10` all-preserved boundary has also been sharpened on the default
+center-neighbor base.  It fixes one vertex in each of the three default
+rotation orbits and proves that no default-base reflected index is moved:
+
+```lean
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.remainingCenterNeighborOrbitBase_orbit_fixed_card_eq_one
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.remainingCenterNeighborOrbitBase_reflectionCenterNeighborOrbitIndex_eq_self
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.not_exists_remainingCenterNeighborOrbitBase_reflectionCenterNeighborOrbitIndex_ne
+```
+
+This confirms that the regular-`10` branch cannot feed the labeled-reflection
+matching-equation route via a moved default index.  It remains the cleanest
+geometric obstruction to attack next.
 
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
