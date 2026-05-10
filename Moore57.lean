@@ -139,6 +139,7 @@ import Moore57.AFiberUnionFilterCardinality
 import Moore57.AFiberRotationTransport
 import Moore57.AFiberReflectionTransport
 import Moore57.AFiberCoordinateRotation
+import Moore57.AFiberRotationCoordPermBoundary
 import Moore57.AFiberCoordinateReflection
 import Moore57.AFiberRotationMatchingCardinality
 import Moore57.AFiberCoordinateOrbit
