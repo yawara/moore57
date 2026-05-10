@@ -1,4 +1,5 @@
 import Moore57.D19LinearCharacterInput
+import Moore57.D19FinalInputs
 
 /-!
 # Dimension equation from the D19 linear-character equality
@@ -113,8 +114,45 @@ theorem reflection_of_counts
     (hin.multiplicity.alpha : ℤ) - (hin.multiplicity.beta : ℤ) = 33 :=
   reflection_eq_of_linear_character _ _ _ hin.linear_character ha0 ha1
 
+/-- Build `D19LinearCharacterInput` from the linear-character equality, the
+standard involution counts at one reflection, and the `(-8)`-eigenspace bounds
+`α ≤ 113`, `β ≤ 58`.  The dimension and reflection arithmetic constraints are
+filled in automatically. -/
+noncomputable def ofLinearCharacterAndCounts
+    (alpha beta gamma : ℕ)
+    (hAlpha : alpha ≤ 113)
+    (hBeta : beta ≤ 58)
+    (hlin : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    {d : ZMod 19}
+    (ha0 : fixedVertexCount (h.smulEquiv (DihedralGroup.sr d)) = 56)
+    (ha1 : adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr d)) = 112) :
+    D19LinearCharacterInput h where
+  multiplicity :=
+    { alpha := alpha
+      beta := beta
+      gamma := gamma
+      reflection := reflection_eq_of_linear_character alpha beta gamma hlin ha0 ha1
+      dimension := dimension_eq_of_linear_character alpha beta gamma hlin
+      minus8_trivial_nonneg := hAlpha
+      minus8_sign_nonneg := hBeta }
+  linear_character := hlin
+
 end D19LinearCharacterInput
 
 end D19ActsOnMoore57
+
+/-- Convenience: produce `D19FinalCharacterInputs` from a linear-character
+witness together with the standard rotation fixed-count bound. -/
+noncomputable def D19FinalCharacterInputs.ofD19LinearCharacterInput
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    {h : D19ActsOnMoore57 V Γ}
+    (hin : D19ActsOnMoore57.D19LinearCharacterInput h)
+    (fixedUpperBound : D19ActsOnMoore57.RotationFixedUpperBoundInput h) :
+    D19FinalCharacterInputs h where
+  representation := hin.toD19RepresentationCharacterInput
+  fixedUpperBound := fixedUpperBound
 
 end Moore57
