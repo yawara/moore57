@@ -64,22 +64,35 @@ InvolutionK155.toInvolutionFixedSetStar56
 D19ActsOnMoore57.reflection_smulEquiv_involutive
 D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_and_fixedSetStarWithCenter
 D19ActsOnMoore57.involutionFixedSetStar56OfReflectionFixedNeighborCenterCount
+IsStrongZeroOne.exists_isStarWithCenter_of_not_regular
+D19ActsOnMoore57.exists_fixedSetStarWithCenter_of_fixedVertexCount_eq_56
+D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_eq_56
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
 ```
 
 This matches the Makhnev-Paduchikh/Higman formulation more directly than the
-constructive center-count records.  It is still a boundary: the proof that a
-raw reflection satisfies `InvolutionFixedSetStar56` is the Higman/Cameron
-fixed-star theorem and remains to be formalized.
+constructive center-count records.  After reading Macaj-Siran 2010, the Lean
+route now follows their state-of-the-art summary: Lemma 1 supplies the
+fixed-induced strong-graph classification, while Lemma 2 supplies the
+involution fixed count.
 
 The raw-reflection automatic fields are now separated out: a reflection in a
-`D19ActsOnMoore57` action is already an involutive graph automorphism.  Thus
-the direct paper-star constructor only needs the exact reflection fixed count
-`56` and the existence of a `FixedSetStarWithCenter`.  The existing constructive
-fixed-neighbor center count route also now reaches `InvolutionFixedSetStar56`
-through `InvolutionK155.toInvolutionFixedSetStar56`.
+`D19ActsOnMoore57` action is already an involutive graph automorphism.  The
+Macaj-Siran Lemma 1 classification branch needed here is also formalized in
+the non-regular form `IsStrongZeroOne.exists_isStarWithCenter_of_not_regular`.
+Combining it with fixed-induced common-neighbor inheritance and the
+`56`-vertex regular-branch exclusion gives:
+
+```lean
+D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_eq_56
+```
+
+So the remaining raw-reflection-to-paper-star gap is no longer fixed-star
+geometry itself; it is the Higman/Macaj-Siran Lemma 2 count
+`fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56` from the raw
+involutory automorphism.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
