@@ -13,11 +13,10 @@ to prove, with no extra assumptions and depending only on mathlib, that no
 ### 1. Hardest: derive E7 trace data and standard count inputs from the raw action
 
 Many no-go routes now consume the following upstream package, plus the standard
-reflection count inputs:
+reflection fixed-count input:
 
 - `TraceRepresentationData h.a1`, or the slightly richer `D19TraceInput h`;
-- fixed count `56` and adjacent-moved count `112` for one reflection
-  representative.
+- fixed count `56` for one reflection representative.
 
 The remaining work is to derive these from the raw `D19ActsOnMoore57` action,
 using mathlib representation theory as much as possible and avoiding a custom
@@ -25,8 +24,12 @@ representation-theory reimplementation.  The `(-8)` character boundary is no
 longer an independent representation-decomposition gap: once
 `TraceRepresentationData h.a1` is available, Lean derives the complementary
 `(-8)` values from the existing projection-character formula.  The hard residue
-is now the finite E7 trace data and the raw-action count inputs used by the
-packaged bridges.
+is now the finite E7 trace data and the raw-action reflection fixed-count input
+used by the packaged bridges.  At the `D19TraceInput`, `D19CharacterInput`,
+data-package, and now direct `TraceRepresentationData h.a1` levels, the
+adjacent-moved count `112` is no longer an independent input once the standard
+reflection fixed count `56` is available: Lean derives the paper fixed-star
+statement and then derives `adjacentMovedCount = 112`.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 
