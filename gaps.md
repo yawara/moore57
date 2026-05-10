@@ -113,6 +113,9 @@ D19ActsOnMoore57.D19LinearCharacterInput.adjacentMovedCount_reflection_eq_112_of
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_involutionFixedStar55_of_raw_reflection
 PermutationRepresentationCharacter.trace_permutationRepresentation
 PermutationRepresentationCharacter.character_permutationRepresentation
+D19ActsOnMoore57.vertexPermutationRepresentation
+D19ActsOnMoore57.vertexPermutationRepresentation_character_eq_fixedVertexCount
+D19ActsOnMoore57.trace_permMatrix_smulEquiv_eq_vertexPermutationRepresentation_character
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -198,7 +201,9 @@ stronger `D19RepresentationCharacterInput`) from the raw D19 action using
 mathlib, rather than taking the character decomposition as an assumption.
 The first reusable mathlib-side trace lemma is now available for ordinary
 permutation representations: `Representation.ofMulAction` has character equal
-to the number of fixed points.
+to the number of fixed points.  The concrete `D19ActsOnMoore57` vertex action
+is also packaged as a mathlib permutation representation, and its character is
+identified with both `fixedVertexCount` and the local `permMatrix` trace.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
