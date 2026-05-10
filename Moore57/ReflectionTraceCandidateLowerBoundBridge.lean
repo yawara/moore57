@@ -77,6 +77,21 @@ def toReflectionFixedCountBounds
 
 end ReflectionFixedCountLower47
 
+namespace D19LinearCharacterInput
+
+/-- A packaged full linear-character input is a source of the uniform
+reflection lower-bound package: the existing raw-reflection bridge already
+gives exact fixed count `56` for every reflection. -/
+theorem toReflectionFixedCountLower47_of_raw_reflection
+    (hin : D19LinearCharacterInput h) :
+    ReflectionFixedCountLower47 h where
+  lower := by
+    intro k
+    rw [(hin.involutionFixedSetStar56_of_raw_reflection k).fixedVertexCount_eq_56]
+    norm_num
+
+end D19LinearCharacterInput
+
 end D19ActsOnMoore57
 
 end

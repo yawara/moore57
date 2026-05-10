@@ -1,5 +1,6 @@
 import Moore57.D19RepresentationCharacterFromData
 import Moore57.TraceDataSplit
+import Moore57.RotationFixedRegularity
 
 /-!
 # Boundary helpers for trace-core character data
@@ -234,6 +235,14 @@ namespace TraceCoreCharacterBoundary
 
 variable {h : D19ActsOnMoore57 V Γ}
 
+/-- The ambient `D19ActsOnMoore57` witness supplies the split rotation fixed
+data needed by `TraceCharacterCoreData.toTraceRepresentationData`. -/
+def rotationFixedData (h : D19ActsOnMoore57 V Γ) :
+    RotationFixedData h.rotation where
+  rotation_fixed := by
+    intro d hd
+    exact h.rotation_fixed_card_eq_one hd
+
 /-- Build trace-core data from the final-boundary components. -/
 noncomputable def toTraceCharacterCoreData
     (data : TraceCoreCharacterBoundary h) :
@@ -312,6 +321,21 @@ theorem traceCharacterCoreData_nonempty_iff_exists_boundary
     exact ⟨toTraceCharacterCoreData
       { multiplicity := multiplicity
         rotation_character := rotation_character }⟩
+
+/-- Combine the final trace-core boundary with the raw action's rotation
+fixed-count theorem to obtain the arithmetic trace-representation data. -/
+noncomputable def toTraceRepresentationData
+    (data : TraceCoreCharacterBoundary h) :
+    TraceRepresentationData h.a1 :=
+  data.toTraceCharacterCoreData.toTraceRepresentationData
+    (rotationFixedData h) h.isMoore
+
+/-- A trace-core boundary exists only if the corresponding trace-representation
+data exists; the rotation fixed-count field is supplied by the raw action. -/
+theorem nonempty_traceRepresentationData
+    (data : TraceCoreCharacterBoundary h) :
+    Nonempty (TraceRepresentationData h.a1) :=
+  ⟨data.toTraceRepresentationData⟩
 
 end TraceCoreCharacterBoundary
 

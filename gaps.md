@@ -24,13 +24,17 @@ representation-theory reimplementation.  The `(-8)` character boundary is no
 longer an independent representation-decomposition gap: once
 `TraceRepresentationData h.a1` is available, Lean derives the complementary
 `(-8)` values from the existing projection-character formula.  The hard residue
-is now the finite E7 trace data and the raw-action reflection fixed-count input
-used by the packaged bridges.  At the `D19TraceInput`, `D19CharacterInput`,
-`TraceCoreCharacterBoundary`, representation-character, data-package, and now
-direct `TraceRepresentationData h.a1` levels, the adjacent-moved count `112` is
-no longer an independent input once the standard reflection fixed count `56` is
-available: Lean derives the paper fixed-star statement and then derives
-`adjacentMovedCount = 112`.
+is now the finite E7 trace-core data and the raw-action reflection fixed-count
+input used by the packaged bridges.  `TraceCoreCharacterBoundary h` and the
+Prop-valued `RepresentationCharacterComponentsBoundary h` now lower to
+`TraceRepresentationData h.a1` using the raw action's proved rotation
+fixed-count theorem, so the representation-side residue is the multiplicity
+arithmetic plus the nontrivial-rotation character identity.  At the
+`D19TraceInput`, `D19CharacterInput`, `TraceCoreCharacterBoundary`,
+representation-character, data-package, and direct `TraceRepresentationData
+h.a1` levels, the adjacent-moved count `112` is no longer an independent input
+once the standard reflection fixed count `56` is available: Lean derives the
+paper fixed-star statement and then derives `adjacentMovedCount = 112`.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 

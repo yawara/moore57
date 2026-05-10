@@ -324,6 +324,36 @@ theorem representationCharacterComponentsBoundary
 
 end TraceCoreCharacterBoundary
 
+namespace RepresentationCharacterComponentsBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Reify the exposed component boundary as the final trace-core boundary.
+
+This is noncomputable only because the component boundary is Prop-valued and
+there may be many equivalent multiplicity witnesses. -/
+noncomputable def toTraceCoreCharacterBoundary
+    (hcomp : RepresentationCharacterComponentsBoundary h) :
+    TraceCoreCharacterBoundary h :=
+  Classical.choice
+    ((TraceCoreCharacterBoundary.nonempty_iff_componentsBoundary h).mpr hcomp)
+
+/-- Lower the exposed component boundary to the arithmetic trace representation
+data used by the older trace consumers.  The raw action supplies the separated
+rotation fixed-count field. -/
+noncomputable def toTraceRepresentationData
+    (hcomp : RepresentationCharacterComponentsBoundary h) :
+    TraceRepresentationData h.a1 :=
+  hcomp.toTraceCoreCharacterBoundary.toTraceRepresentationData
+
+/-- Nonemptiness wrapper for the component-boundary-to-trace-data bridge. -/
+theorem nonempty_traceRepresentationData
+    (hcomp : RepresentationCharacterComponentsBoundary h) :
+    Nonempty (TraceRepresentationData h.a1) :=
+  ⟨hcomp.toTraceRepresentationData⟩
+
+end RepresentationCharacterComponentsBoundary
+
 end D19ActsOnMoore57
 
 end Moore57
