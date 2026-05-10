@@ -20,6 +20,7 @@ import Moore57.E7Minus8InversePairTraceBoundaryPackages
 import Moore57.E7Minus8BoundaryPackageNoGoConnectors
 import Moore57.E7Minus8BoundaryPackageCurrentGapNoGoConnectors
 import Moore57.E7Minus8BoundaryPackageActionNoGoConnectors
+import Moore57.E7ProjectionA1CharacterBoundary
 import Moore57.E7MatrixIdempotent
 import Moore57.E7MatrixPermutationCommutation
 import Moore57.E7LinearCharacterInputBridge

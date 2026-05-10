@@ -501,6 +501,10 @@ matrix trace:
 The same representation now has finrank `1729` by `Representation.char_one`,
 and an E7-specific constructor routes any class-boundary decomposition of
 `h.e7ProjectionRepresentation` directly to `D19LinearCharacterInput`.
+The E7 class-boundary can also be built from the older `a1` arithmetic
+surface: `TraceRepresentationData h.a1`, nontrivial rotation fixed count `1`,
+and the reflection representative trace now give
+`D19CharacterClassBoundary h.e7ProjectionRepresentation`.
 The complementary `(-8)` projection has also been constructed as
 `minus8Matrix Γ = I - E57 - E7`, where `E57` is the rank-one all-ones
 projection.  Lean now proves its idempotence, its commutation with graph
@@ -514,6 +518,9 @@ paper-star and explicit `K_{1,55}` downstream connectors are also now exposed:
 
 ```lean
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.e7_rotation_trace_eq_of_fixed_one_and_a1_trace
+D19ActsOnMoore57.e7_rotation_trace_eq_of_traceRepresentationData
+D19ActsOnMoore57.E7ProjectionCharacterClassBoundary.ofTraceRepresentationData
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7AndMinus8CharacterBoundaries
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundaries
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7AndMinus8InversePairTraceBoundaries
