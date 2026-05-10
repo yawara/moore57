@@ -41,6 +41,13 @@ namespace InvolutionFixedSetStar56
 
 variable {σ : Equiv.Perm V}
 
+/-- The paper-shaped fixed-star input includes the exact fixed-point count in
+the `fixedVertexCount` normalization used by the D19 trace pipeline. -/
+theorem fixedVertexCount_eq_56
+    (hStar : InvolutionFixedSetStar56 Γ σ) :
+    fixedVertexCount σ = 56 := by
+  simpa using hStar.fixed_card
+
 /-- The paper-shaped fixed-star input yields a nonempty explicit `K_{1,55}`
 witness.  The result is Prop-valued, so it can eliminate Prop-level paper
 statements without requiring constructive center data. -/
@@ -121,6 +128,15 @@ theorem nonempty_involutionK155_of_reflectionFixedSetStar56
       InvolutionFixedSetStar56 Γ (h.smulEquiv (DihedralGroup.sr k))) :
     Nonempty (InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr k))) :=
   hStar.nonempty_involutionK155
+
+/-- Reflection-specialized fixed-point count extracted from the paper-shaped
+fixed-star statement. -/
+theorem fixedVertexCount_reflection_eq_56_of_reflectionFixedSetStar56
+    {k : ZMod 19}
+    (hStar :
+      InvolutionFixedSetStar56 Γ (h.smulEquiv (DihedralGroup.sr k))) :
+    fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56 :=
+  hStar.fixedVertexCount_eq_56
 
 /-- Reflection-specialized bridge from the paper-shaped fixed-star statement to
 the fixed-star count abstraction. -/

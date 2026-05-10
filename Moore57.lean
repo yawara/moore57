@@ -333,6 +333,7 @@ import Moore57.D19K155EndpointCombinedNoGo
 import Moore57.D19EndpointFrontierK155Aliases
 import Moore57.D19FixedCenterLeafReplacementK155NoGo
 import Moore57.D19NonemptyK155NoGoConnectors
+import Moore57.D19PaperFixedStarNoGoConnectors
 import Moore57.D19ActionLevelBoundaryNoGoConnectors
 import Moore57.D19CurrentGapBoundaryNoGoConnectors
 import Moore57.D19FixedStarBoundaryNoGoConnectors

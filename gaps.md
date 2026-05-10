@@ -57,6 +57,7 @@ The paper-shaped statement "the fixed set of an involution is a star with
 
 ```lean
 InvolutionFixedSetStar56
+InvolutionFixedSetStar56.fixedVertexCount_eq_56
 InvolutionFixedSetStar56.nonempty_involutionK155
 ```
 
