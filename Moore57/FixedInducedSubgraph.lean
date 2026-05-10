@@ -82,5 +82,29 @@ theorem fixedInducedGraph_commonNeighbors_card_of_not_adj
   change (w : V) = (z : V)
   exact hw_eq_z
 
+/-- Paper Lemma 1(2), packaged in mathlib's strongly-regular form: if the
+fixed induced graph has constant fixed degree `k`, then it is strongly regular
+with parameters `(fixedVertexCount, k, 0, 1)`.  The common-neighbor parameters
+come directly from the ambient Moore graph and fixedness of unique common
+neighbors. -/
+theorem fixedInducedGraph_isSRGWith_of_regular
+    (h : D19ActsOnMoore57 V Γ) (g : DihedralGroup 19) (k : ℕ)
+    (hreg : ∀ x : fixedVertexSet (h.smulEquiv g),
+      (fixedInducedGraph h g).degree x = k) :
+    (fixedInducedGraph h g).IsSRGWith
+      (fixedVertexCount (h.smulEquiv g)) k 0 1 where
+  card := by
+    rw [fixedVertexCount_eq_card_fixedVertexSet]
+  regular := by
+    intro x
+    exact hreg x
+  of_adj := by
+    intro x y hxy
+    exact h.fixedInducedGraph_commonNeighbors_card_of_adj g (x := x) (y := y) hxy
+  of_not_adj := by
+    intro x y hxy_ne hxy_not
+    exact h.fixedInducedGraph_commonNeighbors_card_of_not_adj g
+      (x := x) (y := y) hxy_ne hxy_not
+
 end D19ActsOnMoore57
 end Moore57

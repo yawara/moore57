@@ -65,6 +65,18 @@ constructive center-count records.  It is still a boundary: the proof that a
 raw reflection satisfies `InvolutionFixedSetStar56` is the Higman/Cameron
 fixed-star theorem and remains to be formalized.
 
+The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
+available in a regularity-parameterized form:
+
+```lean
+D19ActsOnMoore57.fixedInducedGraph_isSRGWith_of_regular
+```
+
+This packages the already-proved common-neighbor inheritance into mathlib's
+`IsSRGWith` API.  The remaining classification step is still to prove, or
+otherwise bridge, that the relevant involution fixed induced graph is the
+`56`-vertex star rather than another Moore graph case.
+
 ### 3. Raw action to default-base / branch-orbit frontier
 
 The no-go side is now broad: default-base, endpoint, fixed-star, current-gap,
