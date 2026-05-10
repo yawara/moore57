@@ -52,19 +52,23 @@ The first non-wrapper representation-theory component is now in Lean:
 
 ```lean
 d19RotationInvariantSubmodule
+d19RotationSubgroup
+finrank_d19RotationInvariantSubmodule_eq_average_rotation_character
 reflectionZeroOnRotationInvariants
 reflectionZeroOnRotationInvariants_sq
 exists_nat_trace_reflectionZeroOnRotationInvariants
 ```
 
 This formalizes the trivial/sign split on the rotation-invariant part of any
-rational `D19` representation: the restriction of `sr 0` to the subspace fixed
-by all rotations is an involution, and its trace is the difference of two
-natural multiplicities.  The remaining hard representation-theory work is to
-connect this split to the E7 projection representation's character values,
-handle the nontrivial 18-dimensional rotation part (`gamma`), and derive the
-specific E7 arithmetic `alpha - beta = 33`, `alpha ≤ 113`, and `beta ≤ 58`
-from the raw action rather than assuming them.
+rational `D19` representation using mathlib's `Representation.invariants` for
+the normal rotation subgroup: the invariant dimension is the average of the
+character over rotations, the restriction of `sr 0` to this invariant subspace
+is an involution, and its trace is the difference of two natural
+multiplicities.  The remaining hard representation-theory work is to connect
+this split and average formula to the E7 projection representation's concrete
+matrix traces, handle the nontrivial 18-dimensional rotation part (`gamma`),
+and derive the specific E7 arithmetic `alpha - beta = 33`, `alpha ≤ 113`, and
+`beta ≤ 58` from the raw action rather than assuming them.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 
