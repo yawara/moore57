@@ -1,7 +1,8 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after adding the raw linear-character reflection split
-and projection-character consequence wrappers.
+Snapshot: 2026-05-10, after routing `TraceRepresentationData h.a1` plus
+`(-8)` value/trace boundaries through the packaged raw-reflection and no-go
+frontiers.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -20,7 +21,11 @@ inputs:
 
 The remaining work is to derive these from the raw `D19ActsOnMoore57` action,
 using mathlib representation theory as much as possible and avoiding a custom
-representation-theory reimplementation.
+representation-theory reimplementation.  The projection representations
+themselves are already constructed; the hard residue is the finite list of
+trace/value data that proves their characters are the required D19 rational
+characters, together with the raw-action count inputs used by the packaged
+bridges.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 
@@ -513,8 +518,14 @@ the expected character formula
 `trace(P_g) - 1 - trace(E7 * P_g)`.  A combined bridge now turns an E7
 class-boundary and a `(-8)` value-boundary into the concrete
 `D19LinearCharacterInput`, with the `α ≤ 113`, `β ≤ 58`, and
-`α - β = 33` fields derived by the existing character arithmetic.  The
-paper-star and explicit `K_{1,55}` downstream connectors are also now exposed:
+`α - β = 33` fields derived by the existing character arithmetic.  The latest
+bridge also builds the packaged E7/minus-8 reflection-count boundary directly
+from `TraceRepresentationData h.a1` plus either a `(-8)` value-boundary or
+explicit complementary `(-8)` projection trace values.  From there it exposes
+the bare `D19LinearCharacterInput`, raw-reflection fixed-star/K155 outputs,
+the fixed-center leaf split, representation component boundary, and current
+final-gap no-go.  The paper-star and explicit `K_{1,55}` downstream connectors
+are also now exposed:
 
 ```lean
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7ProjectionCharacterClassBoundary
@@ -525,6 +536,17 @@ D19ActsOnMoore57.E7ProjectionCharacterClassBoundary.reflection_zero_trace_eq_of_
 D19ActsOnMoore57.E7ProjectionCharacterClassBoundary.ofTraceRepresentationDataAndReflectionCounts
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationData
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndReflectionStar
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8ProjectionTraceBoundary
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8ProjectionTraceBoundaryAndReflectionStar
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataAndMinus8Values
+D19ActsOnMoore57.involutionFixedSetStar56_of_traceRepresentationDataAndMinus8Values
+D19ActsOnMoore57.nonempty_involutionK155_of_traceRepresentationDataAndMinus8Values
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_traceRepresentationDataAndMinus8Values
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_traceRepresentationDataAndMinus8Values
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_traceRepresentationDataAndMinus8Values
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataAndMinus8ValuesAndReflectionStar
+D19ActsOnMoore57.involutionFixedSetStar56_of_traceRepresentationDataAndMinus8ValuesAndReflectionStar
+D19ActsOnMoore57.nonempty_involutionK155_of_traceRepresentationDataAndMinus8ValuesAndReflectionStar
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7AndMinus8CharacterBoundaries
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundaries
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7AndMinus8InversePairTraceBoundaries
@@ -644,10 +666,12 @@ representative from each inverse pair, using only the group-theoretic fact that
 A direct route from the two concrete
 character boundaries alone to raw-reflection fixed stars would currently be
 circular, because the raw-reflection fixed-star theorem itself consumes the
-resulting `D19LinearCharacterInput`.  The
-remaining representation-theoretic gap is therefore sharply isolated:
-prove the finite list of D19 trace values for the two concrete projection
-representations, rather than constructing the representations themselves.
+resulting `D19LinearCharacterInput`.  The remaining representation-theoretic
+gap is therefore sharply isolated: prove the finite list of D19 trace values
+for the concrete projection representations, especially the complementary
+`(-8)` projection trace/value boundary and the raw-action inputs feeding
+`TraceRepresentationData h.a1`, rather than constructing the projection
+representations themselves.
 
 The domain split has also started.  Pure D19 character functions and
 inverse-pair conjugacy reductions live under `Moore57/GroupTheory/`, generic
