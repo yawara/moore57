@@ -121,6 +121,32 @@ adjMatrix_mul_permMatrix_eq_permMatrix_mul_adjMatrix
 allOnesMatrix_mul_permMatrix_eq_permMatrix_mul_allOnesMatrix
 E7Matrix_mul_permMatrix_eq_permMatrix_mul_E7Matrix
 LinearMap.trace_restrict_range_eq_trace_comp_of_isIdempotentElem
+allOnesMatrix_mul_allOnesMatrix
+adjMatrix_mul_allOnesMatrix_of_regular
+allOnesMatrix_mul_adjMatrix_of_regular
+adjMatrix_mul_allOnesMatrix
+allOnesMatrix_mul_adjMatrix
+allOnesMatrix_mul_allOnesMatrix_of_moore
+E7Matrix_mul_E7Matrix_eq_E7Matrix
+E7Matrix_isIdempotentElem
+matrix_toLin'_mul
+toMatrix'_comp_toLin'
+trace_toLin'_eq_matrix_trace
+toLin'_commute_of_mul_eq
+mul_eq_of_toLin'_commute
+E7Matrix_mul_permMatrix_toLin'
+trace_E7Matrix_mul_permMatrix_toLin'_eq_matrix_trace
+E7Matrix_toLin'_commute_permMatrix_toLin'
+LinearMap.range_le_comap_of_commute
+LinearMap.mapsTo_range_of_commute
+Representation.onCommutingRange
+LinearEquiv.restrictRangeOfCommute
+D19ActsOnMoore57.vertexPermutationMatrixRepresentationOnPi
+D19ActsOnMoore57.e7ProjectionRepresentation
+E7Matrix_toLin'_isIdempotentElem
+trace_restrict_E7Range_permMatrix_toLin'_eq_matrix_trace
+D19ActsOnMoore57.trace_restrict_E7Range_smulEquiv_toLin'_eq_matrix_trace
+D19ActsOnMoore57.e7ProjectionRepresentation_character_eq_matrix_trace
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -213,10 +239,18 @@ The Moore57 trace matrices are now known to commute with graph automorphism
 permutation matrices, in particular `E7Matrix Γ * Pσ = Pσ * E7Matrix Γ`.
 The core mathlib linear-algebra bridge for a commuting idempotent projection
 is also available: the trace of `f` restricted to `range p` equals the ambient
-trace of `p ∘ f`.  The next representation-theoretic step is to show that the
-matrix `E7Matrix Γ` is an idempotent linear projection of rank `1729`, so its
-range carries the desired mathlib representation with character
-`Matrix.trace (E7Matrix Γ * permMatrix σ)`.
+trace of `p ∘ f`.  The `E7Matrix Γ` matrix has now been proved idempotent
+from the Moore57 adjacency identities, transported through mathlib's
+`Matrix.toLin'`, and used to construct a concrete mathlib representation on
+`LinearMap.range (E7Matrix Γ).toLin'`.  Its character is exactly the Higman
+matrix trace:
+`D19ActsOnMoore57.e7ProjectionRepresentation_character_eq_matrix_trace`.
+The next representation-theoretic step is no longer construction of the E7
+representation, but decomposition of this rational D19 representation into
+the expected D19 linear-character multiplicities, yielding the `h7` field of
+`D19LinearCharacterInput`.  The parallel complementary task is to construct
+or identify the `-8` complementary representation in mathlib and prove the
+analogous character identity for `hMinus8`.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
