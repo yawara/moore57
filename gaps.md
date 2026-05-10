@@ -1,7 +1,7 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after adding reflection-orbit fixed-point local facts and
-Higman/star-edge arithmetic connectors.
+Snapshot: 2026-05-10, after adding the raw linear-character reflection split
+and projection-character consequence wrappers.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -461,10 +461,13 @@ E7 trace is packaged as a full D19 linear character, regular-`10` forces
 ReflectionRegularTenAllCenterNeighborOrbitsPreserved.alpha_sub_beta_eq_181_of_e7_linear_character
 ReflectionRegularTenAllCenterNeighborOrbitsPreserved.not_d19LinearCharacterInput
 D19ActsOnMoore57.reflectionRegularTen_not_d19LinearCharacterInput
+D19ActsOnMoore57.D19LinearCharacterInput.no_reflectionRegularTenAllCenterNeighborOrbitsPreserved
+D19ActsOnMoore57.D19LinearCharacterInput.reflectionFixedCenterLeafBoundary
 ```
 
 So once the raw action supplies `D19LinearCharacterInput` from mathlib
-representation theory, the regular-`10` boundary is eliminated automatically.
+representation theory, the regular-`10` boundary is eliminated automatically,
+and the raw split lands in `ReflectionFixedCenterLeafBoundary`.
 Lean also records the fixed-induced graph shape of the branch as the
 strongly-regular `(10,3,0,1)` graph, with triangle-free and unique common
 neighbor consequences:
@@ -509,6 +512,9 @@ class-boundary and a `(-8)` value-boundary into the concrete
 paper-star and explicit `K_{1,55}` downstream connectors are also now exposed:
 
 ```lean
+D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7AndMinus8CharacterBoundaries
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundaries
 D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndPaperFixedStar56
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56
 D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndInvolutionK155
@@ -538,6 +544,10 @@ bridges and the existing fixed-star/no-go APIs; they add no new linear-algebra
 or representation-theory assumptions beyond concrete trace/value boundaries
 for the two projection representations and the explicit reflection-side
 paper-star/K155/count input needed to build `D19LinearCharacterInput`.  The
+latest wrappers also expose the bare `Nonempty (D19LinearCharacterInput h)`
+consequence of the E7 and E7/minus-8 boundary packages, so later modules can
+consume the representation input without choosing the concrete record
+manually.  The
 rotation obligations have also been reduced conservatively to one
 representative from each inverse pair, using only the group-theoretic fact that
 `r d` is conjugate to `r (-d)` in `D19`; nonzero rotations are not all conjugate.

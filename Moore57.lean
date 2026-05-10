@@ -11,6 +11,7 @@ import Moore57.E7Minus8InversePairTraceNoGoConnectors
 import Moore57.E7Minus8InversePairTraceRawReflectionStarConnectors
 import Moore57.E7Minus8TraceBoundaryBridge
 import Moore57.E7Minus8TraceNoGoConnectors
+import Moore57.E7ProjectionLinearCharacterConsequences
 import Moore57.E7MatrixIdempotent
 import Moore57.E7MatrixPermutationCommutation
 import Moore57.E7LinearCharacterInputBridge
@@ -316,6 +317,7 @@ import Moore57.ReflectionRegularTenCharacterBoundary
 import Moore57.ReflectionRegularTenStrongGraphBoundary
 import Moore57.ReflectionRawGeometrySplit
 import Moore57.ReflectionDefaultBaseIndexSplit
+import Moore57.ReflectionLinearCharacterGeometrySplit
 import Moore57.ReflectionRegularBranchExclusion
 import Moore57.ReflectionLinearRawReflectionK155Bridge
 import Moore57.BranchOrbitABCActionLevelCaseBoundary
