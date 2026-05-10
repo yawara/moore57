@@ -70,6 +70,9 @@ D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_eq_56
 D19ActsOnMoore57.involutionFixedSetStar56_of_linear_character_reflection_eq_and_adjacentMovedCount_eq_112
 D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_adjacentMovedCount_eq_112
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_involutionK155_of_adjacentMovedCount_eq_112
+two_dvd_card_sub_fixedVertexCount_of_involutive
+two_dvd_adjacentMovedCount_of_involutive
+D19ActsOnMoore57.two_dvd_reflection_adjacentMovedCount
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -100,7 +103,12 @@ involutory automorphism.  A packaged trace route is also now available:
 `a₁ = 112` gives both `InvolutionFixedSetStar56` and
 `Nonempty (InvolutionK155 ...)`.  Thus the remaining Lemma 2 work is either
 to prove `a₀ = 56` directly for involutions, or to prove the trace/character
-and `a₁ = 112` data that forces the same fixed count.
+and `a₁ = 112` data that forces the same fixed count.  General involution
+parity constraints are now available: non-fixed vertices and adjacent-moved
+vertices come in swapped pairs, so `Fintype.card V - fixedVertexCount σ` and
+`adjacentMovedCount Γ σ` are even.  These are not enough by themselves to prove
+Macaj-Siran Lemma 2, but they are reusable arithmetic constraints for the
+remaining count argument.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
