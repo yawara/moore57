@@ -424,9 +424,33 @@ ReflectionRegularTenAllCenterNeighborOrbitsPreserved.remainingCenterNeighborOrbi
 ReflectionRegularTenAllCenterNeighborOrbitsPreserved.not_exists_remainingCenterNeighborOrbitBase_reflectionCenterNeighborOrbitIndex_ne
 ```
 
+The raw split is also available directly as a default-base index dichotomy:
+
+```lean
+D19ActsOnMoore57.exists_moved_defaultBase_index_or_forall_defaultBase_index_fixed
+D19ActsOnMoore57.forall_defaultBase_index_fixed_of_not_exists_moved_defaultBase_index
+D19ActsOnMoore57.exists_reflection_forall_defaultBase_index_fixed_of_not_reflectionFixedCenterLeafBoundary
+```
+
 This confirms that the regular-`10` branch cannot feed the labeled-reflection
 matching-equation route via a moved default index.  It remains the cleanest
 geometric obstruction to attack next.
+
+The regular-`10` branch has now been numerically evaluated:
+
+```lean
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.fixedInducedGraph_edgeFinset_card_eq_fifteen
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.adjacentMovedCount_eq_2700
+ReflectionRegularTenAllCenterNeighborOrbitsPreserved.trace_E7Matrix_mul_permMatrix_eq_181
+D19ActsOnMoore57.reflectionRegularTen_trace_E7Matrix_mul_permMatrix_eq_181
+```
+
+Thus a regular-`10` obstruction is now equivalent to a reflection whose fixed
+induced graph is cubic on 10 vertices, with adjacent-moved count `2700` and
+E7 trace `181`.  This survives the earlier parity/range checks, so the next
+regular-branch target is a stronger representation-theoretic or geometric
+contradiction with trace `181` or with all default center-neighbor orbits
+preserved.
 
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
