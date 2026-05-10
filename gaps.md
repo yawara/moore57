@@ -1,7 +1,7 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after adding
-`ReflectionInvolutionK155FromActionBoundary`.
+Snapshot: 2026-05-10, after adding fixed-star paper-boundary connectors and
+fixed-induced-graph inheritance wrappers.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -66,16 +66,20 @@ raw reflection satisfies `InvolutionFixedSetStar56` is the Higman/Cameron
 fixed-star theorem and remains to be formalized.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
-available in a regularity-parameterized form:
+available in both non-regular and regularity-parameterized forms:
 
 ```lean
+D19ActsOnMoore57.fixedInducedGraph_isStrongZeroOne
 D19ActsOnMoore57.fixedInducedGraph_isSRGWith_of_regular
 ```
 
-This packages the already-proved common-neighbor inheritance into mathlib's
-`IsSRGWith` API.  The remaining classification step is still to prove, or
-otherwise bridge, that the relevant involution fixed induced graph is the
-`56`-vertex star rather than another Moore graph case.
+The first theorem records the paper-level common-neighbor condition directly:
+adjacent fixed vertices have `0` common fixed neighbors, and distinct
+non-adjacent fixed vertices have `1`.  The second packages the same inheritance
+into mathlib's `IsSRGWith` API once constant degree is available.  The remaining
+classification step is still to prove, or otherwise bridge, that the relevant
+involution fixed induced graph is the `56`-vertex star rather than another
+Moore graph case.
 
 ### 3. Raw action to default-base / branch-orbit frontier
 

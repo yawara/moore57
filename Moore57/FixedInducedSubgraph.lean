@@ -2,6 +2,17 @@ import Moore57.FixedPointBasics
 import Moore57.FixedCommonNeighbors
 
 namespace Moore57
+
+/-- Non-regular strong graph condition with parameters `λ = 0`, `μ = 1`.
+This is the exact paper-level condition used before the fixed graph is
+classified as either a Moore graph or a star. -/
+structure IsStrongZeroOne {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] : Prop where
+  of_adj : ∀ v w : V, G.Adj v w → Fintype.card (G.commonNeighbors v w) = 0
+  of_not_adj :
+    ∀ v w : V, v ≠ w → ¬ G.Adj v w →
+      Fintype.card (G.commonNeighbors v w) = 1
+
 namespace D19ActsOnMoore57
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
@@ -81,6 +92,18 @@ theorem fixedInducedGraph_commonNeighbors_card_of_not_adj
     congrArg Subtype.val (hz_unique ⟨(w : V), hw_mem⟩)
   change (w : V) = (z : V)
   exact hw_eq_z
+
+/-- Paper Lemma 1(2) in its non-regular form: the subgraph induced by fixed
+vertices inherits the strong `(λ, μ) = (0, 1)` common-neighbor condition. -/
+theorem fixedInducedGraph_isStrongZeroOne
+    (h : D19ActsOnMoore57 V Γ) (g : DihedralGroup 19) :
+    IsStrongZeroOne (fixedInducedGraph h g) where
+  of_adj := by
+    intro x y hxy
+    exact h.fixedInducedGraph_commonNeighbors_card_of_adj g hxy
+  of_not_adj := by
+    intro x y hxy_ne hxy_not
+    exact h.fixedInducedGraph_commonNeighbors_card_of_not_adj g hxy_ne hxy_not
 
 /-- Paper Lemma 1(2), packaged in mathlib's strongly-regular form: if the
 fixed induced graph has constant fixed degree `k`, then it is strongly regular
