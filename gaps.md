@@ -97,6 +97,16 @@ IsStarWithCenter.card_edgeFinset_eq_card_sub_one
 D19ActsOnMoore57.fixedInducedGraph_card_edgeFinset_eq_fixedVertexCount_sub_one_of_isStarWithCenter
 D19ActsOnMoore57.reflection_starEdgeCountFormula_of_fixedInduced_isStarWithCenter
 D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_fixedInduced_starEdgeCountFormula_bounds
+D19ActsOnMoore57.D19LinearCharacterInput.fixedVertexCount_reflection_eq_56_of_starEdgeCountFormula
+D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_starEdgeCountFormula
+D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_fixedInduced_isStarWithCenter
+D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_fixedInduced_not_regular
+D19ActsOnMoore57.D19LinearCharacterInput.reflection_adjacentMovedCount_int_eq
+D19ActsOnMoore57.D19LinearCharacterInput.reflection_regular_fixedVertexCount_mul_eq
+D19ActsOnMoore57.D19LinearCharacterInput.reflection_regular_fixedVertexCount_eq_degree_sq_add_one_int
+D19ActsOnMoore57.D19LinearCharacterInput.reflection_regular_fixedInduced_degree_cubic
+D19ActsOnMoore57.D19LinearCharacterInput.reflection_fixedInducedGraph_not_regular
+D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_raw_reflection
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -164,10 +174,20 @@ star specialization is also formalized: if the fixed-induced graph is a star,
 then `e = a₀ - 1`, and the packaged character bridge reaches
 `InvolutionFixedSetStar56` from that star plus the `52..56` bounds.
 
-The remaining non-paper-count bottleneck has therefore shifted again:
-derive the fixed-induced star/non-regular branch and the fixed-count bounds
-`52 ≤ a₀ ≤ 56` from the raw reflection geometry, or prove the exact
-Macaj-Siran/Higman count `a₀ = 56` directly.
+With the full D19 linear-character value at reflections, the bounds are no
+longer needed once the fixed-induced graph is known to be a star:
+star-edge formula plus `α - β = 33` directly forces `a₀ = 56`.  The regular
+fixed-induced branch is now excluded under `D19LinearCharacterInput` as well:
+the trace equation and the raw involution edge-count formula give
+`a₀ * (50 - d) = 2690`, regular strong `(0,1)` parameters give
+`a₀ = d^2 + 1`, and the resulting cubic has no root for `d ≤ 57`.  Therefore
+the trace-assisted raw-reflection bridge is now closed:
+`D19LinearCharacterInput.involutionFixedSetStar56_of_raw_reflection`.
+
+The remaining main gap for the no-assumptions final theorem is now the
+representation/character input itself: derive `D19LinearCharacterInput` (or a
+stronger `D19RepresentationCharacterInput`) from the raw D19 action using
+mathlib, rather than taking the character decomposition as an assumption.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
