@@ -151,6 +151,20 @@ D19ActsOnMoore57.finrank_E7Range_eq_1729
 D19ActsOnMoore57.finrank_e7ProjectionRepresentation_eq_1729
 D19ActsOnMoore57.D19LinearCharacterInput.ofE7ProjectionCharacterClassBoundary
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7ProjectionCharacterClassBoundary
+E57Matrix
+minus8Matrix
+E57Matrix_mul_E57Matrix_eq_E57Matrix
+E57Matrix_mul_permMatrix_eq_permMatrix_mul_E57Matrix
+E57Matrix_mul_E7Matrix_eq_zero
+E7Matrix_mul_E57Matrix_eq_zero
+minus8Matrix_mul_minus8Matrix_eq_minus8Matrix
+minus8Matrix_mul_permMatrix_eq_permMatrix_mul_minus8Matrix
+D19ActsOnMoore57.minus8ProjectionRepresentation
+D19ActsOnMoore57.minus8ProjectionRepresentation_character_eq_matrix_trace
+D19ActsOnMoore57.minus8_trace_eq_d19Linear_of_characterValueBoundary
+D19ActsOnMoore57.e7_trace_eq_d19Linear_of_characterClassBoundary
+D19ActsOnMoore57.alpha_beta_gamma_le_of_E7_minus8_characterBoundaries
+D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundaries
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -252,12 +266,19 @@ matrix trace:
 The same representation now has finrank `1729` by `Representation.char_one`,
 and an E7-specific constructor routes any class-boundary decomposition of
 `h.e7ProjectionRepresentation` directly to `D19LinearCharacterInput`.
-The next representation-theoretic step is no longer construction of the E7
-representation, but decomposition of this rational D19 representation into
-the expected D19 linear-character multiplicities, yielding the `h7` field of
-`D19LinearCharacterInput`.  The parallel complementary task is to construct
-or identify the `-8` complementary representation in mathlib and prove the
-analogous character identity for `hMinus8`.
+The complementary `(-8)` projection has also been constructed as
+`minus8Matrix Γ = I - E57 - E7`, where `E57` is the rank-one all-ones
+projection.  Lean now proves its idempotence, its commutation with graph
+automorphism permutation matrices, the corresponding range representation, and
+the expected character formula
+`trace(P_g) - 1 - trace(E7 * P_g)`.  A combined bridge now turns an E7
+class-boundary and a `(-8)` value-boundary into the concrete
+`D19LinearCharacterInput`, with the `α ≤ 113`, `β ≤ 58`, and
+`α - β = 33` fields derived by the existing character arithmetic.  The
+remaining representation-theoretic gap is therefore sharply isolated:
+prove the D19 rational character class-boundaries for the two concrete
+projection representations, rather than constructing the representations
+themselves.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:

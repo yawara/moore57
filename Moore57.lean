@@ -1,5 +1,6 @@
 -- This module serves as the root of the `Moore57` library.
 import Moore57.D19Contradiction
+import Moore57.E7Minus8CharacterInputBridge
 import Moore57.E7MatrixIdempotent
 import Moore57.E7MatrixPermutationCommutation
 import Moore57.E7LinearCharacterInputBridge
@@ -195,6 +196,7 @@ import Moore57.D19RepresentationCharacterFromData
 import Moore57.D19RepresentationCharacterMathlibBridge
 import Moore57.D19RepresentationMathlibCharacterTools
 import Moore57.MatrixLinearMapBridge
+import Moore57.Minus8ProjectionRepresentation
 import Moore57.PermutationRepresentationCharacter
 import Moore57.ProjectionTrace
 import Moore57.D19VertexPermutationRepresentation
