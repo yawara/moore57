@@ -87,6 +87,30 @@ theorem nonempty_involutionK155_raw_reflection
     boundary.reflection_adjacent_moved
     boundary.rotation_fixed_count k
 
+/-- The packaged boundary gives reflection fixed count `56` for any
+reflection. -/
+theorem fixedVertexCount_reflection_eq_56_raw_reflection
+    (boundary : E7Minus8CharacterReflectionCountBoundary h) (k : ZMod 19) :
+    fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56 :=
+  fixedVertexCount_reflection_eq_56_of_nonempty_linearCharacterInput_raw_reflection
+    boundary.nonempty_d19LinearCharacterInput k
+
+/-- The packaged boundary gives reflection adjacent-moved count `112` for any
+reflection. -/
+theorem adjacentMovedCount_reflection_eq_112_raw_reflection
+    (boundary : E7Minus8CharacterReflectionCountBoundary h) (k : ZMod 19) :
+    adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr k)) = 112 :=
+  adjacentMovedCount_reflection_eq_112_of_nonempty_linearCharacterInput_raw_reflection
+    boundary.nonempty_d19LinearCharacterInput k
+
+/-- The packaged boundary eliminates the regular-`10` branch of the raw split,
+hence gives the fixed-center leaf boundary. -/
+theorem reflectionFixedCenterLeafBoundary
+    (boundary : E7Minus8CharacterReflectionCountBoundary h) :
+    ReflectionFixedCenterLeafBoundary h :=
+  reflectionFixedCenterLeafBoundary_of_nonempty_linearCharacterInput
+    boundary.nonempty_d19LinearCharacterInput
+
 /-- The packaged boundary supplies the representation component boundary. -/
 theorem representationCharacterComponentsBoundary
     (boundary : E7Minus8CharacterReflectionCountBoundary h) :
