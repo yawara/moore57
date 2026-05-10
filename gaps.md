@@ -1,7 +1,7 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after adding fixed-star paper-boundary connectors and
-fixed-induced-graph inheritance wrappers.
+Snapshot: 2026-05-10, after adding reflection-orbit fixed-point local facts and
+Higman/star-edge arithmetic connectors.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -75,6 +75,13 @@ two_dvd_adjacentMovedCount_of_involutive
 D19ActsOnMoore57.two_dvd_reflection_adjacentMovedCount
 IsMoore57.higman_trace_int_natModEq
 D19ActsOnMoore57.D19LinearCharacterInput.reflection_higman_natModEq
+D19ActsOnMoore57.rotationFixedCenter_fixed_reflection
+D19ActsOnMoore57.exists_three_rotation_orbits_on_rotationFixedCenter_neighbors
+D19ActsOnMoore57.reflection_fixed_points_in_rotationOrbitFinset_card_eq_one_of_mem
+D19ActsOnMoore57.reflection_fixed_center_neighbor_orbit_card_eq_one_of_index_eq
+InvolutionHigmanCountArithmetic.starEdgeCountFormula_a0_eq_56_of_bounds
+IsMoore57.starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
+D19ActsOnMoore57.D19LinearCharacterInput.reflection_starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -114,6 +121,19 @@ remaining count argument.  Higman's Lemma 3 congruence is also separated out:
 if the `E7` trace is integer-valued, then
 `adjacentMovedCount Γ σ ≡ 7 * fixedVertexCount σ + 5 [MOD 15]`; packaged
 `D19LinearCharacterInput` supplies this congruence for every reflection.
+The arithmetic part of the Lemma 2 route is now factored further:
+if the fixed-induced graph is a star, the explicit edge-count formula
+`a₁ = 3250 - 58*a₀ + 2*(a₀ - 1)` and bounds `52 ≤ a₀ ≤ 56` force
+`a₀ = 56`.  Thus the remaining non-paper arithmetic hypotheses are now
+localized to proving the star-edge formula and the fixed-count bounds from
+the raw involution/reflection geometry.
+
+The local reflection action around `rotationFixedCenter` is also recorded:
+each reflection fixes `rotationFixedCenter`, the center-neighbor set splits
+into three 19-point rotation orbits, and any center-neighbor rotation orbit
+preserved by a reflection contains exactly one reflection-fixed vertex.  The
+remaining geometric choice is to control the induced permutation of these
+three neighbor orbits strongly enough to feed the fixed-star/count argument.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:

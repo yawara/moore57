@@ -3,6 +3,7 @@ import Moore57.D19Contradiction
 import Moore57.FixedPointBasics
 import Moore57.InvolutionCountParity
 import Moore57.HigmanTraceCongruence
+import Moore57.InvolutionHigmanCountArithmetic
 import Moore57.BranchFiberAction
 import Moore57.BranchFiberMatching
 import Moore57.BranchFiberPartition
@@ -160,6 +161,7 @@ import Moore57.BranchOrbitABCFromCenter
 import Moore57.BranchOrbitBCSelectionCover
 import Moore57.BranchOrbitABCData
 import Moore57.BranchOrbitABCDataFromCenter
+import Moore57.ReflectionFixedCenterLocal
 import Moore57.ReflectionFixedCenterLeafBoundary
 import Moore57.AFiberMatchingFixedCountSupport
 import Moore57.AFiberMatchingSupportEquations
