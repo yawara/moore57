@@ -114,6 +114,15 @@ theorem nonempty_involutionFixedStar55
   rcases hStar.nonempty_involutionK155 with ⟨hK⟩
   exact ⟨hK.toInvolutionFixedStar55 hΓ⟩
 
+/-- The paper-shaped fixed-star input gives the standard adjacent-moved count
+for the involution. -/
+theorem adjacentMovedCount_eq_112
+    (hΓ : IsMoore57 Γ)
+    (hStar : InvolutionFixedSetStar56 Γ σ) :
+    adjacentMovedCount Γ σ = 112 := by
+  rcases hStar.nonempty_involutionFixedStar55 hΓ with ⟨hFixedStar⟩
+  exact hFixedStar.adjacentMovedCount_eq_112 hΓ
+
 end InvolutionFixedSetStar56
 
 namespace D19ActsOnMoore57
@@ -137,6 +146,15 @@ theorem fixedVertexCount_reflection_eq_56_of_reflectionFixedSetStar56
       InvolutionFixedSetStar56 Γ (h.smulEquiv (DihedralGroup.sr k))) :
     fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56 :=
   hStar.fixedVertexCount_eq_56
+
+/-- Reflection-specialized adjacent-moved count extracted from the paper-shaped
+fixed-star statement. -/
+theorem adjacentMovedCount_reflection_eq_112_of_reflectionFixedSetStar56
+    {k : ZMod 19}
+    (hStar :
+      InvolutionFixedSetStar56 Γ (h.smulEquiv (DihedralGroup.sr k))) :
+    adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr k)) = 112 :=
+  hStar.adjacentMovedCount_eq_112 h.isMoore
 
 /-- Reflection-specialized bridge from the paper-shaped fixed-star statement to
 the fixed-star count abstraction. -/
