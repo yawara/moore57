@@ -1,8 +1,8 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after routing `TraceRepresentationData h.a1` plus
-`(-8)` value/trace boundaries through the packaged raw-reflection and no-go
-frontiers.
+Snapshot: 2026-05-10, after deriving the concrete `(-8)` value-boundary as
+the complement of `TraceRepresentationData h.a1` and routing it through the
+packaged raw-reflection/no-go frontiers.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -520,14 +520,15 @@ class-boundary and a `(-8)` value-boundary into the concrete
 `D19LinearCharacterInput`, with the `α ≤ 113`, `β ≤ 58`, and
 `α - β = 33` fields derived by the existing character arithmetic.  The latest
 bridge also builds the packaged E7/minus-8 reflection-count boundary directly
-from `TraceRepresentationData h.a1` plus either a `(-8)` value-boundary or
-explicit complementary `(-8)` projection trace values; there are also
-inverse-pair trace variants for the `(-8)` rotation obligations and constructors
-one step further upstream from `D19TraceInput h`.  From there it exposes the
-bare `D19LinearCharacterInput`, raw-reflection fixed-star/K155 outputs, the
-fixed-center leaf split, representation component boundary, and current
-final-gap no-go.  The paper-star and explicit `K_{1,55}` downstream connectors
-are also now exposed:
+from `TraceRepresentationData h.a1`.  The concrete `(-8)` value-boundary is
+now derived as the complementary character with multiplicities
+`113 - α`, `58 - β`, and `171 - γ`, using the existing projection character
+formula; explicit and inverse-pair trace variants remain available as lower
+level surfaces.  There are also constructors one step further upstream from
+`D19TraceInput h`.  From there it exposes the bare `D19LinearCharacterInput`,
+raw-reflection fixed-star/K155 outputs, the fixed-center leaf split,
+representation component boundary, and current final-gap no-go.  The
+paper-star and explicit `K_{1,55}` downstream connectors are also now exposed:
 
 ```lean
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_ofE7ProjectionCharacterClassBoundary
@@ -542,6 +543,9 @@ D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationD
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8ProjectionTraceBoundaryAndReflectionStar
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8InversePairTraceBoundary
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataAndMinus8InversePairTraceBoundaryAndReflectionStar
+D19ActsOnMoore57.minus8ProjectionRepresentation_characterValueBoundary_of_traceRepresentationDataComplement
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofTraceRepresentationDataComplement
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_traceRepresentationDataComplement
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8Values
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8ValuesAndReflectionStar
 D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.ofD19TraceInputAndMinus8ProjectionTraceBoundary
@@ -701,11 +705,11 @@ A direct route from the two concrete
 character boundaries alone to raw-reflection fixed stars would currently be
 circular, because the raw-reflection fixed-star theorem itself consumes the
 resulting `D19LinearCharacterInput`.  The remaining representation-theoretic
-gap is therefore sharply isolated: prove the finite list of D19 trace values
-for the concrete projection representations, especially the complementary
-`(-8)` projection trace/value boundary.  On the E7 side, it now suffices to
-feed the existing `D19TraceInput h`/`TraceRepresentationData h.a1` surfaces,
-rather than constructing the projection representations themselves.
+gap is therefore sharply isolated: on the E7 side, feed the existing
+`D19TraceInput h`/`TraceRepresentationData h.a1` surfaces from the raw action.
+The complementary `(-8)` character values then follow automatically from that
+E7 data and no longer need to be supplied as a separate representation
+decomposition hypothesis.
 
 The domain split has also started.  Pure D19 character functions and
 inverse-pair conjugacy reductions live under `Moore57/GroupTheory/`, generic
