@@ -532,6 +532,16 @@ no_D19_fixedStarLocalObstructionBoundary_of_nonempty_linearCharacterInput
 no_D19_fixedStarWitnessBoundary_of_nonempty_linearCharacterInput
 no_D19_fixedStarCoordinateWitnessBoundary_of_nonempty_linearCharacterInput
 no_D19_currentFinalGapBoundary_of_nonempty_linearCharacterInput
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.nonempty_d19LinearCharacterInput
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.involutionFixedSetStar56_raw_reflection
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.nonempty_involutionK155_raw_reflection
+D19ActsOnMoore57.E7Minus8CharacterReflectionCountBoundary.no_currentFinalGapBoundary
+D19ActsOnMoore57.E7Minus8InversePairTraceReflectionCountBoundary
+D19ActsOnMoore57.E7Minus8InversePairTraceReflectionCountBoundary.nonempty_d19LinearCharacterInput
+D19ActsOnMoore57.E7Minus8InversePairTraceReflectionCountBoundary.involutionFixedSetStar56_raw_reflection
+D19ActsOnMoore57.E7Minus8InversePairTraceReflectionCountBoundary.nonempty_involutionK155_raw_reflection
+D19ActsOnMoore57.E7Minus8InversePairTraceReflectionCountBoundary.no_currentFinalGapBoundary
 D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndPaperFixedStar56
 D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56
 D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndInvolutionK155
@@ -567,7 +577,10 @@ consume the representation input without choosing the concrete record
 manually.  That `Nonempty` boundary now has direct reflection consumers for
 fixed-star, `K_{1,55}`, fixed-count, adjacent-moved count, and the
 fixed-center leaf split, plus no-go consumers for the fixed-star and current
-final-gap frontiers.  The
+final-gap frontiers.  The same data is also packaged in Type-valued boundary
+records for both the direct character-boundary and inverse-pair trace-boundary
+surfaces, so downstream code can carry the finite representation obligations
+as one object.  The
 rotation obligations have also been reduced conservatively to one
 representative from each inverse pair, using only the group-theoretic fact that
 `r d` is conjugate to `r (-d)` in `D19`; nonzero rotations are not all conjugate.
