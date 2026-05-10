@@ -66,6 +66,7 @@ import Moore57.RotationFixedUniqueCriteria
 import Moore57.D19ConstructiveFinalUnique
 import Moore57.D19ConstructiveFinalFixedEnumeration
 import Moore57.D19LinearCharacterInput
+import Moore57.D19LinearCharacterDimension
 import Moore57.ReflectionOrbitTools
 import Moore57.D19ConstructiveFinalLinearUnique
 import Moore57.D19ConstructiveFinalLinearFixedEnumeration
