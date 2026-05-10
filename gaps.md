@@ -270,6 +270,29 @@ Once `52 ≤ fixedVertexCount (sr k) ≤ 56` is available for every reflection,
 Lean now produces `InvolutionFixedSetStar56` and `Nonempty (InvolutionK155 ...)`
 for every reflection without any additional trace-integrality assumption.
 
+The raw-reflection side has also been tightened without using
+`D19LinearCharacterInput`.  The local action on the three rotation orbits of
+neighbors of `rotationFixedCenter` now bounds the fixed-induced degree at that
+vertex by `3`:
+
+```lean
+D19ActsOnMoore57.fixedInducedGraph_reflection_rotationFixedCenter_degree_le_three
+```
+
+The regular fixed-induced branch is correspondingly reduced to only
+`fixedVertexCount = 2` or `10`, while the non-regular branch is a star and the
+Higman/involution arithmetic reduces it to `6, 16, 26, 36, 46, 56`.  The public
+combined candidate theorem is:
+
+```lean
+D19ActsOnMoore57.fixedVertexCount_reflection_raw_candidates
+```
+
+So the active raw-reflection gap has narrowed from proving the full `52..56`
+range from scratch to excluding the residual small candidates
+`2, 6, 10, 16, 26, 36, 46`, or equivalently proving a lower bound strong
+enough to force the final candidate `56`.
+
 The remaining main gap for the no-assumptions final theorem is also the
 representation/character input itself: derive `D19LinearCharacterInput` (or a
 stronger `D19RepresentationCharacterInput`) from the raw D19 action using
