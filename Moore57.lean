@@ -73,6 +73,7 @@ import Moore57.D19LinearCharacterDimensionConnectors
 import Moore57.D19LinearCharacterMinus8Connectors
 import Moore57.InvolutionFixedStarA1
 import Moore57.InvolutionFixedStarPaperBoundary
+import Moore57.D19LinearCharacterPaperFixedStarConnectors
 import Moore57.D19PhaseEBundle
 import Moore57.ReflectionOrbitTools
 import Moore57.D19ConstructiveFinalLinearUnique

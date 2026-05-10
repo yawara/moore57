@@ -60,6 +60,9 @@ InvolutionFixedSetStar56
 InvolutionFixedSetStar56.fixedVertexCount_eq_56
 InvolutionFixedSetStar56.adjacentMovedCount_eq_112
 InvolutionFixedSetStar56.nonempty_involutionK155
+D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
+D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
+D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
 ```
 
 This matches the Makhnev-Paduchikh/Higman formulation more directly than the
@@ -73,15 +76,18 @@ available in both non-regular and regularity-parameterized forms:
 ```lean
 D19ActsOnMoore57.fixedInducedGraph_isStrongZeroOne
 D19ActsOnMoore57.fixedInducedGraph_isSRGWith_of_regular
+not_isSRGWith_56_k_0_1
+D19ActsOnMoore57.fixedInducedGraph_not_regular_of_fixedVertexCount_eq_56
 ```
 
 The first theorem records the paper-level common-neighbor condition directly:
 adjacent fixed vertices have `0` common fixed neighbors, and distinct
 non-adjacent fixed vertices have `1`.  The second packages the same inheritance
-into mathlib's `IsSRGWith` API once constant degree is available.  The remaining
-classification step is still to prove, or otherwise bridge, that the relevant
-involution fixed induced graph is the `56`-vertex star rather than another
-Moore graph case.
+into mathlib's `IsSRGWith` API once constant degree is available.  The
+`IsSRGWith.param_eq` arithmetic now rules out a regular `56`-vertex
+`(λ, μ) = (0, 1)` fixed induced graph, so the remaining classification work is
+the genuinely non-regular fixed-star step: prove that the fixed induced graph
+has a degree-`55` center and all other fixed vertices are leaves.
 
 ### 3. Raw action to default-base / branch-orbit frontier
 
