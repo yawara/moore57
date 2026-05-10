@@ -116,6 +116,11 @@ PermutationRepresentationCharacter.character_permutationRepresentation
 D19ActsOnMoore57.vertexPermutationRepresentation
 D19ActsOnMoore57.vertexPermutationRepresentation_character_eq_fixedVertexCount
 D19ActsOnMoore57.trace_permMatrix_smulEquiv_eq_vertexPermutationRepresentation_character
+permMatrix_mul_apply
+adjMatrix_mul_permMatrix_eq_permMatrix_mul_adjMatrix
+allOnesMatrix_mul_permMatrix_eq_permMatrix_mul_allOnesMatrix
+E7Matrix_mul_permMatrix_eq_permMatrix_mul_E7Matrix
+LinearMap.trace_restrict_range_eq_trace_comp_of_isIdempotentElem
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -204,6 +209,14 @@ permutation representations: `Representation.ofMulAction` has character equal
 to the number of fixed points.  The concrete `D19ActsOnMoore57` vertex action
 is also packaged as a mathlib permutation representation, and its character is
 identified with both `fixedVertexCount` and the local `permMatrix` trace.
+The Moore57 trace matrices are now known to commute with graph automorphism
+permutation matrices, in particular `E7Matrix Γ * Pσ = Pσ * E7Matrix Γ`.
+The core mathlib linear-algebra bridge for a commuting idempotent projection
+is also available: the trace of `f` restricted to `range p` equals the ambient
+trace of `p ∘ f`.  The next representation-theoretic step is to show that the
+matrix `E7Matrix Γ` is an idempotent linear projection of rank `1729`, so its
+range carries the desired mathlib representation with character
+`Matrix.trace (E7Matrix Γ * permMatrix σ)`.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
