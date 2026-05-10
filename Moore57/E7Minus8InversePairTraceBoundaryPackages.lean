@@ -80,6 +80,14 @@ theorem nonempty_involutionK155_raw_reflection
     boundary.reflection_fixed_count boundary.reflection_adjacent_moved
     boundary.rotation_fixed_count k
 
+/-- The packaged inverse-pair trace boundary supplies the representation
+component boundary. -/
+theorem representationCharacterComponentsBoundary
+    (boundary : E7Minus8InversePairTraceReflectionCountBoundary h) :
+    RepresentationCharacterComponentsBoundary h :=
+  representationCharacterComponentsBoundary_of_nonempty_linearCharacterInput
+    boundary.nonempty_d19LinearCharacterInput
+
 /-- Current-final-gap no-go from the packaged nonempty linear-character input. -/
 theorem no_currentFinalGapBoundary
     (boundary : E7Minus8InversePairTraceReflectionCountBoundary h) :
