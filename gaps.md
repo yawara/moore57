@@ -67,6 +67,9 @@ D19ActsOnMoore57.involutionFixedSetStar56OfReflectionFixedNeighborCenterCount
 IsStrongZeroOne.exists_isStarWithCenter_of_not_regular
 D19ActsOnMoore57.exists_fixedSetStarWithCenter_of_fixedVertexCount_eq_56
 D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_eq_56
+D19ActsOnMoore57.involutionFixedSetStar56_of_linear_character_reflection_eq_and_adjacentMovedCount_eq_112
+D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_adjacentMovedCount_eq_112
+D19ActsOnMoore57.D19LinearCharacterInput.nonempty_involutionK155_of_adjacentMovedCount_eq_112
 D19ActsOnMoore57.D19LinearCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19ActsOnMoore57.D19RepresentationCharacterInput.ofLinearCharacterAndPaperFixedStar56
 D19FinalCharacterInputs.ofLinearCharacterAndPaperFixedStar56
@@ -92,7 +95,12 @@ D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_eq_56
 So the remaining raw-reflection-to-paper-star gap is no longer fixed-star
 geometry itself; it is the Higman/Macaj-Siran Lemma 2 count
 `fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56` from the raw
-involutory automorphism.
+involutory automorphism.  A packaged trace route is also now available:
+`D19LinearCharacterInput` plus the standard reflection adjacent-moved count
+`a₁ = 112` gives both `InvolutionFixedSetStar56` and
+`Nonempty (InvolutionK155 ...)`.  Thus the remaining Lemma 2 work is either
+to prove `a₀ = 56` directly for involutions, or to prove the trace/character
+and `a₁ = 112` data that forces the same fixed count.
 
 The fixed-induced-graph inheritance part of the paper's Lemma 1(2) is now
 available in both non-regular and regularity-parameterized forms:
@@ -191,13 +199,16 @@ The contradiction routes are now well connected once their inputs exist.  The
 main missing work is still:
 
 1. derive the representation character identities `h7` and `hMinus8`;
-2. derive `InvolutionK155` from a raw reflection;
+2. prove the Higman/Macaj-Siran involution counts, especially reflection
+   `a₀ = 56` and, for the trace bridge, `a₁ = 112`;
 3. construct a default-base / branch-orbit frontier wrapper from the raw action.
 
 The current best decomposition of item 2 is:
 
-1. raw reflection geometry -> constructive fixed-neighbor center data
-   (`55` fixed neighbors), or constructive induced degree-`55` center data;
-2. raw/reflection trace data -> reflection fixed count `56`;
-3. center separation from `rotationFixedCenter` for the fixed-center-leaf route;
-4. the existing Lean bridge -> `InvolutionK155` and downstream frontiers.
+1. raw involution trace/character data -> reflection fixed count `56`;
+2. if using the linear-character route, prove the standard adjacent-moved count
+   `112`;
+3. the existing Lean bridge -> `InvolutionFixedSetStar56` and Prop-level
+   `Nonempty (InvolutionK155 ...)`;
+4. for constructive fixed-center-leaf routes, still build Type-valued
+   fixed-neighbor center data and separate it from `rotationFixedCenter`.
