@@ -240,6 +240,28 @@ theorem fixedVertexCount_reflection_eq_56_of_involutionFixedStar55
     fixedVertexCount (h.smulEquiv (DihedralGroup.sr d)) = 56 :=
   hStar.fixed_card
 
+namespace D19LinearCharacterInput
+
+/-- Build `D19LinearCharacterInput` from the linear-character equality, the
+`(-8)`-eigenspace bounds, and an `InvolutionFixedStar55` witness for some
+reflection: the standard reflection counts `a₀(t) = 56` and `a₁(t) = 112` are
+both supplied by the fixed-star data. -/
+noncomputable def ofLinearCharacterAndFixedStar55
+    (alpha beta gamma : ℕ)
+    (hAlpha : alpha ≤ 113)
+    (hBeta : beta ≤ 58)
+    (hlin : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    {d : ZMod 19}
+    (hStar : InvolutionFixedStar55 Γ (h.smulEquiv (DihedralGroup.sr d))) :
+    D19LinearCharacterInput h :=
+  ofLinearCharacterAndCounts (h := h) alpha beta gamma hAlpha hBeta hlin
+    (h.fixedVertexCount_reflection_eq_56_of_involutionFixedStar55 hStar)
+    (h.adjacentMovedCount_reflection_eq_112 hStar)
+
+end D19LinearCharacterInput
+
 end D19ActsOnMoore57
 
 end Moore57
