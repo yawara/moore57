@@ -90,6 +90,42 @@ def ofTraceRepresentationData
           data rotation_fixed d hd)
     reflection_zero_trace
 
+/-- Reflection fixed count `56` and adjacent-moved count `112` give the E7
+reflection representative trace required by the class-boundary API. -/
+theorem reflection_zero_trace_eq_of_traceRepresentationData_and_counts
+    (data : TraceRepresentationData h.a1)
+    (reflection_fixed_count :
+      fixedVertexCount (h.smulEquiv (DihedralGroup.sr 0)) = 56)
+    (reflection_adjacent_moved :
+      adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr 0)) = 112) :
+    Matrix.trace (E7Matrix Γ *
+        permMatrix (h.smulEquiv (DihedralGroup.sr 0))) =
+      (data.alpha : ℚ) - (data.beta : ℚ) := by
+  have hreflectionℚ :
+      (data.alpha : ℚ) - (data.beta : ℚ) = 33 := by
+    exact_mod_cast data.reflection
+  rw [h.isMoore.higman_trace_formula,
+    reflection_fixed_count, reflection_adjacent_moved]
+  rw [hreflectionℚ]
+  norm_num
+
+/-- Build the E7 projection class-boundary from the `a1` trace arithmetic,
+nontrivial rotation fixed count `1`, and the standard reflection count inputs
+at `sr 0`. -/
+def ofTraceRepresentationDataAndReflectionCounts
+    (data : TraceRepresentationData h.a1)
+    (rotation_fixed :
+      ∀ d : ZMod 19, d ≠ 0 → fixedVertexCount (h.rotation d) = 1)
+    (reflection_fixed_count :
+      fixedVertexCount (h.smulEquiv (DihedralGroup.sr 0)) = 56)
+    (reflection_adjacent_moved :
+      adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr 0)) = 112) :
+    D19CharacterClassBoundary h.e7ProjectionRepresentation
+      data.alpha data.beta data.gamma :=
+  ofTraceRepresentationData h data rotation_fixed
+    (reflection_zero_trace_eq_of_traceRepresentationData_and_counts h
+      data reflection_fixed_count reflection_adjacent_moved)
+
 end E7ProjectionCharacterClassBoundary
 
 end D19ActsOnMoore57
