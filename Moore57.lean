@@ -43,6 +43,7 @@ import Moore57.E7Minus8D19ActionDataComplementBoundary
 import Moore57.E7Minus8D19DataComplementFixedCount
 import Moore57.E7Minus8RepresentationInputComplementAutoFixed
 import Moore57.E7TraceThirtyThreeComplementBoundary
+import Moore57.E7CharacterClassTraceBoundary
 import Moore57.E7MatrixIdempotent
 import Moore57.E7MatrixPermutationCommutation
 import Moore57.E7LinearCharacterInputBridge

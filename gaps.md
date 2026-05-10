@@ -1,8 +1,8 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after deriving the concrete `(-8)` value-boundary as
-the complement of `TraceRepresentationData h.a1` and routing it through the
-packaged raw-reflection/no-go frontiers.
+Snapshot: 2026-05-10, after routing E7 projection character-class data with
+`alpha - beta = 33` through the trace-core, reflection trace `33`, fixed-star,
+and current-final-gap no-go frontiers.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -10,40 +10,42 @@ to prove, with no extra assumptions and depending only on mathlib, that no
 
 ## Gap List By Difficulty
 
-### 1. Hardest: derive E7 trace data and standard count inputs from the raw action
+### 1. Hardest: derive E7 character-class data from the raw action
 
-Many no-go routes now consume the following upstream package, plus the standard
-reflection fixed-count input:
+The downstream trace/count route now consumes a single representation-facing
+boundary for the concrete E7 projection representation:
 
-- `TraceRepresentationData h.a1`, or the slightly richer `D19TraceInput h`;
-- fixed count `56` for one reflection representative.
+- `D19CharacterClassBoundary h.e7ProjectionRepresentation alpha beta gamma`;
+- `(alpha : ℤ) - (beta : ℤ) = 33`;
+- the two complement bounds `alpha ≤ 113` and `beta ≤ 58`.
 
-The remaining work is to derive these from the raw `D19ActsOnMoore57` action,
-using mathlib representation theory as much as possible and avoiding a custom
-representation-theory reimplementation.  The `(-8)` character boundary is no
-longer an independent representation-decomposition gap: once
+From this package, Lean now constructs `TraceCoreCharacterBoundary h`,
+`TraceRepresentationData h.a1`, the uniform reflection trace condition
+`∀ k, trace(E7 * P_{sr k}) = 33`, the fixed count `56` for every reflection,
+`InvolutionFixedSetStar56`, and the current-final-gap no-go route.  The direct
+bridge is:
+
+```lean
+D19ActsOnMoore57.traceCoreCharacterBoundary_of_E7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.traceRepresentationData_of_E7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.e7_reflection_trace_eq_33_of_E7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_E7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.involutionFixedSetStar56_of_E7ProjectionCharacterClassBoundary
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_E7ProjectionCharacterClassBoundary
+```
+
+The remaining work is therefore upstream of this bridge: construct the E7
+D19 character-class boundary and the side arithmetic from mathlib
+representation theory, avoiding a custom finite-character reimplementation
+where mathlib already supplies character facts.  The `(-8)` character boundary
+is no longer an independent representation-decomposition gap: once
 `TraceRepresentationData h.a1` is available, Lean derives the complementary
-`(-8)` values from the existing projection-character formula.  The hard residue
-is now the finite E7 trace-core data and the raw-action reflection fixed-count
-input used by the packaged bridges.  `TraceCoreCharacterBoundary h` and the
-Prop-valued `RepresentationCharacterComponentsBoundary h` now lower to
-`TraceRepresentationData h.a1` using the raw action's proved rotation
-fixed-count theorem, so the representation-side residue is the multiplicity
-arithmetic plus the nontrivial-rotation character identity.  At the
+`(-8)` values from the existing projection-character formula.  At the
 `D19TraceInput`, `D19CharacterInput`, `TraceCoreCharacterBoundary`,
 representation-character, data-package, and direct `TraceRepresentationData
 h.a1` levels, the adjacent-moved count `112` is no longer an independent input
 once the standard reflection fixed count `56` is available: Lean derives the
-paper fixed-star statement and then derives `adjacentMovedCount = 112`.  For
-the count route, Lean now also has the non-circular local theorem
-`fixedVertexCount_reflection_eq_56_of_E7_trace_eq_33`: if the E7 trace of a
-single reflection is `33`, the regular-`10` branch contradicts its trace value
-`181`, and the nonregular star-edge branch forces fixed count `56`.  The
-complementary route can now consume `TraceCoreCharacterBoundary h` or
-`RepresentationCharacterComponentsBoundary h` plus the uniform reflection trace
-condition `∀ k, trace(E7 * P_{sr k}) = 33`; the remaining representation-side
-gap is proving this reflection trace condition from mathlib's character
-decomposition of the concrete E7 projection representation.
+paper fixed-star statement and then derives `adjacentMovedCount = 112`.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 
