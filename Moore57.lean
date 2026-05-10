@@ -1,6 +1,10 @@
 -- This module serves as the root of the `Moore57` library.
 import Moore57.D19Contradiction
 import Moore57.E7Minus8CharacterInputBridge
+import Moore57.E7Minus8K155NoGoConnectors
+import Moore57.E7Minus8PaperFixedStarConnectors
+import Moore57.E7Minus8PaperFixedStarNoGoConnectors
+import Moore57.E7Minus8RawReflectionStarConnectors
 import Moore57.E7MatrixIdempotent
 import Moore57.E7MatrixPermutationCommutation
 import Moore57.E7LinearCharacterInputBridge

@@ -275,6 +275,29 @@ the expected character formula
 class-boundary and a `(-8)` value-boundary into the concrete
 `D19LinearCharacterInput`, with the `α ≤ 113`, `β ≤ 58`, and
 `α - β = 33` fields derived by the existing character arithmetic.  The
+paper-star and explicit `K_{1,55}` downstream connectors are also now exposed:
+
+```lean
+D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndPaperFixedStar56
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56
+D19ActsOnMoore57.D19LinearCharacterInput.ofE7AndMinus8CharacterBoundariesAndInvolutionK155
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_E7AndMinus8CharacterBoundariesAndInvolutionK155
+no_D19_fixedStarReferenceMatchingCardinalityPipeline_boundary_of_E7AndMinus8CharacterBoundariesAndInvolutionK155
+no_D19_fixedStarReferenceMatchingCardinalityPipeline_boundary_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56
+no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8CharacterBoundariesAndInvolutionK155
+no_D19_leanAwareFixedStarFinalBoundary_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56
+D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8CharacterBoundariesAndPaperFixedStar56_raw_reflection
+D19ActsOnMoore57.involutionFixedSetStar56_of_E7AndMinus8CharacterBoundariesAndInvolutionK155_raw_reflection
+```
+
+These are thin wrappers around existing mathlib-facing `Representation.character`
+bridges and the existing fixed-star/no-go APIs; they add no new linear-algebra
+or representation-theory assumptions beyond the two concrete D19 character
+boundaries and the explicit reflection-side paper-star/K155/count input needed
+to build `D19LinearCharacterInput`.  A direct route from the two concrete
+character boundaries alone to raw-reflection fixed stars would currently be
+circular, because the raw-reflection fixed-star theorem itself consumes the
+resulting `D19LinearCharacterInput`.  The
 remaining representation-theoretic gap is therefore sharply isolated:
 prove the D19 rational character class-boundaries for the two concrete
 projection representations, rather than constructing the representations
