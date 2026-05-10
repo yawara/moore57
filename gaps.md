@@ -34,7 +34,11 @@ arithmetic plus the nontrivial-rotation character identity.  At the
 representation-character, data-package, and direct `TraceRepresentationData
 h.a1` levels, the adjacent-moved count `112` is no longer an independent input
 once the standard reflection fixed count `56` is available: Lean derives the
-paper fixed-star statement and then derives `adjacentMovedCount = 112`.
+paper fixed-star statement and then derives `adjacentMovedCount = 112`.  For
+the count route, Lean now also has the non-circular local theorem
+`fixedVertexCount_reflection_eq_56_of_E7_trace_eq_33`: if the E7 trace of a
+single reflection is `33`, the regular-`10` branch contradicts its trace value
+`181`, and the nonregular star-edge branch forces fixed count `56`.
 
 ### 2. Hardest geometry: construct `InvolutionK155` from a reflection
 
