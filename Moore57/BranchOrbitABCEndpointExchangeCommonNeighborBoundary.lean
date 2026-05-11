@@ -41,9 +41,87 @@ structure EndpointReferenceExchangeCommonNeighborBoundary
               (labeling.aFiberReflectionCoordPerm p))
             (labeling.endpointCommonNeighborReflectedEndpointVertex d p)
 
+/-- Matching-equation form of endpoint-reference exchange.  It says that if
+the endpoint target generated from `p` is matched by `p`, then the same endpoint
+target is also matched by `A p`. -/
+structure EndpointReferenceExchangePositiveMatchingBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  positive_matching_exchange :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        p ∈ labeling.aFiberReflectionSupport →
+          AFiberCoordinates.matchingEquiv h.isMoore
+              labeling.data.toAFiberCoordinates 0 (0 + d)
+              (index_ne_add_of_ne_zero hd) p =
+            labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+              (labeling.aFiberReflectionCoordPerm p) →
+          AFiberCoordinates.matchingEquiv h.isMoore
+              labeling.data.toAFiberCoordinates 0 (0 + d)
+              (index_ne_add_of_ne_zero hd)
+              (labeling.aFiberReflectionCoordPerm p) =
+            labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+              (labeling.aFiberReflectionCoordPerm p)
+
+namespace EndpointReferenceExchangePositiveMatchingBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Matching-equation endpoint exchange is the same as the adjacency-form
+endpoint-reference exchange. -/
+def toEndpointReferenceExchangeCommonNeighborBoundary
+    (boundary :
+      EndpointReferenceExchangePositiveMatchingBoundary labeling) :
+    EndpointReferenceExchangeCommonNeighborBoundary labeling where
+  reflected_reference_adj_endpoint_of_endpoint_adj := by
+    intro d hd p hp hadj
+    have hmatch :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+            (labeling.aFiberReflectionCoordPerm p) :=
+      (labeling.endpointCommonNeighbor_reference_adj_reflectedEndpoint_iff_matching
+        d hd p p).1 hadj
+    have hexchange :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd)
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+            (labeling.aFiberReflectionCoordPerm p) :=
+      boundary.positive_matching_exchange d hd p hp hmatch
+    exact
+      (labeling.endpointCommonNeighbor_reference_adj_reflectedEndpoint_iff_matching
+        d hd (labeling.aFiberReflectionCoordPerm p) p).2 hexchange
+
+end EndpointReferenceExchangePositiveMatchingBoundary
+
 namespace EndpointReferenceExchangeCommonNeighborBoundary
 
 variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- The adjacency-form endpoint-reference exchange can be restated as a
+matching-equation exchange. -/
+def toEndpointReferenceExchangePositiveMatchingBoundary
+    (boundary : EndpointReferenceExchangeCommonNeighborBoundary labeling) :
+    EndpointReferenceExchangePositiveMatchingBoundary labeling where
+  positive_matching_exchange := by
+    intro d hd p hp hmatch
+    have hadj :
+        Γ.Adj
+          (labeling.endpointCommonNeighborReferenceVertex p)
+          (labeling.endpointCommonNeighborReflectedEndpointVertex d p) :=
+      (labeling.endpointCommonNeighbor_reference_adj_reflectedEndpoint_iff_matching
+        d hd p p).2 hmatch
+    have hexchange :
+        Γ.Adj
+          (labeling.endpointCommonNeighborReferenceVertex
+            (labeling.aFiberReflectionCoordPerm p))
+          (labeling.endpointCommonNeighborReflectedEndpointVertex d p) :=
+      boundary.reflected_reference_adj_endpoint_of_endpoint_adj d hd p hp hadj
+    exact
+      (labeling.endpointCommonNeighbor_reference_adj_reflectedEndpoint_iff_matching
+        d hd (labeling.aFiberReflectionCoordPerm p) p).1 hexchange
 
 private theorem endpoint_reference_vertices_ne_of_mem_support
     (p : labeling.data.toAFiberCoordinates.P)
@@ -157,6 +235,21 @@ def toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
     exact h.isMoore.no_two_commonNeighbors hx_ne_y hz_ne_w hxz hyz hxw hyw
 
 end EndpointReferenceExchangeCommonNeighborBoundary
+
+namespace EndpointReferenceExchangePositiveMatchingBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Matching-equation endpoint exchange gives the same endpoint pointwise
+non-adjacency as the adjacency-form exchange. -/
+def toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+    (boundary :
+      EndpointReferenceExchangePositiveMatchingBoundary labeling) :
+    MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling :=
+  boundary.toEndpointReferenceExchangeCommonNeighborBoundary
+    |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+end EndpointReferenceExchangePositiveMatchingBoundary
 
 namespace MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
 

@@ -109,6 +109,132 @@ theorem endpoint_targetSign_hyp_of_endpoint_adj
         simpa [endpointCommonNeighborReferenceVertex, coords, hendpoint] using
           hadj)
 
+/-- A reference vertex `q` is adjacent to the endpoint target generated from
+`p` exactly when its matching value is the target coordinate of that endpoint.
+The specialized `q = p` case is the positive-target premise used by the
+endpoint target-sign diagnostics. -/
+theorem endpointCommonNeighbor_reference_adj_reflectedEndpoint_iff_matching
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (d : ZMod 19) (hd : d ≠ 0)
+    (q p : labeling.data.toAFiberCoordinates.P) :
+    Γ.Adj
+        (labeling.endpointCommonNeighborReferenceVertex q)
+        (labeling.endpointCommonNeighborReflectedEndpointVertex d p) ↔
+      AFiberCoordinates.matchingEquiv h.isMoore
+          labeling.data.toAFiberCoordinates 0 (0 + d)
+          (index_ne_add_of_ne_zero hd) q =
+        labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+          (labeling.aFiberReflectionCoordPerm p) := by
+  constructor
+  · intro hadj
+    let coords := labeling.data.toAFiberCoordinates
+    have hdd : midpointOf d + midpointOf d = d := midpointOf_add_self d
+    have hendpoint :
+        labeling.endpointCommonNeighborReflectedEndpointVertex d p =
+          (((coords.coord (0 + d)
+              (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+                (labeling.aFiberReflectionCoordPerm p)) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) := by
+      have hidx : (0 + (midpointOf d + midpointOf d) : ZMod 19) = 0 + d := by
+        simp [hdd]
+      have hperm :
+          labeling.midpointReflectionCoordPerm (midpointOf d) p =
+            labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+              (labeling.aFiberReflectionCoordPerm p) := by
+        simpa [hdd] using
+          labeling.midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+            (midpointOf d) p
+      rw [endpointCommonNeighborReflectedEndpointVertex, hperm, hidx]
+    exact
+      (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore coords
+        (index_ne_add_of_ne_zero hd) q
+        (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+          (labeling.aFiberReflectionCoordPerm p))).1
+        (by
+          simpa [endpointCommonNeighborReferenceVertex, coords, hendpoint] using
+            hadj)
+  · intro hmatch
+    let coords := labeling.data.toAFiberCoordinates
+    have hdd : midpointOf d + midpointOf d = d := midpointOf_add_self d
+    have hendpoint :
+        labeling.endpointCommonNeighborReflectedEndpointVertex d p =
+          (((coords.coord (0 + d)
+              (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+                (labeling.aFiberReflectionCoordPerm p)) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) := by
+      have hidx : (0 + (midpointOf d + midpointOf d) : ZMod 19) = 0 + d := by
+        simp [hdd]
+      have hperm :
+          labeling.midpointReflectionCoordPerm (midpointOf d) p =
+            labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+              (labeling.aFiberReflectionCoordPerm p) := by
+        simpa [hdd] using
+          labeling.midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+            (midpointOf d) p
+      rw [endpointCommonNeighborReflectedEndpointVertex, hperm, hidx]
+    have hadj :
+        Γ.Adj
+          (((coords.coord 0 q :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V))
+          (((coords.coord (0 + d)
+              (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+                (labeling.aFiberReflectionCoordPerm p)) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) :=
+      (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore coords
+        (index_ne_add_of_ne_zero hd) q
+        (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+          (labeling.aFiberReflectionCoordPerm p))).2 hmatch
+    simpa [endpointCommonNeighborReferenceVertex, coords, hendpoint] using hadj
+
+/-- Endpoint adjacency is exactly the positive-target matching equation used
+by the endpoint target-sign diagnostics. -/
+theorem endpointCommonNeighbor_endpoint_adj_iff_positive_target_matching
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (d : ZMod 19) (hd : d ≠ 0)
+    (p : labeling.data.toAFiberCoordinates.P) :
+    Γ.Adj
+        (labeling.endpointCommonNeighborReferenceVertex p)
+        (labeling.endpointCommonNeighborReflectedEndpointVertex d p) ↔
+      AFiberCoordinates.matchingEquiv h.isMoore
+          labeling.data.toAFiberCoordinates 0 (0 + d)
+          (index_ne_add_of_ne_zero hd) p =
+        labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+          (labeling.aFiberReflectionCoordPerm p) := by
+  constructor
+  · exact labeling.endpoint_targetSign_hyp_of_endpoint_adj d hd p
+  · intro hmatch
+    let coords := labeling.data.toAFiberCoordinates
+    have hdd : midpointOf d + midpointOf d = d := midpointOf_add_self d
+    have hendpoint :
+        labeling.endpointCommonNeighborReflectedEndpointVertex d p =
+          (((coords.coord (0 + d)
+              (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+                (labeling.aFiberReflectionCoordPerm p)) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) := by
+      have hidx : (0 + (midpointOf d + midpointOf d) : ZMod 19) = 0 + d := by
+        simp [hdd]
+      have hperm :
+          labeling.midpointReflectionCoordPerm (midpointOf d) p =
+            labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+              (labeling.aFiberReflectionCoordPerm p) := by
+        simpa [hdd] using
+          labeling.midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+            (midpointOf d) p
+      rw [endpointCommonNeighborReflectedEndpointVertex, hperm, hidx]
+    have hadj :
+        Γ.Adj
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V))
+          (((coords.coord (0 + d)
+              (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+                (labeling.aFiberReflectionCoordPerm p)) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) :=
+      (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore coords
+        (index_ne_add_of_ne_zero hd) p
+        (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+          (labeling.aFiberReflectionCoordPerm p))).2 hmatch
+    simpa [endpointCommonNeighborReferenceVertex, coords, hendpoint] using hadj
+
 /-- Under the target-sign boundary, endpoint adjacency identifies the
 A-fixing-reflected endpoint with the sign-correct positive target endpoint.
 This is a target-identification reduction; it does not by itself change the
