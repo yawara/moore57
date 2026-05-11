@@ -1,7 +1,7 @@
 import Moore57.PhaseSevenPrebuilt
-import Moore57.BranchOrbitABCResidualContribution
-import Moore57.AFiberCardinality38FromClosures
-import Moore57.ReflectionRawActionFixedCenterLeaf
+import Moore57.D19OnMoore57.BranchOrbit.BranchOrbitABCResidualContribution
+import Moore57.D19OnMoore57.AFiber.AFiberCardinality38FromClosures
+import Moore57.D19OnMoore57.Reflection.ReflectionRawActionFixedCenterLeaf
 
 /-!
 # Final assembly: closing the geometric witness from raw action

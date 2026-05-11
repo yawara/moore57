@@ -1,7 +1,7 @@
 import Moore57.PhaseFivePrebuilt
 import Moore57.PhaseSixPrebuilt
 import Moore57.PhaseThreePrebuilt
-import Moore57.E7Minus8CharacterBoundariesFromRotationSplit
+import Moore57.D19OnMoore57.E7Projection.E7Minus8CharacterBoundariesFromRotationSplit
 
 /-!
 # Phase 7 prebuilt: construct `RotationCharacterConstancy` from raw action

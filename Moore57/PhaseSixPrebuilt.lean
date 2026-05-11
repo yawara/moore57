@@ -1,8 +1,8 @@
 import Moore57.PhaseFivePrebuilt
 import Moore57.PhaseOnePrebuilt
-import Moore57.OrbitBaseSelectionFromRawAction
-import Moore57.D19OrbitContributionData
-import Moore57.D19FinalRepresentationCompact
+import Moore57.D19OnMoore57.Orbit.OrbitBaseSelectionFromRawAction
+import Moore57.D19OnMoore57.D19Core.D19OrbitContributionData
+import Moore57.D19OnMoore57.Final.D19FinalRepresentationCompact
 
 /-!
 # Phase 6 prebuilt: final assembly from Phase 5 + geometric pieces
