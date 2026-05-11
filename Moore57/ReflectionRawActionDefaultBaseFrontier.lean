@@ -191,6 +191,39 @@ noncomputable def
       referenceToMidpoint)
     singletonFixed.no_card_one noAllEndpointAdj
 
+/-- Raw-action constructor for the default-base A-fixing frontier from an
+independent reference-to-midpoint comparison and the corrected negative-endpoint
+label exchange. -/
+noncomputable def
+    remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointNegativePair
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointNegativePair :
+      BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector h :=
+  let labeling := h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k
+  let criterion := labeling.midpointReflectionCriterionBoundary_of_raw_action
+  let noPaired :=
+    endpointNegativePair
+      |>.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary criterion
+  let transport :=
+    labeling.midpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+      criterion
+  let noCardOne :=
+    noPaired.toMidpointExceptionAFixingSupportNoCardOneBoundary transport
+  h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action
+    k
+    (labeling.referenceMatchingPipelineBoundary_of_raw_action
+      labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+      referenceToMidpoint)
+    noCardOne.no_card_one noAllEndpointAdj
+
 /-- Raw-action constructor for the explicit default-base non-representation
 frontier after removing the `star`, `fixedCenterLeaf`, and `support_card_boundary`
 fields. -/
@@ -271,6 +304,26 @@ noncomputable def
     RemainingNonRepresentationFrontierAfterDefaultBase h :=
   (h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointTargetSign
     k referenceToMidpoint endpointTargetSign noAllEndpointAdj)
+    |>.toRemainingNonRepresentationFrontierAfterDefaultBase
+
+/-- Raw-action constructor for the explicit default-base frontier from an
+independent reference-to-midpoint comparison and the corrected negative-endpoint
+label exchange. -/
+noncomputable def
+    remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointNegativePair :
+      BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingNonRepresentationFrontierAfterDefaultBase h :=
+  (h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointNegativePair
+    k referenceToMidpoint endpointNegativePair noAllEndpointAdj)
     |>.toRemainingNonRepresentationFrontierAfterDefaultBase
 
 /-- Raw-action constructor for the fixed-star-local default-base frontier.  This

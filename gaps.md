@@ -1230,6 +1230,7 @@ one-point exception case from endpoint target-sign compatibility:
 
 - `ReferenceRotationToMidpointReflectionBoundary`
 - `EndpointMatchingAFixingTargetSignBoundary` only via its no-premise form
+- `EndpointSignNegativeMatchingPairBoundary`
 - `noAllEndpointAdj`
 
 The midpoint-exception disjointness is no longer a primitive input on the
@@ -1300,6 +1301,17 @@ BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingleto
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.toMidpointExceptionAFixingSupportNoCardOneBoundary
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.no_card_one
 BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointNegativePair
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointNegativePair
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointNegativePair
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+D19ActsOnMoore57.no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
+D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
+D19ActsOnMoore57.no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
+D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.target_sign_vertices_ne
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
 ```
@@ -1322,9 +1334,11 @@ BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary.toMidp
 ```
 
 Thus the next real gap is no longer the finite paired-singleton contradiction
-itself.  It is to prove the corrected negative-endpoint label exchange for the
-default-base labeling, or alternatively prove the reference-solution
-support-complement/fixedness predicted by Cameron Step 2.
+itself, and the raw/default-base constructors now use the corrected
+negative-endpoint label exchange directly, without going through the false
+same-offset target-sign boundary.  It is to prove this negative-endpoint label
+exchange for the default-base labeling, or alternatively prove the
+reference-solution support-complement/fixedness predicted by Cameron Step 2.
 
 ### 6. Representation component entrypoints
 
@@ -1374,7 +1388,8 @@ The main missing work is now:
    form `EndpointMatchingAFixingNoPositiveTargetBoundary`, or prove the
    corrected negative-endpoint label exchange
    `EndpointSignNegativeMatchingPairBoundary` for the default-base labeling
-   and use it to rule out the already-isolated paired-singleton obstruction;
+   and use the now-wired raw/default-base route to rule out the already-isolated
+   paired-singleton obstruction;
 3. connect the already-closed all-offset support-subset endpoint obstruction to
    the remaining default-base/raw-action package surfaces without reverting to
    the deprecated single-offset `noAllEndpointAdj` shape.

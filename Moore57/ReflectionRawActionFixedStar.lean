@@ -2,6 +2,7 @@ import Moore57.ReflectionRawActionFixedCenterLeaf
 import Moore57.ReflectionFixedCountBoundsBridge
 import Moore57.ReflectionPaperFixedStarBoundary
 import Moore57.BranchOrbitABCMatchingTargetReflectionReduced
+import Moore57.BranchOrbitABCEndpointSignMatchingSymmetry
 
 /-!
 # Raw-action paper fixed-star consequences
@@ -440,6 +441,30 @@ noncomputable def midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_
     endpointTargetSign.toMidpointEquationSetAFixingInvariantBoundary
     noAllEndpointAdj
 
+/-- Raw-action disjointness constructor using the corrected negative-endpoint
+label exchange for the one-point case.  This avoids the false same-offset
+target-sign route: the negative-pair exchange rules out paired singletons, and
+the already-proved `d ↦ -d` transport reduces `no_card_one` to that
+obstruction. -/
+noncomputable def midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (endpointNegativePair :
+      EndpointSignNegativeMatchingPairBoundary labeling)
+    (noAllEndpointAdj :
+      MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary labeling) :
+    MidpointExceptionDisjointAFixingSupportBoundary labeling :=
+  let criterion := labeling.midpointReflectionCriterionBoundary_of_raw_action
+  let noPaired :=
+    endpointNegativePair
+      |>.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary criterion
+  let transport :=
+    labeling.midpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+      criterion
+  let noCardOne :=
+    noPaired.toMidpointExceptionAFixingSupportNoCardOneBoundary transport
+  labeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_noCardOne_noAllEndpointAdj
+    noCardOne.no_card_one noAllEndpointAdj
+
 /-- Raw-action reference-fiber matching-equation frontier after reducing
 midpoint-exception disjointness to the one-point and endpoint-adjacency
 exclusions. -/
@@ -566,6 +591,50 @@ theorem referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_
         2 :=
   labeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointTargetSign
     referenceToMidpoint endpointTargetSign noAllEndpointAdj
+    |>.toReferenceFiberMatchingEquationCardTwo
+
+/-- Raw-action reference-fiber matching-equation frontier from an independent
+reference-to-midpoint comparison and the corrected negative-endpoint label
+exchange. -/
+noncomputable def
+    referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointNegativePair
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointNegativePair :
+      EndpointSignNegativeMatchingPairBoundary labeling)
+    (noAllEndpointAdj :
+      MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary labeling) :
+    ReferenceFiberMatchingEquationFrontierBoundary labeling :=
+  labeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action
+    labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+    referenceToMidpoint
+    (labeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
+      endpointNegativePair noAllEndpointAdj)
+
+/-- Raw-action reference-fiber matching equation from an independent
+reference-to-midpoint comparison and the corrected negative-endpoint label
+exchange. -/
+theorem referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointNegativePair
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointNegativePair :
+      EndpointSignNegativeMatchingPairBoundary labeling)
+    (noAllEndpointAdj :
+      MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary labeling) :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ((Finset.univ :
+          Finset
+            labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+            0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+          (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+            d 0 p).card =
+        2 :=
+  labeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointNegativePair
+    referenceToMidpoint endpointNegativePair noAllEndpointAdj
     |>.toReferenceFiberMatchingEquationCardTwo
 
 end BranchOrbitABCReflectionLabeling
@@ -784,6 +853,54 @@ theorem
     ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
       |>.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointTargetSign_noAllEndpointAdj
         endpointTargetSign noAllEndpointAdj)
+
+/-- Default-base raw-action constructor from an independent
+reference-to-midpoint comparison and the corrected negative-endpoint label
+exchange. -/
+noncomputable def
+    remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointNegativePair :
+      BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingDefaultBaseFixedCenterLeafReferenceConnector h :=
+  h.remainingDefaultBaseFixedCenterLeafReferenceConnector_of_raw_action_fields k
+    ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+      |>.midpointMiddleSupportCardTwoBoundary_of_raw_action)
+    referenceToMidpoint
+    ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+      |>.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
+        endpointNegativePair noAllEndpointAdj)
+
+/-- Public labeled-reflection matching connector from an independent
+reference-to-midpoint comparison and the corrected negative-endpoint label
+exchange. -/
+theorem
+    remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointNegativePair :
+      BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingLabeledReflectionMatchingEquationConnector h :=
+  h.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_fields k
+    ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+      |>.midpointMiddleSupportCardTwoBoundary_of_raw_action)
+    referenceToMidpoint
+    ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+      |>.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
+        endpointNegativePair noAllEndpointAdj)
 
 end D19ActsOnMoore57
 
