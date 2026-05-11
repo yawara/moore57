@@ -70,6 +70,26 @@ noncomputable def toReferenceRotationMatchingSolutionVertexFixedBoundary
     ReferenceMatchingLocalObstructionBoundary star labeling)
     |>.toReferenceRotationMatchingSolutionVertexFixedBoundary
 
+/-- Reference matching plus the local obstruction puts reference matching
+solutions in the complement of the A-fixing reflection support. -/
+noncomputable def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+    (boundary : FixedStarLocalObstructionBoundary star labeling) :
+    ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling :=
+  ({ aFixing := boundary.localObstruction.aFixing
+     referenceMatching := boundary.referenceMatching
+     singletonFixed := boundary.localObstruction.singletonFixed
+     noAllEndpointAdj := boundary.localObstruction.noAllEndpointAdj } :
+    ReferenceMatchingLocalObstructionBoundary star labeling)
+    |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+/-- Reference matching plus the local obstruction gives the reference-to-
+midpoint comparison boundary. -/
+noncomputable def toReferenceRotationToMidpointReflectionBoundary
+    (boundary : FixedStarLocalObstructionBoundary star labeling) :
+    ReferenceRotationToMidpointReflectionBoundary labeling :=
+  boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+    |>.toReferenceRotationToMidpointReflectionBoundary
+
 /-- Convert the fixed-star local obstruction package to the lean-aware final
 package. -/
 noncomputable def toLeanAwareFixedStarFinalBoundary

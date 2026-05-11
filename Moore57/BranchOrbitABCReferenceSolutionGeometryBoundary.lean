@@ -211,6 +211,24 @@ noncomputable def toReferenceRotationMatchingSolutionVertexFixedBoundary
       (labeling := labeling)
       boundary.reference_matching_solution_subset_aFiberReflectionSupport_compl
 
+/-- Collapse the support-complement boundary to the coordinate fixedness
+boundary for reference matching solutions. -/
+noncomputable def toReferenceRotationEquationAFixingFixedBoundary
+    (boundary :
+      ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling) :
+    ReferenceRotationEquationAFixingFixedBoundary labeling :=
+  boundary.toReferenceRotationMatchingSolutionVertexFixedBoundary
+    |>.toReferenceRotationEquationAFixingFixedBoundary
+
+/-- Direct route from the support-complement form to the
+reference-to-midpoint comparison boundary. -/
+noncomputable def toReferenceRotationToMidpointReflectionBoundary
+    (boundary :
+      ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling) :
+    ReferenceRotationToMidpointReflectionBoundary labeling :=
+  ReferenceRotationToMidpointReflectionBoundary.of_aFixingFixed
+    boundary.toReferenceRotationEquationAFixingFixedBoundary
+
 end ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
 
 end BranchOrbitABCReflectionLabeling

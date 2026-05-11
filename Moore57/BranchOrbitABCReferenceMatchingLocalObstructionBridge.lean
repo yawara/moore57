@@ -95,6 +95,14 @@ noncomputable def toReferenceRotationMatchingSolutionVertexFixedBoundary
   boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
     |>.toReferenceRotationMatchingSolutionVertexFixedBoundary
 
+/-- Reference matching plus the local obstruction also gives the direct
+reference-to-midpoint comparison boundary. -/
+noncomputable def toReferenceRotationToMidpointReflectionBoundary
+    (boundary : ReferenceMatchingLocalObstructionBoundary star labeling) :
+    ReferenceRotationToMidpointReflectionBoundary labeling :=
+  boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+    |>.toReferenceRotationToMidpointReflectionBoundary
+
 end ReferenceMatchingLocalObstructionBoundary
 
 end BranchOrbitABCReflectionLabeling

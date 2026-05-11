@@ -1,6 +1,7 @@
 import Moore57.ReflectionRawActionFixedStar
 import Moore57.BranchOrbitABCSupportCardFrontier
 import Moore57.BranchOrbitABCCardTwoAllOffsetsFinalGapBoundary
+import Moore57.BranchOrbitABCReferenceMatchingLocalObstructionBridge
 
 /-!
 # Raw-action default-base frontier bridge
@@ -22,6 +23,94 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 namespace D19ActsOnMoore57
 
 variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Hard reference-side target for the raw-action default-base labeling: every
+reference matching solution lies off the A-fixing reflection moving support.
+This is the support-complement form of the desired reference fixedness input. -/
+structure RawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    (h : D19ActsOnMoore57 V Γ) : Prop where
+  supportCompl :
+    ∀ k : ZMod 19,
+      BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+
+namespace RawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Expose the per-default-base support-complement boundary. -/
+noncomputable def referenceRotationMatchingSolutionAFixingSupportComplBoundary
+    (boundary : RawActionDefaultBaseReferenceSolutionSupportComplBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.supportCompl k
+
+/-- The hard target gives the vertex-fixed reference-solution boundary on each
+raw-action default-base labeling. -/
+noncomputable def toReferenceRotationMatchingSolutionVertexFixedBoundary
+    (boundary : RawActionDefaultBaseReferenceSolutionSupportComplBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionVertexFixedBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (boundary.referenceRotationMatchingSolutionAFixingSupportComplBoundary k)
+    |>.toReferenceRotationMatchingSolutionVertexFixedBoundary
+
+/-- The hard target gives the direct reference-to-midpoint boundary on each
+raw-action default-base labeling. -/
+noncomputable def toReferenceRotationToMidpointReflectionBoundary
+    (boundary : RawActionDefaultBaseReferenceSolutionSupportComplBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (boundary.referenceRotationMatchingSolutionAFixingSupportComplBoundary k)
+    |>.toReferenceRotationToMidpointReflectionBoundary
+
+/-- Existing local-obstruction packages imply the reference-side hard target.
+This records the non-circular route that still needs raw/default-base local
+obstruction input. -/
+noncomputable def of_referenceMatchingLocalObstruction
+    (localObs :
+      ∀ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceMatchingLocalObstructionBoundary
+          h.reflectionFixedStarBoundary_of_raw_action
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h where
+  supportCompl k :=
+    (localObs k).toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+/-- Existing fixed-star local-obstruction packages also imply the reference-
+side hard target. -/
+noncomputable def of_fixedStarLocalObstruction
+    (localObs :
+      ∀ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.FixedStarLocalObstructionBoundary
+          h.reflectionFixedStarBoundary_of_raw_action
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h where
+  supportCompl k :=
+    (localObs k).toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+end RawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+/-- Target theorem surface for the raw-action default-base reference
+support-complement boundary.  Supplying this boundary closes the reference side
+of the current branch/A-fiber frontier. -/
+noncomputable def referenceRotationMatchingSolutionAFixingSupportComplBoundary_of_raw_action_defaultBase
+    (boundary : RawActionDefaultBaseReferenceSolutionSupportComplBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.referenceRotationMatchingSolutionAFixingSupportComplBoundary k
+
+/-- Reference-to-midpoint consequence of the raw-action default-base
+support-complement target. -/
+noncomputable def referenceRotationToMidpointReflectionBoundary_of_raw_action_defaultBase_supportCompl
+    (boundary : RawActionDefaultBaseReferenceSolutionSupportComplBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.toReferenceRotationToMidpointReflectionBoundary k
 
 /-- Raw action supplies the corrected all-offset endpoint obstruction on every
 default-base labeling.  This is the useful replacement for trying to prove the
