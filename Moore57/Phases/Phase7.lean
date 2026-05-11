@@ -1,6 +1,6 @@
-import Moore57.PhaseFivePrebuilt
-import Moore57.PhaseSixPrebuilt
-import Moore57.PhaseThreePrebuilt
+import Moore57.Phases.Phase5
+import Moore57.Phases.Phase6
+import Moore57.Phases.Phase3
 import Moore57.D19OnMoore57.E7Projection.E7Minus8CharacterBoundariesFromRotationSplit
 
 /-!

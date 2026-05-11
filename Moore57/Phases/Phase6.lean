@@ -1,5 +1,5 @@
-import Moore57.PhaseFivePrebuilt
-import Moore57.PhaseOnePrebuilt
+import Moore57.Phases.Phase5
+import Moore57.Phases.Phase1
 import Moore57.D19OnMoore57.Orbit.OrbitBaseSelectionFromRawAction
 import Moore57.D19OnMoore57.D19Core.D19OrbitContributionData
 import Moore57.D19OnMoore57.Final.D19FinalRepresentationCompact

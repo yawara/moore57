@@ -1,4 +1,4 @@
-import Moore57.PhaseSevenPrebuilt
+import Moore57.Phases.Phase7
 
 /-!
 # Final frontier: the remaining geometric witness

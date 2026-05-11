@@ -1,5 +1,5 @@
-import Moore57.PhaseFourVertexDecomposition
-import Moore57.PhaseThreePrebuilt
+import Moore57.Phases.Phase4VertexDecomposition
+import Moore57.Phases.Phase3
 import Moore57.D19OnMoore57.D19Core.D19RepresentationCharacterDataBridge
 import Moore57.D19OnMoore57.D19Core.D19RepresentationCharacterMathlibBridge
 import Moore57.D19OnMoore57.E7Projection.E7ProjectionDimension
