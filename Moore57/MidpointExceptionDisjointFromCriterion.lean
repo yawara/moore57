@@ -6,7 +6,7 @@ import Moore57.BranchOrbitABCExceptionIntersectionInvariantDecomp
 import Moore57.BranchOrbitABCExceptionCardOneBoundary
 import Moore57.BranchOrbitABCExceptionCardTwoBoundary
 import Moore57.BranchOrbitABCExceptionCaseBoundary
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.ZMod19.Lemmas
 
 /-!
 # `MidpointExceptionDisjointAFixingSupportBoundary` modulo the e=2 base witness

@@ -1,5 +1,5 @@
-import Moore57.GroupTheory.D19RotationInvariantTrace
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.GroupTheory.D19RotationInvariantTrace
+import Moore57.Foundations.ZMod19.Lemmas
 
 /-!
 # Reflection trace on the rotation-invariant summand

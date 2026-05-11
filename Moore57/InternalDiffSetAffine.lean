@@ -1,5 +1,5 @@
 import Moore57.InternalDiffSetTranslate
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.ZMod19.Lemmas
 
 namespace Moore57
 

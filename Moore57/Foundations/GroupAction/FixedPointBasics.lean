@@ -1,5 +1,5 @@
 import Moore57.D19Contradiction
-import Moore57.GroupAction.FixedPoints
+import Moore57.Foundations.GroupAction.FixedPoints
 
 namespace Moore57
 

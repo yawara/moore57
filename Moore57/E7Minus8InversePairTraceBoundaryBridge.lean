@@ -1,4 +1,4 @@
-import Moore57.GroupTheory.Dihedral19CharacterValueReduction
+import Moore57.Foundations.GroupTheory.Dihedral19CharacterValueReduction
 import Moore57.E7Minus8TraceBoundaryBridge
 
 /-!

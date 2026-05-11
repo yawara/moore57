@@ -1,5 +1,5 @@
-import Moore57.GroupTheory.D19ReflectionTraceOnInvariants
-import Moore57.GroupTheory.D19CyclotomicTrace
+import Moore57.Foundations.GroupTheory.D19ReflectionTraceOnInvariants
+import Moore57.Foundations.GroupTheory.D19CyclotomicTrace
 
 /-!
 # The cyclotomic constraint on the D19 moving summand

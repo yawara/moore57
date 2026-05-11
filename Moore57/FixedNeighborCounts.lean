@@ -1,4 +1,4 @@
-import Moore57.FixedPointBasics
+import Moore57.Foundations.GroupAction.FixedPointBasics
 
 namespace Moore57
 

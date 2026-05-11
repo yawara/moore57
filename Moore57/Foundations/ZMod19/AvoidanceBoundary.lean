@@ -1,4 +1,4 @@
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.ZMod19.Lemmas
 
 /-!
 # Small avoidance witnesses in `ZMod 19`

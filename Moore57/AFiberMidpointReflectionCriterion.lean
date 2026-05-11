@@ -2,7 +2,7 @@ import Moore57.AFiberCoordinateReflection
 import Moore57.AFiberCoordinateRotation
 import Moore57.AFiberMatchingPermAdjacency
 import Moore57.FixedCommonNeighbors
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.ZMod19.Lemmas
 
 /-!
 # Forward midpoint-reflection criterion

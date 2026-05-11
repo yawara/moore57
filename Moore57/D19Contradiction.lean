@@ -4,9 +4,9 @@ import Mathlib.Data.Matrix.PEquiv
 import Mathlib.GroupTheory.SpecificGroups.Dihedral
 import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Moore57.GroupAction.FixedPoints
-import Moore57.GraphTheory.AdjacentMovedCount
-import Moore57.GroupTheory.Dihedral19LinearCharacter
+import Moore57.Foundations.GroupAction.FixedPoints
+import Moore57.Foundations.GraphTheory.AdjacentMovedCount
+import Moore57.Foundations.GroupTheory.Dihedral19LinearCharacter
 
 /-!
 # Moore graph of degree 57: the $D_{19}$ counting obstruction

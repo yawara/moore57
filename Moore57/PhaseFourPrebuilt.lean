@@ -1,4 +1,4 @@
-import Moore57.GroupTheory.Dihedral19LinearCharacter
+import Moore57.Foundations.GroupTheory.Dihedral19LinearCharacter
 
 /-!
 # Phase 4 prebuilt aliases for the D₁₉ rational character theory

@@ -1,5 +1,5 @@
 import Moore57.BranchOrbitABCCardTwoGapSummaryBoundary
-import Moore57.ZMod19AvoidanceBoundary
+import Moore57.Foundations.ZMod19.AvoidanceBoundary
 import Moore57.BranchOrbitABCSupportPairVertexBoundary
 import Moore57.BranchOrbitABCSupportPairEndpointMatchingBoundary
 

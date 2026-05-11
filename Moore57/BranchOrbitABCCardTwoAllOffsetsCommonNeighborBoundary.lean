@@ -3,7 +3,7 @@ import Moore57.BranchOrbitABCCardTwoCandidateDistinctBoundary
 import Moore57.BranchOrbitABCCardTwoCommonNeighborBoundary
 import Moore57.BranchOrbitABCCardTwoEndpointNonadjBoundary
 import Moore57.BranchOrbitABCSupportPairEndpointMatchingBoundary
-import Moore57.ZMod19CardTwoCandidateIndices
+import Moore57.Foundations.ZMod19.CardTwoCandidateIndices
 
 /-!
 # Card-two common neighbors from all endpoint offsets

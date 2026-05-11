@@ -1,4 +1,4 @@
-import Moore57.GroupAction.FixedPoints
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # Fixed-point counts and conjugacy

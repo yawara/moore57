@@ -1,7 +1,7 @@
 import Moore57.BranchOrbitABCReflectionChoice
 import Moore57.AFiberCoordinateReflection
 import Moore57.FixedInducedDegree
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.ZMod19.Lemmas
 
 /-!
 # Reflection-compatible A/B/C branch labeling

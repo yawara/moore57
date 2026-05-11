@@ -1,5 +1,5 @@
 import Moore57.D19Contradiction
-import Moore57.PermutationRepresentationCharacter
+import Moore57.Foundations.Representation.PermutationRepresentationCharacter
 
 /-!
 # Vertex permutation representation of a D19 action

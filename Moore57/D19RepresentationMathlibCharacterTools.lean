@@ -1,5 +1,5 @@
 import Moore57.D19RepresentationCharacterMathlibBridge
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.ZMod19.Lemmas
 
 /-!
 # Mathlib character tools for the D19 representation input

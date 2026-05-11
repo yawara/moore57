@@ -1,4 +1,4 @@
-import Moore57.GroupTheory.D19RotationMovingCyclotomic
+import Moore57.Foundations.GroupTheory.D19RotationMovingCyclotomic
 import Moore57.D19CharacterBoundaryConstructors
 
 /-!

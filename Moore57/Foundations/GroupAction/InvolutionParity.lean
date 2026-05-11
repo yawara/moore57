@@ -1,5 +1,5 @@
 import Mathlib.GroupTheory.Perm.Cycle.Type
-import Moore57.GroupAction.FixedPoints
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # Parity constraints for involutions

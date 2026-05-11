@@ -1,5 +1,5 @@
 import Moore57.BranchOrbitABCExceptionCaseBoundary
-import Moore57.ZMod19DoublingOrbitBoundary
+import Moore57.Foundations.ZMod19.DoublingOrbitBoundary
 
 /-!
 # Doubling propagation for midpoint exceptions meeting the A-fixing support

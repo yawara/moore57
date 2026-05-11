@@ -1,4 +1,4 @@
-import Moore57.BranchFiberAction
+import Moore57.Foundations.GroupAction.BranchFiberAction
 
 namespace Moore57
 

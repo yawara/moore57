@@ -1,4 +1,4 @@
-import Moore57.ProjectionTrace
+import Moore57.Foundations.LinearAlgebra.ProjectionTrace
 import Mathlib.Tactic
 
 /-!

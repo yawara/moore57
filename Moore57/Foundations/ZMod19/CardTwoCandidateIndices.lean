@@ -1,4 +1,4 @@
-import Moore57.ZMod19AvoidanceBoundary
+import Moore57.Foundations.ZMod19.AvoidanceBoundary
 
 /-!
 # Index candidates for card-two common-neighbor constructions

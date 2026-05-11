@@ -1,4 +1,4 @@
-import Moore57.ZMod19Lemmas
+import Moore57.Foundations.ZMod19.Lemmas
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic
 

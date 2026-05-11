@@ -1,6 +1,6 @@
 import Moore57.BranchOrbitABCFromCenterBBase
 import Moore57.BranchOrbitABCReflectionLabeling
-import Moore57.BranchFiberAction
+import Moore57.Foundations.GroupAction.BranchFiberAction
 import Moore57.RotationFixedCenter
 
 set_option maxRecDepth 1000

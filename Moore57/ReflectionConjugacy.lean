@@ -1,5 +1,5 @@
-import Moore57.GroupAction.FixedPointConjugacy
-import Moore57.GroupTheory.Dihedral19CharacterValueReduction
+import Moore57.Foundations.GroupAction.FixedPointConjugacy
+import Moore57.Foundations.GroupTheory.Dihedral19CharacterValueReduction
 
 /-!
 # Reflection conjugacy consequences

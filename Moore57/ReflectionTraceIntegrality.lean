@@ -1,5 +1,5 @@
 import Moore57.E7ProjectionCharacterBridge
-import Moore57.LinearAlgebra.InvolutionTrace
+import Moore57.Foundations.LinearAlgebra.InvolutionTrace
 
 /-!
 # Reflection trace integrality

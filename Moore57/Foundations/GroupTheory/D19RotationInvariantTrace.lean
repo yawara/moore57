@@ -1,5 +1,5 @@
-import Moore57.LinearAlgebra.InvolutionTrace
-import Moore57.GroupTheory.Dihedral19LinearCharacter
+import Moore57.Foundations.LinearAlgebra.InvolutionTrace
+import Moore57.Foundations.GroupTheory.Dihedral19LinearCharacter
 import Mathlib.RepresentationTheory.Character
 import Mathlib.RepresentationTheory.Invariants
 import Mathlib.Tactic

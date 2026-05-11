@@ -1,4 +1,4 @@
-import Moore57.GraphTheory.StrongZeroOne
+import Moore57.Foundations.GraphTheory.StrongZeroOne
 import Moore57.ReflectionInvolutionFixedSetStarFromActionBoundary
 
 /-!
