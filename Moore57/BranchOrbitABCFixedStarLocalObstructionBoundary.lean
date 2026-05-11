@@ -58,16 +58,22 @@ def toMidpointExceptionAFixingSupportCaseBoundary
     MidpointExceptionAFixingSupportCaseBoundary labeling :=
   boundary.localObstruction.toMidpointExceptionAFixingSupportCaseBoundary
 
+/-- Forget the fixed-star middle field and expose the smaller
+reference-matching/local-obstruction package. -/
+def toReferenceMatchingLocalObstructionBoundary
+    (boundary : FixedStarLocalObstructionBoundary star labeling) :
+    ReferenceMatchingLocalObstructionBoundary star labeling where
+  aFixing := boundary.localObstruction.aFixing
+  referenceMatching := boundary.referenceMatching
+  singletonFixed := boundary.localObstruction.singletonFixed
+  noAllEndpointAdj := boundary.localObstruction.noAllEndpointAdj
+
 /-- Reference matching plus the local obstruction fixes the reference
 matching solutions under the A-fixing reflection. -/
 noncomputable def toReferenceRotationMatchingSolutionVertexFixedBoundary
     (boundary : FixedStarLocalObstructionBoundary star labeling) :
     ReferenceRotationMatchingSolutionVertexFixedBoundary labeling :=
-  ({ aFixing := boundary.localObstruction.aFixing
-     referenceMatching := boundary.referenceMatching
-     singletonFixed := boundary.localObstruction.singletonFixed
-     noAllEndpointAdj := boundary.localObstruction.noAllEndpointAdj } :
-    ReferenceMatchingLocalObstructionBoundary star labeling)
+  boundary.toReferenceMatchingLocalObstructionBoundary
     |>.toReferenceRotationMatchingSolutionVertexFixedBoundary
 
 /-- Reference matching plus the local obstruction puts reference matching
@@ -75,11 +81,7 @@ solutions in the complement of the A-fixing reflection support. -/
 noncomputable def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
     (boundary : FixedStarLocalObstructionBoundary star labeling) :
     ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling :=
-  ({ aFixing := boundary.localObstruction.aFixing
-     referenceMatching := boundary.referenceMatching
-     singletonFixed := boundary.localObstruction.singletonFixed
-     noAllEndpointAdj := boundary.localObstruction.noAllEndpointAdj } :
-    ReferenceMatchingLocalObstructionBoundary star labeling)
+  boundary.toReferenceMatchingLocalObstructionBoundary
     |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
 
 /-- Reference matching plus the local obstruction gives the reference-to-

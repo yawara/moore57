@@ -34,6 +34,35 @@ structure RawActionDefaultBaseReferenceSolutionSupportComplBoundary
       BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
         (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
 
+/-- Pointwise moving-support form of the raw-action default-base reference
+target.  This is the Lean surface closest to a label-exchange proof: after
+choosing the raw default-base labeling, no A-fixing moving coordinate may solve
+the reference matching equation. -/
+structure RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    (h : D19ActsOnMoore57 V Γ) : Prop where
+  movingExclusion :
+    ∀ k : ZMod 19,
+      BranchOrbitABCReflectionLabeling.ReferenceRotationMovingSolutionExclusionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+
+/-- Raw-action default-base package for the same-target source-exchange input
+identified as the remaining reference-side hard core. -/
+structure RawActionDefaultBaseReferenceSourceExchangeBoundary
+    (h : D19ActsOnMoore57 V Γ) : Prop where
+  sourceExchange :
+    ∀ k : ZMod 19,
+      BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingSourceExchangeBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+
+/-- Raw-action default-base package for the adjacency form of the same-target
+source-exchange input. -/
+structure RawActionDefaultBaseReferenceCrossAdjacencyBoundary
+    (h : D19ActsOnMoore57 V Γ) : Prop where
+  crossAdjacency :
+    ∀ k : ZMod 19,
+      BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingCrossAdjacencyBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+
 namespace RawActionDefaultBaseReferenceSolutionSupportComplBoundary
 
 variable {h : D19ActsOnMoore57 V Γ}
@@ -45,6 +74,16 @@ noncomputable def referenceRotationMatchingSolutionAFixingSupportComplBoundary
     BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
       (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
   boundary.supportCompl k
+
+/-- Rephrase the hard raw-action default-base reference target as exclusion
+of moving-support reference matching solutions. -/
+def toReferenceRotationMovingSolutionExclusionBoundary
+    (boundary : RawActionDefaultBaseReferenceSolutionSupportComplBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMovingSolutionExclusionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (boundary.referenceRotationMatchingSolutionAFixingSupportComplBoundary k)
+    |>.toReferenceRotationMovingSolutionExclusionBoundary
 
 /-- The hard target gives the vertex-fixed reference-solution boundary on each
 raw-action default-base labeling. -/
@@ -93,6 +132,216 @@ noncomputable def of_fixedStarLocalObstruction
 
 end RawActionDefaultBaseReferenceSolutionSupportComplBoundary
 
+namespace RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Expose the per-default-base moving-support exclusion boundary. -/
+def referenceRotationMovingSolutionExclusionBoundary
+    (boundary : RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMovingSolutionExclusionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.movingExclusion k
+
+/-- Moving-support exclusion is exactly the pointwise route to the
+support-complement target. -/
+def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    (boundary : RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h where
+  supportCompl k :=
+    (boundary.referenceRotationMovingSolutionExclusionBoundary k)
+      |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+/-- Consequence on each raw-action default-base labeling: moving-support
+exclusion fixes all reference matching solution vertices. -/
+noncomputable def toReferenceRotationMatchingSolutionVertexFixedBoundary
+    (boundary : RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionVertexFixedBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (boundary.referenceRotationMovingSolutionExclusionBoundary k)
+    |>.toReferenceRotationMatchingSolutionVertexFixedBoundary
+
+/-- Consequence on each raw-action default-base labeling: moving-support
+exclusion supplies the reference-to-midpoint comparison. -/
+noncomputable def toReferenceRotationToMidpointReflectionBoundary
+    (boundary : RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (boundary.referenceRotationMovingSolutionExclusionBoundary k)
+    |>.toReferenceRotationToMidpointReflectionBoundary
+
+end RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+
+namespace RawActionDefaultBaseReferenceSourceExchangeBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Expose the per-default-base same-target source-exchange boundary. -/
+def referenceMatchingAFixingSourceExchangeBoundary
+    (boundary : RawActionDefaultBaseReferenceSourceExchangeBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingSourceExchangeBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.sourceExchange k
+
+/-- Same-target source exchange supplies the raw-action moving-exclusion
+reference target. -/
+def toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    (boundary : RawActionDefaultBaseReferenceSourceExchangeBoundary h) :
+    RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h where
+  movingExclusion k :=
+    (boundary.referenceMatchingAFixingSourceExchangeBoundary k)
+      |>.toReferenceRotationMovingSolutionExclusionBoundary
+
+/-- Same-target source exchange supplies the raw-action support-complement
+reference target. -/
+def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    (boundary : RawActionDefaultBaseReferenceSourceExchangeBoundary h) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+end RawActionDefaultBaseReferenceSourceExchangeBoundary
+
+namespace RawActionDefaultBaseReferenceCrossAdjacencyBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Expose the per-default-base cross-adjacency boundary. -/
+def referenceMatchingAFixingCrossAdjacencyBoundary
+    (boundary : RawActionDefaultBaseReferenceCrossAdjacencyBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingCrossAdjacencyBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.crossAdjacency k
+
+/-- Cross-adjacency supplies the raw-action source-exchange package. -/
+def toRawActionDefaultBaseReferenceSourceExchangeBoundary
+    (boundary : RawActionDefaultBaseReferenceCrossAdjacencyBoundary h) :
+    RawActionDefaultBaseReferenceSourceExchangeBoundary h where
+  sourceExchange k :=
+    (boundary.referenceMatchingAFixingCrossAdjacencyBoundary k)
+      |>.toReferenceMatchingAFixingSourceExchangeBoundary
+
+/-- Cross-adjacency supplies the raw-action support-complement reference
+target. -/
+def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    (boundary : RawActionDefaultBaseReferenceCrossAdjacencyBoundary h) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceSourceExchangeBoundary
+    |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+end RawActionDefaultBaseReferenceCrossAdjacencyBoundary
+
+/-- Build the per-default-base moving-support exclusion target from the direct
+support-exclusion hard core. -/
+def referenceRotationMovingSolutionExclusionBoundary_of_raw_action_defaultBase_direct
+    (k : ZMod 19)
+    (hnot :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∀ p :
+          ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates.P),
+          p ∈ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).referenceMatchingSolutionSet d hd) →
+            p ∉ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).aFiberReflectionSupport)) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMovingSolutionExclusionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  BranchOrbitABCReflectionLabeling.ReferenceRotationMovingSolutionExclusionBoundary.of_referenceMatchingSolution_not_mem_aFiberReflectionSupport
+    (labeling := h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+    hnot
+
+/-- Build the per-default-base support-complement target from the direct
+support-exclusion hard core. -/
+def referenceRotationMatchingSolutionAFixingSupportComplBoundary_of_raw_action_defaultBase_direct
+    (k : ZMod 19)
+    (hnot :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∀ p :
+          ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates.P),
+          p ∈ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).referenceMatchingSolutionSet d hd) →
+            p ∉ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).aFiberReflectionSupport)) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (referenceRotationMovingSolutionExclusionBoundary_of_raw_action_defaultBase_direct
+      (h := h) k hnot)
+    |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+/-- Raw-action package from the pointwise hard core excluding reference
+solutions on the A-fixing moving support. -/
+def rawActionDefaultBaseReferenceMovingSolutionExclusionBoundary_of_direct
+    (hnot :
+      ∀ k : ZMod 19, ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∀ p :
+          ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates.P),
+          p ∈ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).referenceMatchingSolutionSet d hd) →
+            p ∉ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).aFiberReflectionSupport)) :
+    RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h where
+  movingExclusion k :=
+    referenceRotationMovingSolutionExclusionBoundary_of_raw_action_defaultBase_direct
+      (h := h) k (hnot k)
+
+/-- Raw-action support-complement package from the pointwise hard core
+excluding reference solutions on the A-fixing moving support. -/
+def rawActionDefaultBaseReferenceSolutionSupportComplBoundary_of_direct
+    (hnot :
+      ∀ k : ZMod 19, ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∀ p :
+          ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates.P),
+          p ∈ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).referenceMatchingSolutionSet d hd) →
+            p ∉ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).aFiberReflectionSupport)) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
+  (rawActionDefaultBaseReferenceMovingSolutionExclusionBoundary_of_direct
+      (h := h) hnot)
+    |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+/-- Raw-action constructor for the smaller reference-matching/local-obstruction
+package.  It removes the `aFixing` field, which is already supplied by the raw
+fixed-star data; the remaining fields are still real inputs. -/
+noncomputable def referenceMatchingLocalObstructionBoundary_of_raw_action_defaultBase_fields
+    (k : ZMod 19)
+    (referenceMatching :
+      BranchOrbitABCReflectionLabeling.ReferenceMatchingPipelineBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (singletonFixed :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportSingletonFixedBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingLocalObstructionBoundary
+      h.reflectionFixedStarBoundary_of_raw_action
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) where
+  aFixing :=
+    (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+      |>.reflectionFixedStarAFixingBoundary_of_raw_action
+  referenceMatching := referenceMatching
+  singletonFixed := singletonFixed
+  noAllEndpointAdj := noAllEndpointAdj
+
+/-- Raw-action support-complement package from the smaller local-obstruction
+fields.  This is a fallback route only: the `referenceMatching` inputs must be
+obtained independently, not from this support-complement target. -/
+noncomputable def rawActionDefaultBaseReferenceSolutionSupportComplBoundary_of_localObstruction_fields
+    (referenceMatching :
+      ∀ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceMatchingPipelineBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (singletonFixed :
+      ∀ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportSingletonFixedBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      ∀ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
+  RawActionDefaultBaseReferenceSolutionSupportComplBoundary.of_referenceMatchingLocalObstruction
+      (fun k =>
+        h.referenceMatchingLocalObstructionBoundary_of_raw_action_defaultBase_fields
+          k (referenceMatching k) (singletonFixed k) (noAllEndpointAdj k))
+
 /-- Target theorem surface for the raw-action default-base reference
 support-complement boundary.  Supplying this boundary closes the reference side
 of the current branch/A-fiber frontier. -/
@@ -102,6 +351,14 @@ noncomputable def referenceRotationMatchingSolutionAFixingSupportComplBoundary_o
     BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
       (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
   boundary.referenceRotationMatchingSolutionAFixingSupportComplBoundary k
+
+/-- Target theorem surface in the pointwise moving-support-exclusion spelling. -/
+def referenceRotationMovingSolutionExclusionBoundary_of_raw_action_defaultBase
+    (boundary : RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMovingSolutionExclusionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.referenceRotationMovingSolutionExclusionBoundary k
 
 /-- Reference-to-midpoint consequence of the raw-action default-base
 support-complement target. -/
