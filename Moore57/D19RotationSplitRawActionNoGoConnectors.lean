@@ -279,6 +279,151 @@ theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_refe
       ⟨k, referenceToMidpoint,
         endpointNoPositiveTarget.toEndpointSignNoReflectedReferenceNegMatchingBoundary⟩
 
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointPointwiseNonadj
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceSupportCompl, endpointPointwiseNonadj⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceSupportCompl.toReferenceRotationToMidpointReflectionBoundary,
+        endpointPointwiseNonadj⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointCommonNeighborBasic
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceSupportCompl, endpointCommonNeighborBasic⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+      h
+      ⟨k, referenceSupportCompl.toReferenceRotationToMidpointReflectionBoundary,
+        endpointCommonNeighborBasic⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointExchangeCommonNeighbor
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceSupportCompl, endpointExchange⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+      h
+      ⟨k, referenceSupportCompl.toReferenceRotationToMidpointReflectionBoundary,
+        endpointExchange⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointNoReflectedReferenceNegMatching
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceSupportCompl, endpointNoReflectedReferenceNegMatching⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+      h
+      ⟨k, referenceSupportCompl.toReferenceRotationToMidpointReflectionBoundary,
+        endpointNoReflectedReferenceNegMatching⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointNoPositiveTarget
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceSupportCompl, endpointNoPositiveTarget⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointNoPositiveTarget
+      h
+      ⟨k, referenceSupportCompl.toReferenceRotationToMidpointReflectionBoundary,
+        endpointNoPositiveTarget⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_globalReferenceSupportCompl_endpointPointwiseNonadj
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ (D19ActsOnMoore57.RawActionDefaultBaseReferenceSolutionSupportComplBoundary h ∧
+        ∃ k : ZMod 19,
+          BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+            (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) := by
+  rintro ⟨referenceSupportCompl, k, endpointPointwiseNonadj⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointPointwiseNonadj
+      h
+      ⟨k,
+        referenceSupportCompl.referenceRotationMatchingSolutionAFixingSupportComplBoundary
+          k,
+        endpointPointwiseNonadj⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_globalReferenceSupportCompl_endpointCommonNeighborBasic
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ (D19ActsOnMoore57.RawActionDefaultBaseReferenceSolutionSupportComplBoundary h ∧
+        ∃ k : ZMod 19,
+          BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+            (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) := by
+  rintro ⟨referenceSupportCompl, k, endpointCommonNeighborBasic⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointCommonNeighborBasic
+      h
+      ⟨k,
+        referenceSupportCompl.referenceRotationMatchingSolutionAFixingSupportComplBoundary
+          k,
+        endpointCommonNeighborBasic⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_globalReferenceSupportCompl_endpointExchangeCommonNeighbor
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ (D19ActsOnMoore57.RawActionDefaultBaseReferenceSolutionSupportComplBoundary h ∧
+        ∃ k : ZMod 19,
+          BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary
+            (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) := by
+  rintro ⟨referenceSupportCompl, k, endpointExchange⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointExchangeCommonNeighbor
+      h
+      ⟨k,
+        referenceSupportCompl.referenceRotationMatchingSolutionAFixingSupportComplBoundary
+          k,
+        endpointExchange⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_globalReferenceSupportCompl_endpointNoReflectedReferenceNegMatching
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ (D19ActsOnMoore57.RawActionDefaultBaseReferenceSolutionSupportComplBoundary h ∧
+        ∃ k : ZMod 19,
+          BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary
+            (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) := by
+  rintro ⟨referenceSupportCompl, k, endpointNoReflectedReferenceNegMatching⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointNoReflectedReferenceNegMatching
+      h
+      ⟨k,
+        referenceSupportCompl.referenceRotationMatchingSolutionAFixingSupportComplBoundary
+          k,
+        endpointNoReflectedReferenceNegMatching⟩
+
+theorem no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_globalReferenceSupportCompl_endpointNoPositiveTarget
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ (D19ActsOnMoore57.RawActionDefaultBaseReferenceSolutionSupportComplBoundary h ∧
+        ∃ k : ZMod 19,
+          BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
+            (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) := by
+  rintro ⟨referenceSupportCompl, k, endpointNoPositiveTarget⟩
+  exact
+    no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceSupportCompl_endpointNoPositiveTarget
+      h
+      ⟨k,
+        referenceSupportCompl.referenceRotationMatchingSolutionAFixingSupportComplBoundary
+          k,
+        endpointNoPositiveTarget⟩
+
 theorem no_D19_fixedStarLocalObstructionBoundary_of_rotation_split_raw_action
     (h : D19ActsOnMoore57 V Γ) :
     ¬ ∃ star : ReflectionFixedStarBoundary h,
