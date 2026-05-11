@@ -1,4 +1,5 @@
 import Moore57.BranchOrbitABCMatchingAdjacencyTransportBoundary
+import Moore57.BranchOrbitABCExceptionCardOneBoundary
 import Moore57.AFiberMatchingPerm
 
 /-!
@@ -379,6 +380,63 @@ theorem singleton_neg_of_singleton
     simpa [hqeq] using htransport
 
 end MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+
+/-- Boundary input excluding the only one-point pattern left by the
+negative-offset transport: a singleton at offset `d` paired with the reflected
+singleton at offset `-d`. -/
+structure MidpointExceptionAFixingSupportNoPairedSingletonBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  not_paired_singleton :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        p ∈ labeling.aFiberReflectionSupport →
+          ¬ (labeling.midpointExceptionAFixingSupportIntersection
+                (midpointOf d) (midpointOf_ne_zero hd) = {p} ∧
+              labeling.midpointExceptionAFixingSupportIntersection
+                (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd)) =
+                  {labeling.aFiberReflectionCoordPerm p})
+
+namespace MidpointExceptionAFixingSupportNoPairedSingletonBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Negative-offset transport reduces `no_card_one` to ruling out the paired
+singleton pattern. -/
+def toMidpointExceptionAFixingSupportNoCardOneBoundary
+    (boundary :
+      MidpointExceptionAFixingSupportNoPairedSingletonBoundary labeling)
+    (transport :
+      MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+        labeling) :
+    MidpointExceptionAFixingSupportNoCardOneBoundary labeling where
+  not_singleton_intersection := by
+    intro d hd hsingleton
+    rcases hsingleton with ⟨p, hp_singleton⟩
+    have hp_inter :
+        p ∈ labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf d) (midpointOf_ne_zero hd) := by
+      simp [hp_singleton]
+    have hp_support : p ∈ labeling.aFiberReflectionSupport :=
+      (labeling.mem_midpointExceptionAFixingSupportIntersection
+        (midpointOf d) (midpointOf_ne_zero hd) p).1 hp_inter |>.2
+    exact boundary.not_paired_singleton d hd p hp_support
+      ⟨hp_singleton,
+        transport.singleton_neg_of_singleton d hd p hp_singleton⟩
+
+/-- Direct `no_card_one` consequence of excluding paired singletons. -/
+theorem no_card_one
+    (boundary :
+      MidpointExceptionAFixingSupportNoPairedSingletonBoundary labeling)
+    (transport :
+      MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+        labeling)
+    (d : ZMod 19) (hd : d ≠ 0) :
+    (labeling.midpointExceptionAFixingSupportIntersection
+      (midpointOf d) (midpointOf_ne_zero hd)).card ≠ 1 :=
+  (boundary.toMidpointExceptionAFixingSupportNoCardOneBoundary transport)
+    |>.no_card_one d hd
+
+end MidpointExceptionAFixingSupportNoPairedSingletonBoundary
 
 namespace MidpointEquationSetAFixingNegInvariantBoundary
 

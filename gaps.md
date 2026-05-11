@@ -1296,6 +1296,9 @@ BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportIntersectionNegI
 BranchOrbitABCReflectionLabeling.midpointExceptionAFixingSupportIntersectionNegInvariantBoundary
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary.card_eq_neg
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary.singleton_neg_of_singleton
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.toMidpointExceptionAFixingSupportNoCardOneBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.no_card_one
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.target_sign_vertices_ne
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
 ```
@@ -1307,10 +1310,12 @@ equation sets and, under `MidpointReflectionCriterionBoundary`, to midpoint
 exception sets.  It is also now lifted to the
 midpoint-exception/A-fixing-support intersection: the intersections at offsets
 `d` and `-d` have equal cardinality, and a singleton at `d` transports to the
-reflected singleton at `-d`.  Therefore the next real gap is not to prove
-same-offset invariance directly, but to rule out the remaining alternating
-paired-singleton case or prove the reference-solution fixedness predicted by
-the Cameron Step 2 label-exchange argument.
+reflected singleton at `-d`.  Lean now also packages this as a direct
+reduction from `no_card_one` to the remaining alternating paired-singleton
+obstruction.  Therefore the next real gap is not to prove same-offset
+invariance directly, but to prove the label-exchange/common-neighbor argument
+that rules out this paired singleton, or alternatively prove the
+reference-solution support-complement/fixedness predicted by Cameron Step 2.
 
 ### 6. Representation component entrypoints
 
