@@ -135,6 +135,15 @@ noncomputable def toReferenceRotationToMidpointReflectionBoundary
   (boundary.referenceRotationMatchingSolutionAFixingSupportComplBoundary k)
     |>.toReferenceRotationToMidpointReflectionBoundary
 
+/-- The support-complement package also supplies the paired-solution exclusion
+form on every raw-action default-base labeling. -/
+def toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
+    (boundary : RawActionDefaultBaseReferenceSolutionSupportComplBoundary h) :
+    RawActionDefaultBaseReferenceNoPairedSolutionBoundary h where
+  noPairedSolution k :=
+    (boundary.referenceRotationMatchingSolutionAFixingSupportComplBoundary k)
+      |>.toReferenceMatchingAFixingNoPairedSolutionBoundary
+
 /-- Existing local-obstruction packages imply the reference-side hard target.
 This records the non-circular route that still needs raw/default-base local
 obstruction input. -/
@@ -203,6 +212,15 @@ noncomputable def toReferenceRotationToMidpointReflectionBoundary
   (boundary.referenceRotationMovingSolutionExclusionBoundary k)
     |>.toReferenceRotationToMidpointReflectionBoundary
 
+/-- Moving-support exclusion supplies the paired-solution exclusion package on
+each raw-action default-base labeling. -/
+def toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
+    (boundary : RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h) :
+    RawActionDefaultBaseReferenceNoPairedSolutionBoundary h where
+  noPairedSolution k :=
+    (boundary.referenceRotationMovingSolutionExclusionBoundary k)
+      |>.toReferenceMatchingAFixingNoPairedSolutionBoundary
+
 end RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
 
 namespace RawActionDefaultBaseReferenceSourceExchangeBoundary
@@ -242,6 +260,14 @@ def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
     RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
   boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
     |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+/-- Same-target source exchange also supplies the paired-solution exclusion
+package on every raw-action default-base labeling. -/
+def toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
+    (boundary : RawActionDefaultBaseReferenceSourceExchangeBoundary h) :
+    RawActionDefaultBaseReferenceNoPairedSolutionBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    |>.toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
 
 end RawActionDefaultBaseReferenceSourceExchangeBoundary
 
@@ -304,6 +330,15 @@ def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
   (boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary mate)
     |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
 
+/-- Support-pair no-all plus same-offset support-mate closure also gives the
+paired-solution exclusion package. -/
+def toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
+    (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h)
+    (mate : RawActionDefaultBaseReferenceSupportMateBoundary h) :
+    RawActionDefaultBaseReferenceNoPairedSolutionBoundary h :=
+  (boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary mate)
+    |>.toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
+
 /-- Since the same-offset support-mate closure is theorem-level, the raw-action
 support-pair no-all boundary alone gives moving-support exclusion. -/
 def toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary_of_raw_action
@@ -318,6 +353,14 @@ def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary_of_raw_action
     (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h) :
     RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
   boundary.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    h.rawActionDefaultBaseReferenceSupportMateBoundary_of_raw_action
+
+/-- Since same-offset support-mate closure is theorem-level, support-pair
+no-all alone gives the paired-solution exclusion package. -/
+def toRawActionDefaultBaseReferenceNoPairedSolutionBoundary_of_raw_action
+    (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h) :
+    RawActionDefaultBaseReferenceNoPairedSolutionBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
     h.rawActionDefaultBaseReferenceSupportMateBoundary_of_raw_action
 
 end RawActionDefaultBaseReferenceSupportNoAllBoundary
@@ -380,6 +423,14 @@ def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
   boundary.toRawActionDefaultBaseReferenceSourceExchangeBoundary
     |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
 
+/-- Cross-adjacency also supplies the paired-solution exclusion package on
+every raw-action default-base labeling. -/
+def toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
+    (boundary : RawActionDefaultBaseReferenceCrossAdjacencyBoundary h) :
+    RawActionDefaultBaseReferenceNoPairedSolutionBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceSourceExchangeBoundary
+    |>.toRawActionDefaultBaseReferenceNoPairedSolutionBoundary
+
 end RawActionDefaultBaseReferenceCrossAdjacencyBoundary
 
 /-- Build the per-default-base moving-support exclusion target from the direct
@@ -426,6 +477,36 @@ def rawActionDefaultBaseReferenceMovingSolutionExclusionBoundary_of_direct
     RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h where
   movingExclusion k :=
     referenceRotationMovingSolutionExclusionBoundary_of_raw_action_defaultBase_direct
+      (h := h) k (hnot k)
+
+/-- Build the per-default-base paired-solution exclusion from the direct
+support-exclusion hard core. -/
+def referenceMatchingAFixingNoPairedSolutionBoundary_of_raw_action_defaultBase_direct
+    (k : ZMod 19)
+    (hnot :
+      ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∀ p :
+          ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates.P),
+          p ∈ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).referenceMatchingSolutionSet d hd) →
+            p ∉ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).aFiberReflectionSupport)) :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingNoPairedSolutionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (referenceRotationMovingSolutionExclusionBoundary_of_raw_action_defaultBase_direct
+      (h := h) k hnot)
+    |>.toReferenceMatchingAFixingNoPairedSolutionBoundary
+
+/-- Raw-action paired-solution exclusion package from the pointwise hard core
+excluding reference solutions on the A-fixing moving support. -/
+def rawActionDefaultBaseReferenceNoPairedSolutionBoundary_of_direct
+    (hnot :
+      ∀ k : ZMod 19, ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+        ∀ p :
+          ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates.P),
+          p ∈ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).referenceMatchingSolutionSet d hd) →
+            p ∉ ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).aFiberReflectionSupport)) :
+    RawActionDefaultBaseReferenceNoPairedSolutionBoundary h where
+  noPairedSolution k :=
+    referenceMatchingAFixingNoPairedSolutionBoundary_of_raw_action_defaultBase_direct
       (h := h) k (hnot k)
 
 /-- Raw-action support-complement package from the pointwise hard core

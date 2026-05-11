@@ -682,6 +682,19 @@ noncomputable def toReferenceRotationToMidpointReflectionBoundary
   ReferenceRotationToMidpointReflectionBoundary.of_aFixingFixed
     boundary.toReferenceRotationEquationAFixingFixedBoundary
 
+/-- Support-complement immediately forbids the paired `d`/`-d` reference
+solution pattern on the A-fixing moving support. -/
+def toReferenceMatchingAFixingNoPairedSolutionBoundary
+    (boundary :
+      ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling) :
+    ReferenceMatchingAFixingNoPairedSolutionBoundary labeling where
+  no_paired_reference_solution d hd p hpSupport hpair := by
+    have hpCompl :
+        p ∈ labeling.aFiberReflectionSupportᶜ :=
+      boundary.reference_matching_solution_subset_aFiberReflectionSupport_compl
+        d hd hpair.1
+    exact (Finset.mem_compl.mp hpCompl) hpSupport
+
 end ReferenceRotationMatchingSolutionAFixingSupportComplBoundary
 
 namespace ReferenceRotationMovingSolutionExclusionBoundary
@@ -742,6 +755,14 @@ noncomputable def toReferenceRotationToMidpointReflectionBoundary
     ReferenceRotationToMidpointReflectionBoundary labeling :=
   boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
     |>.toReferenceRotationToMidpointReflectionBoundary
+
+/-- Moving-support exclusion is also the direct paired-solution exclusion:
+the first component of a paired solution is already impossible. -/
+def toReferenceMatchingAFixingNoPairedSolutionBoundary
+    (boundary : ReferenceRotationMovingSolutionExclusionBoundary labeling) :
+    ReferenceMatchingAFixingNoPairedSolutionBoundary labeling where
+  no_paired_reference_solution d hd p hpSupport hpair :=
+    boundary.no_moving_reference_solution d hd p hpSupport hpair.1
 
 end ReferenceRotationMovingSolutionExclusionBoundary
 
@@ -829,6 +850,14 @@ noncomputable def toReferenceRotationToMidpointReflectionBoundary
   boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
     |>.toReferenceRotationToMidpointReflectionBoundary
 
+/-- Same-target source exchange also supplies the paired-solution exclusion
+form through moving-support exclusion. -/
+def toReferenceMatchingAFixingNoPairedSolutionBoundary
+    (boundary : ReferenceMatchingAFixingSourceExchangeBoundary labeling) :
+    ReferenceMatchingAFixingNoPairedSolutionBoundary labeling :=
+  boundary.toReferenceRotationMovingSolutionExclusionBoundary
+    |>.toReferenceMatchingAFixingNoPairedSolutionBoundary
+
 end ReferenceMatchingAFixingSourceExchangeBoundary
 
 namespace ReferenceMatchingAFixingNoPairedSolutionBoundary
@@ -915,6 +944,25 @@ def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary_of_reflection
   boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
     supportCard labeling.referenceMatchingAFixingSupportMateBoundary
 
+/-- Support-pair no-all plus same-offset mate closure also gives the paired
+`d`/`-d` exclusion form. -/
+def toReferenceMatchingAFixingNoPairedSolutionBoundary
+    (boundary : ReferenceMatchingAFixingSupportNoAllBoundary labeling)
+    (supportCard : AFixingReflectionFixedNeighborCardBoundary labeling)
+    (mate : ReferenceMatchingAFixingSupportMateBoundary labeling) :
+    ReferenceMatchingAFixingNoPairedSolutionBoundary labeling :=
+  (boundary.toReferenceRotationMovingSolutionExclusionBoundary supportCard mate)
+    |>.toReferenceMatchingAFixingNoPairedSolutionBoundary
+
+/-- Since same-offset mate closure is theorem-level, support-pair no-all plus
+the two-point support-card input gives paired-solution exclusion. -/
+def toReferenceMatchingAFixingNoPairedSolutionBoundary_of_reflectionSignSymmetry
+    (boundary : ReferenceMatchingAFixingSupportNoAllBoundary labeling)
+    (supportCard : AFixingReflectionFixedNeighborCardBoundary labeling) :
+    ReferenceMatchingAFixingNoPairedSolutionBoundary labeling :=
+  boundary.toReferenceMatchingAFixingNoPairedSolutionBoundary supportCard
+    labeling.referenceMatchingAFixingSupportMateBoundary
+
 end ReferenceMatchingAFixingSupportNoAllBoundary
 
 namespace ReferenceMatchingAFixingCrossAdjacencyBoundary
@@ -949,6 +997,14 @@ def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
     ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling :=
   boundary.toReferenceMatchingAFixingSourceExchangeBoundary
     |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+/-- Cross-adjacency gives the paired-solution exclusion through source
+exchange and moving-support exclusion. -/
+def toReferenceMatchingAFixingNoPairedSolutionBoundary
+    (boundary : ReferenceMatchingAFixingCrossAdjacencyBoundary labeling) :
+    ReferenceMatchingAFixingNoPairedSolutionBoundary labeling :=
+  boundary.toReferenceMatchingAFixingSourceExchangeBoundary
+    |>.toReferenceMatchingAFixingNoPairedSolutionBoundary
 
 end ReferenceMatchingAFixingCrossAdjacencyBoundary
 
