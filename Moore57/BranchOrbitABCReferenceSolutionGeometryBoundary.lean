@@ -1,5 +1,6 @@
 import Moore57.BranchOrbitABCReferenceSolutionFixedBoundary
 import Moore57.AFiberMatchingPermAdjacency
+import Moore57.BranchOrbitABCSupportPairBoundary
 
 /-!
 # Geometry connectors for reference matching solution fixedness
@@ -89,6 +90,116 @@ theorem mem_referenceMatchingSolutionSet_iff_adj_rotationTarget
           labeling.data.toAFiberCoordinates (index_ne_add_of_ne_zero hd) p
           (labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p)).1
           hpAdj)
+
+/-- A reference matching solution at offset `d` is also a solution at offset
+`-d`.  Geometrically, it is an edge from the reference fiber to its `d`-rotate;
+reversing the edge and rotating by `-d` gives the same reference coordinate as
+a solution at offset `-d`. -/
+theorem mem_referenceMatchingSolutionSet_neg
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (d : ZMod 19) (hd : d ≠ 0)
+    (p : labeling.data.toAFiberCoordinates.P) :
+    p ∈ labeling.referenceMatchingSolutionSet d hd →
+      p ∈ labeling.referenceMatchingSolutionSet (-d) (neg_ne_zero.mpr hd) := by
+  intro hp
+  let coords := labeling.data.toAFiberCoordinates
+  let rot := labeling.data.toAFiberRotationEquivariance
+  have hpAdj :
+        Γ.Adj
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V))
+          (((coords.coord (0 + d) (rot.coordPerm d 0 p) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) :=
+      (labeling.mem_referenceMatchingSolutionSet_iff_adj_rotationTarget
+        d hd p).1 hp
+  have hAdj_rot :
+        Γ.Adj
+          (h.rotation (-d)
+            (((coords.coord (0 + d) (rot.coordPerm d 0 p) :
+              {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)))
+          (h.rotation (-d)
+            (((coords.coord 0 p :
+              {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V))) := by
+      simpa [D19ActsOnMoore57.rotation] using
+        (h.smul_adj (DihedralGroup.r (-d))
+          (((coords.coord (0 + d) (rot.coordPerm d 0 p) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V))
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V))).mp
+          hpAdj.symm
+  have htarget_d :
+        (((coords.coord (0 + d) (rot.coordPerm d 0 p) :
+          {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) =
+          h.rotation d
+            (((coords.coord 0 p :
+              {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+      simpa [coords, rot] using
+        AFiberRotationEquivariance.coord_coordPerm_apply_val
+          (rot := labeling.data.toAFiberRotationEquivariance)
+          (d := d) (i := 0) (p := p)
+  have hleft :
+        h.rotation (-d)
+          (((coords.coord (0 + d) (rot.coordPerm d 0 p) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) =
+        (((coords.coord 0 p :
+          {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+      rw [htarget_d]
+      calc
+        h.rotation (-d)
+            (h.rotation d
+              (((coords.coord 0 p :
+                {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)))
+            =
+          (h.rotation (-d) * h.rotation d)
+              (((coords.coord 0 p :
+                {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+              simp [Equiv.Perm.mul_apply]
+        _ =
+          h.rotation ((-d) + d)
+              (((coords.coord 0 p :
+                {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+              rw [← h.rotation_add]
+        _ = (((coords.coord 0 p :
+              {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+              simp
+  have htarget_neg :
+        (((coords.coord (0 + (-d)) (rot.coordPerm (-d) 0 p) :
+          {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + (-d)))}) : V)) =
+          h.rotation (-d)
+            (((coords.coord 0 p :
+              {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V)) := by
+      simpa [coords, rot] using
+        AFiberRotationEquivariance.coord_coordPerm_apply_val
+          (rot := labeling.data.toAFiberRotationEquivariance)
+          (d := -d) (i := 0) (p := p)
+  have hpAdj_neg :
+        Γ.Adj
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V))
+          (((coords.coord (0 + (-d)) (rot.coordPerm (-d) 0 p) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + (-d)))}) : V)) := by
+      rw [hleft, ← htarget_neg] at hAdj_rot
+      exact hAdj_rot
+  exact
+      (labeling.mem_referenceMatchingSolutionSet_iff_adj_rotationTarget
+        (-d) (neg_ne_zero.mpr hd) p).2
+        (by simpa [coords, rot] using hpAdj_neg)
+
+/-- The reference matching solution set is invariant under changing the offset
+sign. -/
+theorem referenceMatchingSolutionSet_neg_iff
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (d : ZMod 19) (hd : d ≠ 0)
+    (p : labeling.data.toAFiberCoordinates.P) :
+    p ∈ labeling.referenceMatchingSolutionSet (-d) (neg_ne_zero.mpr hd) ↔
+      p ∈ labeling.referenceMatchingSolutionSet d hd := by
+  constructor
+  · intro hpneg
+    have hback :=
+      labeling.mem_referenceMatchingSolutionSet_neg (-d)
+        (neg_ne_zero.mpr hd) p hpneg
+    simpa using hback
+  · exact labeling.mem_referenceMatchingSolutionSet_neg d hd p
 
 /-- A point in the A-fixing moving support gives two distinct reference-fiber
 vertices: the original coordinate and its A-reflection. -/
@@ -266,6 +377,23 @@ theorem aFiberReflectionCoordPerm_mem_referenceMatchingSolutionSet_neg
       (-d) (neg_ne_zero.mpr hd) (labeling.aFiberReflectionCoordPerm p)).2
       (by simpa [coords] using hpAdj_reflected)
 
+/-- Combining A-fixing reflection transport with the sign symmetry of the
+reference solution set gives same-offset closure under the A-fixing coordinate
+reflection. -/
+theorem aFiberReflectionCoordPerm_mem_referenceMatchingSolutionSet
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (d : ZMod 19) (hd : d ≠ 0)
+    (p : labeling.data.toAFiberCoordinates.P) :
+    p ∈ labeling.referenceMatchingSolutionSet d hd →
+      labeling.aFiberReflectionCoordPerm p ∈
+        labeling.referenceMatchingSolutionSet d hd := by
+  intro hp
+  exact
+    (labeling.referenceMatchingSolutionSet_neg_iff d hd
+      (labeling.aFiberReflectionCoordPerm p)).1
+      (labeling.aFiberReflectionCoordPerm_mem_referenceMatchingSolutionSet_neg
+        d hd p hp)
+
 /-- The underlying reference-fiber vertex represented by a coordinate. -/
 def referenceFiberVertex
     (labeling : BranchOrbitABCReflectionLabeling h)
@@ -380,6 +508,55 @@ structure ReferenceMatchingAFixingCrossAdjacencyBoundary
                 {x : V // x ∈
                   branchFiber Γ labeling.data.toAFiberCoordinates.u
                     (labeling.data.toAFiberCoordinates.a (0 + d))}) : V))
+
+/-- Same-offset mate-closure of reference matching solutions on the A-fixing
+moving support.  This is deliberately separated from the raw reflection
+transport, which only gives the proven `d` to `-d` statement. -/
+structure ReferenceMatchingAFixingSupportMateBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  reflected_solution_of_solution :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        p ∈ labeling.aFiberReflectionSupport →
+          p ∈ labeling.referenceMatchingSolutionSet d hd →
+            labeling.aFiberReflectionCoordPerm p ∈
+              labeling.referenceMatchingSolutionSet d hd
+
+/-- Support-pair exclusion form suggested by the label-exchange direction:
+the whole two-point A-fixing moving support cannot lie in one reference
+matching solution set.  By itself this is weaker than pointwise
+support-complement; converting it to pointwise exclusion also needs the
+same-offset mate-closure boundary above. -/
+structure ReferenceMatchingAFixingSupportNoAllBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  not_all_support_reference_solution :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ¬ ∀ p : labeling.data.toAFiberCoordinates.P,
+          p ∈ labeling.aFiberReflectionSupport →
+            p ∈ labeling.referenceMatchingSolutionSet d hd
+
+/-- Primitive paired-solution exclusion aligned with the theorem-level
+reflection transport: a support point cannot solve the `d` reference equation
+while its A-reflection solves the `-d` reference equation. -/
+structure ReferenceMatchingAFixingNoPairedSolutionBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  no_paired_reference_solution :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        p ∈ labeling.aFiberReflectionSupport →
+          ¬ (p ∈ labeling.referenceMatchingSolutionSet d hd ∧
+              labeling.aFiberReflectionCoordPerm p ∈
+                labeling.referenceMatchingSolutionSet (-d) (neg_ne_zero.mpr hd))
+
+/-- The same-offset mate-closure is now a theorem-level consequence of
+reflection transport plus the `d` to `-d` sign symmetry of reference matching
+solution sets. -/
+def referenceMatchingAFixingSupportMateBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    ReferenceMatchingAFixingSupportMateBoundary labeling where
+  reflected_solution_of_solution d hd p _hpSupport hpSolution :=
+    labeling.aFiberReflectionCoordPerm_mem_referenceMatchingSolutionSet d hd p
+      hpSolution
 
 namespace ReferenceRotationMatchingSolutionVertexFixedBoundary
 
@@ -615,6 +792,35 @@ def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
   boundary.toReferenceRotationMovingSolutionExclusionBoundary
     |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
 
+/-- Same-target source exchange is equivalent to the same-target adjacency
+form: once `p` is a reference solution, the exchanged matching equation says
+that the reflected source is adjacent to the same rotated target. -/
+def toReferenceMatchingAFixingCrossAdjacencyBoundary
+    (boundary : ReferenceMatchingAFixingSourceExchangeBoundary labeling) :
+    ReferenceMatchingAFixingCrossAdjacencyBoundary labeling where
+  cross_adj_of_reference_solution := by
+    intro d hd p hpSupport hpSolution
+    have hpMatch :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p :=
+      (labeling.mem_referenceMatchingSolutionSet d hd p).1 hpSolution
+    have hApMatch :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd)
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p :=
+      boundary.source_exchange d hd p hpSupport hpMatch
+    exact
+      (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore
+        labeling.data.toAFiberCoordinates
+        (index_ne_add_of_ne_zero hd)
+        (labeling.aFiberReflectionCoordPerm p)
+        (labeling.data.toAFiberRotationEquivariance.coordPerm d 0 p)).2
+        hApMatch
+
 /-- Same-target source exchange gives the reference-to-midpoint boundary
 through the support-complement route. -/
 noncomputable def toReferenceRotationToMidpointReflectionBoundary
@@ -624,6 +830,92 @@ noncomputable def toReferenceRotationToMidpointReflectionBoundary
     |>.toReferenceRotationToMidpointReflectionBoundary
 
 end ReferenceMatchingAFixingSourceExchangeBoundary
+
+namespace ReferenceMatchingAFixingNoPairedSolutionBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Paired-solution exclusion is the exact primitive needed with the existing
+reflection transport theorem to rule out moving-support reference solutions. -/
+def toReferenceRotationMovingSolutionExclusionBoundary
+    (boundary : ReferenceMatchingAFixingNoPairedSolutionBoundary labeling) :
+    ReferenceRotationMovingSolutionExclusionBoundary labeling where
+  no_moving_reference_solution d hd p hpSupport hpSolution := by
+    exact
+      boundary.no_paired_reference_solution d hd p hpSupport
+        ⟨hpSolution,
+          labeling.aFiberReflectionCoordPerm_mem_referenceMatchingSolutionSet_neg
+            d hd p hpSolution⟩
+
+/-- Paired-solution exclusion gives the standard support-complement boundary. -/
+def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+    (boundary : ReferenceMatchingAFixingNoPairedSolutionBoundary labeling) :
+    ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling :=
+  boundary.toReferenceRotationMovingSolutionExclusionBoundary
+    |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+end ReferenceMatchingAFixingNoPairedSolutionBoundary
+
+namespace ReferenceMatchingAFixingSupportNoAllBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- A support-pair no-all statement plus same-offset mate-closure gives the
+pointwise moving-support exclusion.  The support has exactly two points, so any
+single support solution and its reflected mate would make the whole support a
+solution set, contradicting `not_all_support_reference_solution`. -/
+def toReferenceRotationMovingSolutionExclusionBoundary
+    (boundary : ReferenceMatchingAFixingSupportNoAllBoundary labeling)
+    (supportCard : AFixingReflectionFixedNeighborCardBoundary labeling)
+    (mate : ReferenceMatchingAFixingSupportMateBoundary labeling) :
+    ReferenceRotationMovingSolutionExclusionBoundary labeling where
+  no_moving_reference_solution d hd p hpSupport hpSolution := by
+    have hApSolution :
+        labeling.aFiberReflectionCoordPerm p ∈
+          labeling.referenceMatchingSolutionSet d hd :=
+      mate.reflected_solution_of_solution d hd p hpSupport hpSolution
+    have hall :
+        ∀ q : labeling.data.toAFiberCoordinates.P,
+          q ∈ labeling.aFiberReflectionSupport →
+            q ∈ labeling.referenceMatchingSolutionSet d hd := by
+      intro q hq
+      rcases
+          (supportCard.mem_aFiberReflectionSupport_iff_eq_or_eq_reflection_of_mem
+            hpSupport).1 hq with hqeq | hqeq
+      · simpa [hqeq] using hpSolution
+      · simpa [hqeq] using hApSolution
+    exact boundary.not_all_support_reference_solution d hd hall
+
+/-- Support-pair no-all plus same-offset mate-closure gives the standard
+support-complement boundary. -/
+def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+    (boundary : ReferenceMatchingAFixingSupportNoAllBoundary labeling)
+    (supportCard : AFixingReflectionFixedNeighborCardBoundary labeling)
+    (mate : ReferenceMatchingAFixingSupportMateBoundary labeling) :
+    ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling :=
+  (boundary.toReferenceRotationMovingSolutionExclusionBoundary supportCard mate)
+    |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+
+/-- Since same-offset mate-closure is now a theorem, the support-pair no-all
+boundary plus the two-point support-card input gives pointwise moving-support
+exclusion. -/
+def toReferenceRotationMovingSolutionExclusionBoundary_of_reflectionSignSymmetry
+    (boundary : ReferenceMatchingAFixingSupportNoAllBoundary labeling)
+    (supportCard : AFixingReflectionFixedNeighborCardBoundary labeling) :
+    ReferenceRotationMovingSolutionExclusionBoundary labeling :=
+  boundary.toReferenceRotationMovingSolutionExclusionBoundary supportCard
+    labeling.referenceMatchingAFixingSupportMateBoundary
+
+/-- Support-pair no-all plus the theorem-level same-offset mate-closure gives
+the standard support-complement boundary. -/
+def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary_of_reflectionSignSymmetry
+    (boundary : ReferenceMatchingAFixingSupportNoAllBoundary labeling)
+    (supportCard : AFixingReflectionFixedNeighborCardBoundary labeling) :
+    ReferenceRotationMatchingSolutionAFixingSupportComplBoundary labeling :=
+  boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+    supportCard labeling.referenceMatchingAFixingSupportMateBoundary
+
+end ReferenceMatchingAFixingSupportNoAllBoundary
 
 namespace ReferenceMatchingAFixingCrossAdjacencyBoundary
 

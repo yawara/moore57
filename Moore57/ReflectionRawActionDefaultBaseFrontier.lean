@@ -63,6 +63,36 @@ structure RawActionDefaultBaseReferenceCrossAdjacencyBoundary
       BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingCrossAdjacencyBoundary
         (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
 
+/-- Raw-action default-base package for same-offset mate-closure of reference
+solutions on the A-fixing moving support.  This is a separate input from the
+already-proved reflection transport, which changes the offset from `d` to
+`-d`. -/
+structure RawActionDefaultBaseReferenceSupportMateBoundary
+    (h : D19ActsOnMoore57 V Γ) : Prop where
+  supportMate :
+    ∀ k : ZMod 19,
+      BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingSupportMateBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+
+/-- Raw-action default-base package for the support-pair no-all reference
+target.  It says the two-point A-fixing moving support is never entirely
+contained in one reference matching solution set. -/
+structure RawActionDefaultBaseReferenceSupportNoAllBoundary
+    (h : D19ActsOnMoore57 V Γ) : Prop where
+  supportNoAll :
+    ∀ k : ZMod 19,
+      BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingSupportNoAllBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+
+/-- Raw-action default-base package for the paired-solution exclusion matching
+the theorem-level `d -> -d` reflection transport. -/
+structure RawActionDefaultBaseReferenceNoPairedSolutionBoundary
+    (h : D19ActsOnMoore57 V Γ) : Prop where
+  noPairedSolution :
+    ∀ k : ZMod 19,
+      BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingNoPairedSolutionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+
 namespace RawActionDefaultBaseReferenceSolutionSupportComplBoundary
 
 variable {h : D19ActsOnMoore57 V Γ}
@@ -196,6 +226,15 @@ def toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
     (boundary.referenceMatchingAFixingSourceExchangeBoundary k)
       |>.toReferenceRotationMovingSolutionExclusionBoundary
 
+/-- Same-target source exchange and same-target cross-adjacency are equivalent
+on every raw-action default-base labeling. -/
+def toRawActionDefaultBaseReferenceCrossAdjacencyBoundary
+    (boundary : RawActionDefaultBaseReferenceSourceExchangeBoundary h) :
+    RawActionDefaultBaseReferenceCrossAdjacencyBoundary h where
+  crossAdjacency k :=
+    (boundary.referenceMatchingAFixingSourceExchangeBoundary k)
+      |>.toReferenceMatchingAFixingCrossAdjacencyBoundary
+
 /-- Same-target source exchange supplies the raw-action support-complement
 reference target. -/
 def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
@@ -205,6 +244,113 @@ def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
     |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
 
 end RawActionDefaultBaseReferenceSourceExchangeBoundary
+
+namespace RawActionDefaultBaseReferenceSupportMateBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Expose the per-default-base same-offset support-mate boundary. -/
+def referenceMatchingAFixingSupportMateBoundary
+    (boundary : RawActionDefaultBaseReferenceSupportMateBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingSupportMateBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.supportMate k
+
+end RawActionDefaultBaseReferenceSupportMateBoundary
+
+/-- Raw action automatically supplies same-offset support-mate closure on each
+default-base labeling, because it is a theorem of any reflection labeling after
+combining reflection transport with reference solution sign symmetry. -/
+def rawActionDefaultBaseReferenceSupportMateBoundary_of_raw_action :
+    RawActionDefaultBaseReferenceSupportMateBoundary h where
+  supportMate k :=
+    (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+      |>.referenceMatchingAFixingSupportMateBoundary
+
+namespace RawActionDefaultBaseReferenceSupportNoAllBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Expose the per-default-base support-pair no-all boundary. -/
+def referenceMatchingAFixingSupportNoAllBoundary
+    (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingSupportNoAllBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.supportNoAll k
+
+/-- Support-pair no-all plus same-offset support-mate closure gives the
+raw-action moving-support exclusion package.  The two-point support-card input
+is supplied by the raw-action fixed-star/A-fixing boundary. -/
+def toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h)
+    (mate : RawActionDefaultBaseReferenceSupportMateBoundary h) :
+    RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h where
+  movingExclusion k :=
+    (boundary.referenceMatchingAFixingSupportNoAllBoundary k)
+      |>.toReferenceRotationMovingSolutionExclusionBoundary
+        ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+          |>.reflectionFixedStarAFixingBoundary_of_raw_action
+          |>.toAFixingReflectionFixedNeighborCardBoundary)
+        (mate.referenceMatchingAFixingSupportMateBoundary k)
+
+/-- Support-pair no-all plus same-offset support-mate closure gives the
+raw-action support-complement package. -/
+def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h)
+    (mate : RawActionDefaultBaseReferenceSupportMateBoundary h) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
+  (boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary mate)
+    |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+/-- Since the same-offset support-mate closure is theorem-level, the raw-action
+support-pair no-all boundary alone gives moving-support exclusion. -/
+def toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary_of_raw_action
+    (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h) :
+    RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    h.rawActionDefaultBaseReferenceSupportMateBoundary_of_raw_action
+
+/-- Since the same-offset support-mate closure is theorem-level, the raw-action
+support-pair no-all boundary alone gives the support-complement package. -/
+def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary_of_raw_action
+    (boundary : RawActionDefaultBaseReferenceSupportNoAllBoundary h) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    h.rawActionDefaultBaseReferenceSupportMateBoundary_of_raw_action
+
+end RawActionDefaultBaseReferenceSupportNoAllBoundary
+
+namespace RawActionDefaultBaseReferenceNoPairedSolutionBoundary
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Expose the per-default-base paired-solution exclusion boundary. -/
+def referenceMatchingAFixingNoPairedSolutionBoundary
+    (boundary : RawActionDefaultBaseReferenceNoPairedSolutionBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingAFixingNoPairedSolutionBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  boundary.noPairedSolution k
+
+/-- Paired-solution exclusion gives the raw-action moving-support exclusion
+package using the existing reflection transport theorem. -/
+def toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    (boundary : RawActionDefaultBaseReferenceNoPairedSolutionBoundary h) :
+    RawActionDefaultBaseReferenceMovingSolutionExclusionBoundary h where
+  movingExclusion k :=
+    (boundary.referenceMatchingAFixingNoPairedSolutionBoundary k)
+      |>.toReferenceRotationMovingSolutionExclusionBoundary
+
+/-- Paired-solution exclusion gives the raw-action support-complement package. -/
+def toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+    (boundary : RawActionDefaultBaseReferenceNoPairedSolutionBoundary h) :
+    RawActionDefaultBaseReferenceSolutionSupportComplBoundary h :=
+  boundary.toRawActionDefaultBaseReferenceMovingSolutionExclusionBoundary
+    |>.toRawActionDefaultBaseReferenceSolutionSupportComplBoundary
+
+end RawActionDefaultBaseReferenceNoPairedSolutionBoundary
 
 namespace RawActionDefaultBaseReferenceCrossAdjacencyBoundary
 
