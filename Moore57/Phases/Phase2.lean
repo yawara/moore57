@@ -1,4 +1,4 @@
-import Moore57.D19Contradiction
+import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Moore57Graph.E7Matrix.Idempotent
 import Moore57.D19OnMoore57.HigmanTrace.HigmanTraceCongruence
 

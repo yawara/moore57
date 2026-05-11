@@ -1,4 +1,5 @@
-import Moore57.D19Contradiction
+import Moore57.Moore57Graph.Moore57Definition
+import Moore57.D19OnMoore57.Counting.AbstractCounting
 
 namespace Moore57
 

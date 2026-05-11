@@ -1,6 +1,7 @@
 import Moore57.Moore57Graph.E7Matrix.Idempotent
 import Moore57.Foundations.LinearAlgebra.MatrixLinearMapBridge
 import Moore57.Foundations.LinearAlgebra.ProjectionTrace
+import Moore57.D19OnMoore57.Action.D19Action
 
 /-!
 # Trace bridge for the E7 projection range

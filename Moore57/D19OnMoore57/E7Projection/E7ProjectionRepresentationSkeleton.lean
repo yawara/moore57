@@ -1,6 +1,7 @@
 import Moore57.Moore57Graph.E7Matrix.PermutationCommutation
 import Mathlib.LinearAlgebra.Matrix.Permutation
 import Mathlib.RepresentationTheory.Submodule
+import Moore57.D19OnMoore57.Action.D19Action
 
 /-!
 # The E7 range as a subrepresentation skeleton

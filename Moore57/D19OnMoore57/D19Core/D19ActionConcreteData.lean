@@ -1,5 +1,7 @@
 import Moore57.D19OnMoore57.Trace.TraceMultiplicityPackaging
-import Moore57.D19Contradiction
+import Moore57.Moore57Graph.Moore57Definition
+import Moore57.D19OnMoore57.Counting.AbstractCounting
+import Moore57.D19OnMoore57.Action.D19Action
 
 /-!
 # Concrete D19 action data

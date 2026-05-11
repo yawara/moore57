@@ -1,5 +1,4 @@
 -- This module serves as the root of the `Moore57` library.
-import Moore57.D19Contradiction
 import Moore57.D19OnMoore57.D19Core.D19CharacterBoundaryConstructors
 import Moore57.D19OnMoore57.E7Projection.E7Minus8CharacterInputBridge
 import Moore57.D19OnMoore57.E7Projection.E7Minus8K155NoGoConnectors

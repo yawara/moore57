@@ -1,5 +1,7 @@
 import Moore57.D19OnMoore57.Misc.CharacterInputPackaging
 import Mathlib.RepresentationTheory.Character
+import Moore57.D19OnMoore57.Action.D19Action
+import Moore57.Foundations.GroupTheory.Dihedral19LinearCharacter
 
 /-!
 # Linear-character criteria for D19 representation inputs

@@ -1,4 +1,4 @@
-import Moore57.D19Contradiction
+import Moore57.Moore57Graph.Moore57Definition
 
 /-!
 # Section 3: coordinates on the A-side fibers

@@ -1,4 +1,4 @@
-import Moore57.D19Contradiction
+import Moore57.Moore57Graph.Moore57Definition
 
 /-!
 # Idempotence of the Moore57 E7 projection matrix
