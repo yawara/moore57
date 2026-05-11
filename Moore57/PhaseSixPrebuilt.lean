@@ -2,6 +2,7 @@ import Moore57.PhaseFivePrebuilt
 import Moore57.PhaseOnePrebuilt
 import Moore57.OrbitBaseSelectionFromRawAction
 import Moore57.D19OrbitContributionData
+import Moore57.D19FinalRepresentationCompact
 
 /-!
 # Phase 6 prebuilt: final assembly from Phase 5 + geometric pieces
@@ -114,6 +115,67 @@ theorem false_of_RotationCharacterConstancy_and_a1Decomposition
         alpha beta gamma reflection dimension rotation_int
         minus8_trivial_nonneg minus8_sign_nonneg
         a1_decomposition).toActionOrbitConcreteData⟩
+
+/-! ### Compact criterion form of Phase 6
+
+The same final assembly using the existing
+`D19FinalRepresentationCountCompactInputs`, which packages the geometric gap
+as the smaller `AdjacentMovedReflectionComplementResidual38Witness`.  This
+form pins the remaining geometric obligation to a single compact criterion:
+cross-disjointness of the 56 base orbits and their reflections, plus the
+constant filtered cardinality `38` of the canonical complement residual. -/
+
+/-- Phase 6 (compact form): turn the Phase 5 representation data plus the
+compact complement-residual adjacent-moved witness over the canonical orbit
+base into a `D19FinalRepresentationCountCompactInputs`. -/
+noncomputable def d19FinalRepresentationCountCompactInputs_of_RotationCharacterConstancy
+    (h : D19ActsOnMoore57 V Γ)
+    (rcc : RotationCharacterConstancy h)
+    (intval : rcc.IntegerValue)
+    (alpha beta gamma : ℕ)
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (dimension : alpha + beta + 18 * gamma = 1729)
+    (rotation_int : (alpha : ℤ) + (beta : ℤ) - (gamma : ℤ) = intval.intValue)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58)
+    (adjacentMoved :
+      AdjacentMovedReflectionComplementResidual38Witness h
+        (h.orbitBaseSelectionInput_of_raw_action)) :
+    D19FinalRepresentationCountCompactInputs h where
+  representation :=
+    (D19LinearCharacterInput.ofE7ProjectionCharacterClassBoundary h
+        alpha beta gamma
+        (d19CharacterClassBoundary_of_RotationCharacterConstancy rcc intval
+          alpha beta gamma reflection dimension rotation_int)
+        reflection minus8_trivial_nonneg minus8_sign_nonneg)
+      |>.toD19RepresentationCharacterInput
+  rotationOne_fixed_count := by
+    have h1 : fixedVertexCount (h.smulEquiv (DihedralGroup.r 1)) = 1 :=
+      h.rotationFixedCountOne_smulEquiv 1 (by decide)
+    simpa [D19ActsOnMoore57.rotation] using h1
+  orbitBase := h.orbitBaseSelectionInput_of_raw_action
+  adjacentMoved := adjacentMoved
+
+/-- Phase 6 (compact form, final): the compact adjacent-moved witness plus the
+Phase 5 representation data imply `False`. -/
+theorem false_of_RotationCharacterConstancy_and_compactAdjacentMoved
+    (h : D19ActsOnMoore57 V Γ)
+    (rcc : RotationCharacterConstancy h)
+    (intval : rcc.IntegerValue)
+    (alpha beta gamma : ℕ)
+    (reflection : (alpha : ℤ) - (beta : ℤ) = 33)
+    (dimension : alpha + beta + 18 * gamma = 1729)
+    (rotation_int : (alpha : ℤ) + (beta : ℤ) - (gamma : ℤ) = intval.intValue)
+    (minus8_trivial_nonneg : alpha ≤ 113)
+    (minus8_sign_nonneg : beta ≤ 58)
+    (adjacentMoved :
+      AdjacentMovedReflectionComplementResidual38Witness h
+        (h.orbitBaseSelectionInput_of_raw_action)) :
+    False :=
+  D19FinalRepresentationCountCompactInputs.not_nonempty h
+    ⟨d19FinalRepresentationCountCompactInputs_of_RotationCharacterConstancy
+      h rcc intval alpha beta gamma reflection dimension rotation_int
+      minus8_trivial_nonneg minus8_sign_nonneg adjacentMoved⟩
 
 end D19ActsOnMoore57
 
