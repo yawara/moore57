@@ -1,5 +1,5 @@
 import Moore57.AFiberCoordinateRotation
-import Moore57.AFiberMatchingPerm
+import Moore57.Moore57Graph.AFiber.MatchingPerm
 
 /-!
 # Rotation transport for A-fiber matching equations

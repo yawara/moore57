@@ -1,4 +1,4 @@
-import Moore57.E7MatrixIdempotent
+import Moore57.Moore57Graph.E7Matrix.Idempotent
 import Moore57.Foundations.LinearAlgebra.MatrixLinearMapBridge
 import Moore57.Foundations.LinearAlgebra.ProjectionTrace
 

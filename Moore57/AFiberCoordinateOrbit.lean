@@ -1,4 +1,4 @@
-import Moore57.AFiberCoordinateConstruction
+import Moore57.Moore57Graph.AFiber.CoordinateConstruction
 import Moore57.AFiberCoordinateRotation
 import Moore57.RotationOrbitFinset
 

@@ -1,5 +1,5 @@
-import Moore57.AFiberCoordinates
-import Moore57.BranchFiberMatching
+import Moore57.Moore57Graph.AFiber.Coordinates
+import Moore57.Moore57Graph.BranchFiber.Matching
 
 /-!
 # Constructing A-side fiber coordinates from branch matchings

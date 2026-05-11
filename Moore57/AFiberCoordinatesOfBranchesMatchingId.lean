@@ -1,6 +1,6 @@
-import Moore57.AFiberCoordinateConstruction
+import Moore57.Moore57Graph.AFiber.CoordinateConstruction
 import Moore57.AFiberCoordinateOrbit
-import Moore57.AFiberMatchingPerm
+import Moore57.Moore57Graph.AFiber.MatchingPerm
 import Moore57.BranchOrbitABCDataFromCenter
 
 /-!

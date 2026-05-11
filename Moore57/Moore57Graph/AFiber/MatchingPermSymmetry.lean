@@ -1,4 +1,4 @@
-import Moore57.AFiberMatchingPermAdjacency
+import Moore57.Moore57Graph.AFiber.MatchingPermAdjacency
 
 /-!
 # Symmetry algebra for A-side fiber matching permutations

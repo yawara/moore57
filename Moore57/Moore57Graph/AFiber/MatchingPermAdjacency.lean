@@ -1,4 +1,4 @@
-import Moore57.AFiberMatchingPerm
+import Moore57.Moore57Graph.AFiber.MatchingPerm
 
 /-!
 # All-index adjacency criterion for A-fiber matching coordinates

@@ -1,5 +1,5 @@
 import Moore57.AdjacentMovedReflectionAvoidanceSplit
-import Moore57.AFiberCoordinateConstruction
+import Moore57.Moore57Graph.AFiber.CoordinateConstruction
 
 /-!
 # A-fiber criteria for the avoidance split witness

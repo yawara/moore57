@@ -1,4 +1,4 @@
-import Moore57.AFiberCoordinateConstruction
+import Moore57.Moore57Graph.AFiber.CoordinateConstruction
 
 /-!
 # Adjacency of constructed A-side fiber coordinates

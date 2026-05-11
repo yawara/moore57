@@ -1,4 +1,4 @@
-import Moore57.AFiberFiberUnionCardinality
+import Moore57.Moore57Graph.AFiber.FiberUnionCardinality
 import Moore57.AFiberOrbitMoved
 import Moore57.OrbitBaseSelectionCanonicalCarrierCardinality
 import Moore57.OrbitBaseSelectionEnumeration

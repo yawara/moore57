@@ -1,5 +1,5 @@
 import Moore57.FixedInducedStarEdgeFormula
-import Moore57.InvolutionEdgeCountFormula
+import Moore57.Moore57Graph.InvolutionEdgeCountFormula
 
 /-!
 # Reflection fixed-star bridge from linear trace and edge formula

@@ -1,5 +1,5 @@
 import Moore57.BranchOrbitABCCardTwoCandidateGeometryBoundary
-import Moore57.AFiberFiberUnionCardinality
+import Moore57.Moore57Graph.AFiber.FiberUnionCardinality
 
 /-!
 # Card-two rotated endpoint non-adjacency

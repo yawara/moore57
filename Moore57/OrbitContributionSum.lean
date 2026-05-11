@@ -1,5 +1,5 @@
 import Moore57.OrbitAdjacentMovedCount
-import Moore57.FinsetIndicatorSums
+import Moore57.Moore57Graph.Util.FinsetIndicatorSums
 
 namespace Moore57
 

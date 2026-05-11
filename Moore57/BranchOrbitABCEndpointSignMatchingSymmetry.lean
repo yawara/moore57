@@ -1,6 +1,6 @@
 import Moore57.BranchOrbitABCEndpointSignAdjacencyBoundary
 import Moore57.BranchOrbitABCExceptionEndpointPointwiseBoundary
-import Moore57.AFiberMatchingPermSymmetry
+import Moore57.Moore57Graph.AFiber.MatchingPermSymmetry
 
 /-!
 # Endpoint sign matching symmetry diagnostics

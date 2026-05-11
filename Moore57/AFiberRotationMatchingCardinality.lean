@@ -1,5 +1,5 @@
 import Moore57.AFiberUnionFilterCardinality
-import Moore57.AFiberMatchingPermSymmetry
+import Moore57.Moore57Graph.AFiber.MatchingPermSymmetry
 import Moore57.AFiberCoordinateRotation
 import Moore57.AFiberCardinalityBoundary
 

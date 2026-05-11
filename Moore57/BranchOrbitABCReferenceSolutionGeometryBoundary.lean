@@ -1,5 +1,5 @@
 import Moore57.BranchOrbitABCReferenceSolutionFixedBoundary
-import Moore57.AFiberMatchingPermAdjacency
+import Moore57.Moore57Graph.AFiber.MatchingPermAdjacency
 import Moore57.BranchOrbitABCSupportPairBoundary
 
 /-!

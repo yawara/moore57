@@ -1,6 +1,6 @@
 import Moore57.BranchOrbitABCMatchingAdjacencyTransportBoundary
 import Moore57.BranchOrbitABCExceptionCardOneBoundary
-import Moore57.AFiberMatchingPerm
+import Moore57.Moore57Graph.AFiber.MatchingPerm
 
 /-!
 # Endpoint target reflection reduced to target sign compatibility

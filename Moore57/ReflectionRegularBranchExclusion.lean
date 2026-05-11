@@ -1,6 +1,6 @@
 import Moore57.FixedInducedDegree
 import Moore57.FixedInducedStarEdgeFormula
-import Moore57.InvolutionEdgeCountFormula
+import Moore57.Moore57Graph.InvolutionEdgeCountFormula
 import Mathlib.Tactic
 
 /-!

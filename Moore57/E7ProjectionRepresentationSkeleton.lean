@@ -1,4 +1,4 @@
-import Moore57.E7MatrixPermutationCommutation
+import Moore57.Moore57Graph.E7Matrix.PermutationCommutation
 import Mathlib.LinearAlgebra.Matrix.Permutation
 import Mathlib.RepresentationTheory.Submodule
 

@@ -1,5 +1,5 @@
 import Moore57.RotationOrbitInjectivity
-import Moore57.InternalDiffSetTranslate
+import Moore57.Moore57Graph.InternalDiffSet.Translate
 
 namespace Moore57
 

@@ -1,6 +1,6 @@
 import Mathlib.LinearAlgebra.Trace
 import Mathlib.LinearAlgebra.Matrix.ToLin
-import Moore57.E7MatrixPermutationCommutation
+import Moore57.Moore57Graph.E7Matrix.PermutationCommutation
 
 /-!
 # Bridge from local matrices to mathlib linear maps
