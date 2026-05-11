@@ -376,6 +376,63 @@ theorem no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split
     (h.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
       k referenceToMidpoint endpointPointwiseNonadj)
 
+theorem no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointCommonNeighborBasic⟩
+  exact
+    no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointCommonNeighborBasic.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointExchange⟩
+  exact
+    no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointExchange.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoReflectedReferenceNegMatching⟩
+  exact
+    no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoReflectedReferenceNegMatching
+          |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoPositiveTarget
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoPositiveTarget⟩
+  exact
+    no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoPositiveTarget.toEndpointSignNoReflectedReferenceNegMatchingBoundary⟩
+
 theorem no_remainingLabeledReflectionMatchingEquationFromDisjointConnector_of_rotation_split_raw_action
     (h : D19ActsOnMoore57 V Γ) :
     ¬ RemainingLabeledReflectionMatchingEquationFromDisjointConnector h :=
@@ -492,6 +549,63 @@ theorem no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_
     ⟨h.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
       k referenceToMidpoint endpointPointwiseNonadj⟩
 
+theorem no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointCommonNeighborBasic⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointCommonNeighborBasic.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointExchange⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointExchange.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoReflectedReferenceNegMatching⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoReflectedReferenceNegMatching
+          |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointNoPositiveTarget
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoPositiveTarget⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoPositiveTarget.toEndpointSignNoReflectedReferenceNegMatchingBoundary⟩
+
 theorem no_remainingNonRepresentationRawActionFrontierAfterDefaultBase_of_rotation_split_raw_action
     (h : D19ActsOnMoore57 V Γ) :
     ¬ RemainingNonRepresentationRawActionFrontierAfterDefaultBase h :=
@@ -565,6 +679,63 @@ theorem no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_spl
     h
     ⟨h.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
       k referenceToMidpoint endpointPointwiseNonadj⟩
+
+theorem no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointCommonNeighborBasic⟩
+  exact
+    no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointCommonNeighborBasic.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointExchange⟩
+  exact
+    no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointExchange.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoReflectedReferenceNegMatching⟩
+  exact
+    no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoReflectedReferenceNegMatching
+          |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoPositiveTarget
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoPositiveTarget⟩
+  exact
+    no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoPositiveTarget.toEndpointSignNoReflectedReferenceNegMatchingBoundary⟩
 
 theorem no_remainingDefaultBaseFixedCenterLeafMidpointDisjointnessConnector_of_rotation_split_raw_action
     (h : D19ActsOnMoore57 V Γ) :
@@ -646,6 +817,63 @@ theorem no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of
     h
     ⟨h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
       k referenceToMidpoint endpointPointwiseNonadj⟩
+
+theorem no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointCommonNeighborBasic⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointCommonNeighborBasic.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointExchange⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointExchange.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoReflectedReferenceNegMatching⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoReflectedReferenceNegMatching
+          |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary⟩
+
+theorem no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoPositiveTarget
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) ∧
+        BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, referenceToMidpoint, endpointNoPositiveTarget⟩
+  exact
+    no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+      h
+      ⟨k, referenceToMidpoint,
+        endpointNoPositiveTarget.toEndpointSignNoReflectedReferenceNegMatchingBoundary⟩
 
 theorem no_remainingNonRepresentationFrontierAfterDefaultBaseFixedStarLocalConnector_of_rotation_split_raw_action
     (h : D19ActsOnMoore57 V Γ) :
