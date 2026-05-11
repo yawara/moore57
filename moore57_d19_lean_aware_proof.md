@@ -74,7 +74,7 @@ Diameter $2$ の Moore graph の次数は $2,3,7,57$ に限られる。従って
 $\Gamma$ の自己同型 $s$ が involution なら、
 
 $$
-\operatorname{Fix}(s)
+\mathrm{Fix}(s)
 $$
 
 は $56$ 頂点からなる star、すなわち $K_{1,55}$ である。
@@ -135,7 +135,7 @@ Lean では `IsMoore57.no_four_cycle` 型の補題として使う。
 $r$ を位数 $19$ の自己同型とし、
 
 $$
-H=\operatorname{Fix}(r)
+H=\mathrm{Fix}(r)
 $$
 
 を $r$ の固定頂点集合で誘導される部分グラフとする。
@@ -193,7 +193,7 @@ $$
 ### 補題 2.4：位数 $19$ の回転はただ一つの頂点を固定する
 
 $$
-|\operatorname{Fix}(r)|=1.
+|\mathrm{Fix}(r)|=1.
 $$
 
 #### 証明
@@ -340,7 +340,7 @@ $$
 
 #### 証明
 
-$t$ は $u$ を固定する。$\operatorname{Fix}(t)$ は $K_{1,55}$ である。
+$t$ は $u$ を固定する。$\mathrm{Fix}(t)$ は $K_{1,55}$ である。
 
 もし $u$ が固定 star の中心なら、$u$ の近傍のうち $55$ 個が $t$ で固定される。しかし $N(u)$ は三つの $19$-cycle に分かれており、反射が各 $19$-cycle 内で固定できる点は高々一つである。合計高々三つなので矛盾。
 
@@ -443,7 +443,7 @@ $$
 かつ
 
 $$
-\theta|_F=\operatorname{id},
+\theta|_F=\mathrm{id},
 \qquad
 \theta(+)=-,
 \qquad
@@ -475,7 +475,7 @@ $$
 $d\in\mathbb Z/19$, $d\ne0$ に対して、$L_i$ と $L_{i+d}$ の完全マッチングを置換
 
 $$
-A_d\in\operatorname{Sym}(P)
+A_d\in\mathrm{Sym}(P)
 $$
 
 で表す。すなわち、任意の $i,p$ について
@@ -704,7 +704,7 @@ $$
 任意の $d\ne0$ について、
 
 $$
-|\operatorname{Fix}(A_d)|=2.
+|\mathrm{Fix}(A_d)|=2.
 $$
 
 #### 証明
@@ -726,7 +726,7 @@ $$
 従って
 
 $$
-\operatorname{Fix}(A_d)=S_h,
+\mathrm{Fix}(A_d)=S_h,
 $$
 
 その cardinality は $2$ である。
@@ -755,7 +755,7 @@ x\sim r^dx
 A_d(p)=p.
 $$
 
-すなわち、各 fiber $L_i$ における寄与は $\operatorname{Fix}(A_d)$ の濃度に等しい。補題 6.4 よりこれは $2$ である。
+すなわち、各 fiber $L_i$ における寄与は $\mathrm{Fix}(A_d)$ の濃度に等しい。補題 6.4 よりこれは $2$ である。
 
 fiber は $19$ 個あるので、総寄与は
 
@@ -957,10 +957,10 @@ $$
 
 ### 定義 8.1：support complement
 
-置換 $\sigma\in\operatorname{Sym}(P)$ に対し、support complement を
+置換 $\sigma\in\mathrm{Sym}(P)$ に対し、support complement を
 
 $$
-\operatorname{Fix}(\sigma)=\{p\in P:\sigma(p)=p\}
+\mathrm{Fix}(\sigma)=\{p\in P:\sigma(p)=p\}
 $$
 
 と読む。Lean で `support` を「動く点集合」として定義しているなら、その complement が固定点集合である。
@@ -970,7 +970,7 @@ $$
 非零 $d$ と index $i$ を固定する。このとき写像
 
 $$
-\Phi_i:\operatorname{Fix}(A_d)	o
+\Phi_i:\mathrm{Fix}(A_d)	o
 \{x\in L_i:x\sim r^dx\},
 \qquad
 p\mapsto(i,p)
@@ -980,7 +980,7 @@ $$
 
 #### 証明
 
-$p\in\operatorname{Fix}(A_d)$ なら $A_d(p)=p$。matching の定義から
+$p\in\mathrm{Fix}(A_d)$ なら $A_d(p)=p$。matching の定義から
 
 $$
 (i,p)\sim(i+d,A_d(p))=(i+d,p)=r^d(i,p).
@@ -1000,14 +1000,14 @@ $$
 A_d(p)=p.
 $$
 
-従って $p\in\operatorname{Fix}(A_d)$。単射性は座標表示の一意性から従う。
+従って $p\in\mathrm{Fix}(A_d)$。単射性は座標表示の一意性から従う。
 
 ### 系 8.3：support complement の総和と $A$-fiber contribution
 
 非零 $d$ について
 
 $$
-\sum_{i\in\mathbb Z/19}|\operatorname{Fix}(A_d)|
+\sum_{i\in\mathbb Z/19}|\mathrm{Fix}(A_d)|
 =
 \left|\{x\in A_f:x\sim r^dx\}\right|.
 $$
@@ -1027,7 +1027,7 @@ $$
 自己同型 $g$ に対して
 
 $$
-a_0(g)=|\operatorname{Fix}(g)|,
+a_0(g)=|\mathrm{Fix}(g)|,
 $$
 
 $$
@@ -1055,21 +1055,21 @@ $$
 である。置換行列を $P_g$ とすると、
 
 $$
-\chi_7(g)=\operatorname{Tr}(E_7P_g).
+\chi_7(g)=\mathrm{Tr}(E_7P_g).
 $$
 
 ここで
 
 $$
-\operatorname{Tr}(IP_g)=a_0(g),
+\mathrm{Tr}(IP_g)=a_0(g),
 $$
 
 $$
-\operatorname{Tr}(AP_g)=a_1(g),
+\mathrm{Tr}(AP_g)=a_1(g),
 $$
 
 $$
-\operatorname{Tr}(JP_g)=3250.
+\mathrm{Tr}(JP_g)=3250.
 $$
 
 従って
@@ -1403,7 +1403,7 @@ $$
 
 ### 定理 10.3：$D_{19}$ 作用は存在しない
 
-$D_{19}$ は $\operatorname{Aut}(\Gamma)$ の部分群として作用できない。
+$D_{19}$ は $\mathrm{Aut}(\Gamma)$ の部分群として作用できない。
 
 #### 証明
 
@@ -1447,14 +1447,14 @@ $$
 特に
 
 $$
-\operatorname{Aut}(\Gamma)\simeq D_{19}
+\mathrm{Aut}(\Gamma)\simeq D_{19}
 $$
 
 は不可能である。
 
 #### 証明
 
-もし $\operatorname{Aut}(\Gamma)\simeq D_{19}$ なら、$D_{19}$ が自己同型群に部分群として作用する。これは定理 10.3 に反する。
+もし $\mathrm{Aut}(\Gamma)\simeq D_{19}$ なら、$D_{19}$ が自己同型群に部分群として作用する。これは定理 10.3 に反する。
 
 ---
 
@@ -1494,7 +1494,7 @@ $$
    $$
 
 5. `exception_disjoint_E`：$S_h\cap E=\varnothing$。
-6. `matching_fixed_card_two`：$|\operatorname{Fix}(A_d)|=2$。
+6. `matching_fixed_card_two`：$|\mathrm{Fix}(A_d)|=2$。
 7. `a_fiber_contribution_eq_38`。
 
 この Phase C が、Codex コメントで指摘された「A-fiber cardinality 38 boundary」の本体である。
@@ -1637,13 +1637,13 @@ $$
 従って
 
 $$
-D_{19}\not\leq\operatorname{Aut}(\Gamma).
+D_{19}\not\leq\mathrm{Aut}(\Gamma).
 $$
 
 特に
 
 $$
-\operatorname{Aut}(\Gamma)\simeq D_{19}
+\mathrm{Aut}(\Gamma)\simeq D_{19}
 $$
 
 は不可能である。

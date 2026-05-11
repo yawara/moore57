@@ -13,7 +13,7 @@ $$
 使う既知事実は次の二つである。
 
 1. Moore graph of diameter $2$ は、次数が $2,3,7,57$ の場合に限って算術的に可能であり、次数 $57$ の場合は未解決である。
-2. Moore graph of degree $57$ の自己同型群が involution $t$ を含むなら、$\operatorname{Fix}(t)$ は $56$ 頂点からなる star である。
+2. Moore graph of degree $57$ の自己同型群が involution $t$ を含むなら、$\mathrm{Fix}(t)$ は $56$ 頂点からなる star である。
 
 主な新しい部分は、固定点 $u$ のまわりの $57$ 本の枝と $57\cdot 56$ 個の葉を、$D_{19}$-作用と枝間完全マッチングの整合性まで追跡するところにある。一次的な軌道分解
 
@@ -25,7 +25,7 @@ $$
 
 結論は次である。
 
-> 仮想的 Moore graph $\Gamma$ of degree $57$ and diameter $2$ は、自己同型群に $D_{19}$ を部分群として含まない。特に、$\operatorname{Aut}(\Gamma)\simeq D_{19}$ は不可能である。
+> 仮想的 Moore graph $\Gamma$ of degree $57$ and diameter $2$ は、自己同型群に $D_{19}$ を部分群として含まない。特に、$\mathrm{Aut}(\Gamma)\simeq D_{19}$ は不可能である。
 
 注意：本稿の主張は、下記既知事実を前提にした自前の整合性解析である。文献中の既成定理として引用しているものではない。
 
@@ -74,7 +74,7 @@ $$
 Moore graph $\Gamma$ of degree $57$ の自己同型群が involution $t$ を含むなら、
 
 $$
-\operatorname{Fix}(t)
+\mathrm{Fix}(t)
 $$
 
 は $56$ 頂点からなる star である。すなわち、ある中心頂点 $c$ と、その $55$ 個の固定近傍からなる
@@ -90,7 +90,7 @@ $$
 自己同型 $g$ に対して、
 
 $$
-a_0(g)=|\operatorname{Fix}(g)|,
+a_0(g)=|\mathrm{Fix}(g)|,
 $$
 
 $$
@@ -108,7 +108,7 @@ $$
 $r$ を位数 $19$ の自己同型とし、
 
 $$
-H=\operatorname{Fix}(r)
+H=\mathrm{Fix}(r)
 $$
 
 を $r$ の固定頂点集合で誘導される部分グラフとする。
@@ -216,7 +216,7 @@ $\square$
 位数 $19$ の自己同型 $r$ について、
 
 $$
-|\operatorname{Fix}(r)|=1.
+|\mathrm{Fix}(r)|=1.
 $$
 
 #### 証明
@@ -326,7 +326,7 @@ $$
 
 $r$ は $N(u)$ 上に固定点を持たない。もし枝 $b\in N(u)$ を固定すれば、$b$ は $r$ の固定頂点になり、命題 1.3 に反するからである。よって $57$ 本の枝は $r$ の3個の $19$ 周期に分かれる。
 
-反射 $t$ は $u$ を固定する。$\operatorname{Fix}(t)$ は $K_{1,55}$ である。もし $u$ がこの star の中心なら、$N(u)$ のうち $55$ 個の枝が $t$ で固定される。しかし $t$ は各 $19$ 周期上では高々1点しか固定できないので、これは不可能である。
+反射 $t$ は $u$ を固定する。$\mathrm{Fix}(t)$ は $K_{1,55}$ である。もし $u$ がこの star の中心なら、$N(u)$ のうち $55$ 個の枝が $t$ で固定される。しかし $t$ は各 $19$ 周期上では高々1点しか固定できないので、これは不可能である。
 
 したがって $u$ は固定 star の葉であり、固定 star の中心は $N(u)$ 内の枝である。その枝を $a_0$ とする。すると $t$ は $A$ を反転し、
 
@@ -399,7 +399,7 @@ $$
 かつ
 
 $$
-\theta|_F=\operatorname{id},
+\theta|_F=\mathrm{id},
 \qquad
 \theta(+)=-,
 \qquad
@@ -435,7 +435,7 @@ $$
 $d\in\mathbb Z/19$, $d\ne0$ に対し、$L_i$ と $L_{i+d}$ の間の完全マッチングを置換
 
 $$
-A_d\in\operatorname{Sym}(P)
+A_d\in\mathrm{Sym}(P)
 $$
 
 で表す。すなわち、
@@ -785,23 +785,23 @@ $$
 $g$ の置換行列を $P_g$ とする。すると
 
 $$
-\chi_7(g)=\operatorname{Tr}(E_7P_g).
+\chi_7(g)=\mathrm{Tr}(E_7P_g).
 $$
 
 ここで
 
 $$
-\operatorname{Tr}(P_g)=a_0(g),
+\mathrm{Tr}(P_g)=a_0(g),
 $$
 
 $$
-\operatorname{Tr}(AP_g)=a_1(g),
+\mathrm{Tr}(AP_g)=a_1(g),
 $$
 
 かつ $JP_g=J$ なので
 
 $$
-\operatorname{Tr}(JP_g)=\operatorname{Tr}(J)=3250.
+\mathrm{Tr}(JP_g)=\mathrm{Tr}(J)=3250.
 $$
 
 従って
@@ -1286,7 +1286,7 @@ $$
 仮想的 Moore graph $\Gamma$ of degree $57$ and diameter $2$ について、
 
 $$
-D_{19}\le\operatorname{Aut}(\Gamma)
+D_{19}\le\mathrm{Aut}(\Gamma)
 $$
 
 は不可能である。
@@ -1347,7 +1347,7 @@ $$
 よって
 
 $$
-D_{19}\le\operatorname{Aut}(\Gamma)
+D_{19}\le\mathrm{Aut}(\Gamma)
 $$
 
 は不可能である。$\square$
@@ -1357,7 +1357,7 @@ $$
 ### 系 6.2：自己同型群が位数 $38$ の二面体群である場合も不可能
 
 $$
-\operatorname{Aut}(\Gamma)\simeq D_{19}
+\mathrm{Aut}(\Gamma)\simeq D_{19}
 $$
 
 は不可能である。
@@ -1367,13 +1367,13 @@ $$
 もし
 
 $$
-\operatorname{Aut}(\Gamma)\simeq D_{19}
+\mathrm{Aut}(\Gamma)\simeq D_{19}
 $$
 
 なら、当然
 
 $$
-D_{19}\le\operatorname{Aut}(\Gamma)
+D_{19}\le\mathrm{Aut}(\Gamma)
 $$
 
 である。これは定理 6.1 に反する。$\square$
