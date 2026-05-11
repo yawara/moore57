@@ -1224,7 +1224,7 @@ now keeps the reference-to-midpoint comparison independent and supplies the
 one-point exception case from endpoint target-sign compatibility:
 
 - `ReferenceRotationToMidpointReflectionBoundary`
-- `EndpointMatchingAFixingTargetSignBoundary`
+- `EndpointMatchingAFixingTargetSignBoundary` only via its no-premise form
 - `noAllEndpointAdj`
 
 The midpoint-exception disjointness is no longer a primitive input on the
@@ -1283,13 +1283,22 @@ vertices in the distinct `d` and `-d` A-fibers:
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNegativeOffsetBoundary
 BranchOrbitABCReflectionLabeling.endpointMatchingAFixingNegativeOffsetBoundary
+BranchOrbitABCReflectionLabeling.MidpointEquationSetAFixingNegInvariantBoundary
+BranchOrbitABCReflectionLabeling.midpointEquationSetAFixingNegInvariantBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionSetAFixingNegInvariantBoundary
+BranchOrbitABCReflectionLabeling.midpointExceptionSetAFixingNegInvariantBoundary
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.target_sign_vertices_ne
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
 ```
 
 The non-circular reflection calculation gives the negative-offset transport
 `M_d p = R_d (θ p) → M_(-d) (θ p) = R_(-d) p`; it does not give a same-sign
-target equality.
+target equality.  This is now lifted past endpoint matching to midpoint
+equation sets and, under `MidpointReflectionCriterionBoundary`, to midpoint
+exception sets.  Therefore the next real gap is not to prove same-offset
+invariance directly, but to either prove the no-positive-target premise
+impossibility or replace the remaining same-offset uses by a paired
+`d`/`-d` argument.
 
 ### 6. Representation component entrypoints
 
@@ -1335,11 +1344,10 @@ The main missing work is now:
 1. prove `ReferenceRotationToMidpointReflectionBoundary` for the default-base
    labeling, or alternatively prove the stronger
    `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
-2. prove `EndpointMatchingAFixingTargetSignBoundary` for the default-base
-   labeling, or more accurately prove the equivalent no-premise form
-   `EndpointMatchingAFixingNoPositiveTargetBoundary`, which records that the
-   positive target-matching premise cannot occur; the provable reflection
-   transport is only the negative-offset boundary already exposed above;
+2. avoid the false same-offset target-sign route: either prove the no-premise
+   form `EndpointMatchingAFixingNoPositiveTargetBoundary`, or reroute the
+   one-point exception step through the now-proved negative-offset midpoint
+   equation/exception transport;
 3. connect the already-closed all-offset support-subset endpoint obstruction to
    the remaining default-base/raw-action package surfaces without reverting to
    the deprecated single-offset `noAllEndpointAdj` shape.

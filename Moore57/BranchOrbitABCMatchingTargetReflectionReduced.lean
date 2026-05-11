@@ -163,6 +163,104 @@ def endpointMatchingAFixingNegativeOffsetBoundary
         coords (index_ne_add_of_ne_zero (neg_ne_zero.mpr hd))
         (by simpa [coords] using hadj_reflected)
 
+/-- Correct midpoint-equation transport under the A-fixing reflection.
+
+The A-fixing reflection does not preserve the midpoint equation at the same
+offset.  It sends the equation for endpoint offset `d` to the equation for
+endpoint offset `-d`. -/
+structure MidpointEquationSetAFixingNegInvariantBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  aFiberReflection_mem_midpointEquationSet_neg :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        p ∈ labeling.midpointEquationSet
+          (midpointOf d) (midpointOf_ne_zero hd) →
+        labeling.aFiberReflectionCoordPerm p ∈
+          labeling.midpointEquationSet
+            (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))
+
+/-- The proven endpoint negative-offset transport supplies the midpoint
+equation-set negative-offset transport. -/
+def midpointEquationSetAFixingNegInvariantBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) :
+    MidpointEquationSetAFixingNegInvariantBoundary labeling where
+  aFiberReflection_mem_midpointEquationSet_neg := by
+    intro d hd p hp
+    rw [mem_midpointEquationSet] at hp ⊢
+    have hdd : midpointOf d + midpointOf d = d := midpointOf_add_self d
+    have hnegdd : midpointOf (-d) + midpointOf (-d) = -d :=
+      midpointOf_add_self (-d)
+    have hp_rotation :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+            (labeling.aFiberReflectionCoordPerm p) := by
+      simpa [hdd] using
+        hp.trans
+          (labeling.midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+            (midpointOf d) p)
+    have hmatching_neg :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + (-d))
+            (index_ne_add_of_ne_zero (neg_ne_zero.mpr hd))
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0 p :=
+      (labeling.endpointMatchingAFixingNegativeOffsetBoundary
+        |>.aFiberReflection_matching_eq_rotation_neg d hd p hp_rotation)
+    have hmid_neg :
+        labeling.midpointReflectionCoordPerm (midpointOf (-d))
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0 p := by
+      simpa [hnegdd] using
+        labeling.midpointReflectionCoordPerm_aFiberReflectionCoordPerm_eq_rotationCoordPerm
+          (midpointOf (-d)) p
+    simpa [hnegdd, hmid_neg] using hmatching_neg
+
+/-- Boundary input: the midpoint-exception set at offset `d` is transported
+to the midpoint-exception set at offset `-d` by the A-fixing reflection. -/
+structure MidpointExceptionSetAFixingNegInvariantBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  aFiberReflection_mem_midpointExceptionSet_neg :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        p ∈ labeling.midpointExceptionSet
+          (midpointOf d) (midpointOf_ne_zero hd) →
+        labeling.aFiberReflectionCoordPerm p ∈
+          labeling.midpointExceptionSet
+            (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))
+
+namespace MidpointEquationSetAFixingNegInvariantBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Under the midpoint criterion, negative-offset equation transport gives
+negative-offset exception transport. -/
+def toMidpointExceptionSetAFixingNegInvariantBoundary
+    (boundary : MidpointEquationSetAFixingNegInvariantBoundary labeling)
+    (criterion : MidpointReflectionCriterionBoundary labeling) :
+    MidpointExceptionSetAFixingNegInvariantBoundary labeling where
+  aFiberReflection_mem_midpointExceptionSet_neg := by
+    intro d hd p hp
+    exact
+      (criterion.midpoint_equation_iff_exception
+        (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))
+        (labeling.aFiberReflectionCoordPerm p)).1
+        (boundary.aFiberReflection_mem_midpointEquationSet_neg d hd p
+          ((criterion.midpoint_equation_iff_exception
+            (midpointOf d) (midpointOf_ne_zero hd) p).2 hp))
+
+end MidpointEquationSetAFixingNegInvariantBoundary
+
+/-- The proven endpoint negative-offset transport and midpoint criterion
+supply midpoint-exception negative-offset transport. -/
+def midpointExceptionSetAFixingNegInvariantBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (criterion : MidpointReflectionCriterionBoundary labeling) :
+    MidpointExceptionSetAFixingNegInvariantBoundary labeling :=
+  labeling.midpointEquationSetAFixingNegInvariantBoundary
+    |>.toMidpointExceptionSetAFixingNegInvariantBoundary criterion
+
 namespace EndpointMatchingAFixingTargetSignBoundary
 
 variable {labeling : BranchOrbitABCReflectionLabeling h}
