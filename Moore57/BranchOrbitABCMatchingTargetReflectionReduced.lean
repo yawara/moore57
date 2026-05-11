@@ -230,6 +230,156 @@ structure MidpointExceptionSetAFixingNegInvariantBoundary
           labeling.midpointExceptionSet
             (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))
 
+/-- Boundary input: the A-fixing reflection transports the
+midpoint-exception/A-fixing-support intersection at offset `d` to the
+intersection at offset `-d`. -/
+structure MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h) : Prop where
+  aFiberReflection_mem_intersection_neg :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ∀ p : labeling.data.toAFiberCoordinates.P,
+        p ∈ labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf d) (midpointOf_ne_zero hd) →
+        labeling.aFiberReflectionCoordPerm p ∈
+          labeling.midpointExceptionAFixingSupportIntersection
+            (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))
+
+namespace MidpointExceptionSetAFixingNegInvariantBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Negative-offset exception-set transport gives the corresponding transport
+for the intersection with the A-fixing reflection support, since that support
+is preserved by the same involution. -/
+def toMidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+    (boundary : MidpointExceptionSetAFixingNegInvariantBoundary labeling) :
+    MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary labeling where
+  aFiberReflection_mem_intersection_neg := by
+    intro d hd p hp
+    rcases
+      (labeling.mem_midpointExceptionAFixingSupportIntersection
+        (midpointOf d) (midpointOf_ne_zero hd) p).1 hp with
+      ⟨hpException, hpSupport⟩
+    exact
+      (labeling.mem_midpointExceptionAFixingSupportIntersection
+        (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))
+        (labeling.aFiberReflectionCoordPerm p)).2
+        ⟨boundary.aFiberReflection_mem_midpointExceptionSet_neg d hd p
+            hpException,
+          labeling.aFiberReflectionCoordPerm_mem_support_of_mem hpSupport⟩
+
+end MidpointExceptionSetAFixingNegInvariantBoundary
+
+namespace MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- The `d ↦ -d` intersection transport is bijective, with inverse given by
+the same A-fixing involution. -/
+noncomputable def intersectionEquivNeg
+    (boundary :
+      MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary labeling)
+    (d : ZMod 19) (hd : d ≠ 0) :
+    {p : labeling.data.toAFiberCoordinates.P //
+      p ∈ labeling.midpointExceptionAFixingSupportIntersection
+        (midpointOf d) (midpointOf_ne_zero hd)} ≃
+    {q : labeling.data.toAFiberCoordinates.P //
+      q ∈ labeling.midpointExceptionAFixingSupportIntersection
+        (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))} where
+  toFun p :=
+    ⟨labeling.aFiberReflectionCoordPerm p,
+      boundary.aFiberReflection_mem_intersection_neg d hd p p.property⟩
+  invFun q :=
+    ⟨labeling.aFiberReflectionCoordPerm q, by
+      have hq :=
+        boundary.aFiberReflection_mem_intersection_neg (-d)
+          (neg_ne_zero.mpr hd) q q.property
+      simpa using hq⟩
+  left_inv := by
+    intro p
+    ext
+    exact labeling.aFiberReflectionCoordPerm_involutive p.1
+  right_inv := by
+    intro q
+    ext
+    exact labeling.aFiberReflectionCoordPerm_involutive q.1
+
+/-- The midpoint-exception/A-fixing-support intersections at endpoint offsets
+`d` and `-d` have the same cardinality. -/
+theorem card_eq_neg
+    (boundary :
+      MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary labeling)
+    (d : ZMod 19) (hd : d ≠ 0) :
+    (labeling.midpointExceptionAFixingSupportIntersection
+      (midpointOf d) (midpointOf_ne_zero hd)).card =
+    (labeling.midpointExceptionAFixingSupportIntersection
+      (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))).card := by
+  classical
+  letI := labeling.data.toAFiberCoordinates.P_fintype
+  let e := boundary.intersectionEquivNeg d hd
+  calc
+    (labeling.midpointExceptionAFixingSupportIntersection
+      (midpointOf d) (midpointOf_ne_zero hd)).card =
+        Fintype.card {p : labeling.data.toAFiberCoordinates.P //
+          p ∈ labeling.midpointExceptionAFixingSupportIntersection
+            (midpointOf d) (midpointOf_ne_zero hd)} := by
+          rw [Fintype.card_coe]
+    _ = Fintype.card {q : labeling.data.toAFiberCoordinates.P //
+          q ∈ labeling.midpointExceptionAFixingSupportIntersection
+            (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))} :=
+          Fintype.card_congr e
+    _ =
+        (labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd))).card := by
+          rw [Fintype.card_coe]
+
+/-- A singleton at offset `d` transports to the reflected singleton at offset
+`-d`.  Thus the remaining one-point obstruction is an alternating
+`d`/`-d` paired singleton, not a same-offset invariance problem. -/
+theorem singleton_neg_of_singleton
+    (boundary :
+      MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary labeling)
+    (d : ZMod 19) (hd : d ≠ 0)
+    (p : labeling.data.toAFiberCoordinates.P)
+    (hsingleton :
+      labeling.midpointExceptionAFixingSupportIntersection
+        (midpointOf d) (midpointOf_ne_zero hd) = {p}) :
+    labeling.midpointExceptionAFixingSupportIntersection
+        (midpointOf (-d)) (midpointOf_ne_zero (neg_ne_zero.mpr hd)) =
+      {labeling.aFiberReflectionCoordPerm p} := by
+  classical
+  ext q
+  constructor
+  · intro hq
+    have hpre :
+        labeling.aFiberReflectionCoordPerm q ∈
+          labeling.midpointExceptionAFixingSupportIntersection
+            (midpointOf d) (midpointOf_ne_zero hd) := by
+      have htransport :=
+        boundary.aFiberReflection_mem_intersection_neg (-d)
+          (neg_ne_zero.mpr hd) q hq
+      simpa using htransport
+    have hthetaq : labeling.aFiberReflectionCoordPerm q = p := by
+      simpa [hsingleton] using hpre
+    have happly :
+        labeling.aFiberReflectionCoordPerm
+            (labeling.aFiberReflectionCoordPerm q) =
+          labeling.aFiberReflectionCoordPerm p := by
+      simpa using congrArg labeling.aFiberReflectionCoordPerm hthetaq
+    simpa [labeling.aFiberReflectionCoordPerm_involutive q] using happly
+  · intro hq
+    have hqeq : q = labeling.aFiberReflectionCoordPerm p := by
+      simpa using hq
+    have hp :
+        p ∈ labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf d) (midpointOf_ne_zero hd) := by
+      simp [hsingleton]
+    have htransport :=
+      boundary.aFiberReflection_mem_intersection_neg d hd p hp
+    simpa [hqeq] using htransport
+
+end MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+
 namespace MidpointEquationSetAFixingNegInvariantBoundary
 
 variable {labeling : BranchOrbitABCReflectionLabeling h}
@@ -260,6 +410,16 @@ def midpointExceptionSetAFixingNegInvariantBoundary
     MidpointExceptionSetAFixingNegInvariantBoundary labeling :=
   labeling.midpointEquationSetAFixingNegInvariantBoundary
     |>.toMidpointExceptionSetAFixingNegInvariantBoundary criterion
+
+/-- The proven endpoint negative-offset transport and midpoint criterion
+also supply negative-offset transport for the midpoint-exception/A-fixing
+support intersections. -/
+def midpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (criterion : MidpointReflectionCriterionBoundary labeling) :
+    MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary labeling :=
+  (labeling.midpointExceptionSetAFixingNegInvariantBoundary criterion)
+    |>.toMidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
 
 namespace EndpointMatchingAFixingTargetSignBoundary
 

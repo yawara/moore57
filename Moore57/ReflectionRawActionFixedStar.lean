@@ -70,33 +70,48 @@ theorem nonempty_involutionFixedStar55_of_raw_action
   (h.involutionFixedSetStar56_of_raw_action k).nonempty_involutionFixedStar55
     h.isMoore
 
+/-- In the raw-action fixed-star situation, the center of the paper-shaped
+fixed star cannot be the rotation-fixed center.  This is the local separation
+needed to make the rotation-fixed center a leaf of the fixed star. -/
+theorem fixedSetStarWithCenter_ne_rotationFixedCenter_of_raw_action
+    (k : ZMod 19) {c : V}
+    (hc : FixedSetStarWithCenter Γ (h.smulEquiv (DihedralGroup.sr k)) c) :
+    c ≠ h.rotationFixedCenter := by
+  intro hc_eq
+  have hcenter_degree :
+      (h.fixedInducedGraph (DihedralGroup.sr k)).degree
+          (reflectionRotationFixedCenterVertex h k) = 55 := by
+    have hdegree :=
+      h.fixedInducedGraph_center_degree_eq_55_of_fixedSetStarWithCenter
+        k (h.involutionFixedSetStar56_of_raw_action k) hc
+    have hvertex :
+        (⟨c, hc.center_fixed⟩ : reflectionFixedVertex h k) =
+          reflectionRotationFixedCenterVertex h k :=
+      Subtype.ext hc_eq
+    rw [hvertex] at hdegree
+    exact hdegree
+  have hleaf_degree :
+      (h.fixedInducedGraph (DihedralGroup.sr k)).degree
+          (reflectionRotationFixedCenterVertex h k) ≤ 1 :=
+    h.reflectionFixedCenterLeafBoundary_of_raw_action.degree_le_one k
+  omega
+
+/-- Raw action gives the induced fixed-star degree package from the
+paper-shaped fixed-star theorem and the center-separation fact above. -/
+def reflectionFixedInducedStarDegrees_of_raw_action :
+    ReflectionFixedInducedStarDegrees h :=
+  h.reflectionFixedInducedStarDegrees_of_reflectionFixedSetStar56
+    (fun k => h.involutionFixedSetStar56_of_raw_action k)
+    (fun k _c hc => h.fixedSetStarWithCenter_ne_rotationFixedCenter_of_raw_action k hc)
+
 /-- Raw action gives the branch-geometry fixed-star boundary for all
 reflections.  The only extra check beyond the paper-shaped fixed star is that
 the rotation-fixed center is a leaf, supplied by the raw fixed-center-leaf
 boundary. -/
 theorem reflectionFixedStarBoundary_of_raw_action :
     ReflectionFixedStarBoundary h :=
-  h.reflectionFixedStarBoundary_of_reflectionFixedSetStar56
-    (fun k => h.involutionFixedSetStar56_of_raw_action k)
-    (by
-      intro k c hc hc_eq
-      have hcenter_degree :
-          (h.fixedInducedGraph (DihedralGroup.sr k)).degree
-              (reflectionRotationFixedCenterVertex h k) = 55 := by
-        have hdegree :=
-          h.fixedInducedGraph_center_degree_eq_55_of_fixedSetStarWithCenter
-            k (h.involutionFixedSetStar56_of_raw_action k) hc
-        have hvertex :
-            (⟨c, hc.center_fixed⟩ : reflectionFixedVertex h k) =
-              reflectionRotationFixedCenterVertex h k :=
-          Subtype.ext hc_eq
-        rw [hvertex] at hdegree
-        exact hdegree
-      have hleaf_degree :
-          (h.fixedInducedGraph (DihedralGroup.sr k)).degree
-              (reflectionRotationFixedCenterVertex h k) ≤ 1 :=
-        h.reflectionFixedCenterLeafBoundary_of_raw_action.degree_le_one k
-      omega)
+  h.reflectionFixedInducedStarDegrees_of_raw_action
+    |>.toReflectionFixedStarBoundary
 
 /-- Raw action gives the standard adjacent-moved count `112` for every
 reflection. -/

@@ -325,6 +325,9 @@ D19ActsOnMoore57.involutionFixedSetStar56OfReflectionFixedNeighborCenterCount
 IsStrongZeroOne.exists_isStarWithCenter_of_not_regular
 D19ActsOnMoore57.exists_fixedSetStarWithCenter_of_fixedVertexCount_eq_56
 D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_eq_56
+D19ActsOnMoore57.fixedSetStarWithCenter_ne_rotationFixedCenter_of_raw_action
+D19ActsOnMoore57.reflectionFixedInducedStarDegrees_of_raw_action
+D19ActsOnMoore57.reflectionFixedStarBoundary_of_raw_action
 D19ActsOnMoore57.involutionFixedSetStar56_of_linear_character_reflection_eq_and_adjacentMovedCount_eq_112
 D19ActsOnMoore57.D19LinearCharacterInput.involutionFixedSetStar56_of_adjacentMovedCount_eq_112
 D19ActsOnMoore57.D19LinearCharacterInput.nonempty_involutionK155_of_adjacentMovedCount_eq_112
@@ -519,8 +522,10 @@ the trace-assisted raw-reflection bridge is now closed:
 downstream aliases also expose this as `Nonempty (InvolutionK155 ...)`, the
 exact reflection fixed count, `a₁ = 112`, and `InvolutionFixedStar55`.
 
-The remaining raw-reflection-to-star gap is now sharply the Macaj-Siran/Higman
-fixed-count range for reflections:
+The raw-action reflection-to-star route is closed.  The remaining
+paper-level gap, if one wants the theorem for an arbitrary involution of an
+arbitrary Moore `(57,2)` graph rather than for the D19 raw-action reflections,
+is the Macaj-Siran/Higman fixed-count range:
 
 ```lean
 D19ActsOnMoore57.ReflectionFixedCountBounds
@@ -1287,6 +1292,10 @@ BranchOrbitABCReflectionLabeling.MidpointEquationSetAFixingNegInvariantBoundary
 BranchOrbitABCReflectionLabeling.midpointEquationSetAFixingNegInvariantBoundary
 BranchOrbitABCReflectionLabeling.MidpointExceptionSetAFixingNegInvariantBoundary
 BranchOrbitABCReflectionLabeling.midpointExceptionSetAFixingNegInvariantBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+BranchOrbitABCReflectionLabeling.midpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary.card_eq_neg
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportIntersectionNegInvariantBoundary.singleton_neg_of_singleton
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.target_sign_vertices_ne
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
 ```
@@ -1295,10 +1304,13 @@ The non-circular reflection calculation gives the negative-offset transport
 `M_d p = R_d (θ p) → M_(-d) (θ p) = R_(-d) p`; it does not give a same-sign
 target equality.  This is now lifted past endpoint matching to midpoint
 equation sets and, under `MidpointReflectionCriterionBoundary`, to midpoint
-exception sets.  Therefore the next real gap is not to prove same-offset
-invariance directly, but to either prove the no-positive-target premise
-impossibility or replace the remaining same-offset uses by a paired
-`d`/`-d` argument.
+exception sets.  It is also now lifted to the
+midpoint-exception/A-fixing-support intersection: the intersections at offsets
+`d` and `-d` have equal cardinality, and a singleton at `d` transports to the
+reflected singleton at `-d`.  Therefore the next real gap is not to prove
+same-offset invariance directly, but to rule out the remaining alternating
+paired-singleton case or prove the reference-solution fixedness predicted by
+the Cameron Step 2 label-exchange argument.
 
 ### 6. Representation component entrypoints
 
@@ -1345,9 +1357,9 @@ The main missing work is now:
    labeling, or alternatively prove the stronger
    `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
 2. avoid the false same-offset target-sign route: either prove the no-premise
-   form `EndpointMatchingAFixingNoPositiveTargetBoundary`, or reroute the
-   one-point exception step through the now-proved negative-offset midpoint
-   equation/exception transport;
+   form `EndpointMatchingAFixingNoPositiveTargetBoundary`, or rule out the
+   alternating paired-singleton case exposed by the now-proved negative-offset
+   midpoint equation/exception/intersection transport;
 3. connect the already-closed all-offset support-subset endpoint obstruction to
    the remaining default-base/raw-action package surfaces without reverting to
    the deprecated single-offset `noAllEndpointAdj` shape.
