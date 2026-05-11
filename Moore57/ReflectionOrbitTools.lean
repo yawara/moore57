@@ -1,4 +1,5 @@
 import Moore57.RotationOrbitFinset
+import Moore57.ZMod19Lemmas
 
 namespace Moore57
 
@@ -116,6 +117,122 @@ theorem exists_reflection_smul_fixed_of_reflection_mem_rotationOrbitFinset
           simpa [Equiv.Perm.mul_apply] using
             congrArg (fun σ : Equiv.Perm V => σ x)
               (h.rotation_add (-j) j).symm
+
+/-- If a reflection preserves a full rotation orbit, then it has a unique
+fixed point on that orbit.  This is the local counting fact needed for
+representative-family arguments over rotation orbits. -/
+theorem existsUnique_reflection_fixed_mem_rotationOrbitFinset_of_reflection_mem
+    (h : D19ActsOnMoore57 V Γ) {k : ZMod 19} {x : V}
+    (hinj : Function.Injective fun i : ZMod 19 => h.rotation i x)
+    (hrefOrbit :
+      h.smul (DihedralGroup.sr k) x ∈ h.rotationOrbitFinset x) :
+    ∃! y : V,
+      y ∈ h.rotationOrbitFinset x ∧
+        h.smul (DihedralGroup.sr k) y = y := by
+  rcases (h.mem_rotationOrbitFinset x
+      (h.smul (DihedralGroup.sr k) x)).mp hrefOrbit with ⟨i, hi⟩
+  let t : ZMod 19 := (2 : ZMod 19)⁻¹ * i
+  let y : V := h.rotation t x
+  refine ⟨y, ?_, ?_⟩
+  · constructor
+    · exact (h.mem_rotationOrbitFinset x y).mpr ⟨t, rfl⟩
+    · dsimp [y]
+      have htwo :
+          (2 : ZMod 19) * t = i := by
+        dsimp [t]
+        rw [← mul_assoc, mul_inv_cancel₀ two_ne_zero_zmod19, one_mul]
+      have htwo_add :
+          t + t = i := by
+        rw [← two_mul, htwo]
+      have hneg_add :
+          -t + i = t := by
+        calc
+          -t + i
+              = -t + (t + t) := by rw [htwo_add]
+          _ = t := by abel
+      calc
+        h.smul (DihedralGroup.sr k) (h.rotation t x)
+            = h.rotation (-t) (h.smul (DihedralGroup.sr k) x) := by
+                exact h.reflection_smul_rotation k t x
+        _ = h.rotation (-t) (h.rotation i x) := by rw [← hi]
+        _ = h.rotation (-t + i) x := by
+                simpa [Equiv.Perm.mul_apply] using
+                  congrArg (fun σ : Equiv.Perm V => σ x)
+                    (h.rotation_add (-t) i).symm
+        _ = h.rotation t x := by rw [hneg_add]
+  · intro z hz
+    rcases hz with ⟨hzOrbit, hzFixed⟩
+    rcases (h.mem_rotationOrbitFinset x z).mp hzOrbit with ⟨j, hj⟩
+    have hcoord :
+        -j + i = j := by
+      apply hinj
+      calc
+        h.rotation (-j + i) x
+            = h.rotation (-j) (h.rotation i x) := by
+                simpa [Equiv.Perm.mul_apply] using
+                  congrArg (fun σ : Equiv.Perm V => σ x)
+                    (h.rotation_add (-j) i)
+        _ = h.rotation (-j) (h.smul (DihedralGroup.sr k) x) := by rw [hi]
+        _ = h.smul (DihedralGroup.sr k) (h.rotation j x) := by
+                exact h.rotation_neg_reflection_smul k j x
+        _ = h.rotation j x := by rw [hj, hzFixed]
+    have htwo_j : (2 : ZMod 19) * j = i := by
+      calc
+        (2 : ZMod 19) * j = j + j := by ring
+        _ = (-j + i) + j := by rw [hcoord]
+        _ = i := by abel
+    have hj_eq : j = t := by
+      calc
+        j = (2 : ZMod 19)⁻¹ * ((2 : ZMod 19) * j) := by
+              rw [← mul_assoc, inv_mul_cancel₀ two_ne_zero_zmod19, one_mul]
+        _ = (2 : ZMod 19)⁻¹ * i := by rw [htwo_j]
+        _ = t := by rfl
+    rw [← hj, hj_eq]
+
+/-- If a reflection sends a rotation orbit to a disjoint rotation orbit, then
+there are no reflection-fixed vertices on the original orbit. -/
+theorem not_exists_reflection_fixed_mem_rotationOrbitFinset_of_disjoint_reflection
+    (h : D19ActsOnMoore57 V Γ) {k : ZMod 19} {x : V}
+    (hdisj :
+      Disjoint (h.rotationOrbitFinset x)
+        (h.rotationOrbitFinset (h.smul (DihedralGroup.sr k) x))) :
+    ¬ ∃ y : V,
+      y ∈ h.rotationOrbitFinset x ∧
+        h.smul (DihedralGroup.sr k) y = y := by
+  rintro ⟨y, hyOrbit, hyFixed⟩
+  have hyImage :
+      (h.smulEquiv (DihedralGroup.sr k)) y ∈
+        (h.rotationOrbitFinset x).image
+          (h.smulEquiv (DihedralGroup.sr k)) :=
+    Finset.mem_image_of_mem (h.smulEquiv (DihedralGroup.sr k)) hyOrbit
+  have hyReflectedOrbit :
+      y ∈ h.rotationOrbitFinset (h.smul (DihedralGroup.sr k) x) := by
+    have hyImage' :
+        y ∈ (h.rotationOrbitFinset x).image
+          (h.smulEquiv (DihedralGroup.sr k)) := by
+      change h.smul (DihedralGroup.sr k) y ∈
+        (h.rotationOrbitFinset x).image
+          (h.smulEquiv (DihedralGroup.sr k)) at hyImage
+      rw [← hyFixed]
+      exact hyImage
+    simpa [h.reflection_image_rotationOrbitFinset k x] using hyImage'
+  exact (Finset.disjoint_left.mp hdisj) hyOrbit hyReflectedOrbit
+
+/-- Cardinal form of
+`not_exists_reflection_fixed_mem_rotationOrbitFinset_of_disjoint_reflection`. -/
+theorem reflection_fixed_points_in_rotationOrbitFinset_card_eq_zero_of_disjoint_reflection
+    (h : D19ActsOnMoore57 V Γ) {k : ZMod 19} {x : V}
+    (hdisj :
+      Disjoint (h.rotationOrbitFinset x)
+        (h.rotationOrbitFinset (h.smul (DihedralGroup.sr k) x))) :
+    ((h.rotationOrbitFinset x).filter
+        fun z : V => h.smul (DihedralGroup.sr k) z = z).card = 0 := by
+  classical
+  rw [Finset.card_filter_eq_zero_iff]
+  intro y hyOrbit hyFixed
+  exact
+    h.not_exists_reflection_fixed_mem_rotationOrbitFinset_of_disjoint_reflection
+      hdisj ⟨y, hyOrbit, hyFixed⟩
 
 /-- Reflection identifies the adjacent-moved filter on an orbit for `d` with
 the reflected orbit filter for `-d`. -/

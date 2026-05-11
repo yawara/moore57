@@ -1,9 +1,15 @@
 # Moore57 D19 Lean Gaps
 
-Snapshot: 2026-05-10, after routing E7 projection character-class data with
+Snapshot: 2026-05-11, after routing E7 projection character-class data with
 `alpha - beta = 33` through the trace-core, reflection trace `33`, fixed-star,
-and current-final-gap no-go frontiers, and after adding the first substantive
-D19 representation-theory split on the rotation-invariant summand.
+and current-final-gap no-go frontiers; after adding the rotation-invariant and
+cyclotomic moving-summand representation splits plus the abstract and concrete
+rotation-split constructors for the E7 and `(-8)` character boundaries; and
+after formalizing the Cameron/Higman adjacent-swap reflection fixed-count slice
+and closing its `a₁ = 0` complement from trace-refined candidates plus the
+involution edge-count formula; after exposing raw-action fixed-center-leaf,
+paper fixed-star, `K_{1,55}`, adjacent-moved-count, trace-core, and
+trace-representation consequences.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -11,10 +17,12 @@ to prove, with no extra assumptions and depending only on mathlib, that no
 
 ## Gap List By Difficulty
 
-### 1. Hardest: derive E7 character-class data from the raw action
+### 1. Hardest: construct the raw branch/A-fiber frontier
 
-The downstream trace/count route now consumes a single representation-facing
-boundary for the concrete E7 projection representation:
+The representation and reflection-count parts that used to be the top gap are
+now routed from raw `D19ActsOnMoore57` data.  The downstream trace/count route
+still factors through a single representation-facing boundary for the concrete
+E7 projection representation:
 
 - `D19CharacterClassBoundary h.e7ProjectionRepresentation alpha beta gamma`;
 - `(alpha : ℤ) - (beta : ℤ) = 33`;
@@ -35,20 +43,17 @@ D19ActsOnMoore57.involutionFixedSetStar56_of_E7ProjectionCharacterClassBoundary
 D19ActsOnMoore57.no_currentFinalGapBoundary_of_E7ProjectionCharacterClassBoundary
 ```
 
-The remaining work is therefore upstream of this bridge: construct the E7
-D19 character-class boundary and the side arithmetic from mathlib
-representation theory, avoiding a custom finite-character reimplementation
-where mathlib already supplies character facts.  The `(-8)` character boundary
-is no longer an independent representation-decomposition gap: once
-`TraceRepresentationData h.a1` is available, Lean derives the complementary
-`(-8)` values from the existing projection-character formula.  At the
-`D19TraceInput`, `D19CharacterInput`, `TraceCoreCharacterBoundary`,
-representation-character, data-package, and direct `TraceRepresentationData
-h.a1` levels, the adjacent-moved count `112` is no longer an independent input
-once the standard reflection fixed count `56` is available: Lean derives the
-paper fixed-star statement and then derives `adjacentMovedCount = 112`.
+That E7 character-class boundary and its side arithmetic are no longer the
+hardest missing theorem: Lean now gets them from the rotation split and the raw
+reflection fixed-count theorem.  The `(-8)` character boundary is also no
+longer an independent representation-decomposition gap.  At the `D19TraceInput`,
+`D19CharacterInput`, `TraceCoreCharacterBoundary`, representation-character,
+data-package, and direct `TraceRepresentationData h.a1` levels, the
+adjacent-moved count `112` is no longer an independent input: Lean derives the
+paper fixed-star statement and then derives `adjacentMovedCount = 112` from
+the raw fixed count `56`.
 
-The first non-wrapper representation-theory component is now in Lean:
+The first non-wrapper representation-theory components are now in Lean:
 
 ```lean
 d19RotationInvariantSubmodule
@@ -57,6 +62,170 @@ finrank_d19RotationInvariantSubmodule_eq_average_rotation_character
 reflectionZeroOnRotationInvariants
 reflectionZeroOnRotationInvariants_sq
 exists_nat_trace_reflectionZeroOnRotationInvariants
+d19RotationMovingSubmodule
+d19RotationMovingRepresentation
+d19RotationMovingRepresentation_invariants_eq_bot
+d19RotationMoving_rotation_aeval_cyclotomic19_eq_zero
+trace_package_of_cyclotomic19_aeval_eq_zero
+exists_gamma_trace_d19RotationMovingSubmodule
+d19Character_rotation_eq_invariant_add_moving
+exists_d19CharacterValueBoundary_from_rotation_split
+exists_d19CharacterClassBoundary_from_rotation_split
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_from_rotation_split
+D19ActsOnMoore57.exists_minus8ProjectionCharacterValueBoundary_from_rotation_split
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_and_sideArithmetic
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_and_sideArithmetic_of_reflectionFixedCount
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_and_sideArithmetic_of_reflectionFixedCount_ge_fortySeven
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_and_sideArithmetic_of_reflectionFixedCountLower47
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_and_sideArithmetic_of_E7_reflection_trace_eq_33
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_counts
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_reflectionFixedCount
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_reflectionFixedCount_ge_fortySeven
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_reflectionFixedCountLower47
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_E7_reflection_trace_eq_33
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_reflectionFixedCount_ge_fortySeven
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_reflectionFixedCountLower47
+D19ActsOnMoore57.fixedVertexCount_reflection_ge_fiftySix_of_adjacent_swap
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_adjacent_swap
+D19ActsOnMoore57.exists_adjacent_swap_of_reflection_adjacentMovedCount_pos
+D19ActsOnMoore57.fixedVertexCount_reflection_ge_fiftySix_of_adjacentMovedCount_pos
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_adjacentMovedCount_pos
+D19ActsOnMoore57.fixedVertexCount_reflection_trace_refined_le_fiftySix
+D19ActsOnMoore57.reflection_adjacentMovedCount_pos
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_raw_action
+D19ActsOnMoore57.reflectionFixedCountLower47_of_raw_action
+D19ActsOnMoore57.reflectionFixedCenterLeafAt_of_raw_action
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_raw_action
+D19ActsOnMoore57.fixed_center_neighbors_card_le_one_of_raw_action
+D19ActsOnMoore57.fixedCenterLeafDefaultBasePair_of_raw_action
+D19ActsOnMoore57.fixedCenterLeafDefaultBaseLabeling_of_raw_action
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action
+D19ActsOnMoore57.remainingDefaultBaseFixedCenterLeafReferenceConnector_of_raw_action
+BranchOrbitABCReflectionLabeling.midpointReflectionCriterionBoundary_of_raw_action
+BranchOrbitABCReflectionLabeling.referenceMatchingPipelineBoundary_of_raw_action
+BranchOrbitABCReflectionLabeling.midpointEquationSet_card_eq_midpointMiddleSupport_card_of_raw_action
+D19ActsOnMoore57.remainingDefaultBaseFixedCenterLeafReferenceConnector_of_raw_action_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_fields
+D19ActsOnMoore57.reflectionFixedCountBounds_of_raw_action
+D19ActsOnMoore57.involutionFixedSetStar56_of_raw_action
+D19ActsOnMoore57.nonempty_involutionK155_of_raw_action
+D19ActsOnMoore57.nonempty_involutionFixedStar55_of_raw_action
+D19ActsOnMoore57.reflectionFixedStarBoundary_of_raw_action
+D19ActsOnMoore57.adjacentMovedCount_reflection_eq_112_of_raw_action
+BranchOrbitABCReflectionLabeling.reflectionFixedStarAFixingBoundary_of_raw_action
+BranchOrbitABCReflectionLabeling.reflectionFixedStarMiddleBoundary_of_raw_action
+BranchOrbitABCReflectionLabeling.midpointMiddleSupportCardTwoBoundary_of_raw_action_middle
+BranchOrbitABCReflectionLabeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+BranchOrbitABCReflectionLabeling.referenceMatchingPipelineBoundary_of_raw_action_fixedStar
+BranchOrbitABCReflectionLabeling.referenceMatchingPipelineBoundary_of_raw_action_vertexFixed
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_fixedStar
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_vertexFixed
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_fixedStar
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_vertexFixed
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_noCardOne_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_singletonFixed_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_equationInvariant_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointCoordinate_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointTargetSign_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_vertexFixed_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_vertexFixed_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_vertexFixed_singletonFixed
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_vertexFixed_singletonFixed
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointTargetSign
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointTargetSign
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_fields
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_vertexFixed_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_fixedStar_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_vertexFixed_fields
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_vertexFixed_noAllEndpointAdj_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_vertexFixed_noAllEndpointAdj_fields
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_vertexFixed_singletonFixed_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_vertexFixed_singletonFixed_fields
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointTargetSign_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointTargetSign_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_vertexFixed
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_vertexFixed_singletonFixed
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointTargetSign
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_vertexFixed_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_vertexFixed_singletonFixed_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointTargetSign_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseFixedStarLocalConnector_of_raw_action_fields
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_and_sideArithmetic_of_adjacent_swap
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_adjacent_swap
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_adjacent_swap
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_exists_adjacent_swap
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_reflection_adjacentMovedCount_pos
+D19ActsOnMoore57.exists_e7ProjectionCharacterClassBoundary_and_sideArithmetic_of_raw_action
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_raw_action
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_raw_action
+D19ActsOnMoore57.representationCharacterComponentsBoundary_of_rotation_split_and_raw_action
+D19ActsOnMoore57.traceCoreCharacterBoundary_of_rotation_split_raw_action
+D19ActsOnMoore57.traceRepresentationData_of_rotation_split_raw_action
+D19ActsOnMoore57.e7_reflection_trace_eq_33_of_rotation_split_raw_action
+D19ActsOnMoore57.involutionFixedSetStar56_of_rotation_split_raw_action
+no_D19_actionLevelCaseBoundary_of_rotation_split_raw_action
+no_D19_actionLevelWitnessBoundary_of_rotation_split_raw_action
+no_D19_actionLevelCoordinateWitnessBoundary_of_rotation_split_raw_action
+no_D19_actionLevelFinalBoundary_of_rotation_split_raw_action
+no_D19_actionLevelLocalObstructionBoundary_of_rotation_split_raw_action
+no_D19_actionLevelDoublingEquationSupportBoundary_of_rotation_split_raw_action
+no_D19_actionLevelSetInvariantWitnessBoundary_of_rotation_split_raw_action
+no_D19_actionLevelReducedCoordinateWitnessBoundary_of_rotation_split_raw_action
+no_D19_actionLevelCommonNeighborReducedBoundary_of_rotation_split_raw_action
+no_D19_actionLevelMinimalRemainingBoundary_of_rotation_split_raw_action
+no_D19_actionLevelMinimalRemainingRefinedBoundary_of_rotation_split_raw_action
+no_D19_actionLevelMinimalRemainingRefinedMatchingBoundary_of_rotation_split_raw_action
+no_D19_currentFinalGapBoundary_of_rotation_split_raw_action
+no_D19_actionLevelEndpointObstructionBoundary_of_rotation_split_raw_action
+no_D19_endpointObstructionFinalBoundary_of_rotation_split_raw_action
+no_D19_endpointPairedFinalBoundary_of_rotation_split_raw_action
+no_D19_fixedStarReferenceMatchingCardinalityPipeline_boundary_of_rotation_split_raw_action
+no_D19_fixedStarLocalObstructionBoundary_of_rotation_split_raw_action
+no_D19_fixedStarWitnessBoundary_of_rotation_split_raw_action
+no_D19_fixedStarCoordinateWitnessBoundary_of_rotation_split_raw_action
+no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action
+no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointTargetSign
+no_remainingLabeledReflectionMatchingEquationFromDisjointConnector_of_rotation_split_raw_action
+no_remainingReflectionIndexMatchingEquationConnector_of_rotation_split_raw_action
+no_remainingFixedNeighborBoundMatchingEquationConnector_of_rotation_split_raw_action
+no_remainingFixedCenterLeafMatchingEquationConnector_of_rotation_split_raw_action
+no_remainingNon56FixedCenterLeafIndexMatchingEquationConnector_of_rotation_split_raw_action
+no_remainingNon56FixedCenterLeafReferenceConnector_of_rotation_split_raw_action
+no_remainingNon56FixedCenterLeafMidpointDisjointnessConnector_of_rotation_split_raw_action
+no_remainingNon56FixedCenterLeafLocalObstructionConnector_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointTargetSign
+no_remainingNonRepresentationRawActionFrontierAfterDefaultBase_of_rotation_split_raw_action
+no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action
+no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointTargetSign
+no_remainingDefaultBaseFixedCenterLeafMidpointDisjointnessConnector_of_rotation_split_raw_action
+no_remainingDefaultBaseFixedCenterLeafLocalObstructionConnector_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointTargetSign
+no_remainingNonRepresentationFrontierAfterDefaultBaseFixedStarLocalConnector_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseActionLevelLocalConnector_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseFixedInducedStarDegrees_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseFixedNeighborStarCounts_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseInvolutionK155_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseEndpointNonadjWitness_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseEndpointPointwiseNonadj_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseEndpointAdjForcesAFixingFixed_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseEndpointAdjForcesAFixingVertexFixed_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBasePairEndpointNonadj_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBasePairEndpointTwoCommonNeighbors_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseLeanAwareEndpointObstruction_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingSingletonEndpointObstruction_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingDoublingEndpointObstruction_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseFixedStarLocalSingletonEndpointObstruction_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseActionLevelSingletonEndpointObstruction_of_rotation_split_raw_action
+no_remainingNonRepresentationFrontierAfterDefaultBaseActionLevelDoublingEndpointObstruction_of_rotation_split_raw_action
+D19ActsOnMoore57.reflectionFixedCenterLeafAt_of_E7_reflection_trace_eq_33
+D19ActsOnMoore57.reflectionFixedCenterLeafBoundary_of_E7_reflection_trace_eq_33_all
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_E7_reflection_trace_eq_33
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_E7_reflection_trace_eq_33_all
 ```
 
 This formalizes the trivial/sign split on the rotation-invariant part of any
@@ -64,41 +233,79 @@ rational `D19` representation using mathlib's `Representation.invariants` for
 the normal rotation subgroup: the invariant dimension is the average of the
 character over rotations, the restriction of `sr 0` to this invariant subspace
 is an involution, and its trace is the difference of two natural
-multiplicities.  The remaining hard representation-theory work is to connect
-this split and average formula to the E7 projection representation's concrete
-matrix traces, handle the nontrivial 18-dimensional rotation part (`gamma`),
-and derive the specific E7 arithmetic `alpha - beta = 33`, `alpha ≤ 113`, and
-`beta ≤ 58` from the raw action rather than assuming them.
+multiplicities.  The moving summand is now the kernel of the rotation-average
+projection, is preserved by the D19 action, has no nonzero vectors fixed by a
+nontrivial rotation, is annihilated by `Φ₁₉`, and therefore has dimension `18γ`
+and nontrivial-rotation trace `-γ`.  The abstract assembly is now also present:
+for any finite-dimensional rational `D19` representation of dimension `1729`,
+Lean constructs some `alpha beta gamma` with
+`D19CharacterClassBoundary ρ alpha beta gamma` by splitting the character into
+the invariant and moving summands.
 
-### 2. Hardest geometry: construct `InvolutionK155` from a reflection
+The remaining work at the top gap is therefore no longer the pure
+representation-theoretic D19 decomposition, nor the concrete instantiation of
+that decomposition for `h.e7ProjectionRepresentation` and
+`h.minus8ProjectionRepresentation`.  Lean now obtains the E7 class-boundary and
+the complementary `(-8)` value-boundary by applying the rotation split directly
+to those mathlib representations.  The nontrivial rotation fixed count `1` is
+already supplied by the ambient action theorem
+`D19ActsOnMoore57.rotationFixedCountOne_smulEquiv`, and
+`fixedVertexCount(sr dt)=56` supplies `adjacentMovedCount(sr dt)=112` through
+`involutionFixedSetStar56_of_reflection_fixedVertexCount_eq_56`.  Consequently,
+a single raw reflection fixed-count input, or the weaker trace-refined lower
+bound `47 ≤ fixedVertexCount(sr dt)`, now gives `alpha - beta = 33`,
+`alpha ≤ 113`, `beta ≤ 58`, a `Nonempty (D19LinearCharacterInput h)`, and the
+current-final-gap no-go route.  The same is now true from a single E7
+reflection trace value `33`, using the existing non-circular theorem
+`fixedVertexCount_reflection_eq_56_of_E7_trace_eq_33`.
 
-The K155 no-go surfaces currently assume
+The reflection fixed-count input is now discharged from the raw action.  The
+new `a₁ = 0` exclusion combines the trace-refined raw candidate bound
+`fixedVertexCount(sr k) ≤ 56` with the involution edge-count formula
+`a₁ = 3250 - 58*a₀ + 2e`: under `a₀ ≤ 56`, the right-hand side is positive, so
+`a₁ = 0` is impossible.  Hence every reflection has positive `a₁`, the
+adjacent-swap theorem supplies `fixedVertexCount(sr k)=56`, and the
+rotation-split route now constructs the E7 side arithmetic and rules out the
+current-final-gap boundary without any extra reflection-count hypothesis.
+
+The remaining work above this top gap is no longer the Cameron/Higman
+reflection-count lemma.  It is to connect the appropriate upstream action-level
+boundary to `BranchOrbitABCCurrentFinalGapBoundary h`, or to construct one of
+the surviving default-base / branch-orbit connector packages from the raw
+action.  The cleanup pass is now broad:
+`representationCharacterComponentsBoundary_of_rotation_split_and_raw_action`
+and `D19RotationSplitRawActionNoGoConnectors.lean` re-expose the existing
+action-level, current-gap, endpoint-final, fixed-star, labeled-reflection,
+non-56 local-leaf, and default-base wrapper no-go fronts without any
+representation-component or fixed-count assumptions.
+
+### 2. Fixed-star/K155 is now a raw-action consequence
+
+The K155 and fixed-star frontiers are no longer the top raw-action gap.  The raw
+action now gives the paper-shaped fixed star, nonempty K155 witness, fixed-star
+count abstraction, and the branch-geometry fixed-star boundary:
 
 ```lean
-InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr dt))
+D19ActsOnMoore57.involutionFixedSetStar56_of_raw_action
+D19ActsOnMoore57.nonempty_involutionK155_of_raw_action
+D19ActsOnMoore57.nonempty_involutionFixedStar55_of_raw_action
+D19ActsOnMoore57.reflectionFixedStarBoundary_of_raw_action
 ```
 
-Once this is available, Lean can convert it to the fixed-star reflection-count
-input used downstream.  The first constructive bridge is now present:
+The last theorem uses the paper-shaped `56`-vertex fixed-star statement plus the
+raw fixed-center-leaf boundary to prove that `rotationFixedCenter` is not the
+star center.  This is a real upstream reduction: default-base frontier
+constructors can now fill `star`, `fixedCenterLeaf`, the default-base
+`ReflectionFixedStarAFixingBoundary`, and the midpoint-middle fixed-star
+boundary automatically from raw action data.
 
-```lean
-D19ActsOnMoore57.involutionK155OfReflectionFixedNeighborCenterCount
-```
+The remaining branch/A-fiber geometry is therefore sharper:
 
-This proves that a reflection fixed vertex with exactly `55` fixed neighbors,
-together with the total reflection fixed count `56`, determines an explicit
-`InvolutionK155`.  The remaining hard part is therefore sharper:
-
-- construct a reflection fixed center with `55` fixed neighbors from the raw
-  action, preferably as `ReflectionFixedNeighborStarCenterData`, or construct
-  an induced fixed-graph degree-`55` center as
-  `ReflectionFixedInducedStarCenterData`;
-- derive or route the exact reflection fixed count `56`;
-- prove the selected center is not `rotationFixedCenter` when routing onward to
-  `ReflectionFixedCenterLeafBoundary`;
-- keep in mind that existing fixed-star/count boundaries are Prop-valued, so
-  they yield `Nonempty (InvolutionK155 ...)`, not reusable Type-valued witness
-  data.
+- prove reference matching solutions are fixed by the A-fixing reflection,
+  preferably as `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
+- prove singleton midpoint-exception intersections force A-fixing fixedness,
+  i.e. `MidpointExceptionAFixingSupportSingletonFixedBoundary`;
+- prove the endpoint exclusion `noAllEndpointAdj` from Moore graph geometry.
 
 The paper-shaped statement "the fixed set of an involution is a star with
 `56` vertices" is now represented by:
@@ -110,6 +317,9 @@ InvolutionFixedSetStar56.adjacentMovedCount_eq_112
 InvolutionFixedSetStar56.nonempty_involutionK155
 InvolutionK155.toInvolutionFixedSetStar56
 D19ActsOnMoore57.reflection_smulEquiv_involutive
+D19ActsOnMoore57.existsUnique_reflection_fixed_mem_rotationOrbitFinset_of_reflection_mem
+D19ActsOnMoore57.not_exists_reflection_fixed_mem_rotationOrbitFinset_of_disjoint_reflection
+D19ActsOnMoore57.reflection_fixed_points_in_rotationOrbitFinset_card_eq_zero_of_disjoint_reflection
 D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_and_fixedSetStarWithCenter
 D19ActsOnMoore57.involutionFixedSetStar56OfReflectionFixedNeighborCenterCount
 IsStrongZeroOne.exists_isStarWithCenter_of_not_regular
@@ -133,6 +343,8 @@ D19ActsOnMoore57.fixedInducedGraph_reflection_degree_odd
 BranchOrbitABCReflectionLabeling.reflectionCenterNeighborOrbitIndex_involutive
 BranchOrbitABCReflectionLabeling.exists_reflectionCenterNeighborOrbitIndex_eq_self
 D19ActsOnMoore57.exists_reflection_fixed_center_neighbor_orbit_card_eq_one
+D19ActsOnMoore57.fixedVertexCount_reflection_ne_fiftyEight_of_fixedInduced_isStarWithCenter
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_fixedInduced_isStarWithCenter_ge_fortySeven
 InvolutionHigmanCountArithmetic.starEdgeCountFormula_a0_eq_56_of_bounds
 IsMoore57.starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
 D19ActsOnMoore57.D19LinearCharacterInput.reflection_starEdgeCountFormula_fixedVertexCount_eq_56_of_bounds
@@ -314,6 +526,48 @@ fixed-count range for reflections:
 D19ActsOnMoore57.ReflectionFixedCountBounds
 ```
 
+The paper/book check matches this Lean boundary.  Macaj--Siran cite Higman's
+involution lemma for a Moore `(57,2)` graph as `a₀(x)=56` and `a₁(x)=112`.
+Makhnev--Paduchikh phrase the same input as every involution being good, i.e.
+its fixed set is a star on `k - 1 = 56` vertices.  Cameron's Chapter 3,
+Section 3.7 proof of Theorem 3.13 gives the missing proof shape: Step 1 says
+the fixed points of an involution form either a star or a Moore subgraph; Step
+2 proves that an involution interchanging adjacent vertices fixes `56`
+vertices; Step 3 reduces the remaining case to a `56`- or `58`-point star; and
+Step 4 eliminates the `58`-point star by the eigenspace-character integrality
+calculation.  Step 2 is now represented in Lean for D19 reflections:
+
+```lean
+D19ActsOnMoore57.fixedVertexCount_reflection_ge_fiftySix_of_adjacent_swap
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_adjacent_swap
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_adjacentMovedCount_pos
+D19ActsOnMoore57.reflection_adjacentMovedCount_pos
+D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_raw_action
+D19ActsOnMoore57.reflectionFixedCountLower47_of_raw_action
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_exists_adjacent_swap
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_reflection_adjacentMovedCount_pos
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_raw_action
+```
+
+The proof injects each point of the branch `branchFiber Γ b a` into the fixed
+set by taking the unique common neighbor of `u` and its reflected mate; the
+needed non-adjacency and injectivity are supplied by `no_triangle` and
+`no_four_cycle`.  The theorem
+`exists_adjacent_swap_of_reflection_adjacentMovedCount_pos` also rewrites this
+branch in trace-count language: positive `a₁` for a reflection gives an
+adjacent swapped edge.  The complementary `a₁ = 0` case is now also closed:
+`fixedVertexCount_reflection_trace_refined_le_fiftySix` and the involution
+edge-count formula imply `reflection_adjacentMovedCount_pos`, hence
+`fixedVertexCount_reflection_eq_56_of_raw_action`.
+
+For an independent D19 quotient-count route, Lean now has the local orbit
+counting facts needed before introducing a full quotient or a `Fin 171`
+representative family: if a reflection preserves a full rotation orbit, it has
+a unique fixed point on that orbit; if it sends the orbit to a disjoint orbit,
+there are no fixed points on the original orbit.  The next quotient-count
+slice is to package a moved-rotation-orbit representative family and sum these
+local contributions.
+
 Once `52 ≤ fixedVertexCount (sr k) ≤ 56` is available for every reflection,
 Lean now produces `InvolutionFixedSetStar56` and `Nonempty (InvolutionK155 ...)`
 for every reflection without any additional trace-integrality assumption.
@@ -400,6 +654,10 @@ earlier paper range.  A lower bound of `47` already forces the exact count
 D19ActsOnMoore57.fixedVertexCount_reflection_eq_56_of_ge_fortySeven
 D19ActsOnMoore57.involutionFixedSetStar56_of_reflection_fixedVertexCount_ge_fortySeven
 D19ActsOnMoore57.ReflectionFixedCountLower47
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_reflectionFixedCount_ge_fortySeven
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_reflectionFixedCount_ge_fortySeven
+D19ActsOnMoore57.nonempty_d19LinearCharacterInput_of_rotation_split_and_E7_reflection_trace_eq_33
+D19ActsOnMoore57.no_currentFinalGapBoundary_of_rotation_split_and_E7_reflection_trace_eq_33
 ```
 
 So the current raw-reflection-to-star gap can be stated as: prove, from the
@@ -946,30 +1204,53 @@ and the older `ReflectionFixedStarBoundary`.
 
 ### 3. Raw action to default-base / branch-orbit frontier
 
-The no-go side is now broad: default-base, endpoint, fixed-star, current-gap,
-and action-level connector aliases all route to contradictions once the
-corresponding frontier or wrapper exists.
+The no-go side is now broad: default-base, endpoint, fixed-star,
+labeled-reflection, local-leaf, current-gap, and action-level connector aliases
+all route to contradictions once the corresponding frontier or wrapper exists.
 
 What remains is to construct one of these packages from the raw action.  In
 particular, Lean still needs routes producing the data behind
-`RemainingNonRepresentationFrontierAfterDefaultBase`, such as:
+`RemainingNonRepresentationFrontierAfterDefaultBase`.  The `fixedCenterLeaf`
+and `support_card_boundary` fields are now supplied directly from raw action:
+`reflectionFixedCenterLeafBoundary_of_raw_action` gives the former, and
+`reflectionFixedStarAFixingBoundary_of_raw_action` gives the fixed-neighbor
+support-card boundary.  The `referenceMatching` pipeline is also unfolded past
+the midpoint support-card step: raw fixed-star middle identifies every midpoint
+middle vertex as the corresponding reflection star center, giving
+`midpointMiddleSupportCardTwoBoundary_of_raw_action`.  One route still uses the
+fixedness of reference matching solutions, packaged as
+`ReferenceRotationMatchingSolutionVertexFixedBoundary`.  A less circular route
+now keeps the reference-to-midpoint comparison independent and supplies the
+one-point exception case from endpoint target-sign compatibility:
 
-- `fixedCenterLeaf`
-- `referenceMatching`
-- `support_card_boundary`
-- `no_card_one`
+- `ReferenceRotationToMidpointReflectionBoundary`
+- `EndpointMatchingAFixingTargetSignBoundary`
 - `noAllEndpointAdj`
 
-The new K155 bridge reduces one route through this frontier to constructing
-explicit fixed-neighbor centers for reflections and the reflection fixed count
-`56`.
+The midpoint-exception disjointness is no longer a primitive input on the
+raw-action constructors.  Raw A-fixing support size plus `noAllEndpointAdj` and
+one of `no_card_one`, `MidpointExceptionAFixingSupportSingletonFixedBoundary`,
+`MidpointEquationSetAFixingInvariantBoundary`,
+`EndpointMatchingAFixingCoordinateBoundary`, or
+`EndpointMatchingAFixingTargetSignBoundary` gives the disjointness boundary.
 
-### 4. A-fiber midpoint reflection and support-card case split
+The new raw fixed-star, K155, and A-fixing bridges also remove the reflection
+fixed count `56` and the default-base support-card boundary as separate inputs
+on this route.  What remains is the branch/A-fiber matching and
+midpoint-exception geometry needed to populate the fields above.
 
-The natural-language proof's A-fiber midpoint reflection argument remains a
-major geometric step.  Lean has many boundary structures for the support-card,
-card-one/card-two, endpoint, and all-offset cases, but the raw-action
-construction into those structures is still the difficult part.
+### 4. A-fiber reference solution and exception geometry
+
+The natural-language proof's A-fiber midpoint reflection argument is now split
+more finely.  The midpoint-middle support-card-two fact is a raw-action
+consequence of the fixed-star theorem.  The current best frontier is to prove
+the reference-to-midpoint comparison and endpoint target-sign compatibility.
+That route avoids using `ReferenceRotationMatchingSolutionVertexFixedBoundary`
+as an input, while still leaving the stronger vertex-fixed route available if
+it turns out to be the cleaner graph-geometric statement.  The exception
+disjointness field has been reduced to endpoint target-sign plus endpoint
+obstruction; the raw-action constructors no longer need to assume disjointness
+or singleton fixedness directly on the preferred route.
 
 ### 5. Endpoint obstruction / singleton / doubling case coverage
 
@@ -1011,20 +1292,18 @@ gaps.
 
 ## Current Summary
 
-The contradiction routes are now well connected once their inputs exist.  The
-main missing work is still:
+The contradiction routes are now well connected once their branch/A-fiber
+inputs exist.  The representation character identities, reflection fixed count
+`56`, adjacent-moved count `112`, fixed-star/K155 package, fixed-center-leaf
+boundary, A-fixing support-card boundary, and midpoint-middle support-card-two
+boundary are all available as raw-action consequences.
 
-1. derive the representation character identities `h7` and `hMinus8`;
-2. prove the Higman/Macaj-Siran involution counts, especially reflection
-   `a₀ = 56` and, for the trace bridge, `a₁ = 112`;
-3. construct a default-base / branch-orbit frontier wrapper from the raw action.
+The main missing work is now:
 
-The current best decomposition of item 2 is:
-
-1. raw involution trace/character data -> reflection fixed count `56`;
-2. if using the linear-character route, prove the standard adjacent-moved count
-   `112`;
-3. the existing Lean bridge -> `InvolutionFixedSetStar56` and Prop-level
-   `Nonempty (InvolutionK155 ...)`;
-4. for constructive fixed-center-leaf routes, still build Type-valued
-   fixed-neighbor center data and separate it from `rotationFixedCenter`.
+1. prove `ReferenceRotationToMidpointReflectionBoundary` for the default-base
+   labeling, or alternatively prove the stronger
+   `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
+2. prove `EndpointMatchingAFixingTargetSignBoundary` for the default-base
+   labeling, which supplies the singleton/card-one side of the exception split;
+3. prove the endpoint exclusion `noAllEndpointAdj` from Moore graph branch
+   geometry.

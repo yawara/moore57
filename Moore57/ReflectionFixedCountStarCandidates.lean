@@ -128,6 +128,29 @@ theorem fixedVertexCount_reflection_star_candidates_of_fixedInduced_isStarWithCe
       (fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)))
       hpos hle heven hmod
 
+/-- Cameron/Higman Step 4 in the reflection-star branch: a `58`-point
+reflection fixed star is incompatible with the E7 trace integrality
+constraints. -/
+theorem fixedVertexCount_reflection_ne_fiftyEight_of_fixedInduced_isStarWithCenter
+    (h : D19ActsOnMoore57 V Γ) (k : ZMod 19)
+    {c : fixedVertexSet (h.smulEquiv (DihedralGroup.sr k))}
+    (hstar : IsStarWithCenter (h.fixedInducedGraph (DihedralGroup.sr k)) c) :
+    fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) ≠ 58 := by
+  intro h58
+  rcases h.fixedVertexCount_reflection_star_candidates_of_fixedInduced_isStarWithCenter
+      k hstar with h6 | h16 | h26 | h36 | h46 | h56 <;> omega
+
+/-- In the reflection-star branch, the practical lower bound `47` already
+forces Cameron/Higman's `56`-point fixed star count. -/
+theorem fixedVertexCount_reflection_eq_56_of_fixedInduced_isStarWithCenter_ge_fortySeven
+    (h : D19ActsOnMoore57 V Γ) (k : ZMod 19)
+    {c : fixedVertexSet (h.smulEquiv (DihedralGroup.sr k))}
+    (hstar : IsStarWithCenter (h.fixedInducedGraph (DihedralGroup.sr k)) c)
+    (hlower : 47 ≤ fixedVertexCount (h.smulEquiv (DihedralGroup.sr k))) :
+    fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56 := by
+  rcases h.fixedVertexCount_reflection_star_candidates_of_fixedInduced_isStarWithCenter
+      k hstar with h6 | h16 | h26 | h36 | h46 | h56 <;> omega
+
 end D19ActsOnMoore57
 
 end
