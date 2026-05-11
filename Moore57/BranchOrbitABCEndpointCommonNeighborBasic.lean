@@ -193,7 +193,37 @@ def toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
   boundary.toMidpointExceptionEndpointAdjCommonNeighborFixedBoundary
     |>.toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
 
+/-- Direct connector to pointwise endpoint non-adjacency on the A-fixing
+moving support. -/
+def toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+    (boundary :
+      MidpointExceptionEndpointAdjCommonNeighborBasicBoundary labeling) :
+    MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling :=
+  boundary.toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
+    |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
 end MidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+
+namespace MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Pointwise endpoint non-adjacency gives the basic common-neighbor boundary
+vacuously: the endpoint-adjacency premise is already impossible on the
+A-fixing moving support. -/
+def toMidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+    (boundary :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    MidpointExceptionEndpointAdjCommonNeighborBasicBoundary labeling where
+  aFixing_reflected_endpoint_adj_reference_of_endpoint_adj := by
+    intro d hd p hp hadj
+    exact False.elim
+      (boundary.endpoint_nonadj_of_mem_support d hd p hp
+        (by
+          simpa [endpointCommonNeighborReferenceVertex,
+            endpointCommonNeighborReflectedEndpointVertex] using hadj))
+
+end MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
 
 end BranchOrbitABCReflectionLabeling
 

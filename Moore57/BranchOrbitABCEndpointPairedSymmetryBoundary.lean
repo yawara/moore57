@@ -126,6 +126,162 @@ def toEndpointSignPairedAdjacencyBoundary
 
 end EndpointSignNegativeMatchingPairBoundary
 
+namespace EndpointMatchingAFixingCoordinateBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Coordinate same-offset label exchange supplies the corrected paired
+endpoint adjacency boundary. -/
+def toEndpointSignPairedAdjacencyBoundary
+    (boundary : EndpointMatchingAFixingCoordinateBoundary labeling) :
+    EndpointSignPairedAdjacencyBoundary labeling :=
+  boundary.toEndpointSignNegativeMatchingPairBoundary
+    |>.toEndpointSignPairedAdjacencyBoundary
+
+end EndpointMatchingAFixingCoordinateBoundary
+
+namespace EndpointSignNoReflectedReferenceNegMatchingBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- If the reflected-reference negative matching premise never occurs on the
+moving support, the corrected paired adjacency boundary follows vacuously. -/
+def toEndpointSignPairedAdjacencyBoundary
+    (boundary : EndpointSignNoReflectedReferenceNegMatchingBoundary labeling) :
+    EndpointSignPairedAdjacencyBoundary labeling where
+  endpoint_adj_paired_reference_of_reflected_reference_adj := by
+    intro d hd p hpSupport hadjReflectedReference
+    let coords := labeling.data.toAFiberCoordinates
+    let hneg : -d ≠ 0 := neg_ne_zero_of_ne_zero_zmod19 hd
+    have hmatchReflectedReference :
+        AFiberCoordinates.matchingEquiv h.isMoore coords 0 (0 + (-d))
+            (index_ne_add_of_ne_zero hneg)
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0 p := by
+      exact
+        (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore coords
+          (index_ne_add_of_ne_zero hneg)
+          (labeling.aFiberReflectionCoordPerm p)
+          (labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0 p)).1
+          (by
+            simpa [endpointCommonNeighborReferenceVertex,
+              endpointCommonNeighborAFixingReflectedEndpointVertex, coords] using
+              hadjReflectedReference.symm)
+    exact False.elim
+      (boundary.no_reflected_reference_neg_matching d hd p hpSupport
+        hmatchReflectedReference)
+
+end EndpointSignNoReflectedReferenceNegMatchingBoundary
+
+namespace EndpointMatchingAFixingNoPositiveTargetBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- The no-positive-target diagnostic proves the corrected paired adjacency by
+first ruling out the reflected-reference negative matching premise. -/
+def toEndpointSignPairedAdjacencyBoundary
+    (boundary : EndpointMatchingAFixingNoPositiveTargetBoundary labeling) :
+    EndpointSignPairedAdjacencyBoundary labeling :=
+  boundary.toEndpointSignNoReflectedReferenceNegMatchingBoundary
+    |>.toEndpointSignPairedAdjacencyBoundary
+
+end EndpointMatchingAFixingNoPositiveTargetBoundary
+
+namespace EndpointMatchingAFixingTargetSignBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Target-sign compatibility, equivalently its no-premise form, gives the
+corrected paired adjacency boundary. -/
+def toEndpointSignPairedAdjacencyBoundary
+    (boundary : EndpointMatchingAFixingTargetSignBoundary labeling) :
+    EndpointSignPairedAdjacencyBoundary labeling :=
+  boundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
+    |>.toEndpointSignPairedAdjacencyBoundary
+
+end EndpointMatchingAFixingTargetSignBoundary
+
+namespace MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Pointwise endpoint non-adjacency on the A-fixing support gives the corrected
+paired endpoint adjacency boundary, because it makes the reflected-reference
+premise impossible. -/
+def toEndpointSignPairedAdjacencyBoundary
+    (boundary :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    EndpointSignPairedAdjacencyBoundary labeling :=
+  boundary.toEndpointSignNoReflectedReferenceNegMatchingBoundary
+    |>.toEndpointSignPairedAdjacencyBoundary
+
+end MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+namespace EndpointSignPairedAdjacencyBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- The corrected paired adjacency form is enough to recover the corrected
+negative-endpoint label exchange.
+
+On the moving support this is exactly adjacency/matching conversion.  Away
+from the support the A-fixing reflection fixes `p`, so the paired conclusion is
+just the premise rewritten by `A p = p`. -/
+def toEndpointSignNegativeMatchingPairBoundary
+    (boundary : EndpointSignPairedAdjacencyBoundary labeling) :
+    EndpointSignNegativeMatchingPairBoundary labeling where
+  endpoint_neg_matching_pair := by
+    intro d hd p hreflected
+    by_cases hpSupport : p ∈ labeling.aFiberReflectionSupport
+    · let coords := labeling.data.toAFiberCoordinates
+      let hneg : -d ≠ 0 := neg_ne_zero_of_ne_zero_zmod19 hd
+      have hadjSource :
+          Γ.Adj
+            (labeling.endpointCommonNeighborReferenceVertex
+              (labeling.aFiberReflectionCoordPerm p))
+            (labeling.endpointCommonNeighborAFixingReflectedEndpointVertex
+              d p) :=
+        (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore coords
+          (index_ne_add_of_ne_zero hneg)
+          (labeling.aFiberReflectionCoordPerm p)
+          (labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0 p)).2
+          hreflected
+      have hadjReflectedReference :
+          Γ.Adj
+            (labeling.endpointCommonNeighborAFixingReflectedEndpointVertex
+              d p)
+            (labeling.endpointCommonNeighborReferenceVertex
+              (labeling.aFiberReflectionCoordPerm p)) :=
+        hadjSource.symm
+      have hpairedAdj :
+          Γ.Adj
+            (labeling.endpointCommonNeighborAFixingPairedReflectedEndpointVertex
+              d p)
+            (labeling.endpointCommonNeighborReferenceVertex p) :=
+        boundary.endpoint_adj_paired_reference_of_reflected_reference_adj
+          d hd p hpSupport hadjReflectedReference
+      exact
+        (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore coords
+          (index_ne_add_of_ne_zero hneg) p
+          (labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0
+            (labeling.aFiberReflectionCoordPerm p))).1
+          hpairedAdj.symm
+    · have hfixed : labeling.aFiberReflectionCoordPerm p = p := by
+        by_contra hmove
+        exact hpSupport ((labeling.mem_aFiberReflectionSupport p).2 hmove)
+      simpa [hfixed] using hreflected
+
+/-- Paired adjacency therefore rules out the paired-singleton obstruction by
+first converting to corrected negative-endpoint label exchange. -/
+def toMidpointExceptionAFixingSupportNoPairedSingletonBoundary
+    (boundary : EndpointSignPairedAdjacencyBoundary labeling)
+    (criterion : MidpointReflectionCriterionBoundary labeling) :
+    MidpointExceptionAFixingSupportNoPairedSingletonBoundary labeling :=
+  boundary.toEndpointSignNegativeMatchingPairBoundary
+    |>.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary criterion
+
+end EndpointSignPairedAdjacencyBoundary
+
 /-- Corrected basic endpoint common-neighbor input with the paired `R (A p)`
 target.
 

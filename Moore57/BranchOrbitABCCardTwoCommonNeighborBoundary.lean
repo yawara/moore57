@@ -59,6 +59,52 @@ theorem no_two_commonNeighbors_of_not_adj
     (hΓ.eq_of_commonNeighbor_of_commonNeighbor_of_not_adj
       hxy hnadj hzx hyz hwx hyw)
 
+/-- If two vertices have a common neighbor in a Moore graph, then they are
+not adjacent.  This is the `λ = 0` endpoint core used by the common-neighbor
+argument. -/
+theorem not_adj_of_commonNeighbor
+    (hΓ : IsMoore57 Γ) {x y z : V}
+    (hzx : Γ.Adj x z) (hyz : Γ.Adj y z) :
+    ¬ Γ.Adj x y := by
+  intro hxy
+  exact hΓ.no_triangle hxy hyz hzx.symm
+
+/-- Two common neighbors of the same distinct endpoint pair coincide.  The
+non-adjacency of the endpoint pair is derived from `λ = 0`; uniqueness then
+uses `μ = 1`. -/
+theorem eq_of_commonNeighbor_of_commonNeighbor
+    (hΓ : IsMoore57 Γ) {x y z w : V}
+    (hxy : x ≠ y)
+    (hzx : Γ.Adj x z) (hyz : Γ.Adj y z)
+    (hwx : Γ.Adj x w) (hyw : Γ.Adj y w) :
+    z = w :=
+  hΓ.eq_of_commonNeighbor_of_commonNeighbor_of_not_adj hxy
+    (hΓ.not_adj_of_commonNeighbor hzx hyz) hzx hyz hwx hyw
+
+/-- Contradiction form for two distinct common neighbors of a distinct
+endpoint pair, with endpoint non-adjacency inferred from the first common
+neighbor. -/
+theorem no_two_commonNeighbors
+    (hΓ : IsMoore57 Γ) {x y z w : V}
+    (hxy : x ≠ y) (hzw : z ≠ w)
+    (hzx : Γ.Adj x z) (hyz : Γ.Adj y z)
+    (hwx : Γ.Adj x w) (hyw : Γ.Adj y w) : False :=
+  hzw (hΓ.eq_of_commonNeighbor_of_commonNeighbor hxy hzx hyz hwx hyw)
+
+/-- Two common neighbors of the same distinct endpoint pair cannot be adjacent:
+they are equal by `μ = 1`, so an edge between them would be a loop. -/
+theorem not_adj_between_commonNeighbors
+    (hΓ : IsMoore57 Γ) {x y z w : V}
+    (hxy : x ≠ y)
+    (hzx : Γ.Adj x z) (hyz : Γ.Adj y z)
+    (hwx : Γ.Adj x w) (hyw : Γ.Adj y w) :
+    ¬ Γ.Adj z w := by
+  intro hzw
+  have h_eq : z = w :=
+    hΓ.eq_of_commonNeighbor_of_commonNeighbor hxy hzx hyz hwx hyw
+  subst h_eq
+  exact SimpleGraph.irrefl Γ hzw
+
 end IsMoore57
 
 namespace BranchOrbitABCReflectionLabeling

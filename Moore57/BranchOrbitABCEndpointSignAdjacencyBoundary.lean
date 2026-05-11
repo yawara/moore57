@@ -132,6 +132,34 @@ theorem endpointCommonNeighborAFixingReflectedEndpointVertex_eq_target_of_endpoi
     targetSign.aFiberReflection_target_sign_vertex_eq d hd p
       (labeling.endpoint_targetSign_hyp_of_endpoint_adj d hd p hadj)
 
+namespace EndpointMatchingAFixingNoPositiveTargetBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- The no-positive-target diagnostic directly implies pointwise endpoint
+non-adjacency on the A-fixing moving support.  The endpoint edge is exactly
+the positive-target matching equation by `endpoint_targetSign_hyp_of_endpoint_adj`. -/
+def toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+    (boundary : EndpointMatchingAFixingNoPositiveTargetBoundary labeling) :
+    MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling where
+  endpoint_nonadj_of_mem_support := by
+    intro d hd p _hp hadj
+    exact boundary.no_positive_target_matching d hd p
+      (labeling.endpoint_targetSign_hyp_of_endpoint_adj d hd p
+        (by
+          simpa [endpointCommonNeighborReferenceVertex,
+            endpointCommonNeighborReflectedEndpointVertex] using hadj))
+
+/-- Direct endpoint common-neighbor consequence of the no-positive-target
+diagnostic. -/
+def toMidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+    (boundary : EndpointMatchingAFixingNoPositiveTargetBoundary labeling) :
+    MidpointExceptionEndpointAdjCommonNeighborBasicBoundary labeling :=
+  MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary.toMidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+    (boundary.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary)
+
+end EndpointMatchingAFixingNoPositiveTargetBoundary
+
 /-- Remaining endpoint-sign adjacency boundary.  The reflected edge supplies
 adjacency to the reflected reference coordinate; this boundary is exactly the
 extra input needed to retarget that adjacency to the original reference

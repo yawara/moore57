@@ -9,7 +9,11 @@ after formalizing the Cameron/Higman adjacent-swap reflection fixed-count slice
 and closing its `a₁ = 0` complement from trace-refined candidates plus the
 involution edge-count formula; after exposing raw-action fixed-center-leaf,
 paper fixed-star, `K_{1,55}`, adjacent-moved-count, trace-core, and
-trace-representation consequences.
+trace-representation consequences; and after identifying paired endpoint
+adjacency with the corrected negative-endpoint label exchange; and after
+compressing the pointwise endpoint obstruction through the midpoint-exception
+case boundary, the lean-aware fixed-star package, and the exact
+`AFiberCardinality38Boundary` route.
 
 This note records the current Lean gaps in difficulty order.  The final goal is
 to prove, with no extra assumptions and depending only on mathlib, that no
@@ -1213,32 +1217,27 @@ The no-go side is now broad: default-base, endpoint, fixed-star,
 labeled-reflection, local-leaf, current-gap, and action-level connector aliases
 all route to contradictions once the corresponding frontier or wrapper exists.
 
-What remains is to construct one of these packages from the raw action.  In
-particular, Lean still needs routes producing the data behind
-`RemainingNonRepresentationFrontierAfterDefaultBase`.  The `fixedCenterLeaf`
-and `support_card_boundary` fields are now supplied directly from raw action:
-`reflectionFixedCenterLeafBoundary_of_raw_action` gives the former, and
-`reflectionFixedStarAFixingBoundary_of_raw_action` gives the fixed-neighbor
-support-card boundary.  The `referenceMatching` pipeline is also unfolded past
-the midpoint support-card step: raw fixed-star middle identifies every midpoint
-middle vertex as the corresponding reflection star center, giving
-`midpointMiddleSupportCardTwoBoundary_of_raw_action`.  One route still uses the
-fixedness of reference matching solutions, packaged as
-`ReferenceRotationMatchingSolutionVertexFixedBoundary`.  A less circular route
-now keeps the reference-to-midpoint comparison independent and supplies the
-one-point exception case from endpoint target-sign compatibility:
+What remains is to construct the lean-aware branch/A-fiber package from the
+raw action.  The `fixedCenterLeaf`, fixed-star, fixed-star middle, A-fixing
+support-card, and default-base labeling fields are now supplied directly from
+raw action.  There are now two equivalent compressed entrypoints on the
+default-base labeling.  The direct Lean-aware entrypoint is:
 
-- `ReferenceRotationToMidpointReflectionBoundary`
-- `EndpointMatchingAFixingTargetSignBoundary` only via its no-premise form
-- `EndpointSignNegativeMatchingPairBoundary`
-- `noAllEndpointAdj`
+- `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
+- `MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary`.
 
-The midpoint-exception disjointness is no longer a primitive input on the
-raw-action constructors.  Raw A-fixing support size plus `noAllEndpointAdj` and
-one of `no_card_one`, `MidpointExceptionAFixingSupportSingletonFixedBoundary`,
-`MidpointEquationSetAFixingInvariantBoundary`,
-`EndpointMatchingAFixingCoordinateBoundary`, or
-`EndpointMatchingAFixingTargetSignBoundary` gives the disjointness boundary.
+From these two inputs Lean now constructs `LeanAwareFixedStarFinalBoundary`,
+converts it to `FixedStarReferenceMatchingCardinalityPipelineBoundary`, and
+then obtains the exact `AFiberCardinality38Boundary`.  In addition, the
+reference-solution fixedness field is now derived internally if one supplies
+the reference matching pipeline via:
+
+- `ReferenceRotationToMidpointReflectionBoundary`;
+- `MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary`.
+
+Thus the reference-to-midpoint route is no longer merely a
+matching-equation/default-base frontier; it also feeds the canonical
+lean-aware `AFiberCardinality38Boundary` route.
 
 The new raw fixed-star, K155, and A-fixing bridges also remove the reflection
 fixed count `56` and the default-base support-card boundary as separate inputs
@@ -1249,14 +1248,20 @@ midpoint-exception geometry needed to populate the fields above.
 
 The natural-language proof's A-fiber midpoint reflection argument is now split
 more finely.  The midpoint-middle support-card-two fact is a raw-action
-consequence of the fixed-star theorem.  The current best frontier is to prove
-the reference-to-midpoint comparison and endpoint target-sign compatibility.
-That route avoids using `ReferenceRotationMatchingSolutionVertexFixedBoundary`
-as an input, while still leaving the stronger vertex-fixed route available if
-it turns out to be the cleaner graph-geometric statement.  The exception
-disjointness field has been reduced to endpoint target-sign plus endpoint
-obstruction; the raw-action constructors no longer need to assume disjointness
-or singleton fixedness directly on the preferred route.
+consequence of the fixed-star theorem.  The exception side is now also a
+case-boundary theorem rather than just a disjointness theorem: pointwise
+endpoint non-adjacency supplies the two-point exclusion, and the corrected
+negative-endpoint label exchange supplies the paired-singleton exclusion used
+for `no_card_one`.
+
+The exact `38` count is now reached by the intended upper/lower squeeze:
+`ReferenceRotationMatchingSolutionVertexFixedBoundary` gives the reference
+matching exception-set upper bound, while the midpoint-exception case boundary
+gives the all-fibers support-complement lower bound.  Lean now also proves the
+reference-solution fixedness field from `ReferenceRotationToMidpointReflectionBoundary`
+plus that same case boundary, by first constructing the raw-action
+`ReferenceMatchingPipelineBoundary` and then applying the
+reference-solution-from-exceptions connector.
 
 ### 5. Endpoint obstruction / singleton / doubling case coverage
 
@@ -1283,12 +1288,32 @@ single-offset common-neighbor boundary.  The useful open endpoint target is the
 sign/label compatibility needed by the default-base pipeline, especially
 `EndpointMatchingAFixingTargetSignBoundary`.  The latter is now explicitly
 diagnosed as a no-premise boundary, since its target equality would identify
-vertices in the distinct `d` and `-d` A-fibers:
+vertices in the distinct `d` and `-d` A-fibers.  The paired-adjacency boundary
+is no longer an independent target once any of the coordinate/no-premise/target
+sign inputs is available:
 
 ```lean
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNegativeOffsetBoundary
 BranchOrbitABCReflectionLabeling.endpointMatchingAFixingNegativeOffsetBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary.toEndpointSignNoReflectedReferenceNegMatchingBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary.toEndpointSignPairedAdjacencyBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingCoordinateBoundary.toEndpointSignPairedAdjacencyBoundary
+BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary.toEndpointSignPairedAdjacencyBoundary
+BranchOrbitABCReflectionLabeling.EndpointSignNoReflectedReferenceNegMatchingBoundary.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointSignPairedAdjacencyBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary.toEndpointSignNoReflectedReferenceNegMatchingBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary.toEndpointSignPairedAdjacencyBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary.toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary.toMidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary.toMidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary
+BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary.toMidpointExceptionEndpointAdjCommonNeighborBasicBoundary
+BranchOrbitABCReflectionLabeling.EndpointReferenceExchangeCommonNeighborBoundary.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary.toEndpointReferenceExchangeCommonNeighborBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborBasicBoundary.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionEndpointAdjCommonNeighborFixedBoundary.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
 BranchOrbitABCReflectionLabeling.MidpointEquationSetAFixingNegInvariantBoundary
 BranchOrbitABCReflectionLabeling.midpointEquationSetAFixingNegInvariantBoundary
 BranchOrbitABCReflectionLabeling.MidpointExceptionSetAFixingNegInvariantBoundary
@@ -1301,20 +1326,85 @@ BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingleto
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.toMidpointExceptionAFixingSupportNoCardOneBoundary
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.no_card_one
 BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary
+BranchOrbitABCReflectionLabeling.EndpointSignPairedAdjacencyBoundary.toEndpointSignNegativeMatchingPairBoundary
+BranchOrbitABCReflectionLabeling.EndpointSignPairedAdjacencyBoundary.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.toMidpointExceptionAFixingSupportCaseBoundary_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.midpointExceptionAFixingSupportCaseBoundary_of_raw_action_endpointPointwiseNonadj
 BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointPairedAdj_noAllEndpointAdj
 BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointNegativePair
 BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointNegativePair
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointPairedAdj
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointPairedAdj
+BranchOrbitABCReflectionLabeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.leanAwareFixedStarFinalBoundary_of_raw_action_fields
+BranchOrbitABCReflectionLabeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.aFiberCardinality38Boundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportCaseBoundary.toReferenceRotationMatchingSolutionVertexFixedBoundary
+BranchOrbitABCReflectionLabeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.referenceRotationMatchingSolutionVertexFixedBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+BranchOrbitABCReflectionLabeling.aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+BranchOrbitABCReflectionLabeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+BranchOrbitABCReflectionLabeling.aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+BranchOrbitABCReflectionLabeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+BranchOrbitABCReflectionLabeling.aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+BranchOrbitABCReflectionLabeling.referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+D19ActsOnMoore57.leanAwareFixedStarFinalBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.aFiberCardinality38Boundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.referenceRotationMatchingSolutionVertexFixedBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
 D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
 D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
 D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointNegativePair
 D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointPairedAdj_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointPairedAdj_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointPairedAdj
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointPairedAdj_fields
+D19ActsOnMoore57.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+D19ActsOnMoore57.remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
 D19ActsOnMoore57.no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
 D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
 D19ActsOnMoore57.no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
 D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointNegativePair
+D19ActsOnMoore57.no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPairedAdj
+D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointPairedAdj
+D19ActsOnMoore57.no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPairedAdj
+D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPairedAdj
+D19ActsOnMoore57.no_remainingLabeledReflectionMatchingEquationConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBase_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+D19ActsOnMoore57.no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+D19ActsOnMoore57.no_remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action
+no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+no_D19_leanAwareFixedStarFinalBoundary_of_rotation_split_raw_action_referenceToMidpoint_endpointNoPositiveTarget
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.target_sign_vertices_ne
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
+IsMoore57.not_adj_of_commonNeighbor
+IsMoore57.eq_of_commonNeighbor_of_commonNeighbor
+IsMoore57.no_two_commonNeighbors
 ```
+
+The browser ChatGPT response on 2026-05-11 recommended making the endpoint
+common-neighbor route primary: isolate the SRG core, then use label exchange to
+produce two common neighbors of the same endpoint pair.  Lean now has named
+forms of that core: `not_adj_of_commonNeighbor` is the `λ = 0` step, while
+`eq_of_commonNeighbor_of_commonNeighbor` and `no_two_commonNeighbors` are the
+`λ = 0` plus `μ = 1` collision steps.
 
 The non-circular reflection calculation gives the negative-offset transport
 `M_d p = R_d (θ p) → M_(-d) (θ p) = R_(-d) p`; it does not give a same-sign
@@ -1334,11 +1424,36 @@ BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary.toMidp
 ```
 
 Thus the next real gap is no longer the finite paired-singleton contradiction
-itself, and the raw/default-base constructors now use the corrected
-negative-endpoint label exchange directly, without going through the false
-same-offset target-sign boundary.  It is to prove this negative-endpoint label
-exchange for the default-base labeling, or alternatively prove the
-reference-solution support-complement/fixedness predicted by Cameron Step 2.
+itself, and it is no longer a separate Lean bridge from target-sign/no-premise
+data to `EndpointSignPairedAdjacencyBoundary`.  The corrected negative-endpoint
+label exchange is equivalent, in Lean, to the paired-adjacency form: on the
+moving support this is adjacency/matching conversion, and off the support it is
+just `A p = p`.  If the existing pointwise endpoint obstruction is supplied,
+Lean now builds the whole `MidpointExceptionAFixingSupportCaseBoundary`, not
+only the disjointness field.  This case boundary feeds the lean-aware
+fixed-star final package and hence the `AFiberCardinality38Boundary`.
+
+The remaining mathematical endpoint task is therefore not a choice among
+separate Lean bridges.  Lean now converts pointwise endpoint non-adjacency back
+to the contradiction-style endpoint fixedness boundary and to
+`MidpointExceptionEndpointAdjCommonNeighborBasicBoundary`, while the existing
+routes convert common-neighbor/basic or the no-premise negative-matching form
+back to pointwise endpoint non-adjacency.  There is also now a direct
+ChatGPT-style exchange form,
+`EndpointReferenceExchangeCommonNeighborBoundary`: endpoint adjacency from the
+reference coordinate is transported to endpoint adjacency from the reflected
+reference coordinate.  This form proves pointwise non-adjacency by the explicit
+two-common-neighbor collision, and it is equivalent to the existing basic
+common-neighbor boundary after applying the A-fixing reflection.
+
+The endpoint gap can now be stated as a single geometric input in whichever
+form the natural-language proof supplies: pointwise non-adjacency,
+endpoint-reference exchange, basic single-endpoint common-neighbor/fixedness,
+or `EndpointSignNoReflectedReferenceNegMatchingBoundary`.  In parallel, one can
+prove either `ReferenceRotationToMidpointReflectionBoundary` or the stronger
+direct `ReferenceRotationMatchingSolutionVertexFixedBoundary`.  The former now
+derives the latter once the endpoint pointwise obstruction is available.
+Together these facts close the canonical raw-action branch/A-fiber frontier.
 
 ### 6. Representation component entrypoints
 
@@ -1377,19 +1492,20 @@ The contradiction routes are now well connected once their branch/A-fiber
 inputs exist.  The representation character identities, reflection fixed count
 `56`, adjacent-moved count `112`, fixed-star/K155 package, fixed-center-leaf
 boundary, A-fixing support-card boundary, and midpoint-middle support-card-two
-boundary are all available as raw-action consequences.
+boundary are all available as raw-action consequences.  The finite endpoint
+case split is also now wired into the lean-aware final package and the exact
+`38` A-fiber cardinality boundary.
 
 The main missing work is now:
 
 1. prove `ReferenceRotationToMidpointReflectionBoundary` for the default-base
-   labeling, or alternatively prove the stronger
+   labeling, or prove the stronger direct
    `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
-2. avoid the false same-offset target-sign route: either prove the no-premise
-   form `EndpointMatchingAFixingNoPositiveTargetBoundary`, or prove the
-   corrected negative-endpoint label exchange
-   `EndpointSignNegativeMatchingPairBoundary` for the default-base labeling
-   and use the now-wired raw/default-base route to rule out the already-isolated
-   paired-singleton obstruction;
-3. connect the already-closed all-offset support-subset endpoint obstruction to
-   the remaining default-base/raw-action package surfaces without reverting to
-   the deprecated single-offset `noAllEndpointAdj` shape.
+2. prove the single remaining endpoint input for the default-base labeling,
+   stated in any of the equivalent forms now wired in Lean:
+   `MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary`,
+   `EndpointReferenceExchangeCommonNeighborBoundary`,
+   `MidpointExceptionEndpointAdjCommonNeighborBasicBoundary`, or
+   `EndpointSignNoReflectedReferenceNegMatchingBoundary`;
+3. use the two facts above through the now-available lean-aware
+   `AFiberCardinality38Boundary` route.

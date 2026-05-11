@@ -150,6 +150,24 @@ def toMidpointExceptionAFixingSupportNoCardTwoBoundary
 
 end MidpointExceptionEndpointAdjForcesAFixingFixedBoundary
 
+namespace MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Pointwise endpoint non-adjacency also gives the contradiction-style
+endpoint fixedness boundary: the impossible endpoint adjacency proves the
+fixedness conclusion vacuously. -/
+noncomputable def toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
+    (boundary :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    MidpointExceptionEndpointAdjForcesAFixingFixedBoundary labeling where
+  aFiberReflectionCoordPerm_fixed_of_endpoint_adj := by
+    intro d hd p hp hadj
+    exact False.elim
+      (boundary.endpoint_nonadj_of_mem_support d hd p hp hadj)
+
+end MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
 end BranchOrbitABCReflectionLabeling
 
 end

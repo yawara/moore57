@@ -97,6 +97,15 @@ def toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
   boundary.toMidpointExceptionEndpointAdjForcesAFixingVertexFixedBoundary
     |>.toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
 
+/-- Direct connector to pointwise endpoint non-adjacency on the A-fixing
+moving support. -/
+def toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+    (boundary :
+      MidpointExceptionEndpointAdjCommonNeighborFixedBoundary labeling) :
+    MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling :=
+  boundary.toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
+    |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
 end MidpointExceptionEndpointAdjCommonNeighborFixedBoundary
 
 end BranchOrbitABCReflectionLabeling

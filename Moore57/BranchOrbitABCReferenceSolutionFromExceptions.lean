@@ -84,6 +84,16 @@ noncomputable def toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
     |>.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
       referenceMatching
 
+/-- The finite midpoint-exception case boundary also gives the vertex-fixed
+reference-solution boundary after applying the reference matching pipeline. -/
+noncomputable def toReferenceRotationMatchingSolutionVertexFixedBoundary
+    (boundary : MidpointExceptionAFixingSupportCaseBoundary labeling)
+    (referenceMatching : ReferenceMatchingPipelineBoundary labeling) :
+    ReferenceRotationMatchingSolutionVertexFixedBoundary labeling :=
+  (boundary.toReferenceRotationMatchingSolutionAFixingSupportComplBoundary
+      referenceMatching)
+    |>.toReferenceRotationMatchingSolutionVertexFixedBoundary
+
 end MidpointExceptionAFixingSupportCaseBoundary
 
 namespace ReferenceRotationMatchingSolutionAFixingSupportComplBoundary

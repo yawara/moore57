@@ -224,6 +224,60 @@ noncomputable def
       referenceToMidpoint)
     noCardOne.no_card_one noAllEndpointAdj
 
+/-- Raw-action constructor for the default-base A-fixing frontier from an
+independent reference-to-midpoint comparison and paired endpoint adjacency. -/
+noncomputable def
+    remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointPairedAdj
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPairedAdj :
+      BranchOrbitABCReflectionLabeling.EndpointSignPairedAdjacencyBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector h :=
+  h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointNegativePair
+    k referenceToMidpoint
+    endpointPairedAdj.toEndpointSignNegativeMatchingPairBoundary
+    noAllEndpointAdj
+
+/-- Raw-action constructor for the default-base A-fixing frontier from an
+independent reference-to-midpoint comparison and pointwise endpoint
+non-adjacency.  The pointwise endpoint obstruction supplies both the paired
+label exchange and the endpoint non-containment input. -/
+noncomputable def
+    remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector h :=
+  let labeling := h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k
+  h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action
+    k
+    (labeling.referenceMatchingPipelineBoundary_of_raw_action
+      labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+      referenceToMidpoint)
+    (let criterion := labeling.midpointReflectionCriterionBoundary_of_raw_action
+     let noPaired :=
+       endpointPointwiseNonadj.toEndpointSignPairedAdjacencyBoundary
+         |>.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary criterion
+     let transport :=
+       labeling.midpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+         criterion
+     let noCardOne :=
+       noPaired.toMidpointExceptionAFixingSupportNoCardOneBoundary transport
+     noCardOne.no_card_one)
+    (endpointPointwiseNonadj.toMidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+      (labeling.reflectionFixedStarAFixingBoundary_of_raw_action
+        |>.toAFixingReflectionFixedNeighborCardBoundary))
+
 /-- Raw-action constructor for the explicit default-base non-representation
 frontier after removing the `star`, `fixedCenterLeaf`, and `support_card_boundary`
 fields. -/
@@ -324,6 +378,42 @@ noncomputable def
     RemainingNonRepresentationFrontierAfterDefaultBase h :=
   (h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointNegativePair
     k referenceToMidpoint endpointNegativePair noAllEndpointAdj)
+    |>.toRemainingNonRepresentationFrontierAfterDefaultBase
+
+/-- Raw-action constructor for the explicit default-base frontier from an
+independent reference-to-midpoint comparison and paired endpoint adjacency. -/
+noncomputable def
+    remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointPairedAdj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPairedAdj :
+      BranchOrbitABCReflectionLabeling.EndpointSignPairedAdjacencyBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingNonRepresentationFrontierAfterDefaultBase h :=
+  (h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointPairedAdj
+    k referenceToMidpoint endpointPairedAdj noAllEndpointAdj)
+    |>.toRemainingNonRepresentationFrontierAfterDefaultBase
+
+/-- Raw-action constructor for the explicit default-base frontier from an
+independent reference-to-midpoint comparison and pointwise endpoint
+non-adjacency. -/
+noncomputable def
+    remainingNonRepresentationFrontierAfterDefaultBase_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingNonRepresentationFrontierAfterDefaultBase h :=
+  (h.remainingNonRepresentationFrontierAfterDefaultBaseAFixingConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    k referenceToMidpoint endpointPointwiseNonadj)
     |>.toRemainingNonRepresentationFrontierAfterDefaultBase
 
 /-- Raw-action constructor for the fixed-star-local default-base frontier.  This

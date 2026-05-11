@@ -2,7 +2,10 @@ import Moore57.ReflectionRawActionFixedCenterLeaf
 import Moore57.ReflectionFixedCountBoundsBridge
 import Moore57.ReflectionPaperFixedStarBoundary
 import Moore57.BranchOrbitABCMatchingTargetReflectionReduced
-import Moore57.BranchOrbitABCEndpointSignMatchingSymmetry
+import Moore57.BranchOrbitABCExceptionCaseEndpointPointwiseBoundary
+import Moore57.BranchOrbitABCEndpointPairedSymmetryBoundary
+import Moore57.BranchOrbitABCEndpointExchangeCommonNeighborBoundary
+import Moore57.BranchOrbitABCLeanAwareFinalBoundary
 
 /-!
 # Raw-action paper fixed-star consequences
@@ -465,6 +468,267 @@ noncomputable def midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_
   labeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_noCardOne_noAllEndpointAdj
     noCardOne.no_card_one noAllEndpointAdj
 
+/-- Raw-action disjointness constructor using the paired-adjacency form of the
+corrected negative-endpoint label exchange. -/
+noncomputable def midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointPairedAdj_noAllEndpointAdj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (endpointPairedAdj :
+      EndpointSignPairedAdjacencyBoundary labeling)
+    (noAllEndpointAdj :
+      MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary labeling) :
+    MidpointExceptionDisjointAFixingSupportBoundary labeling :=
+  labeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
+    endpointPairedAdj.toEndpointSignNegativeMatchingPairBoundary
+    noAllEndpointAdj
+
+/-- Raw-action disjointness constructor using pointwise endpoint non-adjacency
+to supply both the paired-adjacency label exchange and the endpoint
+non-containment input. -/
+noncomputable def midpointExceptionAFixingSupportCaseBoundary_of_raw_action_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    MidpointExceptionAFixingSupportCaseBoundary labeling :=
+  let criterion := labeling.midpointReflectionCriterionBoundary_of_raw_action
+  let supportCard :=
+    labeling.reflectionFixedStarAFixingBoundary_of_raw_action
+      |>.toAFixingReflectionFixedNeighborCardBoundary
+  let noPaired :=
+    endpointPointwiseNonadj.toEndpointSignPairedAdjacencyBoundary
+      |>.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary criterion
+  let transport :=
+    labeling.midpointExceptionAFixingSupportIntersectionNegInvariantBoundary
+      criterion
+  noPaired.toMidpointExceptionAFixingSupportCaseBoundary_endpointPointwiseNonadj
+    transport supportCard criterion endpointPointwiseNonadj
+
+/-- Raw-action disjointness constructor using pointwise endpoint non-adjacency
+to supply the whole midpoint-exception support case boundary. -/
+noncomputable def midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    MidpointExceptionDisjointAFixingSupportBoundary labeling :=
+  (labeling.midpointExceptionAFixingSupportCaseBoundary_of_raw_action_endpointPointwiseNonadj
+      endpointPointwiseNonadj)
+    |>.toMidpointExceptionDisjointAFixingSupportBoundary
+
+/-- Raw-action constructor for the lean-aware fixed-star final package after
+the middle and A-fixing fixed-star fields are discharged. -/
+noncomputable def leanAwareFixedStarFinalBoundary_of_raw_action_fields
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceSolutionVertexFixed :
+      ReferenceRotationMatchingSolutionVertexFixedBoundary labeling)
+    (caseBoundary : MidpointExceptionAFixingSupportCaseBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary h.reflectionFixedStarBoundary_of_raw_action
+      labeling where
+  middle := labeling.reflectionFixedStarMiddleBoundary_of_raw_action
+  referenceSolutionVertexFixed := referenceSolutionVertexFixed
+  midpointExceptionAFixingSupportCase := caseBoundary
+
+/-- Raw-action lean-aware fixed-star package from the two genuine remaining
+geometric inputs: reference-solution fixedness and pointwise endpoint
+non-adjacency. -/
+noncomputable def leanAwareFixedStarFinalBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceSolutionVertexFixed :
+      ReferenceRotationMatchingSolutionVertexFixedBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary h.reflectionFixedStarBoundary_of_raw_action
+      labeling :=
+  labeling.leanAwareFixedStarFinalBoundary_of_raw_action_fields
+    referenceSolutionVertexFixed
+    (labeling.midpointExceptionAFixingSupportCaseBoundary_of_raw_action_endpointPointwiseNonadj
+      endpointPointwiseNonadj)
+
+/-- The same raw-action package, immediately converted to the fixed-star
+cardinality pipeline feeding the `38` A-fiber count. -/
+noncomputable def fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceSolutionVertexFixed :
+      ReferenceRotationMatchingSolutionVertexFixedBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    FixedStarReferenceMatchingCardinalityPipelineBoundary
+      h.reflectionFixedStarBoundary_of_raw_action labeling :=
+  (labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+      referenceSolutionVertexFixed endpointPointwiseNonadj)
+    |>.toFixedStarReferenceMatchingCardinalityPipelineBoundary
+
+/-- Canonical raw-action route to the exact A-fiber cardinality `38`: the upper
+bound comes from the reference matching exception set, while the lower bound is
+the all-fibers support-complement sum supplied by the midpoint-exception case. -/
+noncomputable def aFiberCardinality38Boundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceSolutionVertexFixed :
+      ReferenceRotationMatchingSolutionVertexFixedBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    AFiberCardinality38Boundary h labeling.data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  (labeling.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+      referenceSolutionVertexFixed endpointPointwiseNonadj)
+    |>.toAFiberCardinality38Boundary
+
+/-- Raw-action lean-aware fixed-star package from the independent
+reference-to-midpoint comparison and pointwise endpoint non-adjacency.
+
+The endpoint pointwise obstruction gives the finite midpoint-exception case
+boundary.  Together with the raw-action reference matching pipeline, that case
+boundary also supplies the reference-solution fixedness field internally. -/
+noncomputable def leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary h.reflectionFixedStarBoundary_of_raw_action
+      labeling :=
+  let caseBoundary :=
+    labeling.midpointExceptionAFixingSupportCaseBoundary_of_raw_action_endpointPointwiseNonadj
+      endpointPointwiseNonadj
+  LeanAwareFixedStarFinalBoundary.of_referenceMatching_aFixingCenter_cases
+    labeling.reflectionFixedStarMiddleBoundary_of_raw_action
+    labeling.reflectionFixedStarAFixingBoundary_of_raw_action
+    (labeling.referenceMatchingPipelineBoundary_of_raw_action
+      labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+      referenceToMidpoint)
+    caseBoundary
+
+/-- Fixed-star cardinality pipeline from the reference-to-midpoint comparison
+and endpoint pointwise obstruction. -/
+noncomputable def fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    FixedStarReferenceMatchingCardinalityPipelineBoundary
+      h.reflectionFixedStarBoundary_of_raw_action labeling :=
+  (labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      referenceToMidpoint endpointPointwiseNonadj)
+    |>.toFixedStarReferenceMatchingCardinalityPipelineBoundary
+
+/-- Raw-action route to the exact A-fiber cardinality `38` from the independent
+reference-to-midpoint comparison and endpoint pointwise obstruction. -/
+noncomputable def aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    AFiberCardinality38Boundary h labeling.data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  (labeling.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      referenceToMidpoint endpointPointwiseNonadj)
+    |>.toAFiberCardinality38Boundary
+
+/-- Raw-action route from the independent reference-to-midpoint comparison and
+pointwise endpoint obstruction to reference-solution fixedness. -/
+noncomputable def referenceRotationMatchingSolutionVertexFixedBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    ReferenceRotationMatchingSolutionVertexFixedBoundary labeling :=
+  let caseBoundary :=
+    labeling.midpointExceptionAFixingSupportCaseBoundary_of_raw_action_endpointPointwiseNonadj
+      endpointPointwiseNonadj
+  caseBoundary.toReferenceRotationMatchingSolutionVertexFixedBoundary
+    (labeling.referenceMatchingPipelineBoundary_of_raw_action
+      labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+      referenceToMidpoint)
+
+/-- Raw-action lean-aware fixed-star package from reference-to-midpoint and the
+single-endpoint common-neighbor boundary. -/
+noncomputable def leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointCommonNeighborBasic :
+      MidpointExceptionEndpointAdjCommonNeighborBasicBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary h.reflectionFixedStarBoundary_of_raw_action
+      labeling :=
+  labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    referenceToMidpoint
+    endpointCommonNeighborBasic.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+/-- Raw-action `38` route from reference-to-midpoint and the single-endpoint
+common-neighbor boundary. -/
+noncomputable def aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointCommonNeighborBasic :
+      MidpointExceptionEndpointAdjCommonNeighborBasicBoundary labeling) :
+    AFiberCardinality38Boundary h labeling.data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  (labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointCommonNeighborBasic
+      referenceToMidpoint endpointCommonNeighborBasic)
+    |>.toFixedStarReferenceMatchingCardinalityPipelineBoundary
+    |>.toAFiberCardinality38Boundary
+
+/-- Raw-action lean-aware fixed-star package from reference-to-midpoint and
+the endpoint-reference exchange common-neighbor boundary. -/
+noncomputable def leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointExchange :
+      EndpointReferenceExchangeCommonNeighborBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary h.reflectionFixedStarBoundary_of_raw_action
+      labeling :=
+  labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    referenceToMidpoint
+    endpointExchange.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+/-- Raw-action `38` route from reference-to-midpoint and the endpoint-reference
+exchange common-neighbor boundary. -/
+noncomputable def aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointExchange :
+      EndpointReferenceExchangeCommonNeighborBoundary labeling) :
+    AFiberCardinality38Boundary h labeling.data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  (labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointExchangeCommonNeighbor
+      referenceToMidpoint endpointExchange)
+    |>.toFixedStarReferenceMatchingCardinalityPipelineBoundary
+    |>.toAFiberCardinality38Boundary
+
+/-- Raw-action lean-aware fixed-star package from reference-to-midpoint and the
+no-reflected-reference negative matching diagnostic. -/
+noncomputable def leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointNoReflectedReferenceNegMatching :
+      EndpointSignNoReflectedReferenceNegMatchingBoundary labeling) :
+    LeanAwareFixedStarFinalBoundary h.reflectionFixedStarBoundary_of_raw_action
+      labeling :=
+  labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    referenceToMidpoint
+    (endpointNoReflectedReferenceNegMatching
+      |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary)
+
+/-- Raw-action `38` route from reference-to-midpoint and the no-reflected
+negative matching diagnostic. -/
+noncomputable def aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointNoReflectedReferenceNegMatching :
+      EndpointSignNoReflectedReferenceNegMatchingBoundary labeling) :
+    AFiberCardinality38Boundary h labeling.data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  (labeling.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointNoReflectedReferenceNegMatching
+      referenceToMidpoint endpointNoReflectedReferenceNegMatching)
+    |>.toFixedStarReferenceMatchingCardinalityPipelineBoundary
+    |>.toAFiberCardinality38Boundary
+
 /-- Raw-action reference-fiber matching-equation frontier after reducing
 midpoint-exception disjointness to the one-point and endpoint-adjacency
 exclusions. -/
@@ -637,11 +901,221 @@ theorem referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_
     referenceToMidpoint endpointNegativePair noAllEndpointAdj
     |>.toReferenceFiberMatchingEquationCardTwo
 
+/-- Raw-action reference-fiber matching-equation frontier from an independent
+reference-to-midpoint comparison and the paired-adjacency form of the corrected
+negative-endpoint label exchange. -/
+noncomputable def
+    referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointPairedAdj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPairedAdj :
+      EndpointSignPairedAdjacencyBoundary labeling)
+    (noAllEndpointAdj :
+      MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary labeling) :
+    ReferenceFiberMatchingEquationFrontierBoundary labeling :=
+  labeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointNegativePair
+    referenceToMidpoint
+    endpointPairedAdj.toEndpointSignNegativeMatchingPairBoundary
+    noAllEndpointAdj
+
+/-- Raw-action reference-fiber matching equation from an independent
+reference-to-midpoint comparison and paired endpoint adjacency. -/
+theorem referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointPairedAdj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPairedAdj :
+      EndpointSignPairedAdjacencyBoundary labeling)
+    (noAllEndpointAdj :
+      MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary labeling) :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ((Finset.univ :
+          Finset
+            labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+            0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+          (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+            d 0 p).card =
+        2 :=
+  labeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointPairedAdj
+    referenceToMidpoint endpointPairedAdj noAllEndpointAdj
+    |>.toReferenceFiberMatchingEquationCardTwo
+
+/-- Raw-action reference-fiber matching-equation frontier from an independent
+reference-to-midpoint comparison and pointwise endpoint non-adjacency.  The
+pointwise endpoint obstruction supplies both paired endpoint adjacency and the
+single-offset endpoint obstruction. -/
+noncomputable def
+    referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    ReferenceFiberMatchingEquationFrontierBoundary labeling :=
+  labeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action
+    labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+    referenceToMidpoint
+    (labeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointPointwiseNonadj
+      endpointPointwiseNonadj)
+
+/-- Raw-action reference-fiber matching equation from an independent
+reference-to-midpoint comparison and pointwise endpoint non-adjacency. -/
+theorem referenceFiberMatchingEquationCardTwo_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    (labeling : BranchOrbitABCReflectionLabeling h)
+    (referenceToMidpoint :
+      ReferenceRotationToMidpointReflectionBoundary labeling)
+    (endpointPointwiseNonadj :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    ∀ d : ZMod 19, ∀ hd : d ≠ 0,
+      ((Finset.univ :
+          Finset
+            labeling.data.toBranchOrbitABCData.toAFiberCoordinates.P).filter fun p =>
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toBranchOrbitABCData.toAFiberCoordinates
+            0 (0 + d) (index_ne_add_of_ne_zero hd) p =
+          (labeling.data.toBranchOrbitABCData.toAFiberRotationEquivariance).coordPerm
+            d 0 p).card =
+        2 :=
+  labeling.referenceFiberMatchingEquationFrontierBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+    referenceToMidpoint endpointPointwiseNonadj
+    |>.toReferenceFiberMatchingEquationCardTwo
+
 end BranchOrbitABCReflectionLabeling
 
 namespace D19ActsOnMoore57
 
 variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Default-base raw-action constructor for the lean-aware fixed-star final
+package.  Raw action supplies the fixed star and middle fields; the remaining
+inputs are exactly reference-solution fixedness and the pointwise endpoint
+obstruction. -/
+noncomputable def
+    leanAwareFixedStarFinalBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceSolutionVertexFixed :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionVertexFixedBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary
+      h.reflectionFixedStarBoundary_of_raw_action
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+    |>.leanAwareFixedStarFinalBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj
+      referenceSolutionVertexFixed endpointPointwiseNonadj
+
+/-- Default-base raw-action route to the fixed-star cardinality pipeline from
+the two remaining geometric inputs. -/
+noncomputable def
+    fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceSolutionVertexFixed :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionVertexFixedBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    BranchOrbitABCReflectionLabeling.FixedStarReferenceMatchingCardinalityPipelineBoundary
+      h.reflectionFixedStarBoundary_of_raw_action
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (h.leanAwareFixedStarFinalBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+      k referenceSolutionVertexFixed endpointPointwiseNonadj)
+    |>.toFixedStarReferenceMatchingCardinalityPipelineBoundary
+
+/-- Default-base raw-action route to the exact A-fiber cardinality `38` from
+reference-solution fixedness and the pointwise endpoint obstruction. -/
+noncomputable def
+    aFiberCardinality38Boundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceSolutionVertexFixed :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionVertexFixedBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    AFiberCardinality38Boundary h
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  (h.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceVertexFixed_endpointPointwiseNonadj_fields
+      k referenceSolutionVertexFixed endpointPointwiseNonadj)
+    |>.toAFiberCardinality38Boundary
+
+/-- Default-base raw-action constructor for the lean-aware fixed-star final
+package from reference-to-midpoint comparison and pointwise endpoint
+non-adjacency. -/
+noncomputable def
+    leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    BranchOrbitABCReflectionLabeling.LeanAwareFixedStarFinalBoundary
+      h.reflectionFixedStarBoundary_of_raw_action
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+    |>.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      referenceToMidpoint endpointPointwiseNonadj
+
+/-- Default-base raw-action route to the fixed-star cardinality pipeline from
+reference-to-midpoint comparison and pointwise endpoint non-adjacency. -/
+noncomputable def
+    fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    BranchOrbitABCReflectionLabeling.FixedStarReferenceMatchingCardinalityPipelineBoundary
+      h.reflectionFixedStarBoundary_of_raw_action
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (h.leanAwareFixedStarFinalBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+      k referenceToMidpoint endpointPointwiseNonadj)
+    |>.toFixedStarReferenceMatchingCardinalityPipelineBoundary
+
+/-- Default-base raw-action route to the exact A-fiber cardinality `38` from
+reference-to-midpoint comparison and pointwise endpoint non-adjacency. -/
+noncomputable def
+    aFiberCardinality38Boundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    AFiberCardinality38Boundary h
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k).data.toAFiberCoordinates
+      (Finset.univ : Finset (ZMod 19)) :=
+  (h.fixedStarReferenceMatchingCardinalityPipelineBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+      k referenceToMidpoint endpointPointwiseNonadj)
+    |>.toAFiberCardinality38Boundary
+
+/-- Default-base raw-action route from reference-to-midpoint comparison and
+pointwise endpoint non-adjacency to reference-solution fixedness. -/
+noncomputable def
+    referenceRotationMatchingSolutionVertexFixedBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    BranchOrbitABCReflectionLabeling.ReferenceRotationMatchingSolutionVertexFixedBoundary
+      (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+    |>.referenceRotationMatchingSolutionVertexFixedBoundary_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj
+      referenceToMidpoint endpointPointwiseNonadj
 
 /-- Default-base raw-action constructor using fixed-star middle and
 vertex-fixed reference-solution geometry instead of the more algebraic
@@ -901,6 +1375,86 @@ theorem
     ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
       |>.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointNegativePair_noAllEndpointAdj
         endpointNegativePair noAllEndpointAdj)
+
+/-- Default-base raw-action constructor from an independent
+reference-to-midpoint comparison and paired endpoint adjacency. -/
+noncomputable def
+    remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointPairedAdj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPairedAdj :
+      BranchOrbitABCReflectionLabeling.EndpointSignPairedAdjacencyBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingDefaultBaseFixedCenterLeafReferenceConnector h :=
+  h.remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+    k referenceToMidpoint
+    endpointPairedAdj.toEndpointSignNegativeMatchingPairBoundary
+    noAllEndpointAdj
+
+/-- Public labeled-reflection matching connector from an independent
+reference-to-midpoint comparison and paired endpoint adjacency. -/
+theorem
+    remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointPairedAdj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPairedAdj :
+      BranchOrbitABCReflectionLabeling.EndpointSignPairedAdjacencyBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (noAllEndpointAdj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoAllEndpointAdjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingLabeledReflectionMatchingEquationConnector h :=
+  h.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointNegativePair_fields
+    k referenceToMidpoint
+    endpointPairedAdj.toEndpointSignNegativeMatchingPairBoundary
+    noAllEndpointAdj
+
+/-- Default-base raw-action constructor from an independent
+reference-to-midpoint comparison and pointwise endpoint non-adjacency.  The
+endpoint pointwise obstruction supplies both endpoint inputs required by the
+paired-adjacency route. -/
+noncomputable def
+    remainingDefaultBaseFixedStarReferenceConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingDefaultBaseFixedCenterLeafReferenceConnector h :=
+  let labeling := h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k
+  h.remainingDefaultBaseFixedCenterLeafReferenceConnector_of_raw_action_fields k
+    labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+    referenceToMidpoint
+    (labeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointPointwiseNonadj
+      endpointPointwiseNonadj)
+
+/-- Public labeled-reflection matching connector from an independent
+reference-to-midpoint comparison and pointwise endpoint non-adjacency. -/
+theorem
+    remainingLabeledReflectionMatchingEquationConnector_of_raw_action_referenceToMidpoint_endpointPointwiseNonadj_fields
+    (k : ZMod 19)
+    (referenceToMidpoint :
+      BranchOrbitABCReflectionLabeling.ReferenceRotationToMidpointReflectionBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k))
+    (endpointPointwiseNonadj :
+      BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)) :
+    RemainingLabeledReflectionMatchingEquationConnector h :=
+  let labeling := h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k
+  h.remainingLabeledReflectionMatchingEquationConnector_of_raw_action_fields k
+    labeling.midpointMiddleSupportCardTwoBoundary_of_raw_action
+    referenceToMidpoint
+    (labeling.midpointExceptionDisjointAFixingSupportBoundary_of_raw_action_endpointPointwiseNonadj
+      endpointPointwiseNonadj)
 
 end D19ActsOnMoore57
 

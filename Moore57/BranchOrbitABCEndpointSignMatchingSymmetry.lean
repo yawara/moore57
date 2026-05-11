@@ -1,4 +1,5 @@
 import Moore57.BranchOrbitABCEndpointSignAdjacencyBoundary
+import Moore57.BranchOrbitABCExceptionEndpointPointwiseBoundary
 import Moore57.AFiberMatchingPermSymmetry
 
 /-!
@@ -255,7 +256,137 @@ def toEndpointSignMatchingBoundary
     exact False.elim
       (boundary.no_reflected_reference_neg_matching d hd p hpSupport hreflected)
 
+/-- If the reflected-reference negative matching premise never occurs, endpoint
+adjacency would force A-fixing fixedness and hence is pointwise impossible on
+the A-fixing moving support. -/
+def toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+    (boundary : EndpointSignNoReflectedReferenceNegMatchingBoundary labeling) :
+    MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling :=
+  boundary.toEndpointSignMatchingBoundary
+    |>.toMidpointExceptionEndpointAdjForcesAFixingFixedBoundary
+    |>.toMidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
 end EndpointSignNoReflectedReferenceNegMatchingBoundary
+
+namespace EndpointMatchingAFixingNoPositiveTargetBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- The no-positive-target diagnostic also rules out the reflected-reference
+negative matching premise.
+
+Indeed, applying the already-proved negative-offset transport at `-d` to the
+reflected coordinate sends
+`M_(-d) (A p) = R_(-d) p` back to the positive target equation
+`M_d p = R_d (A p)`. -/
+def toEndpointSignNoReflectedReferenceNegMatchingBoundary
+    (boundary : EndpointMatchingAFixingNoPositiveTargetBoundary labeling) :
+    EndpointSignNoReflectedReferenceNegMatchingBoundary labeling where
+  no_reflected_reference_neg_matching := by
+    intro d hd p _hpSupport hreflected
+    let hneg : -d ≠ 0 := neg_ne_zero_of_ne_zero_zmod19 hd
+    have hAA :
+        labeling.aFiberReflectionCoordPerm
+            (labeling.aFiberReflectionCoordPerm p) = p :=
+      labeling.aFiberReflectionCoordPerm_involutive p
+    have hreflected_for_transport :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + (-d))
+            (index_ne_add_of_ne_zero hneg)
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0
+            (labeling.aFiberReflectionCoordPerm
+              (labeling.aFiberReflectionCoordPerm p)) := by
+      simpa [hAA] using hreflected
+    have hpositive :=
+      labeling.endpointMatchingAFixingNegativeOffsetBoundary
+        |>.aFiberReflection_matching_eq_rotation_neg (-d) hneg
+          (labeling.aFiberReflectionCoordPerm p) hreflected_for_transport
+    exact boundary.no_positive_target_matching d hd p (by
+      simpa [hAA] using hpositive)
+
+end EndpointMatchingAFixingNoPositiveTargetBoundary
+
+namespace MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
+
+variable {labeling : BranchOrbitABCReflectionLabeling h}
+
+/-- Pointwise endpoint non-adjacency on the A-fixing support rules out the
+reflected-reference negative matching premise.
+
+The reflected negative premise transports back, at offset `-d`, to the positive
+endpoint equation `M_d p = R_d (A p)`, which is exactly the endpoint adjacency
+forbidden by the pointwise boundary. -/
+def toEndpointSignNoReflectedReferenceNegMatchingBoundary
+    (boundary :
+      MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary labeling) :
+    EndpointSignNoReflectedReferenceNegMatchingBoundary labeling where
+  no_reflected_reference_neg_matching := by
+    intro d hd p hpSupport hreflected
+    let coords := labeling.data.toAFiberCoordinates
+    let hneg : -d ≠ 0 := neg_ne_zero_of_ne_zero_zmod19 hd
+    have hAA :
+        labeling.aFiberReflectionCoordPerm
+            (labeling.aFiberReflectionCoordPerm p) = p :=
+      labeling.aFiberReflectionCoordPerm_involutive p
+    have hreflected_for_transport :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + (-d))
+            (index_ne_add_of_ne_zero hneg)
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0
+            (labeling.aFiberReflectionCoordPerm
+              (labeling.aFiberReflectionCoordPerm p)) := by
+      simpa [hAA] using hreflected
+    have hpositive :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + d)
+            (index_ne_add_of_ne_zero hd) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+            (labeling.aFiberReflectionCoordPerm p) := by
+      have htransport :=
+        labeling.endpointMatchingAFixingNegativeOffsetBoundary
+          |>.aFiberReflection_matching_eq_rotation_neg (-d) hneg
+            (labeling.aFiberReflectionCoordPerm p) hreflected_for_transport
+      simpa [hAA] using htransport
+    have hdd : midpointOf d + midpointOf d = d := midpointOf_add_self d
+    have hendpoint :
+        labeling.endpointCommonNeighborReflectedEndpointVertex d p =
+          (((coords.coord (0 + d)
+              (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+                (labeling.aFiberReflectionCoordPerm p)) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) := by
+      have hidx : (0 + (midpointOf d + midpointOf d) : ZMod 19) = 0 + d := by
+        simp [hdd]
+      have hperm :
+          labeling.midpointReflectionCoordPerm (midpointOf d) p =
+            labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+              (labeling.aFiberReflectionCoordPerm p) := by
+        simpa [hdd] using
+          labeling.midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+            (midpointOf d) p
+      rw [endpointCommonNeighborReflectedEndpointVertex, hperm, hidx]
+    have hadjRaw :
+        Γ.Adj
+          (((coords.coord 0 p :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a 0)}) : V))
+          (((coords.coord (0 + d)
+              (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+                (labeling.aFiberReflectionCoordPerm p)) :
+            {x : V // x ∈ branchFiber Γ coords.u (coords.a (0 + d))}) : V)) :=
+      (AFiberCoordinates.adj_iff_matchingEquiv_eq h.isMoore coords
+        (index_ne_add_of_ne_zero hd) p
+        (labeling.data.toAFiberRotationEquivariance.coordPerm d 0
+          (labeling.aFiberReflectionCoordPerm p))).2 hpositive
+    have hadjPositive :
+        Γ.Adj
+          (labeling.endpointCommonNeighborReferenceVertex p)
+          (labeling.endpointCommonNeighborReflectedEndpointVertex d p) := by
+      simpa [endpointCommonNeighborReferenceVertex, coords, hendpoint] using
+        hadjRaw
+    exact boundary.endpoint_nonadj_of_mem_support d hd p hpSupport hadjPositive
+
+end MidpointExceptionAFixingSupportEndpointPointwiseNonadjBoundary
 
 namespace EndpointSignMatchingBoundary
 
