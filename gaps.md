@@ -1259,6 +1259,38 @@ and doubling geometry are mostly present.  The remaining work is to show that
 the raw action necessarily falls into one of these cases and to build the
 corresponding Lean wrapper.
 
+The all-offset support-subset branch is now separated from the older
+single-offset `noAllEndpointAdj` shape.  For every raw-action default-base
+labeling, Lean directly rules out the global all-offset support-subset
+exception by combining the raw A-fixing support-card boundary with the
+midpoint-reflection criterion:
+
+```lean
+D19ActsOnMoore57.noAllOffsetsEndpointAdj_of_raw_action_defaultBase
+D19ActsOnMoore57.noAllOffsetsSupportSubsetBoundary_of_raw_action_defaultBase
+D19ActsOnMoore57.not_supportSubsetExceptionIssueBoundary_of_raw_action_defaultBase
+D19ActsOnMoore57.not_exists_supportSubsetExceptionIssueBoundary_of_raw_action_defaultBase
+```
+
+Thus the remaining endpoint work should not try to force the deprecated
+single-offset common-neighbor boundary.  The useful open endpoint target is the
+sign/label compatibility needed by the default-base pipeline, especially
+`EndpointMatchingAFixingTargetSignBoundary`.  The latter is now explicitly
+diagnosed as a no-premise boundary, since its target equality would identify
+vertices in the distinct `d` and `-d` A-fibers:
+
+```lean
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNoPositiveTargetBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingNegativeOffsetBoundary
+BranchOrbitABCReflectionLabeling.endpointMatchingAFixingNegativeOffsetBoundary
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.target_sign_vertices_ne
+BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
+```
+
+The non-circular reflection calculation gives the negative-offset transport
+`M_d p = R_d (θ p) → M_(-d) (θ p) = R_(-d) p`; it does not give a same-sign
+target equality.
+
 ### 6. Representation component entrypoints
 
 This is mostly reduced.  Current connector files now expose direct routes from
@@ -1304,6 +1336,10 @@ The main missing work is now:
    labeling, or alternatively prove the stronger
    `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
 2. prove `EndpointMatchingAFixingTargetSignBoundary` for the default-base
-   labeling, which supplies the singleton/card-one side of the exception split;
-3. prove the endpoint exclusion `noAllEndpointAdj` from Moore graph branch
-   geometry.
+   labeling, or more accurately prove the equivalent no-premise form
+   `EndpointMatchingAFixingNoPositiveTargetBoundary`, which records that the
+   positive target-matching premise cannot occur; the provable reflection
+   transport is only the negative-offset boundary already exposed above;
+3. connect the already-closed all-offset support-subset endpoint obstruction to
+   the remaining default-base/raw-action package surfaces without reverting to
+   the deprecated single-offset `noAllEndpointAdj` shape.

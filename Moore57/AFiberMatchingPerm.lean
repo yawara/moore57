@@ -81,6 +81,35 @@ theorem matchingEquiv_eq_of_adj
     matchingEquiv hΓ coords i j hij p = q :=
   (adj_iff_matchingEquiv_eq hΓ coords hij p q).1 hpq
 
+/-- Coordinate vertices in distinct A-side branch fibers are distinct. -/
+theorem coord_ne_of_index_ne
+    (hΓ : IsMoore57 Γ) (coords : AFiberCoordinates Γ)
+    {i j : ZMod 19} (hij : i ≠ j) (p q : coords.P) :
+    (((coords.coord i p :
+      {x : V // x ∈ branchFiber Γ coords.u (coords.a i)}) : V)) ≠
+      (((coords.coord j q :
+        {x : V // x ∈ branchFiber Γ coords.u (coords.a j)}) : V)) := by
+  intro hcoord
+  have hxmem :
+      (((coords.coord i p :
+        {x : V // x ∈ branchFiber Γ coords.u (coords.a i)}) : V)) ∈
+        branchFiber Γ coords.u (coords.a i) :=
+    coords.coord_mem i p
+  have hyadj :
+      Γ.Adj (coords.a j)
+        (((coords.coord i p :
+          {x : V // x ∈ branchFiber Γ coords.u (coords.a i)}) : V)) := by
+    have hymem :
+        (((coords.coord i p :
+          {x : V // x ∈ branchFiber Γ coords.u (coords.a i)}) : V)) ∈
+          branchFiber Γ coords.u (coords.a j) := by
+      simp [hcoord, coords.coord_mem j q]
+    exact (mem_branchFiber.mp hymem).2
+  exact
+    (hΓ.not_adj_other_branch_of_mem_branchFiber
+      (coords.hub i) (coords.hub j) (coords.a_ne hij) hxmem)
+      hyadj.symm
+
 /-- A coordinate point is adjacent to its image under the transported matching
 in the target A-side fiber. -/
 theorem adj_coord_matchingEquiv

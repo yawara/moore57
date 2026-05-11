@@ -1,5 +1,6 @@
 import Moore57.ReflectionRawActionFixedStar
 import Moore57.BranchOrbitABCSupportCardFrontier
+import Moore57.BranchOrbitABCCardTwoAllOffsetsFinalGapBoundary
 
 /-!
 # Raw-action default-base frontier bridge
@@ -21,6 +22,49 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 namespace D19ActsOnMoore57
 
 variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Raw action supplies the corrected all-offset endpoint obstruction on every
+default-base labeling.  This is the useful replacement for trying to prove the
+older single-offset `noAllEndpointAdj` shape from the card-two common-neighbor
+construction. -/
+def noAllOffsetsEndpointAdj_of_raw_action_defaultBase
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.NoAllOffsetsEndpointAdj
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+    |>.reflectionFixedStarAFixingBoundary_of_raw_action
+    |>.toAFixingReflectionFixedNeighborCardBoundary
+    |>.toNoAllOffsetsEndpointAdj
+
+/-- Raw action supplies the all-offset no-support-subset boundary on every
+default-base labeling. -/
+def noAllOffsetsSupportSubsetBoundary_of_raw_action_defaultBase
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling.NoAllOffsetsSupportSubsetBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  h.noAllOffsetsEndpointAdj_of_raw_action_defaultBase k
+    |>.toNoAllOffsetsSupportSubsetBoundary
+      ((h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k)
+        |>.midpointReflectionCriterionBoundary_of_raw_action)
+
+/-- Raw action rules out the global all-offset support-subset exception on
+every default-base labeling. -/
+theorem not_supportSubsetExceptionIssueBoundary_of_raw_action_defaultBase
+    (k : ZMod 19) :
+    ¬ BranchOrbitABCSupportSubsetExceptionIssueBoundary
+        (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) :=
+  h.noAllOffsetsSupportSubsetBoundary_of_raw_action_defaultBase k
+    |>.not_supportSubsetExceptionIssueBoundary
+
+/-- No raw-action default-base labeling can satisfy the global support-subset
+exception package. -/
+theorem not_exists_supportSubsetExceptionIssueBoundary_of_raw_action_defaultBase :
+    ¬ ∃ k : ZMod 19,
+        BranchOrbitABCSupportSubsetExceptionIssueBoundary
+          (h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k) := by
+  rintro ⟨k, supportSubset⟩
+  exact h.not_supportSubsetExceptionIssueBoundary_of_raw_action_defaultBase k
+    supportSubset
 
 /-- Raw-action constructor for the default-base A-fixing frontier.  The
 fixed-star and fixed-center-leaf fields are supplied automatically from the raw
