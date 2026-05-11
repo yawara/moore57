@@ -125,6 +125,104 @@ def toEndpointSignMatchingBoundary
         d hd p hpSupport hreflected
     exact hpair.trans htarget
 
+/-- The corrected negative-endpoint label exchange rules out the remaining
+paired-singleton obstruction.
+
+If `S_(d/2) ∩ E = {p}` and `S_((-d)/2) ∩ E = {A p}`, the `-d` singleton gives
+the reflected-reference negative matching equation for `A p`.  The paired
+label exchange then puts `p` in the same `-d` intersection, contradicting
+`p ∈ E`, which says `A p ≠ p`. -/
+def toMidpointExceptionAFixingSupportNoPairedSingletonBoundary
+    (paired : EndpointSignNegativeMatchingPairBoundary labeling)
+    (criterion : MidpointReflectionCriterionBoundary labeling) :
+    MidpointExceptionAFixingSupportNoPairedSingletonBoundary labeling where
+  not_paired_singleton := by
+    intro d hd p hpSupport hpairedSingleton
+    rcases hpairedSingleton with ⟨_hp_singleton, hneg_singleton⟩
+    let hneg : -d ≠ 0 := neg_ne_zero_of_ne_zero_zmod19 hd
+    have htheta_inter :
+        labeling.aFiberReflectionCoordPerm p ∈
+          labeling.midpointExceptionAFixingSupportIntersection
+            (midpointOf (-d)) (midpointOf_ne_zero hneg) := by
+      simp [hneg_singleton]
+    have htheta_exception :
+        labeling.aFiberReflectionCoordPerm p ∈
+          labeling.midpointExceptionSet
+            (midpointOf (-d)) (midpointOf_ne_zero hneg) :=
+      (labeling.mem_midpointExceptionAFixingSupportIntersection
+        (midpointOf (-d)) (midpointOf_ne_zero hneg)
+        (labeling.aFiberReflectionCoordPerm p)).1 htheta_inter |>.1
+    have htheta_equation :
+        labeling.aFiberReflectionCoordPerm p ∈
+          labeling.midpointEquationSet
+            (midpointOf (-d)) (midpointOf_ne_zero hneg) :=
+      (criterion.midpoint_equation_iff_exception
+        (midpointOf (-d)) (midpointOf_ne_zero hneg)
+        (labeling.aFiberReflectionCoordPerm p)).2 htheta_exception
+    have hnegdd : midpointOf (-d) + midpointOf (-d) = -d :=
+      midpointOf_add_self (-d)
+    have htheta_match_mid :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0
+            (0 + (midpointOf (-d) + midpointOf (-d)))
+            (index_ne_add_of_ne_zero
+              (add_self_ne_zero_zmod19 (midpointOf_ne_zero hneg)))
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.midpointReflectionCoordPerm (midpointOf (-d))
+            (labeling.aFiberReflectionCoordPerm p) :=
+      (labeling.mem_midpointEquationSet
+        (midpointOf (-d)) (midpointOf_ne_zero hneg)
+        (labeling.aFiberReflectionCoordPerm p)).1 htheta_equation
+    have htheta_rhs :
+        labeling.midpointReflectionCoordPerm (midpointOf (-d))
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0 p := by
+      simpa [hnegdd] using
+        labeling.midpointReflectionCoordPerm_aFiberReflectionCoordPerm_eq_rotationCoordPerm
+          (midpointOf (-d)) p
+    have hreflected :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + (-d))
+            (index_ne_add_of_ne_zero hneg)
+            (labeling.aFiberReflectionCoordPerm p) =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0 p := by
+      simpa [hnegdd, htheta_rhs, hneg] using htheta_match_mid
+    have hp_match :
+        AFiberCoordinates.matchingEquiv h.isMoore
+            labeling.data.toAFiberCoordinates 0 (0 + (-d))
+            (index_ne_add_of_ne_zero hneg) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0
+            (labeling.aFiberReflectionCoordPerm p) :=
+      paired.endpoint_neg_matching_pair d hd p hreflected
+    have hp_rhs :
+        labeling.midpointReflectionCoordPerm (midpointOf (-d)) p =
+          labeling.data.toAFiberRotationEquivariance.coordPerm (-d) 0
+            (labeling.aFiberReflectionCoordPerm p) := by
+      simpa [hnegdd] using
+        labeling.midpointReflectionCoordPerm_eq_rotationCoordPerm_aFiberReflectionCoordPerm
+          (midpointOf (-d)) p
+    have hp_equation :
+        p ∈ labeling.midpointEquationSet
+          (midpointOf (-d)) (midpointOf_ne_zero hneg) := by
+      rw [labeling.mem_midpointEquationSet]
+      simpa [hnegdd, hp_rhs, hneg] using hp_match
+    have hp_exception :
+        p ∈ labeling.midpointExceptionSet
+          (midpointOf (-d)) (midpointOf_ne_zero hneg) :=
+      (criterion.midpoint_equation_iff_exception
+        (midpointOf (-d)) (midpointOf_ne_zero hneg) p).1 hp_equation
+    have hp_inter :
+        p ∈ labeling.midpointExceptionAFixingSupportIntersection
+          (midpointOf (-d)) (midpointOf_ne_zero hneg) :=
+      (labeling.mem_midpointExceptionAFixingSupportIntersection
+        (midpointOf (-d)) (midpointOf_ne_zero hneg) p).2
+        ⟨hp_exception, hpSupport⟩
+    have hp_eq_theta : p = labeling.aFiberReflectionCoordPerm p := by
+      simpa [hneg_singleton, hneg] using hp_inter
+    have hp_moved : labeling.aFiberReflectionCoordPerm p ≠ p :=
+      (labeling.mem_aFiberReflectionSupport p).1 hpSupport
+    exact hp_moved hp_eq_theta.symm
+
 end EndpointSignNegativeMatchingPairBoundary
 
 /-- Diagnostic boundary equivalent to making the existing endpoint-sign

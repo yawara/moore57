@@ -1299,6 +1299,7 @@ BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportIntersectionNegI
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.toMidpointExceptionAFixingSupportNoCardOneBoundary
 BranchOrbitABCReflectionLabeling.MidpointExceptionAFixingSupportNoPairedSingletonBoundary.no_card_one
+BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.target_sign_vertices_ne
 BranchOrbitABCReflectionLabeling.EndpointMatchingAFixingTargetSignBoundary.toEndpointMatchingAFixingNoPositiveTargetBoundary
 ```
@@ -1312,10 +1313,18 @@ midpoint-exception/A-fixing-support intersection: the intersections at offsets
 `d` and `-d` have equal cardinality, and a singleton at `d` transports to the
 reflected singleton at `-d`.  Lean now also packages this as a direct
 reduction from `no_card_one` to the remaining alternating paired-singleton
-obstruction.  Therefore the next real gap is not to prove same-offset
-invariance directly, but to prove the label-exchange/common-neighbor argument
-that rules out this paired singleton, or alternatively prove the
-reference-solution support-complement/fixedness predicted by Cameron Step 2.
+obstruction, and the paired singleton itself is ruled out by the corrected
+negative-endpoint label exchange once the midpoint-reflection criterion is
+available:
+
+```lean
+BranchOrbitABCReflectionLabeling.EndpointSignNegativeMatchingPairBoundary.toMidpointExceptionAFixingSupportNoPairedSingletonBoundary
+```
+
+Thus the next real gap is no longer the finite paired-singleton contradiction
+itself.  It is to prove the corrected negative-endpoint label exchange for the
+default-base labeling, or alternatively prove the reference-solution
+support-complement/fixedness predicted by Cameron Step 2.
 
 ### 6. Representation component entrypoints
 
@@ -1362,9 +1371,10 @@ The main missing work is now:
    labeling, or alternatively prove the stronger
    `ReferenceRotationMatchingSolutionVertexFixedBoundary`;
 2. avoid the false same-offset target-sign route: either prove the no-premise
-   form `EndpointMatchingAFixingNoPositiveTargetBoundary`, or rule out the
-   alternating paired-singleton case exposed by the now-proved negative-offset
-   midpoint equation/exception/intersection transport;
+   form `EndpointMatchingAFixingNoPositiveTargetBoundary`, or prove the
+   corrected negative-endpoint label exchange
+   `EndpointSignNegativeMatchingPairBoundary` for the default-base labeling
+   and use it to rule out the already-isolated paired-singleton obstruction;
 3. connect the already-closed all-offset support-subset endpoint obstruction to
    the remaining default-base/raw-action package surfaces without reverting to
    the deprecated single-offset `noAllEndpointAdj` shape.
