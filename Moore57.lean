@@ -65,7 +65,6 @@ import Moore57.Moore57Graph.BranchFiber.Matching
 import Moore57.D19OnMoore57.BranchFiber.Partition
 import Moore57.D19OnMoore57.Fixed.CommonNeighbors
 import Moore57.D19OnMoore57.Fixed.NeighborCounts
-import Moore57.D19OnMoore57.Fixed.SetDegreeConstraints
 import Moore57.Foundations.GraphTheory.StrongZeroOne
 import Moore57.Foundations.GroupTheory.Dihedral19LinearCharacter
 import Moore57.Foundations.GroupTheory.Dihedral19CharacterValueReduction
@@ -88,11 +87,9 @@ import Moore57.D19OnMoore57.Rotation.BranchFiberPerm
 import Moore57.Foundations.ZMod19.Lemmas
 import Moore57.Foundations.ZMod19.AvoidanceBoundary
 import Moore57.Foundations.ZMod19.CardTwoCandidateIndices
-import Moore57.D19OnMoore57.BranchFiber.FixedPointBounds
 import Moore57.D19OnMoore57.Fixed.VertexOrbitComplement
 import Moore57.Moore57Graph.AFiber.Coordinates
 import Moore57.Moore57Graph.AFiber.CoordinateConstruction
-import Moore57.Moore57Graph.AFiber.CoordinateAdjacency
 import Moore57.Moore57Graph.InternalDiffSet.Translate
 import Moore57.Moore57Graph.InternalDiffSet.Affine
 import Moore57.D19OnMoore57.AdjacentMoved.OnOrbit
@@ -175,7 +172,6 @@ import Moore57.D19OnMoore57.Final.RepresentationCompact
 import Moore57.D19OnMoore57.Final.RepresentationUpperBoundCompact
 import Moore57.D19OnMoore57.Final.RepresentationUpperBoundCompactSplit
 import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAvoidance
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAvoidanceFromDisjoint
 import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAvoidanceCriteria
 import Moore57.D19OnMoore57.Final.RepresentationUpperBoundAvoidance
 import Moore57.D19OnMoore57.AdjacentMoved.ReflectionResidualMembership
@@ -325,7 +321,6 @@ import Moore57.D19OnMoore57.Reflection.FixedStarFromActionBoundary
 import Moore57.D19OnMoore57.Reflection.InvolutionK155FromActionBoundary
 import Moore57.D19OnMoore57.Reflection.InvolutionFixedSetStarFromActionBoundary
 import Moore57.D19OnMoore57.Fixed.InducedStrongStarBridge
-import Moore57.D19OnMoore57.Reflection.FixedSetStarTraceBridge
 import Moore57.D19OnMoore57.Reflection.FixedSetStarHigmanArithmeticBridge
 import Moore57.D19OnMoore57.Fixed.InducedStarEdgeFormula
 import Moore57.D19OnMoore57.Reflection.FixedSetStarTraceBoundsBridge
