@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.Reflection.RawActionFixedCenterLeaf
 import Moore57.D19OnMoore57.Reflection.FixedCountBoundsBridge
 import Moore57.D19OnMoore57.Reflection.PaperFixedStarBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCMatchingTargetReflectionReduced
+import Moore57.D19OnMoore57.BranchOrbit.Matching
 import Moore57.D19OnMoore57.BranchOrbit.ABCExceptionCaseEndpointPointwiseBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointPairedSymmetryBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointExchangeCommonNeighborBoundary

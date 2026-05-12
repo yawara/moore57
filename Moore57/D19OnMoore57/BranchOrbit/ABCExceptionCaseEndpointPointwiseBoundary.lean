@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCMatchingTargetReflectionReduced
+import Moore57.D19OnMoore57.BranchOrbit.Matching
 import Moore57.D19OnMoore57.BranchOrbit.ABCExceptionEndpointPointwiseBoundary
 
 /-!

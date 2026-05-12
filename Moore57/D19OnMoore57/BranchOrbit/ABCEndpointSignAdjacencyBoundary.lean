@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointCommonNeighborBasic
-import Moore57.D19OnMoore57.BranchOrbit.ABCMatchingTargetReflectionReduced
+import Moore57.D19OnMoore57.BranchOrbit.Matching
 
 /-!
 # Endpoint sign adjacency boundary

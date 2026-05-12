@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointCommonNeighborConcreteBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCMatchingAdjacencyTransportBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Matching
 
 /-!
 # Basic endpoint common-neighbor pair

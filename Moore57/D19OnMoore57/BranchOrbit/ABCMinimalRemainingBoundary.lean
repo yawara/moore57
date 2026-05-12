@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCCommonNeighborReducedBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCDoublingCommonNeighborBasic
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointCommonNeighborBasic
-import Moore57.D19OnMoore57.BranchOrbit.ABCMatchingTargetReflectionReduced
+import Moore57.D19OnMoore57.BranchOrbit.Matching
 
 /-!
 # Minimal remaining action-level boundary
