@@ -2,7 +2,7 @@ import Moore57.D19OnMoore57.BranchOrbit.ABCFixedStarCoordinateWitnessBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCFixedStarFinalBridge
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.LinearCharacter.Minus8Auto
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 
 /-!
 # Fixed-star boundary no-go connectors

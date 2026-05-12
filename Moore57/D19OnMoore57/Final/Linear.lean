@@ -1,6 +1,5 @@
 import Moore57.D19OnMoore57.AdjacentMoved.Reflection
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalLinearFixedEnumeration
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalLinearUnique
+import Moore57.D19OnMoore57.D19Core.ConstructiveFinal
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.Fixed.UpperBoundEnumeration
 import Moore57.D19OnMoore57.LinearCharacter.Input

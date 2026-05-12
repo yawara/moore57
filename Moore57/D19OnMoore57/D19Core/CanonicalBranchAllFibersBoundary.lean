@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCAllFibersFinalBridge
 import Moore57.D19OnMoore57.BranchOrbit.ABCDataFromCenter
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 
 /-!
 # Canonical branch all-fiber final boundary

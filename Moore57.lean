@@ -83,18 +83,15 @@ import Moore57.D19OnMoore57.Rotation.FixedUpperBoundInputs
 import Moore57.D19OnMoore57.D19Core.ReducedMain
 import Moore57.D19OnMoore57.D19Core.GeometricInputs
 import Moore57.D19OnMoore57.Misc.CharacterInputPackaging
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterBoundary
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 import Moore57.D19OnMoore57.Fixed.UpperBoundCriteria
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.AdjacentMoved.TwoCopyCriteria
 import Moore57.D19OnMoore57.Fixed.UpperBoundEnumeration
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalInputs
+import Moore57.D19OnMoore57.D19Core.ConstructiveFinal
 import Moore57.D19OnMoore57.Final.CharacterComponentConnectors
 import Moore57.D19OnMoore57.AdjacentMoved.OrbitCopyCriteria
 import Moore57.D19OnMoore57.Rotation.FixedUniqueCriteria
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalUnique
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalFixedEnumeration
 import Moore57.D19OnMoore57.LinearCharacter.Input
 import Moore57.D19OnMoore57.LinearCharacter.Dimension
 import Moore57.D19OnMoore57.LinearCharacter.Minus8
@@ -105,8 +102,6 @@ import Moore57.D19OnMoore57.Involution.FixedStarPaperBoundary
 import Moore57.D19OnMoore57.LinearCharacter.PaperFixedStarConnectors
 import Moore57.D19OnMoore57.D19Core.PhaseEBundle
 import Moore57.D19OnMoore57.Reflection.OrbitTools
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalLinearUnique
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalLinearFixedEnumeration
 import Moore57.D19OnMoore57.AdjacentMoved.Symmetry
 import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 import Moore57.D19OnMoore57.Final.Linear
@@ -170,7 +165,6 @@ import Moore57.D19OnMoore57.Rotation.OneFixedBoundBoundary
 import Moore57.D19OnMoore57.Rotation.OneFixedBoundBoundaryNonempty
 import Moore57.D19OnMoore57.Trace.CoreRepresentationBoundary
 import Moore57.D19OnMoore57.D19Core.RepresentationCharacterFromData
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterMathlibBridge
 import Moore57.D19OnMoore57.D19Core.RepresentationMathlibCharacterTools
 import Moore57.Foundations.LinearAlgebra.MatrixLinearMapBridge
 import Moore57.D19OnMoore57.Misc.Minus8ProjectionRepresentation

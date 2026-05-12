@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.E7Projection.Minus8TraceBoundaryBridge
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 
 /-!
 # E7 class-boundary from the `a1` trace arithmetic

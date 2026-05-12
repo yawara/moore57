@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterMathlibBridge
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 import Moore57.Foundations.ZMod19.Lemmas
 
 /-!

@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.E7Projection.Minus8RotationSplit
 import Moore57.D19OnMoore57.E7Projection.CharacterClassTraceBoundary
 import Moore57.D19OnMoore57.NoGo.RotationSplitRawActionNoGoConnectors
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 
 /-!
 # Trace data from the rotation split and raw action

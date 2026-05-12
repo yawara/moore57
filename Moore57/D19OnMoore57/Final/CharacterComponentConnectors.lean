@@ -1,5 +1,5 @@
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalInputs
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
+import Moore57.D19OnMoore57.D19Core.ConstructiveFinal
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 
 /-!
 # Component-boundary connectors for final character packages

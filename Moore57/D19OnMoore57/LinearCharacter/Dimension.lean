@@ -1,5 +1,5 @@
-import Moore57.D19OnMoore57.D19Core.ConstructiveFinalInputs
-import Moore57.D19OnMoore57.D19Core.RepresentationCharacterMathlibBridge
+import Moore57.D19OnMoore57.D19Core.ConstructiveFinal
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.LinearCharacter.Input
 
