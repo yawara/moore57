@@ -4,6 +4,7 @@ import Moore57.D19OnMoore57.Fixed.CommonNeighbors
 import Moore57.D19OnMoore57.Fixed.InducedDegree
 import Moore57.D19OnMoore57.Fixed.NeighborCounts
 import Moore57.Foundations.GroupAction.FixedPointBasics
+import Moore57.Moore57Graph.Aut.FixedCount
 import Moore57.Moore57Graph.Moore57Definition
 
 namespace Moore57
@@ -827,24 +828,21 @@ theorem fixedNeighborFinset_card_eq_of_rotation_one_fixed_of_count_ne_one
   · exact h.fixedNeighborFinset_card_eq_of_rotation_one_fixed_of_not_adj
       hx hy hxy hxyAdj
 
-/-- Rotation by `1` has exactly one fixed vertex. -/
+/-- Rotation by `1` has exactly one fixed vertex.
+
+This is the specialisation of the abstract `order19_aut_fixedVertexCount_eq_one`
+to the `D₁₉`-action rotation `h.rotation 1`. The same Tier-2 theorem also
+covers the cyclic-group case `C₃₈ = ⟨g⟩` via its order-19 element `g^2`. -/
 theorem rotation_one_fixedVertexCount_eq_one
     (h : D19ActsOnMoore57 V Γ) :
     fixedVertexCount (h.rotation 1) = 1 :=
-  h.rotation_one_fixedVertexCount_eq_one_of_regular_if_not_one (by
-    intro hcount
-    have hpos : 0 < Fintype.card (fixedVertexSet (h.rotation 1)) := by
-      simpa [fixedVertexCount_eq_card_fixedVertexSet] using
-        h.fixedVertexCount_rotation_pos 1
-    rcases Fintype.card_pos_iff.mp hpos with ⟨x⟩
-    let k := (h.fixedNeighborFinset 1 (x : V)).card
-    refine ⟨k, ?_, ?_⟩
-    · intro y
-      exact
-        (h.fixedNeighborFinset_card_eq_of_rotation_one_fixed_of_count_ne_one
-          hcount y.property x.property).trans rfl
-    · exact h.fixedNeighborFinset_card_eq_19_or_38_or_57
-        1 hcount x.property)
+  order19_aut_fixedVertexCount_eq_one h.isMoore (h.rotation 1)
+    (by
+      intro v w
+      simpa [D19ActsOnMoore57.rotation] using
+        h.smul_adj (DihedralGroup.r (1 : ZMod 19)) v w)
+    (h.rotation_pow_nineteen 1)
+    (h.rotation_ne_one (by decide))
 
 /-- Every nontrivial rotation has exactly one fixed vertex. -/
 theorem rotation_fixed_card_eq_one
