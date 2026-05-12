@@ -5,7 +5,7 @@ import Moore57.D19OnMoore57.NoGo.RemainingRawActionFrontier
 import Moore57.D19OnMoore57.NoGo.LabeledReflectionMatchingEquationFrontier
 import Moore57.D19OnMoore57.NoGo.LabeledReflectionMatchingEquationFromDisjoint
 import Moore57.D19OnMoore57.NoGo.FixedCenterLeafReplacement
-import Moore57.D19OnMoore57.NoGo.NonRepresentationEndpointFrontierNoGo
+import Moore57.D19OnMoore57.NoGo.EndpointFrontier
 import Moore57.D19OnMoore57.NoGo.DefaultBaseCombinedFrontier
 import Moore57.D19OnMoore57.NoGo.DefaultBaseFrontierNoGoConnectors
 import Moore57.D19OnMoore57.NoGo.FixedStarBoundaryNoGoConnectors
