@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCFixedStarWitnessBoundary
+import Moore57.D19OnMoore57.BranchOrbit.FixedStar
 import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelWitnessBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCExceptionIntersectionInvariantDecomp
 

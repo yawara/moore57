@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCFixedStarCoordinateWitnessBoundary
+import Moore57.D19OnMoore57.BranchOrbit.FixedStar
 import Moore57.D19OnMoore57.BranchOrbit.ABCFixedStarFinalBridge
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.LinearCharacter.Minus8Auto

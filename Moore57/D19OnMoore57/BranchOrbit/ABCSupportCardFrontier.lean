@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCAFixingReflectionSupportBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCFixedStarLocalObstructionBoundary
+import Moore57.D19OnMoore57.BranchOrbit.FixedStar
 import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelLocalObstructionBoundary
 
 /-!
