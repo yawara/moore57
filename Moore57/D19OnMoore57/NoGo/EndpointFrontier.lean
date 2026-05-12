@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCNoAllEndpointAdjFrontier
+import Moore57.D19OnMoore57.BranchOrbit.NoFrontier
 import Moore57.D19OnMoore57.Involution.FixedStarA1
 import Moore57.D19OnMoore57.NoGo.DefaultBaseCombinedFrontier
 import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier

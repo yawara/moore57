@@ -1,6 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCSupportCardFrontier
-import Moore57.D19OnMoore57.BranchOrbit.ABCNoCardOneFrontier
-import Moore57.D19OnMoore57.BranchOrbit.ABCNoAllEndpointAdjFrontier
+import Moore57.D19OnMoore57.BranchOrbit.NoFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCLeanAwareDefaultBaseFrontier
 
 /-!

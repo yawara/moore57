@@ -329,8 +329,7 @@ import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseLocalObstructionFrontier
 import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCLeanAwareDefaultBaseFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCSupportCardFrontier
-import Moore57.D19OnMoore57.BranchOrbit.ABCNoCardOneFrontier
-import Moore57.D19OnMoore57.BranchOrbit.ABCNoAllEndpointAdjFrontier
+import Moore57.D19OnMoore57.BranchOrbit.NoFrontier
 import Moore57.D19OnMoore57.Reflection.FixedCenterLeafActionFrontier
 import Moore57.D19OnMoore57.Reflection.PaperFixedStarBoundary
 import Moore57.D19OnMoore57.NoGo.FixedCenterLeafReplacement
