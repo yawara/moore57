@@ -1,15 +1,27 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseReferenceFrontier
+import Moore57.D19OnMoore57.BranchOrbit.ABCCenterNeighborBaseFrontier
+import Moore57.D19OnMoore57.BranchOrbit.ABCReferenceFiberMatchingEquationFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCMidpointDisjointnessFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCReferenceMatchingLocalObstructionBridge
 
 /-!
-# Default-base local-obstruction frontier
+# Default-base fixed-center-leaf frontier and local obstruction
 
-This file specializes the default-base/fixed-center-leaf reference connector
-to the finite midpoint-disjointness and local-obstruction packages.  It keeps
-the default base and fixed-center-leaf provenance explicit while replacing the
-raw disjointness field with boundary shapes closer to the current fixed-star
-final inputs.
+This file unifies two thematic layers of the default-base/fixed-center-leaf
+frontier:
+
+* **Reference frontier** (formerly `ABCDefaultBaseReferenceFrontier`):
+  the default-base/fixed-center-leaf reference-fiber matching-equation
+  connector with the raw midpoint-exception/A-fixing-support disjointness
+  field.
+* **Local obstruction frontier** (formerly
+  `ABCDefaultBaseLocalObstructionFrontier`): replaces the raw disjointness
+  field by the finite midpoint-disjointness package and by the
+  reference-matching/local-obstruction package, keeping the default base
+  and fixed-center-leaf provenance explicit.
+
+The combined frontier (`ABCDefaultBaseCombinedFrontier`) lives in a separate
+file because it independently depends on `SupportCardFrontier`, `NoFrontier`,
+and the lean-aware default-base frontier.
 -/
 
 namespace Moore57
@@ -20,6 +32,114 @@ universe u
 
 variable {V : Type u} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+namespace BranchOrbitABCReflectionLabeling
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-! ## Default-base labeled reflection pair -/
+
+/-- Stable name for the labeled reflection-pair boundary obtained from the
+default center-neighbor base and a fixed-center-leaf boundary. -/
+noncomputable abbrev fixedCenterLeafDefaultBasePair
+    (fixedCenterLeaf : ReflectionFixedCenterLeafBoundary h)
+    (k : ZMod 19) :
+    HasLabeledReflectionPair h :=
+  hasLabeledReflectionPair_of_fixedCenterLeaf_defaultBase
+    (h := h) fixedCenterLeaf k
+
+/-- Stable name for the canonical labeling attached to the default-base
+fixed-center-leaf pair. -/
+noncomputable abbrev fixedCenterLeafDefaultBaseLabeling
+    (fixedCenterLeaf : ReflectionFixedCenterLeafBoundary h)
+    (k : ZMod 19) :
+    BranchOrbitABCReflectionLabeling h :=
+  ofHasLabeledReflectionPair
+    (h := h)
+    (fixedCenterLeafDefaultBasePair (h := h) fixedCenterLeaf k)
+
+end BranchOrbitABCReflectionLabeling
+
+/-! ## Default-base reference-matching frontier -/
+
+/-- Bundled default-base/fixed-center-leaf reference frontier.  The default
+center-neighbor base is fixed by
+`hasLabeledReflectionPair_of_fixedCenterLeaf_defaultBase`; the remaining
+non-representation fields are named explicitly. -/
+structure RemainingDefaultBaseFixedCenterLeafReferenceConnector
+    (h : D19ActsOnMoore57 V Γ) where
+  fixedCenterLeaf : ReflectionFixedCenterLeafBoundary h
+  k : ZMod 19
+  referenceMatching :
+    BranchOrbitABCReflectionLabeling.ReferenceMatchingPipelineBoundary
+      (BranchOrbitABCReflectionLabeling.fixedCenterLeafDefaultBaseLabeling
+        (h := h) fixedCenterLeaf k)
+  midpointExceptionDisjoint :
+    BranchOrbitABCReflectionLabeling.MidpointExceptionDisjointAFixingSupportBoundary
+      (BranchOrbitABCReflectionLabeling.fixedCenterLeafDefaultBaseLabeling
+        (h := h) fixedCenterLeaf k)
+
+namespace RemainingDefaultBaseFixedCenterLeafReferenceConnector
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Rebundle the named remaining fields as the reference-fiber
+matching-equation frontier boundary. -/
+noncomputable def toReferenceFiberMatchingEquationFrontierBoundary
+    (connector : RemainingDefaultBaseFixedCenterLeafReferenceConnector h) :
+    BranchOrbitABCReflectionLabeling.ReferenceFiberMatchingEquationFrontierBoundary
+      (BranchOrbitABCReflectionLabeling.fixedCenterLeafDefaultBaseLabeling
+        (h := h) connector.fixedCenterLeaf connector.k) where
+  referenceMatching := connector.referenceMatching
+  midpointExceptionDisjoint := connector.midpointExceptionDisjoint
+
+/-- Collapse the reference-matching pipeline and disjointness fields to the
+two-solution reference-fiber matching equation for the default-base pair. -/
+theorem referenceMatchingEquationCardTwo
+    (connector : RemainingDefaultBaseFixedCenterLeafReferenceConnector h) :
+    BranchOrbitABCReflectionLabeling.ReferenceFiberMatchingEquationCardTwoOfPair
+      (h := h)
+      (BranchOrbitABCReflectionLabeling.fixedCenterLeafDefaultBasePair
+        (h := h) connector.fixedCenterLeaf connector.k) :=
+  BranchOrbitABCReflectionLabeling.ReferenceFiberMatchingEquationFrontierBoundary.toReferenceFiberMatchingEquationCardTwoOfPair
+    (h := h)
+    (BranchOrbitABCReflectionLabeling.fixedCenterLeafDefaultBasePair
+      (h := h) connector.fixedCenterLeaf connector.k)
+    connector.toReferenceFiberMatchingEquationFrontierBoundary
+
+/-- Forget the reference-pipeline provenance back to the fixed-center-leaf
+matching-equation connector. -/
+noncomputable def toRemainingFixedCenterLeafMatchingEquationConnector
+    (connector : RemainingDefaultBaseFixedCenterLeafReferenceConnector h) :
+    RemainingFixedCenterLeafMatchingEquationConnector h where
+  fixedCenterLeaf := connector.fixedCenterLeaf
+  k := connector.k
+  referenceMatchingEquationCardTwo :=
+    connector.referenceMatchingEquationCardTwo
+
+/-- Forget all default-base/reference-pipeline provenance back to the raw
+labeled-reflection matching-equation connector. -/
+noncomputable def toRemainingLabeledReflectionMatchingEquationConnector
+    (connector : RemainingDefaultBaseFixedCenterLeafReferenceConnector h) :
+    RemainingLabeledReflectionMatchingEquationConnector h :=
+  connector.toRemainingFixedCenterLeafMatchingEquationConnector
+    |>.toRemainingLabeledReflectionMatchingEquationConnector
+
+end RemainingDefaultBaseFixedCenterLeafReferenceConnector
+
+/-- Once representation components are supplied, the default-base
+fixed-center-leaf reference connector is refuted by the existing
+fixed-center-leaf matching-equation frontier. -/
+theorem no_remainingDefaultBaseFixedCenterLeafReferenceConnector_of_components
+    (h : D19ActsOnMoore57 V Γ) :
+    ¬ ∃ _representationComponents : RemainingRepresentationComponents h,
+        Nonempty (RemainingDefaultBaseFixedCenterLeafReferenceConnector h) := by
+  rintro ⟨representationComponents, ⟨connector⟩⟩
+  exact no_remainingFixedCenterLeafMatchingEquationConnector_of_components h
+    ⟨representationComponents,
+      ⟨connector.toRemainingFixedCenterLeafMatchingEquationConnector⟩⟩
+
+/-! ## Default-base local-obstruction frontier -/
 
 namespace BranchOrbitABCReflectionLabeling
 

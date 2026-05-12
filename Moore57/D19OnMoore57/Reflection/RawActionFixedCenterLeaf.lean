@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.Reflection.AdjacentMovedPositive
 import Moore57.D19OnMoore57.Reflection.RawGeometrySplit
-import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseReferenceFrontier
+import Moore57.D19OnMoore57.BranchOrbit.DefaultBase
 import Moore57.D19OnMoore57.BranchOrbit.ABCReferenceMatchingPipeline
 
 /-!

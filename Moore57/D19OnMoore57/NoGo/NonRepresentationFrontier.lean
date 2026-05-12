@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseReferenceFrontier
+import Moore57.D19OnMoore57.BranchOrbit.DefaultBase
 import Moore57.D19OnMoore57.BranchOrbit.ABCMidpointDisjointnessFrontier
 import Moore57.D19OnMoore57.Involution.FixedStarA1
 import Moore57.D19OnMoore57.LinearCharacter.Dimension

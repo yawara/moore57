@@ -1,5 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseLocalObstructionFrontier
-import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseReferenceFrontier
+import Moore57.D19OnMoore57.BranchOrbit.DefaultBase
 import Moore57.D19OnMoore57.BranchOrbit.ABCSupportCardFrontier
 import Moore57.D19OnMoore57.NoGo.ActionLevelBoundaryNoGoConnectors
 

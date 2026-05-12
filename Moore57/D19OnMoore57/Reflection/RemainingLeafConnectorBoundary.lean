@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.Reflection.RemainingCandidateGeometryBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseLocalObstructionFrontier
+import Moore57.D19OnMoore57.BranchOrbit.DefaultBase
 
 /-!
 # Local-leaf connectors for remaining reflection candidates
