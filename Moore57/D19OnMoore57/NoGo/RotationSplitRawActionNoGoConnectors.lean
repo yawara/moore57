@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.E7Projection.Minus8RotationSplitAdjacentSwapNoGo
+import Moore57.D19OnMoore57.E7Projection.Minus8RotationSplit
 import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 import Moore57.D19OnMoore57.NoGo.EndpointFinalBoundaryNoGoConnectors
 import Moore57.D19OnMoore57.NoGo.RemainingRawActionFrontier

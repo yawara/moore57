@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.E7Projection.Minus8TraceRepresentationComplementFixedCount
+import Moore57.D19OnMoore57.E7Projection.Minus8TraceRepresentation
 import Moore57.D19OnMoore57.Reflection.TraceThirtyThreeFixedCount
 
 /-!
