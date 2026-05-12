@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.Rotation.FixedDataBridge
 import Moore57.D19OnMoore57.Fixed.InducedDegree
 import Moore57.D19OnMoore57.Fixed.VertexOrbitComplement
-import Moore57.D19OnMoore57.Rotation.FixedCardEquality
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 import Moore57.D19OnMoore57.Trace.CharacterInputReduction
 
 /-!

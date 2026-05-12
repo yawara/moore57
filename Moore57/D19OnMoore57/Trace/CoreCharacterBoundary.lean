@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.D19Core.RepresentationCharacterFromData
 import Moore57.D19OnMoore57.Trace.DataSplit
-import Moore57.D19OnMoore57.Rotation.FixedRegularity
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 
 /-!
 # Boundary helpers for trace-core character data

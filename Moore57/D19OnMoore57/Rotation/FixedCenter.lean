@@ -1,6 +1,5 @@
 import Moore57.D19OnMoore57.Rotation.FixedCountUnique
-import Moore57.D19OnMoore57.Rotation.FixedRegularity
-import Moore57.D19OnMoore57.Rotation.FixedSets
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 import Moore57.D19OnMoore57.Reflection.OrbitTools
 
 /-!

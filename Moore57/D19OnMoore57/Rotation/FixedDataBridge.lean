@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.Trace.DataSplit
-import Moore57.D19OnMoore57.Rotation.FixedCardConstraints
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 
 /-!
 # Bridges to rotation fixed-point data

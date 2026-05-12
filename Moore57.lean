@@ -48,13 +48,8 @@ import Moore57.Foundations.GroupTheory.D19RotationMovingCyclotomic
 import Moore57.Foundations.GroupTheory.D19CharacterClassFromRotationSplit
 import Moore57.D19OnMoore57.Fixed.InducedSubgraph
 import Moore57.D19OnMoore57.Fixed.InducedDegree
-import Moore57.D19OnMoore57.Rotation.FixedSets
-import Moore57.D19OnMoore57.Rotation.FixedCardEquality
-import Moore57.D19OnMoore57.Rotation.FixedCardConstraints
-import Moore57.D19OnMoore57.Rotation.FixedCardEqOne
-import Moore57.D19OnMoore57.Rotation.FixedRegularity
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 import Moore57.D19OnMoore57.Rotation.FixedDataBridge
-import Moore57.D19OnMoore57.Rotation.OrbitInjectivity
 import Moore57.D19OnMoore57.Rotation.OrbitFinset
 import Moore57.D19OnMoore57.Rotation.OrbitFinsetBasic
 import Moore57.D19OnMoore57.Rotation.OrbitInternalDiff

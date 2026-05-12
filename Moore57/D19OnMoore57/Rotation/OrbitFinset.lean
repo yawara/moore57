@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.Rotation.OrbitInjectivity
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 
 namespace Moore57
 

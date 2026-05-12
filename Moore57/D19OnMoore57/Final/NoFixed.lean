@@ -2,7 +2,7 @@ import Moore57.D19OnMoore57.AFiber.OrbitBaseSelection
 import Moore57.D19OnMoore57.AFiber.OrbitMovingResidual
 import Moore57.D19OnMoore57.Final.CharacterAFiberBoundary
 import Moore57.D19OnMoore57.Final.TraceRotationOne
-import Moore57.D19OnMoore57.Rotation.FixedRegularity
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 
 /-!
 # Final D19 boundaries with automatic rotation fixed-count bounds

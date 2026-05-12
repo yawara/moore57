@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.Rotation.OneMovingResidualProperties
 import Moore57.D19OnMoore57.AFiber.ContributionCardinalityCriteria
-import Moore57.D19OnMoore57.Rotation.FixedSets
+import Moore57.D19OnMoore57.Rotation.FixedCardinality
 
 /-!
 # Zero contribution from the rotation-one fixed residual side
