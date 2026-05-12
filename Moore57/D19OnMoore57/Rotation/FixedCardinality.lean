@@ -3,7 +3,7 @@ import Moore57.D19OnMoore57.Action.D19Action
 import Moore57.D19OnMoore57.Fixed.CommonNeighbors
 import Moore57.D19OnMoore57.Fixed.InducedDegree
 import Moore57.D19OnMoore57.Fixed.NeighborCounts
-import Moore57.Foundations.GroupAction.FixedPointBasics
+import Moore57.D19OnMoore57.Action.FixedPointBasics
 import Moore57.Moore57Graph.Aut.FixedCount
 import Moore57.Moore57Graph.Moore57Definition
 

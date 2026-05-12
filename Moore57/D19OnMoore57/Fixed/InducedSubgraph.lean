@@ -1,4 +1,4 @@
-import Moore57.Foundations.GroupAction.FixedPointBasics
+import Moore57.D19OnMoore57.Action.FixedPointBasics
 import Moore57.D19OnMoore57.Fixed.CommonNeighbors
 import Moore57.Foundations.GraphTheory.StrongZeroOne
 import Mathlib.Tactic.Linarith.Frontend

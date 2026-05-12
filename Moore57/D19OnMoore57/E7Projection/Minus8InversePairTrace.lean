@@ -6,7 +6,7 @@ import Moore57.D19OnMoore57.E7Projection.ProjectionLinearCharacterConsequences
 import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 import Moore57.D19OnMoore57.Reflection.LinearCharacterNonemptyBridge
 import Moore57.D19OnMoore57.Reflection.LinearRawReflectionK155Bridge
-import Moore57.Foundations.GroupTheory.Dihedral19CharacterValueReduction
+import Moore57.D19OnMoore57.D19Core.Dihedral19CharacterValueReduction
 
 /-!
 # Inverse-pair trace boundary bridge for E7 and minus-8

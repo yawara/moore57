@@ -1,4 +1,4 @@
-import Moore57.Foundations.GroupTheory.D19CharacterClassFromRotationSplit
+import Moore57.D19OnMoore57.D19Core.D19CharacterClassFromRotationSplit
 import Moore57.D19OnMoore57.E7Projection.Minus8CharacterInputBridge
 import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
 import Moore57.D19OnMoore57.Fixed.InducedStrongStarBridge

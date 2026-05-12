@@ -1,5 +1,5 @@
 import Moore57.Foundations.GroupAction.InvolutionParity
-import Moore57.Foundations.GroupAction.FixedPointBasics
+import Moore57.D19OnMoore57.Action.FixedPointBasics
 import Moore57.D19OnMoore57.Reflection.InvolutionFixedSetStarFromActionBoundary
 
 /-!
