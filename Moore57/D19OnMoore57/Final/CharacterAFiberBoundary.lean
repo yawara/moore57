@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.Final.Inputs
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputBridge
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.AFiber.HybridBoundaryFromCriteria
 import Moore57.D19OnMoore57.AFiber.OrbitMovingResidual
 import Moore57.D19OnMoore57.AFiber.MatchingSupportEquations

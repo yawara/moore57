@@ -5,9 +5,7 @@ import Moore57.D19OnMoore57.AFiber.OnlyContributionConstant
 import Moore57.D19OnMoore57.CanonicalCarrier.ReflectedAvoidance
 import Moore57.D19OnMoore57.D19Core.RepresentationCharacterFromData
 import Moore57.D19OnMoore57.Final.RepresentationUpperBound
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierAvoidance
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierCanonical
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierCriteria
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.Rotation.FixedUpperBoundFromData
 
 /-!

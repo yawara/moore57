@@ -1,7 +1,6 @@
 import Moore57.D19OnMoore57.AdjacentMoved.OrbitCopyCriteria
 import Moore57.D19OnMoore57.AdjacentMoved.Symmetry
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputBridge
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputs
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.Reflection.OrbitTools
 
 /-!

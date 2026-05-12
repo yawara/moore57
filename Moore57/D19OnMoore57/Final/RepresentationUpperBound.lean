@@ -2,9 +2,7 @@ import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.LinearCharacter.Input
 import Moore57.D19OnMoore57.Misc.CharacterInputPackaging
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierCriteria
-import Moore57.D19OnMoore57.Orbit.BaseSelectionEnumeration
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputBridge
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.Rotation.FixedUpperBoundFromData
 
 /-!

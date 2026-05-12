@@ -1,7 +1,6 @@
 import Moore57.Moore57Graph.AFiber.FiberUnionCardinality
 import Moore57.D19OnMoore57.AFiber.OrbitMoved
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCanonicalCarrierCardinality
-import Moore57.D19OnMoore57.Orbit.BaseSelectionEnumeration
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 
 /-!
 # Orbit-base selections from equivariant A-fiber coordinates

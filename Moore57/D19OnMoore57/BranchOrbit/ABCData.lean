@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.AFiber.CoordinateOrbit
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputs
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 
 /-!
 # Branch-orbit A/B/C boundary data

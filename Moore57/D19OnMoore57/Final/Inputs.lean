@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.D19Core.GeometricInputs
 import Moore57.D19OnMoore57.Misc.CharacterInputPackaging
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCriteria
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 
 /-!
 # Final D19 input packaging

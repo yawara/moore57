@@ -4,7 +4,7 @@ import Moore57.D19OnMoore57.D19Core.ConstructiveFinalLinearUnique
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.Fixed.UpperBoundEnumeration
 import Moore57.D19OnMoore57.LinearCharacter.Input
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputBridge
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.Rotation.FixedCountUnique
 import Moore57.D19OnMoore57.Rotation.FixedUniqueCriteria
 

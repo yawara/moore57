@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.AdjacentMoved.TwoCopyCriteria
-import Moore57.D19OnMoore57.Orbit.BaseSelectionEnumeration
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 
 /-!
 # Constructive final D19 input packaging

@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.Misc.CharacterInputPackaging
 import Moore57.D19OnMoore57.Rotation.FixedCountUnique
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputBridge
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 
 /-!

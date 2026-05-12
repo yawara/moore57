@@ -83,7 +83,7 @@ import Moore57.D19OnMoore57.D19Core.ActionConcreteData
 import Moore57.D19OnMoore57.D19Core.ActionOrbitConcreteData
 import Moore57.D19OnMoore57.D19Core.OrbitContributionData
 import Moore57.D19OnMoore57.AdjacentMoved.PartitionContribution
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputs
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.Rotation.FixedUpperBoundInputs
 import Moore57.D19OnMoore57.D19Core.ReducedMain
 import Moore57.D19OnMoore57.D19Core.GeometricInputs
@@ -91,12 +91,9 @@ import Moore57.D19OnMoore57.Misc.CharacterInputPackaging
 import Moore57.D19OnMoore57.D19Core.RepresentationCharacterBoundary
 import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
 import Moore57.D19OnMoore57.Fixed.UpperBoundCriteria
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCriteria
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.AdjacentMoved.TwoCopyCriteria
-import Moore57.D19OnMoore57.Orbit.BaseSelectionEnumeration
 import Moore57.D19OnMoore57.Fixed.UpperBoundEnumeration
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputBridge
 import Moore57.D19OnMoore57.D19Core.ConstructiveFinalInputs
 import Moore57.D19OnMoore57.Final.CharacterComponentConnectors
 import Moore57.D19OnMoore57.AdjacentMoved.OrbitCopyCriteria
@@ -126,12 +123,6 @@ import Moore57.D19OnMoore57.Rotation.FixedEnumerationFromCount
 import Moore57.D19OnMoore57.Final.RepresentationCountConstantResidualBase
 import Moore57.D19OnMoore57.Final.RepresentationCompact
 import Moore57.D19OnMoore57.Final.RepresentationUpperBound
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierCriteria
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierAvoidance
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierSimp
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierCanonical
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCanonicalCarrierCardinality
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCanonicalCarrierNonempty
 import Moore57.D19OnMoore57.CanonicalCarrier.ReflectedAvoidance
 import Moore57.D19OnMoore57.CanonicalCarrier.ReflectedAvoidanceFromCriteria
 import Moore57.D19OnMoore57.CanonicalCarrier.ReflectedAvoidanceNonempty

@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.Final.ExposedHybridBoundary
 import Moore57.D19OnMoore57.AFiber.HybridBoundaryFromCriteria
-import Moore57.D19OnMoore57.Orbit.BaseSelectionCanonicalCarrierCardinality
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 
 /-!
 # Final D19 inputs from low-level input criteria

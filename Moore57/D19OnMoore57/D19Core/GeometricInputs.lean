@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.D19Core.ReducedMain
-import Moore57.D19OnMoore57.Orbit.BaseSelectionInputs
+import Moore57.D19OnMoore57.Orbit.BaseSelection
 import Moore57.D19OnMoore57.AdjacentMoved.PartitionContribution
 import Moore57.D19OnMoore57.Rotation.FixedUpperBoundInputs
 
