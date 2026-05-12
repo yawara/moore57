@@ -52,3 +52,5 @@ elab "#assert_only_allowed_axioms " name:ident : command => do
     throwError m!"axioms check FAILED: `{constName}` depends on {bad.size} disallowed axiom(s):{indentD m!"{bad.toList}"}"
 
 #assert_only_allowed_axioms Moore57.no_D19_acts_on_Moore57_unconditional
+#assert_only_allowed_axioms Moore57.no_C38_acts_on_Moore57_unconditional
+#assert_only_allowed_axioms Moore57.Moore57_no_order38_structure

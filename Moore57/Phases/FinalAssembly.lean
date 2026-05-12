@@ -2,6 +2,7 @@ import Moore57.Phases.Phase7
 import Moore57.D19OnMoore57.BranchOrbit.ResidualSplit
 import Moore57.D19OnMoore57.AFiber.Cardinality38FromClosures
 import Moore57.D19OnMoore57.Reflection.RawActionFixedCenterLeaf
+import Moore57.C38OnMoore57.NoGo
 
 /-!
 # Final assembly: closing the geometric witness from raw action
@@ -118,5 +119,25 @@ theorem no_D19_acts_on_Moore57_unconditional
     ¬ Nonempty (D19ActsOnMoore57 V Γ) := by
   rintro ⟨h⟩
   exact h.false_of_raw_action
+
+/-- **Combined order-`38` non-existence**: neither `D₁₉` nor `C₃₈` is a
+subgroup of `Aut(Γ)` for the Moore graph of degree `57`.
+
+Groups of order `38 = 2 · 19` are classified into exactly two isomorphism
+classes:
+
+* the dihedral group `D₁₉` (non-abelian, the involution inverts the
+  rotation), and
+* the cyclic group `C₃₈` (abelian, the involution commutes with the
+  rotation).
+
+This corollary says **both** are excluded; hence no subgroup of `Aut(Γ)`
+has order `38`. -/
+theorem Moore57_no_order38_structure
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    (¬ Nonempty (D19ActsOnMoore57 V Γ)) ∧
+      (¬ Nonempty (C38ActsOnMoore57 V Γ)) :=
+  ⟨no_D19_acts_on_Moore57_unconditional, no_C38_acts_on_Moore57_unconditional⟩
 
 end Moore57
