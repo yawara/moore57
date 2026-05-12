@@ -131,7 +131,7 @@ import Moore57.D19OnMoore57.D19Core.ConstructiveFinalFixedEnumeration
 import Moore57.D19OnMoore57.LinearCharacter.Input
 import Moore57.D19OnMoore57.LinearCharacter.Dimension
 import Moore57.D19OnMoore57.LinearCharacter.Minus8
-import Moore57.D19OnMoore57.LinearCharacter.Minus8Connectors
+import Moore57.D19OnMoore57.LinearCharacter.Minus8Auto
 import Moore57.D19OnMoore57.Involution.FixedStarA1
 import Moore57.Moore57Graph.InvolutionEdgeCountFormula
 import Moore57.D19OnMoore57.Involution.FixedStarPaperBoundary
@@ -432,12 +432,10 @@ import Moore57.D19OnMoore57.BranchOrbit.ABCDefaultBaseCombinedFrontier
 import Moore57.D19OnMoore57.NoGo.FixedCenterLeafReplacementNoGo
 import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
 import Moore57.D19OnMoore57.NoGo.DefaultBaseCombinedFrontierNoGo
-import Moore57.D19OnMoore57.LinearCharacter.Minus8AutoConnectors
 import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierAutoRotationNoGo
 import Moore57.D19OnMoore57.NoGo.DefaultBaseCombinedFrontierAutoNoGo
 import Moore57.D19OnMoore57.NoGo.EndpointFrontierAutoNoGo
 import Moore57.D19OnMoore57.NoGo.FixedCenterLeafReplacementAutoNoGo
-import Moore57.D19OnMoore57.LinearCharacter.Minus8K155Connectors
 import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierK155NoGo
 import Moore57.D19OnMoore57.NoGo.K155EndpointCombinedNoGo
 import Moore57.D19OnMoore57.NoGo.EndpointFrontierK155Aliases

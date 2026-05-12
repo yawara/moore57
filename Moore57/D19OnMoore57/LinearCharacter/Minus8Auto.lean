@@ -1,15 +1,16 @@
-import Moore57.D19OnMoore57.LinearCharacter.Minus8Connectors
-import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
 import Moore57.D19OnMoore57.Involution.FixedStarA1
+import Moore57.D19OnMoore57.LinearCharacter.Minus8
+import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
 
 /-!
-# Auto-rotation variants of the `(-8)` eigenspace connectors
+# Auto-rotation and `K_{1,55}` variants of the `(-8)`-eigenspace connectors
 
-The `(-8)` connector file was intentionally written with the exact rotation
-fixed-count input explicit.  After `RotationFixedCountOneFrontier`, that input
-is a theorem of the ambient `D19ActsOnMoore57` witness.  This file exposes the
-same constructors with that argument filled automatically.
+This file consolidates the originally separate
+`Minus8AutoConnectors.lean` and `Minus8K155Connectors.lean` modules.
+Split out from `Minus8.lean` to avoid a circular import with
+`Rotation.FixedCountOneFrontier`.
 -/
+
 
 namespace Moore57
 
@@ -267,6 +268,140 @@ noncomputable def ofEigenspaceCharactersAndFixedStar55
     alpha beta gamma A B C h7 hMinus8
     (h.fixedVertexCount_reflection_eq_56_of_involutionFixedStar55 hStar)
     (h.adjacentMovedCount_reflection_eq_112 hStar)
+    orbitBase adjacentMoved
+
+end D19ConstructiveFinalInputs
+
+end
+
+end Moore57
+
+/-! ## `K_{1,55}` variants (originally `Minus8K155Connectors.lean`) -/
+
+namespace Moore57
+
+noncomputable section
+
+variable {V : Type*} [Fintype V] [DecidableEq V]
+variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+namespace D19ActsOnMoore57
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+namespace D19LinearCharacterInput
+
+/-- Build the full linear-character input from eigenspace characters and an
+explicit `K_{1,55}` fixed-star witness for a reflection. -/
+noncomputable def ofEigenspaceCharactersAndInvolutionK155
+    (alpha beta gamma A B C : ℕ)
+    (h7 : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    (hMinus8 : ∀ g : DihedralGroup 19,
+      Matrix.trace (permMatrix (h.smulEquiv g)) - 1 -
+          Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter A B C g : ℚ))
+    {dt : ZMod 19}
+    (hK : InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr dt))) :
+    D19LinearCharacterInput h :=
+  ofEigenspaceCharactersAndFixedStar55 (h := h)
+    alpha beta gamma A B C h7 hMinus8
+    (InvolutionK155.toInvolutionFixedStar55 h.isMoore hK)
+
+end D19LinearCharacterInput
+
+namespace D19RepresentationCharacterInput
+
+/-- Representation-character input from eigenspace characters and an explicit
+`K_{1,55}` fixed-star witness for a reflection. -/
+noncomputable def ofEigenspaceCharactersAndInvolutionK155
+    (alpha beta gamma A B C : ℕ)
+    (h7 : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    (hMinus8 : ∀ g : DihedralGroup 19,
+      Matrix.trace (permMatrix (h.smulEquiv g)) - 1 -
+          Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter A B C g : ℚ))
+    {dt : ZMod 19}
+    (hK : InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr dt))) :
+    D19RepresentationCharacterInput h :=
+  (D19LinearCharacterInput.ofEigenspaceCharactersAndInvolutionK155
+    (h := h) alpha beta gamma A B C h7 hMinus8 hK)
+      |>.toD19RepresentationCharacterInput
+
+end D19RepresentationCharacterInput
+
+/-- Component-boundary form of the `K_{1,55}` eigenspace connector. -/
+theorem representationCharacterComponentsBoundary_of_eigenspaceCharactersAndInvolutionK155
+    (h : D19ActsOnMoore57 V Γ)
+    (alpha beta gamma A B C : ℕ)
+    (h7 : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    (hMinus8 : ∀ g : DihedralGroup 19,
+      Matrix.trace (permMatrix (h.smulEquiv g)) - 1 -
+          Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter A B C g : ℚ))
+    {dt : ZMod 19}
+    (hK : InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr dt))) :
+    RepresentationCharacterComponentsBoundary h :=
+  (D19LinearCharacterInput.ofEigenspaceCharactersAndInvolutionK155
+    (h := h) alpha beta gamma A B C h7 hMinus8 hK)
+      |>.representationCharacterComponentsBoundary
+
+end D19ActsOnMoore57
+
+namespace D19FinalCharacterInputs
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Final character inputs from eigenspace characters and an explicit
+`K_{1,55}` fixed-star witness for a reflection. -/
+noncomputable def ofEigenspaceCharactersAndInvolutionK155
+    (alpha beta gamma A B C : ℕ)
+    (h7 : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    (hMinus8 : ∀ g : DihedralGroup 19,
+      Matrix.trace (permMatrix (h.smulEquiv g)) - 1 -
+          Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter A B C g : ℚ))
+    {dt : ZMod 19}
+    (hK : InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr dt))) :
+    D19FinalCharacterInputs h :=
+  ofEigenspaceCharactersAndFixedStar55 (h := h)
+    alpha beta gamma A B C h7 hMinus8
+    (InvolutionK155.toInvolutionFixedStar55 h.isMoore hK)
+
+end D19FinalCharacterInputs
+
+namespace D19ConstructiveFinalInputs
+
+variable {h : D19ActsOnMoore57 V Γ}
+
+/-- Constructive final inputs from eigenspace characters, an explicit
+`K_{1,55}` fixed-star witness for a reflection, and the remaining constructive
+geometry witnesses. -/
+noncomputable def ofEigenspaceCharactersAndInvolutionK155
+    (alpha beta gamma A B C : ℕ)
+    (h7 : ∀ g : DihedralGroup 19,
+      Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter alpha beta gamma g : ℚ))
+    (hMinus8 : ∀ g : DihedralGroup 19,
+      Matrix.trace (permMatrix (h.smulEquiv g)) - 1 -
+          Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv g)) =
+        (d19LinearCharacter A B C g : ℚ))
+    {dt : ZMod 19}
+    (hK : InvolutionK155 Γ (h.smulEquiv (DihedralGroup.sr dt)))
+    (orbitBase : OrbitBaseSelectionEnumeration h)
+    (adjacentMoved :
+      AdjacentMovedTwoCopyPartition38Witness h orbitBase.base) :
+    D19ConstructiveFinalInputs h :=
+  ofEigenspaceCharactersAndFixedStar55 (h := h)
+    alpha beta gamma A B C h7 hMinus8
+    (InvolutionK155.toInvolutionFixedStar55 h.isMoore hK)
     orbitBase adjacentMoved
 
 end D19ConstructiveFinalInputs

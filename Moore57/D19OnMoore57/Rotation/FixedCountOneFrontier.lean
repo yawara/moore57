@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.LinearCharacter.Minus8Connectors
+import Moore57.D19OnMoore57.LinearCharacter.Minus8
 import Moore57.D19OnMoore57.Rotation.FixedUpperBoundFromData
 import Moore57.D19OnMoore57.Rotation.FixedRegularity
 import Moore57.D19OnMoore57.Rotation.OneFixedBoundBoundary

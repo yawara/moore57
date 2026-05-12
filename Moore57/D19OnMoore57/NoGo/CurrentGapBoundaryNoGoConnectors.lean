@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCFinalGapReportBoundary
 import Moore57.D19OnMoore57.Final.CharacterComponentConnectors
-import Moore57.D19OnMoore57.LinearCharacter.Minus8K155Connectors
+import Moore57.D19OnMoore57.LinearCharacter.Minus8Auto
 
 /-!
 # Current-gap no-go connectors
