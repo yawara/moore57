@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCAFixingReflectionSupportBoundary
 import Moore57.D19OnMoore57.BranchOrbit.FixedStar
-import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelLocalObstructionBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Action
 
 /-!
 # Support-card frontier for the non-representation default-base package

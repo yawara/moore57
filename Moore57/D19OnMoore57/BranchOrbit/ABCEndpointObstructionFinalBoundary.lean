@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelLocalObstructionBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Action
 import Moore57.D19OnMoore57.BranchOrbit.ABCFinalGapReportBoundary
 
 /-!

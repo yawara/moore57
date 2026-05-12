@@ -1,7 +1,5 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelCaseBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Action
 import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelFinalBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelLocalObstructionBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelWitnessBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCCoordinateWitnessFinalBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCDoublingEquationSupportBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCReducedCoordinateWitnessBoundary

@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.Reflection.FixedStarFromActionBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelFinalBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelLocalObstructionBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Action
 import Moore57.D19OnMoore57.BranchOrbit.ABCDoublingEquationSupportBoundary
 import Moore57.D19OnMoore57.Involution.FixedStarA1
 

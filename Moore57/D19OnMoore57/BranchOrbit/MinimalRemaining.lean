@@ -4,7 +4,7 @@ import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointCommonNeighborBasic
 import Moore57.D19OnMoore57.BranchOrbit.Matching
 import Moore57.D19OnMoore57.BranchOrbit.ABCDoublingRemainingBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointSignAdjacencyBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCActionLevelLocalObstructionBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Action
 
 /-!
 # Minimal remaining action-level boundary: refinement chain
