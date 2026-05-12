@@ -1,5 +1,4 @@
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAvoidanceSplit
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionResidualOriginalReflected
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 import Moore57.D19OnMoore57.Fixed.UpperBoundCriteria
 import Moore57.D19OnMoore57.Rotation.FixedUpperBoundFromData
 

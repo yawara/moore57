@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.Final.RepresentationCountConstantResidualBase
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCompactCriteria
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 
 /-!
 # Final D19 inputs from compact adjacent-moved data

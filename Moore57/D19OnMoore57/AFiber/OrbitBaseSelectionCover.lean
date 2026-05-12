@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.AFiber.OrbitBaseSelection
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionComplementResidual
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 
 set_option maxRecDepth 10000
 

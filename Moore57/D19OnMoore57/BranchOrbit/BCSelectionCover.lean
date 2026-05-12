@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCFromCenter
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionResidualOriginalReflected
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 
 set_option maxRecDepth 10000
 

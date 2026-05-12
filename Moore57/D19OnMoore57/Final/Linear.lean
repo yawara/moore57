@@ -1,5 +1,4 @@
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionConstantResidual
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCopyCriteria
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 import Moore57.D19OnMoore57.D19Core.ConstructiveFinalLinearFixedEnumeration
 import Moore57.D19OnMoore57.D19Core.ConstructiveFinalLinearUnique
 import Moore57.D19OnMoore57.Final.Inputs

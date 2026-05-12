@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionFixedPartCriteria
+import Moore57.D19OnMoore57.AdjacentMoved.ReflectionFixedPart
 
 /-!
 # Basic properties of the rotation-one moving residual part

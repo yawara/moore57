@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCanonicalAFiberCriteria
+import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAFiber
 
 /-!
 # Fixed/A-fiber contribution decomposition

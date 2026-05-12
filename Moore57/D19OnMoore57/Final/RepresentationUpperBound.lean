@@ -1,7 +1,4 @@
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAvoidanceCriteria
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAvoidanceSplit
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCompactCriteria
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCompactSplit
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 import Moore57.D19OnMoore57.Final.Inputs
 import Moore57.D19OnMoore57.LinearCharacter.Input
 import Moore57.D19OnMoore57.Misc.CharacterInputPackaging

@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrierCriteria
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionResidualOriginalReflected
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 
 /-!
 # Carrier-form reflected avoidance for selected orbit bases

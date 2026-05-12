@@ -1,5 +1,5 @@
 import Moore57.Foundations.GroupAction.BranchFiberAction
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAFiberCriteria
+import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAFiber
 
 /-!
 # Rotation transport for A-fiber coordinates

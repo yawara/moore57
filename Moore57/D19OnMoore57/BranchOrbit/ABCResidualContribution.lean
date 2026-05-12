@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCResidualSplit
 import Moore57.D19OnMoore57.Misc.CenterNeighborContributionZero
 import Moore57.D19OnMoore57.AFiber.CardinalityBoundary
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCompactSplit
+import Moore57.D19OnMoore57.AdjacentMoved.Reflection
 
 /-!
 # Residual contribution for the B/C selected split

@@ -1,6 +1,4 @@
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCanonicalAFiberCriteria
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionCanonicalAFiberInclusions
-import Moore57.D19OnMoore57.AdjacentMoved.ReflectionFixedPartCriteria
+import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAFiber
 import Moore57.D19OnMoore57.AFiber.ContributionDecomposition
 import Moore57.D19OnMoore57.AFiber.ContributionOnlyCriteria
 import Moore57.D19OnMoore57.AFiber.OnlyContributionConstant
