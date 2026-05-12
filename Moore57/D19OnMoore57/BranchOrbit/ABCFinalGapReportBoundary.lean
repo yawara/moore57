@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCMinimalRemainingRefinedBoundary
+import Moore57.D19OnMoore57.BranchOrbit.MinimalRemaining
 import Moore57.D19OnMoore57.BranchOrbit.ABCDoublingReflectedAdjFromEquation
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointSignMatchingSymmetry
 

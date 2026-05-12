@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCDoublingReflectedAdjFromEquation
-import Moore57.D19OnMoore57.BranchOrbit.ABCMinimalRemainingRefinedBoundary
+import Moore57.D19OnMoore57.BranchOrbit.MinimalRemaining
 
 /-!
 # Doubling equation/support action-level boundary

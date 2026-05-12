@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCMinimalRemainingLocalObstructionBoundary
+import Moore57.D19OnMoore57.BranchOrbit.MinimalRemaining
 import Moore57.D19OnMoore57.BranchOrbit.ABCEquationInvariantCoordinateBoundary
 
 /-!
