@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.Orbit.BaseSelection
+import Moore57.D19OnMoore57.Orbit.BaseSelectionCarrier
 
 /-!
 # Canonical carrier reflected avoidance
