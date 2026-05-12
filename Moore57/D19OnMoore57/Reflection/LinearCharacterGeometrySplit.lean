@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.Reflection.RawGeometrySplit
-import Moore57.D19OnMoore57.Reflection.RegularTenCharacterBoundary
+import Moore57.D19OnMoore57.Reflection.RegularTen
 
 /-!
 # Linear-character bridge for the raw reflection geometry split

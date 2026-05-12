@@ -256,10 +256,7 @@ import Moore57.D19OnMoore57.Reflection.Lower47NoGoConnectors
 import Moore57.D19OnMoore57.Reflection.RemainingCandidateGeometryBoundary
 import Moore57.D19OnMoore57.Reflection.RemainingLeafConnectorBoundary
 import Moore57.D19OnMoore57.Reflection.RemainingLeafNoGoConnectors
-import Moore57.D19OnMoore57.Reflection.RegularTenDefaultBaseBoundary
-import Moore57.D19OnMoore57.Reflection.RegularTenTraceArithmetic
-import Moore57.D19OnMoore57.Reflection.RegularTenCharacterBoundary
-import Moore57.D19OnMoore57.Reflection.RegularTenStrongGraphBoundary
+import Moore57.D19OnMoore57.Reflection.RegularTen
 import Moore57.D19OnMoore57.Reflection.RawGeometrySplit
 import Moore57.D19OnMoore57.Reflection.RawActionFixedCenterLeaf
 import Moore57.D19OnMoore57.Reflection.RawActionFixedStar

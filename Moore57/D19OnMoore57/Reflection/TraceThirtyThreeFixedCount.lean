@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.Reflection.RegularTenTraceArithmetic
+import Moore57.D19OnMoore57.Reflection.RegularTen
 import Moore57.D19OnMoore57.Reflection.TraceCandidateLowerBoundBridge
 
 /-!

@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.Reflection.RawGeometrySplit
-import Moore57.D19OnMoore57.Reflection.RegularTenDefaultBaseBoundary
+import Moore57.D19OnMoore57.Reflection.RegularTen
 
 /-!
 # Default-base index split for raw reflections
