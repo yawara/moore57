@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualBridge
+import Moore57.D19OnMoore57.BranchOrbit.ResidualBridge
 import Moore57.D19OnMoore57.AFiber.AllFibersCardinalityBoundary
 
 /-!

@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCReflectionLabeling
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualContribution
+import Moore57.D19OnMoore57.BranchOrbit.ResidualSplit
 import Moore57.D19OnMoore57.BranchOrbit.ABCAllFibersFinalBridge
 import Moore57.D19OnMoore57.AFiber.ContributionRotationInvariance
 import Moore57.D19OnMoore57.D19Core.RepresentationMathlibCharacterTools

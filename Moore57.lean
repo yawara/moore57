@@ -184,11 +184,9 @@ import Moore57.D19OnMoore57.Final.CharacterAFiberBoundary
 import Moore57.D19OnMoore57.Final.NoFixed
 import Moore57.Foundations.ZMod19.DoublingOrbitBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCFinalBridge
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualBridge
+import Moore57.D19OnMoore57.BranchOrbit.ResidualBridge
 import Moore57.D19OnMoore57.BranchOrbit.ABCAllFibersFinalBridge
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualGeometry
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualSplit
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualContribution
+import Moore57.D19OnMoore57.BranchOrbit.ResidualSplit
 import Moore57.D19OnMoore57.BranchOrbit.ABCReflectionChoice
 import Moore57.D19OnMoore57.BranchOrbit.ABCReflectionLabeling
 import Moore57.D19OnMoore57.BranchOrbit.Midpoint

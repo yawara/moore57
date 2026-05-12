@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.D19Core.CanonicalBranchAllFibersBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualContribution
+import Moore57.D19OnMoore57.BranchOrbit.ResidualSplit
 import Moore57.D19OnMoore57.BranchOrbit.ABCReflectionChoice
 import Moore57.D19OnMoore57.Final.RepresentationUpperBound
 

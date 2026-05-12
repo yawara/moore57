@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.BCSelectionCover
-import Moore57.D19OnMoore57.BranchOrbit.ABCResidualGeometry
+import Moore57.D19OnMoore57.BranchOrbit.ResidualBridge
 import Moore57.D19OnMoore57.BranchFiber.Partition
 
 /-!
