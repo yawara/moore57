@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierAfterDefaultBase
+import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier
 import Moore57.D19OnMoore57.BranchOrbit.ABCExceptionEndpointWitnessBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCExceptionEndpointPointwiseBoundary
 import Moore57.D19OnMoore57.BranchOrbit.ABCEndpointCommonNeighborBoundary

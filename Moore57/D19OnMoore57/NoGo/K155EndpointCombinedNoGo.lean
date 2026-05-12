@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.NoGo.EndpointFrontierAutoNoGo
-import Moore57.D19OnMoore57.NoGo.DefaultBaseCombinedFrontierAutoNoGo
+import Moore57.D19OnMoore57.NoGo.DefaultBaseCombinedFrontier
 
 /-!
 # K155 no-go surfaces for endpoint and combined frontiers

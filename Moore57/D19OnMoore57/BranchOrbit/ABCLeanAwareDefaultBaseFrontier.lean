@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCLeanAwareFinalBoundary
-import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierAfterDefaultBase
+import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier
 
 /-!
 # Lean-aware default-base frontier

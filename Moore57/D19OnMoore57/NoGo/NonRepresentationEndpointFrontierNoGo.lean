@@ -1,6 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCNoAllEndpointAdjFrontier
-import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierLinearNoGo
-import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierEigenspaceNoGo
+import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier
 
 /-!
 # Endpoint-wrapper no-go surfaces for the default-base frontier

@@ -1,7 +1,7 @@
 import Moore57.D19OnMoore57.NoGo.CurrentGapBoundaryNoGoConnectors
 import Moore57.D19OnMoore57.NoGo.EndpointFinalBoundaryNoGoConnectors
-import Moore57.D19OnMoore57.NoGo.FixedCenterLeafReplacementK155NoGo
-import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierK155NoGo
+import Moore57.D19OnMoore57.NoGo.FixedCenterLeafReplacement
+import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontier
 
 /-!
 # Nonempty K155 no-go connectors
