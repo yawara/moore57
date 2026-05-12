@@ -50,29 +50,22 @@ theorem rho_u_eq : h.rho h.u = h.u := h.uWitness.property
 
 theorem tau_u_eq : h.tau h.u = h.u := by
   have h_comm := h.rho_mul_tau_eq_tau_mul_rho
-  have : h.rho (h.tau h.u) = h.tau h.u := by
+  have htau_u_fixed : h.rho (h.tau h.u) = h.tau h.u := by
     have heq : h.rho (h.tau h.u) = h.tau (h.rho h.u) := by
       have := congr_arg (· h.u) h_comm.symm
       simpa using this
     rw [heq, h.rho_u_eq]
-  -- Use uniqueness of `ρ`-fixed point: `|Fix(ρ)| = 1`, so any ρ-fixed vertex equals u.
-  have hfix_one : fixedVertexCount h.rho = 1 :=
-    order19_aut_fixedVertexCount_eq_one h.isMoore h.rho h.rho_aut
+  -- `Fix(ρ)` has cardinality 1, hence is a `Subsingleton`.
+  have hcard_one : Fintype.card (fixedVertexSet h.rho) = 1 := by
+    rw [← fixedVertexCount_eq_card_fixedVertexSet]
+    exact order19_aut_fixedVertexCount_eq_one h.isMoore h.rho h.rho_aut
       h.rho_pow_nineteen h.rho_ne_one
-  have htau_u_in_fix : h.tau h.u ∈ fixedVertexSet h.rho := this
-  have hu_in_fix : h.u ∈ fixedVertexSet h.rho := h.rho_u_eq
-  -- `fixedVertexSet h.rho` is a singleton.
-  have hcard_one :
-      Fintype.card (fixedVertexSet h.rho) = 1 := by
-    rw [← fixedVertexCount_eq_card_fixedVertexSet]; exact hfix_one
-  rcases Fintype.card_eq_one_iff.mp hcard_one with ⟨v, hv_unique⟩
-  have h1 : (⟨h.tau h.u, htau_u_in_fix⟩ : fixedVertexSet h.rho) = v :=
-    hv_unique ⟨h.tau h.u, htau_u_in_fix⟩
-  have h2 : (⟨h.u, hu_in_fix⟩ : fixedVertexSet h.rho) = v :=
-    hv_unique ⟨h.u, hu_in_fix⟩
-  have : (⟨h.tau h.u, htau_u_in_fix⟩ : fixedVertexSet h.rho) =
-      ⟨h.u, hu_in_fix⟩ := h1.trans h2.symm
-  exact congrArg Subtype.val this
+  haveI : Subsingleton (fixedVertexSet h.rho) :=
+    Fintype.card_le_one_iff_subsingleton.mp hcard_one.le
+  exact congrArg Subtype.val
+    (Subsingleton.elim
+      (⟨h.tau h.u, htau_u_fixed⟩ : fixedVertexSet h.rho)
+      ⟨h.u, h.rho_u_eq⟩)
 
 /-- `ρ` preserves the fixed set of `τ` (since `ρ` and `τ` commute). -/
 theorem rho_preserves_tau_fix (v : V) (hv : h.tau v = v) :
@@ -116,7 +109,7 @@ theorem fixedVertexCount_tau_modEq_one :
   classical
   haveI : Fact (Nat.Prime 19) := ⟨by decide⟩
   have hpow : h.rhoRestrict ^ 19 ^ 1 = 1 := by
-    simpa using h.rhoRestrict_pow_nineteen
+    simp [h.rhoRestrict_pow_nineteen]
   -- |Fix(τ)| ≡ |Fix(rhoRestrict)| mod 19
   have hmod := Equiv.Perm.card_compl_support_modEq
     (α := fixedVertexSet h.tau) (p := 19) (n := 1)
@@ -126,46 +119,22 @@ theorem fixedVertexCount_tau_modEq_one :
       fixedVertexCount h.tau = Fintype.card (fixedVertexSet h.tau) :=
     fixedVertexCount_eq_card_fixedVertexSet h.tau
   -- |Fix(rhoRestrict)| = |Fix(ρ) ∩ Fix(τ)| = |{u}| = 1 (since u ∈ Fix(τ)).
-  have hsupp :
-      h.rhoRestrict.supportᶜ.card = 1 := by
-    -- show `Fix(rhoRestrict) = {⟨u, tau_u_eq⟩}`.
-    rw [show h.rhoRestrict.supportᶜ.card =
-        Fintype.card {w : fixedVertexSet h.tau // h.rhoRestrict w = w}
-      from by
-        rw [← Fintype.card_ofFinset h.rhoRestrict.supportᶜ (by intro w; rfl)]
-        exact Fintype.card_congr
-          { toFun := fun w => ⟨w.1, by simpa [Equiv.Perm.support] using w.2⟩
-            invFun := fun w => ⟨w.1, by simpa [Equiv.Perm.support] using w.2⟩
-            left_inv := fun w => rfl
-            right_inv := fun w => rfl }]
-    have hfix_eq :
-        Fintype.card {w : fixedVertexSet h.tau // h.rhoRestrict w = w} = 1 := by
-      have hfix_rho : fixedVertexCount h.rho = 1 :=
-        order19_aut_fixedVertexCount_eq_one h.isMoore h.rho h.rho_aut
-          h.rho_pow_nineteen h.rho_ne_one
-      have hcard_rho :
-          Fintype.card (fixedVertexSet h.rho) = 1 := by
-        rw [← fixedVertexCount_eq_card_fixedVertexSet]; exact hfix_rho
-      refine Fintype.card_eq_one_iff.mpr ⟨⟨⟨h.u, h.tau_u_eq⟩, ?_⟩, ?_⟩
-      · apply Subtype.ext
-        exact h.rho_u_eq
-      · rintro ⟨⟨v, hv_tau⟩, hv_fix⟩
-        have hv_rho : h.rho v = v := by
-          show h.rho v = v
-          have : h.rhoRestrict ⟨v, hv_tau⟩ = ⟨v, hv_tau⟩ := hv_fix
-          exact congrArg Subtype.val this
-        -- v ∈ Fix(h.rho) = {u}.
-        rcases Fintype.card_eq_one_iff.mp hcard_rho with ⟨w, hw_unique⟩
-        have h1 : (⟨v, hv_rho⟩ : fixedVertexSet h.rho) = w := hw_unique _
-        have h2 : (⟨h.u, h.rho_u_eq⟩ : fixedVertexSet h.rho) = w := hw_unique _
-        have hvu : v = h.u := by
-          have : (⟨v, hv_rho⟩ : fixedVertexSet h.rho) = ⟨h.u, h.rho_u_eq⟩ :=
-            h1.trans h2.symm
-          exact congrArg Subtype.val this
-        apply Subtype.ext
-        apply Subtype.ext
-        exact hvu
-    exact hfix_eq
+  have hsupp : h.rhoRestrict.supportᶜ.card = 1 := by
+    rw [← card_fixedVertexSet_eq_card_supportCompl]
+    have hcard_rho : Fintype.card (fixedVertexSet h.rho) = 1 := by
+      rw [← fixedVertexCount_eq_card_fixedVertexSet]
+      exact order19_aut_fixedVertexCount_eq_one h.isMoore h.rho h.rho_aut
+        h.rho_pow_nineteen h.rho_ne_one
+    haveI : Subsingleton (fixedVertexSet h.rho) :=
+      Fintype.card_le_one_iff_subsingleton.mp hcard_rho.le
+    refine Fintype.card_eq_one_iff.mpr ⟨⟨⟨h.u, h.tau_u_eq⟩, ?_⟩, ?_⟩
+    · exact Subtype.ext h.rho_u_eq
+    · rintro ⟨⟨v, hv_tau⟩, hv_fix⟩
+      have hv_rho : h.rho v = v := congrArg Subtype.val hv_fix
+      have hvu : v = h.u := congrArg Subtype.val
+        (Subsingleton.elim
+          (⟨v, hv_rho⟩ : fixedVertexSet h.rho) ⟨h.u, h.rho_u_eq⟩)
+      exact Subtype.ext (Subtype.ext hvu)
   rw [hcard_eq]
   -- hmod : 1 ≡ Fintype.card (fixedVertexSet h.tau) [MOD 19] after rw
   rw [hsupp] at hmod

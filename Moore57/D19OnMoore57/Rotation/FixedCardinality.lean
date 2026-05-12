@@ -531,8 +531,7 @@ theorem fixedVertexCount_rotation_one_eq_degree_sq_add_one_of_regular_candidate
     h.fixedInducedGraph_rotation_one_isSRGWith_of_regular k hreg
   have hpos : 0 < fixedVertexCount (h.rotation 1) :=
     h.fixedVertexCount_rotation_pos 1
-  have hparam := SimpleGraph.IsSRGWith.param_eq Gfix hsrg hpos
-  rcases hk with rfl | rfl | rfl <;> norm_num at hparam ⊢ <;> omega
+  exact srg_n_eq_k_sq_add_one_of_k_in_19_38_57 hsrg hpos hk
 
 /-- If, whenever rotation `1` has more than one fixed point, the induced fixed
 graph is regular of one of the three possible fixed-neighbor degrees, then

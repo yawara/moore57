@@ -367,6 +367,19 @@ theorem aut_fixed_moved_cross_edge_bound
 
 /-! ### SRG / regular-candidate arithmetic -/
 
+/-- Pure SRG arithmetic: from `IsSRGWith n k 0 1` with positive `n` and
+`k ∈ {19, 38, 57}` we get `n = k² + 1`. Used to discharge the regularity
+candidate case for both the abstract (raw automorphism) and `D₁₉` rotation
+pipelines. -/
+theorem srg_n_eq_k_sq_add_one_of_k_in_19_38_57
+    {W : Type*} [Fintype W]
+    {G : SimpleGraph W} [DecidableRel G.Adj]
+    {n k : ℕ} (hsrg : G.IsSRGWith n k 0 1) (hpos : 0 < n)
+    (hk : k = 19 ∨ k = 38 ∨ k = 57) :
+    n = k * k + 1 := by
+  have hparam := SimpleGraph.IsSRGWith.param_eq G hsrg hpos
+  rcases hk with rfl | rfl | rfl <;> norm_num at hparam ⊢ <;> omega
+
 /-- If `σ` has a regular fixed induced subgraph of degree `k ∈ {19, 38, 57}`,
 then `fixedVertexCount σ = k² + 1`. -/
 theorem aut_fixedVertexCount_eq_degree_sq_add_one_of_regular_candidate
@@ -387,8 +400,7 @@ theorem aut_fixedVertexCount_eq_degree_sq_add_one_of_regular_candidate
     exact hreg x
   have hpos : 0 < fixedVertexCount σ :=
     aut_fixedVertexCount_pos_of_pow_nineteen hΓ σ pow_nineteen
-  have hparam := SimpleGraph.IsSRGWith.param_eq Gfix hsrg hpos
-  rcases hk with rfl | rfl | rfl <;> norm_num at hparam ⊢ <;> omega
+  exact srg_n_eq_k_sq_add_one_of_k_in_19_38_57 hsrg hpos hk
 
 /-! ### Conditional reduction: regular ⇒ fixed count 1 -/
 

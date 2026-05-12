@@ -55,4 +55,29 @@ theorem fixedVertexSet_eq_support_compl
   ext v
   simp [fixedVertexSet, Equiv.Perm.support]
 
+/-- Bridge: `fixedVertexCount σ = σ.supportᶜ.card`.  Lets Mathlib's `Equiv.Perm`
+support lemmas (e.g. `Equiv.Perm.card_compl_support_modEq`) apply directly to
+`fixedVertexCount`-based statements. -/
+theorem fixedVertexCount_eq_card_supportCompl
+    [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) :
+    fixedVertexCount σ = σ.supportᶜ.card := by
+  classical
+  show ((Finset.univ : Finset V).filter fun v => σ v = v).card = σ.supportᶜ.card
+  congr 1
+  ext v
+  simp [Equiv.Perm.mem_support]
+
+theorem card_fixedVertexSet_eq_card_supportCompl
+    [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) :
+    Fintype.card (fixedVertexSet σ) = σ.supportᶜ.card := by
+  rw [← fixedVertexCount_eq_card_fixedVertexSet,
+      fixedVertexCount_eq_card_supportCompl]
+
+theorem fixedVertexSet_toFinset_eq_supportCompl
+    [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) :
+    (fixedVertexSet σ).toFinset = σ.supportᶜ := by
+  classical
+  ext v
+  simp [fixedVertexSet, Equiv.Perm.mem_support]
+
 end Moore57
