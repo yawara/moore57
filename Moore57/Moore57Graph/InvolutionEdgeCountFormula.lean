@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.Involution.InvolutionFixedStarA1
+import Moore57.D19OnMoore57.Involution.FixedStarA1
 
 /-!
 # Involution edge-count formula

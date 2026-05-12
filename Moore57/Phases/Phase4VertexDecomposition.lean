@@ -1,9 +1,9 @@
 import Moore57.Phases.Phase4
 import Moore57.Phases.Phase1
-import Moore57.D19OnMoore57.D19Core.D19VertexPermutationRepresentation
-import Moore57.D19OnMoore57.D19Core.D19BurnsideFixedCountConstraints
-import Moore57.D19OnMoore57.Rotation.RotationFixedCountOneFrontier
-import Moore57.D19OnMoore57.D19Core.D19RepresentationMathlibCharacterTools
+import Moore57.D19OnMoore57.D19Core.VertexPermutationRepresentation
+import Moore57.D19OnMoore57.D19Core.BurnsideFixedCountConstraints
+import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
+import Moore57.D19OnMoore57.D19Core.RepresentationMathlibCharacterTools
 
 /-!
 # Phase 4.3 / 4.4: vertex permutation character and its D₁₉ linear-character form

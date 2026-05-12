@@ -1,7 +1,7 @@
-import Moore57.D19OnMoore57.Midpoint.MidpointExceptionECardTwoContradiction
-import Moore57.D19OnMoore57.AFiber.AFiberCoordinatesOfBranchesMatchingId
-import Moore57.D19OnMoore57.Midpoint.MidpointMiddleSupportRotationBridge
-import Moore57.D19OnMoore57.BranchOrbit.BranchOrbitABCReferenceSolutionGeometryBoundary
+import Moore57.D19OnMoore57.Midpoint.ExceptionECardTwoContradiction
+import Moore57.D19OnMoore57.AFiber.CoordinatesOfBranchesMatchingId
+import Moore57.D19OnMoore57.Midpoint.MiddleSupportRotationBridge
+import Moore57.D19OnMoore57.BranchOrbit.ABCReferenceSolutionGeometryBoundary
 
 /-!
 # Reference-side support complement from disjointness (default-base)

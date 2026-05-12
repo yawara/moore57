@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.D19Core.D19RepresentationMathlibCharacterTools
+import Moore57.D19OnMoore57.D19Core.RepresentationMathlibCharacterTools
 
 /-!
 # D19 character-value reductions

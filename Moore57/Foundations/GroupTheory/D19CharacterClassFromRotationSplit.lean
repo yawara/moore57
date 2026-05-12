@@ -1,5 +1,5 @@
 import Moore57.Foundations.GroupTheory.D19RotationMovingCyclotomic
-import Moore57.D19OnMoore57.D19Core.D19CharacterBoundaryConstructors
+import Moore57.D19OnMoore57.D19Core.CharacterBoundaryConstructors
 
 /-!
 # D19 character class data from the rotation split

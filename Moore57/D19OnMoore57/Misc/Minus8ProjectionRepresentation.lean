@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.E7Projection.E7ProjectionCharacterBridge
+import Moore57.D19OnMoore57.E7Projection.ProjectionCharacterBridge
 
 /-!
 # The complementary `(-8)` projection representation

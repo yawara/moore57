@@ -1,6 +1,6 @@
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Moore57Graph.E7Matrix.Idempotent
-import Moore57.D19OnMoore57.HigmanTrace.HigmanTraceCongruence
+import Moore57.D19OnMoore57.HigmanTrace.Congruence
 
 /-!
 # Phase 2 prebuilt aliases for the SRG / Higman trace pipeline

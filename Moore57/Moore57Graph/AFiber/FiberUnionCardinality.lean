@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.AdjacentMoved.AdjacentMovedReflectionAFiberCriteria
+import Moore57.D19OnMoore57.AdjacentMoved.ReflectionAFiberCriteria
 
 /-!
 # Cardinality of selected A-fiber unions

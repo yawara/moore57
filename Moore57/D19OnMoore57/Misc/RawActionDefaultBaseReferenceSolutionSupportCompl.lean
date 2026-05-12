@@ -1,8 +1,8 @@
 import Moore57.D19OnMoore57.Misc.ReferenceMatchingSupportComplFromDisjointness
-import Moore57.D19OnMoore57.Reflection.ReflectionRawActionFixedStar
-import Moore57.D19OnMoore57.Reflection.ReflectionRawActionFixedCenterLeaf
-import Moore57.D19OnMoore57.BranchOrbit.BranchOrbitABCAFixingReflectionSupportBoundary
-import Moore57.D19OnMoore57.Reflection.ReflectionRawActionDefaultBaseFrontier
+import Moore57.D19OnMoore57.Reflection.RawActionFixedStar
+import Moore57.D19OnMoore57.Reflection.RawActionFixedCenterLeaf
+import Moore57.D19OnMoore57.BranchOrbit.ABCAFixingReflectionSupportBoundary
+import Moore57.D19OnMoore57.Reflection.RawActionDefaultBaseFrontier
 
 /-!
 # Raw-action default-base reference-side support complement

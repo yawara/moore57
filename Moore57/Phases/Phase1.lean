@@ -1,5 +1,5 @@
-import Moore57.D19OnMoore57.Rotation.RotationFixedCountOneFrontier
-import Moore57.D19OnMoore57.Reflection.ReflectionRawActionFixedStar
+import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
+import Moore57.D19OnMoore57.Reflection.RawActionFixedStar
 
 /-!
 # Phase 1 prebuilt aliases for the representation-side wiring

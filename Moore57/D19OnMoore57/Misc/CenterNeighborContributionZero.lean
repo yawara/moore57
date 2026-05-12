@@ -1,5 +1,5 @@
-import Moore57.D19OnMoore57.BranchFiber.BranchFiberPartition
-import Moore57.D19OnMoore57.AFiber.AFiberCoordinateOrbit
+import Moore57.D19OnMoore57.BranchFiber.Partition
+import Moore57.D19OnMoore57.AFiber.CoordinateOrbit
 
 /-!
 # Zero contribution from the center-neighbor part

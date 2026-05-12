@@ -1,5 +1,5 @@
-import Moore57.D19OnMoore57.Rotation.RotationFixedUpperBoundInputs
-import Moore57.D19OnMoore57.Trace.TraceCharacterInputReduction
+import Moore57.D19OnMoore57.Rotation.FixedUpperBoundInputs
+import Moore57.D19OnMoore57.Trace.CharacterInputReduction
 
 /-!
 # Split packaging for D19 character inputs

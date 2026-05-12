@@ -1,9 +1,9 @@
 import Moore57.Phases.Phase4VertexDecomposition
 import Moore57.Phases.Phase3
-import Moore57.D19OnMoore57.D19Core.D19RepresentationCharacterDataBridge
-import Moore57.D19OnMoore57.D19Core.D19RepresentationCharacterMathlibBridge
-import Moore57.D19OnMoore57.E7Projection.E7ProjectionDimension
-import Moore57.D19OnMoore57.E7Projection.E7CharacterClassTraceBoundary
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacterDataBridge
+import Moore57.D19OnMoore57.D19Core.RepresentationCharacterMathlibBridge
+import Moore57.D19OnMoore57.E7Projection.ProjectionDimension
+import Moore57.D19OnMoore57.E7Projection.CharacterClassTraceBoundary
 
 /-!
 # Phase 5 prebuilt: from vertex orbit decomposition to E₇ multiplicity data
