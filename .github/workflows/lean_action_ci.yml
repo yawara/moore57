@@ -11,4 +11,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+
+      - name: Fast-fail check for sorry / admit in proof positions
+        run: |
+          PAT='(\b(sorry|admit)[[:space:]]*$)|((:=|\bby\b|\bexact\b|\brefine\b|\bapply\b)[[:space:]]+(sorry|admit)\b)|(^[[:space:]]*(sorry|admit)[[:space:]]*($|--))'
+          if grep -rnE "$PAT" Moore57/ --include='*.lean'; then
+            echo "::error::sorry or admit found in proof position"
+            exit 1
+          fi
+
       - uses: leanprover/lean-action@v1
+
+      # The main-theorem axioms check runs as part of `lake build`
+      # via `Moore57/AxiomsCheck.lean` — if axioms regress, the build above fails.
