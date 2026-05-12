@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.BranchOrbit.ABCMidpointExceptionSetBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Midpoint
 
 /-!
 # Reflection fixed-star boundary

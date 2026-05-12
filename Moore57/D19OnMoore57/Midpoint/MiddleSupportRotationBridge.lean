@@ -1,6 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCReflectionLabeling
-import Moore57.D19OnMoore57.BranchOrbit.ABCMidpointReflection
-import Moore57.D19OnMoore57.BranchOrbit.ABCMidpointExceptionSetBoundary
+import Moore57.D19OnMoore57.BranchOrbit.Midpoint
 import Moore57.D19OnMoore57.BranchOrbit.ABCExceptionDoublingVertexPullbackBoundary
 
 /-!

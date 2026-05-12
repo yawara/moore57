@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCExceptionCardTwoBoundary
-import Moore57.D19OnMoore57.BranchOrbit.ABCMidpointReflection
+import Moore57.D19OnMoore57.BranchOrbit.Midpoint
 
 /-!
 # All-support connectors for the midpoint-exception card-two boundary
