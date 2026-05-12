@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.E7Projection.Minus8BoundaryPackageNoGoConnectors
-import Moore57.D19OnMoore57.LinearCharacter.NonemptyActionNoGoConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 
 /-!
 # Action-level no-go connectors for packaged E7/minus-8 boundaries

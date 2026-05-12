@@ -131,7 +131,6 @@ import Moore57.D19OnMoore57.D19Core.ConstructiveFinalFixedEnumeration
 import Moore57.D19OnMoore57.LinearCharacter.Input
 import Moore57.D19OnMoore57.LinearCharacter.Dimension
 import Moore57.D19OnMoore57.LinearCharacter.Minus8
-import Moore57.D19OnMoore57.LinearCharacter.DimensionConnectors
 import Moore57.D19OnMoore57.LinearCharacter.Minus8Connectors
 import Moore57.D19OnMoore57.Involution.FixedStarA1
 import Moore57.Moore57Graph.InvolutionEdgeCountFormula
@@ -445,9 +444,7 @@ import Moore57.D19OnMoore57.NoGo.EndpointFrontierK155Aliases
 import Moore57.D19OnMoore57.NoGo.FixedCenterLeafReplacementK155NoGo
 import Moore57.D19OnMoore57.NoGo.NonemptyK155NoGoConnectors
 import Moore57.D19OnMoore57.NoGo.PaperFixedStarNoGoConnectors
-import Moore57.D19OnMoore57.LinearCharacter.NonemptyNoGoConnectors
-import Moore57.D19OnMoore57.LinearCharacter.NonemptyCurrentGapNoGoConnectors
-import Moore57.D19OnMoore57.LinearCharacter.NonemptyActionNoGoConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 import Moore57.D19OnMoore57.NoGo.ActionLevelBoundaryNoGoConnectors
 import Moore57.D19OnMoore57.E7Projection.Minus8CharacterBoundariesFromRotationSplit
 import Moore57.D19OnMoore57.E7Projection.Minus8RotationSplitLower47NoGo

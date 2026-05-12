@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.E7Projection.Minus8InversePairTraceCountRawReflectionStarConnectors
-import Moore57.D19OnMoore57.LinearCharacter.NonemptyNoGoConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 
 /-!
 # Boundary packages for inverse-pair E7/minus-8 trace data

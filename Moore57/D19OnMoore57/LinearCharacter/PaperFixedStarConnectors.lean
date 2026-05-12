@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.LinearCharacter.DimensionConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Dimension
 import Moore57.D19OnMoore57.Involution.FixedStarPaperBoundary
 
 /-!

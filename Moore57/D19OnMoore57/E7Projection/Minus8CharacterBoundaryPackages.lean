@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.E7Projection.Minus8CountRawReflectionStarConnectors
-import Moore57.D19OnMoore57.LinearCharacter.NonemptyNoGoConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 
 /-!
 # Packaged E7/minus-8 character boundaries

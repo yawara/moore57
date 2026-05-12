@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.E7Projection.Minus8CharacterBoundariesFromRotationSplit
-import Moore57.D19OnMoore57.LinearCharacter.NonemptyNoGoConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 
 /-!
 # Rotation-split no-go from the trace-refined reflection lower bound

@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.NoGo.NonRepresentationFrontierAfterDefaultBase
-import Moore57.D19OnMoore57.LinearCharacter.DimensionConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Dimension
 
 /-!
 # Linear-character no-go for the default-base non-representation frontier

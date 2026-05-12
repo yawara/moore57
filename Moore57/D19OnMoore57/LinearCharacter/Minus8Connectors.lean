@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.LinearCharacter.Minus8
-import Moore57.D19OnMoore57.LinearCharacter.DimensionConnectors
+import Moore57.D19OnMoore57.LinearCharacter.Dimension
 
 /-!
 # Connectors from the `(-8)`-eigenspace character bounds
