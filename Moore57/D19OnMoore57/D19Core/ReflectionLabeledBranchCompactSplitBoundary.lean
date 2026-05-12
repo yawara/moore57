@@ -3,7 +3,7 @@ import Moore57.D19OnMoore57.BranchOrbit.ABCResidualContribution
 import Moore57.D19OnMoore57.BranchOrbit.ABCAllFibersFinalBridge
 import Moore57.D19OnMoore57.AFiber.ContributionRotationInvariance
 import Moore57.D19OnMoore57.D19Core.RepresentationMathlibCharacterTools
-import Moore57.D19OnMoore57.Final.RepresentationUpperBoundCompactSplit
+import Moore57.D19OnMoore57.Final.RepresentationUpperBound
 import Moore57.D19OnMoore57.Reflection.FixedCenterLeafBoundary
 
 /-!

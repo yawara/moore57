@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.Final.TraceRotationOneHybridBoundary
+import Moore57.D19OnMoore57.Final.TraceRotationOne
 import Moore57.D19OnMoore57.AFiber.CardinalityBoundary
 
 /-!

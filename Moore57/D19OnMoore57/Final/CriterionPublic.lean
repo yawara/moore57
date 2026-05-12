@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.Final.CharacterAFiberBoundary
 import Moore57.D19OnMoore57.Final.CharacterCriterionBoundary
-import Moore57.D19OnMoore57.Final.NoFixedBoundBoundary
+import Moore57.D19OnMoore57.Final.NoFixed
 
 /-!
 # Public final-criterion nonexistence aliases

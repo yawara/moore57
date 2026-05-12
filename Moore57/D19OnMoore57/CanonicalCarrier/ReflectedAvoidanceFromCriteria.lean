@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.CanonicalCarrier.ReflectedAvoidance
-import Moore57.D19OnMoore57.Final.RepresentationUpperBoundAvoidanceSemantic
+import Moore57.D19OnMoore57.Final.RepresentationUpperBound
 
 /-!
 # Canonical carrier reflected avoidance from criteria

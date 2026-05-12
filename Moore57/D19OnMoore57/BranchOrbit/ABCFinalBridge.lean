@@ -1,6 +1,6 @@
 import Moore57.D19OnMoore57.BranchOrbit.ABCData
 import Moore57.D19OnMoore57.AFiber.OrbitBaseSelection
-import Moore57.D19OnMoore57.Final.NoFixedResidualContainmentBoundary
+import Moore57.D19OnMoore57.Final.NoFixed
 
 /-!
 # Branch-orbit A/B/C data to no-fixed final boundaries

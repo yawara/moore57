@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.Final.TraceRotationOneCanonicalAFiberCardCarrier
+import Moore57.D19OnMoore57.Final.TraceRotationOne
 import Moore57.D19OnMoore57.Rotation.OneFixedBoundBoundary
 
 /-!
