@@ -37,14 +37,7 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 noncomputable def traceNumber (h : Order22ActsOnMoore57 V Γ) : ℕ :=
   (Finset.univ.filter (fun x : V => Γ.Adj x (h.σ x))).card / 11
 
-/-- **Phase 2-4 の結論 (要証明)**: `n = 5`.
-
-自然言語証明 §2-§4: 複素 trace 制限で `n ∈ {5, 20, 35, 50}`,
-さらに F_11 モジュラ trace で `n ≡ 5 (mod 11)`, 合わせて `n = 5`. -/
-theorem traceNumber_eq_five (h : Order22ActsOnMoore57 V Γ) :
-    h.traceNumber = 5 := by
-  sorry
-
+-- `traceNumber_eq_five` (Phase 2-4) は `ComplexRestriction.lean` に分離.
 -- `traceNumber_even` (Phase 5) は `Parity.lean` に分離.
 
 end Order22ActsOnMoore57

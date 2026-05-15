@@ -1,4 +1,5 @@
 import Moore57.Order22OnMoore57.TraceNumber
+import Moore57.Order22OnMoore57.ComplexRestriction
 import Moore57.Order22OnMoore57.Parity
 
 /-!
