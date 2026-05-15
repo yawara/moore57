@@ -349,5 +349,6 @@ import Moore57.D19OnMoore57.D19Core.ReflectionLabeledBranchCompactSplitBoundary
 import Moore57.D19OnMoore57.Final.CriterionPublic
 import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Order22OnMoore57.Action
+import Moore57.Order22OnMoore57.BasicStructure
 import Moore57.Order22OnMoore57.TraceNumber
 import Moore57.Order22OnMoore57.NoGo
