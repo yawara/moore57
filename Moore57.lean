@@ -351,4 +351,5 @@ import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Order22OnMoore57.Action
 import Moore57.Order22OnMoore57.BasicStructure
 import Moore57.Order22OnMoore57.TraceNumber
+import Moore57.Order22OnMoore57.TraceConstancy
 import Moore57.Order22OnMoore57.NoGo
