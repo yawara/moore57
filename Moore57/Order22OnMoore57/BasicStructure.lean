@@ -196,6 +196,45 @@ theorem dihedral_σ_six_in_στ_fix (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
   rw [← h_conj]
   exact hlhs
 
+/-- dihedral case 反対側: `z ∈ Fix(στ) ⟹ z = σ^6 y` for `y = σ^5 z ∈ Fix(τ)`. -/
+theorem dihedral_στ_fix_eq_σ_six (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
+    {z : V} (hz : (h.σ * h.τ) z = z) :
+    h.τ ((h.σ ^ 5) z) = (h.σ ^ 5) z ∧ (h.σ ^ 6) ((h.σ ^ 5) z) = z := by
+  refine ⟨?_, ?_⟩
+  · -- τ (σ^5 z) = σ^5 z
+    -- 戦略: τσ^5 = σ⁻¹^5 τ. hz から τz = σ⁻¹z. σ⁻¹^5 (σ⁻¹ z) = σ⁻¹^6 z = σ^5 z.
+    have h_τσ5 : h.τ * h.σ ^ 5 = (h.σ⁻¹) ^ 5 * h.τ := h.dihedral_τ_σ_pow hdihe 5
+    have h_τz : h.τ z = h.σ⁻¹ z := by
+      -- hz : σ(τz) = z. (σ⁻¹ * σ * τ) z = σ⁻¹ z. (σ⁻¹ * σ) = 1, so τ z = σ⁻¹ z.
+      have hz' : (h.σ⁻¹ * (h.σ * h.τ)) z = h.σ⁻¹ z := by
+        show h.σ⁻¹ ((h.σ * h.τ) z) = h.σ⁻¹ z
+        rw [hz]
+      have hsimp : h.σ⁻¹ * (h.σ * h.τ) = h.τ := by
+        rw [← mul_assoc, inv_mul_cancel, one_mul]
+      rw [hsimp] at hz'
+      exact hz'
+    have h_τσ5_apply : h.τ ((h.σ ^ 5) z) = ((h.σ⁻¹) ^ 5) (h.τ z) := by
+      have := congrArg (· z) h_τσ5
+      simpa [Equiv.Perm.mul_apply] using this
+    rw [h_τσ5_apply, h_τz]
+    -- σ⁻¹^5 (σ⁻¹ z) = σ^5 z
+    show ((h.σ⁻¹) ^ 5) (h.σ⁻¹ z) = (h.σ ^ 5) z
+    have h_sigma_calc : (h.σ⁻¹) ^ 5 * h.σ⁻¹ = h.σ ^ 5 := by
+      have h1 : (h.σ⁻¹) ^ 5 * h.σ⁻¹ = (h.σ⁻¹) ^ 6 := by
+        show (h.σ⁻¹) ^ 5 * (h.σ⁻¹) ^ 1 = (h.σ⁻¹) ^ 6
+        rw [← pow_add]
+      have h2 : (h.σ⁻¹) ^ 6 = (h.σ ^ 6)⁻¹ := inv_pow h.σ 6
+      have hsum : h.σ ^ 6 * h.σ ^ 5 = 1 := by
+        rw [← pow_add]; show h.σ ^ 11 = 1; exact h.σ_pow_eleven
+      have h3 : (h.σ ^ 6)⁻¹ = h.σ ^ 5 := inv_eq_of_mul_eq_one_right hsum
+      rw [h1, h2, h3]
+    show ((h.σ⁻¹) ^ 5 * h.σ⁻¹) z = (h.σ ^ 5) z
+    rw [h_sigma_calc]
+  · -- σ^6 (σ^5 z) = z
+    show (h.σ ^ 6 * h.σ ^ 5) z = z
+    rw [← pow_add]
+    exact h.σ_pow_eleven_apply z
+
 /-- 両ケース共通: τ は Fix(σ) を保つ.
 
 cyclic case では `(στ) x = (τσ) x ⟹ σ (τ x) = τ (σ x) = τ x`.
