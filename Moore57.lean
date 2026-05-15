@@ -41,7 +41,7 @@ import Moore57.D19OnMoore57.BranchFiber.Partition
 import Moore57.D19OnMoore57.Fixed.CommonNeighbors
 import Moore57.D19OnMoore57.Fixed.NeighborCounts
 import Moore57.Foundations.GraphTheory.StrongZeroOne
-import Moore57.Foundations.GroupTheory.Dihedral19LinearCharacter
+import Moore57.Foundations.GroupTheory.D19LinearCharacter
 import Moore57.D19OnMoore57.D19Core.Dihedral19CharacterValueReduction
 import Moore57.Foundations.GroupTheory.D19RotationInvariantTrace
 import Moore57.Foundations.GroupTheory.D19RotationMovingCyclotomic

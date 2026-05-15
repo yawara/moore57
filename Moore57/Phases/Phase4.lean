@@ -1,4 +1,4 @@
-import Moore57.Foundations.GroupTheory.Dihedral19LinearCharacter
+import Moore57.Foundations.GroupTheory.D19LinearCharacter
 
 /-!
 # Phase 4 prebuilt aliases for the D₁₉ rational character theory
@@ -21,7 +21,7 @@ A general `D₁₉` rational virtual character then has the form
 This file exposes the elementary character functions and their evaluation
 lemmas under stable `Phase4` names referenced in the representation-side
 roadmap.  All three characters and their value lemmas are already proved in
-`Moore57/GroupTheory/Dihedral19LinearCharacter.lean`; this file only renames
+`Moore57/Foundations/GroupTheory/D19LinearCharacter.lean`; this file only renames
 them.
 -/
 
