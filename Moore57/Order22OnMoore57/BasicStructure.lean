@@ -174,6 +174,10 @@ theorem dihedral_σ_six_τ_σ_five (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
   rw [show (6 : ℕ) = 1 + 5 from rfl, pow_add]
   rw [mul_assoc, mul_inv_cancel, mul_one, pow_one]
 
+/-- σ^11 z = z (σ の位数 11 の頂点単位適用). -/
+theorem σ_pow_eleven_apply (z : V) : (h.σ ^ 11) z = z := by
+  rw [h.σ_pow_eleven]; rfl
+
 /-- dihedral case: `y ∈ Fix(τ) ⟹ σ^6 y ∈ Fix(στ)`. Conjugation 経由. -/
 theorem dihedral_σ_six_in_στ_fix (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
     {y : V} (hy : h.τ y = y) :
