@@ -160,6 +160,38 @@ theorem dihedral_τ_σ_pow (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) (k : ℕ) :
       _ = ((h.σ⁻¹) ^ n * h.σ⁻¹) * h.τ := by rw [mul_assoc]
       _ = (h.σ⁻¹) ^ (n + 1) * h.τ := by rw [← pow_succ]
 
+/-- dihedral case: `σ^6 τ σ^5 = στ` (i.e., `σ^6 τ σ^{-6} = στ` in cyclic Z/11 sense).
+
+Phase 5.2 で Fix(στ) = σ^6 · Fix(τ) を導くための conjugation 式. -/
+theorem dihedral_σ_six_τ_σ_five (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
+    h.σ ^ 6 * h.τ * h.σ ^ 5 = h.σ * h.τ := by
+  have h_τσ5 : h.τ * h.σ ^ 5 = (h.σ⁻¹) ^ 5 * h.τ := h.dihedral_τ_σ_pow hdihe 5
+  -- σ^6 * τ * σ^5 = σ^6 * (τ * σ^5) = σ^6 * (σ⁻¹^5 * τ) = (σ^6 * σ⁻¹^5) * τ = σ * τ
+  rw [mul_assoc, h_τσ5, ← mul_assoc]
+  congr 1
+  -- σ^6 * σ⁻¹^5 = σ
+  rw [inv_pow]
+  rw [show (6 : ℕ) = 1 + 5 from rfl, pow_add]
+  rw [mul_assoc, mul_inv_cancel, mul_one, pow_one]
+
+/-- dihedral case: `y ∈ Fix(τ) ⟹ σ^6 y ∈ Fix(στ)`. Conjugation 経由. -/
+theorem dihedral_σ_six_in_στ_fix (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
+    {y : V} (hy : h.τ y = y) :
+    (h.σ * h.τ) ((h.σ ^ 6) y) = (h.σ ^ 6) y := by
+  have h_conj : h.σ ^ 6 * h.τ * h.σ ^ 5 = h.σ * h.τ :=
+    h.dihedral_σ_six_τ_σ_five hdihe
+  -- (σ^6 τ σ^5)(σ^6 y) = σ^6 (τ (σ^5 (σ^6 y))) = σ^6 (τ y) = σ^6 y
+  have hlhs : (h.σ ^ 6 * h.τ * h.σ ^ 5) ((h.σ ^ 6) y) = (h.σ ^ 6) y := by
+    show (h.σ ^ 6) (h.τ ((h.σ ^ 5) ((h.σ ^ 6) y))) = (h.σ ^ 6) y
+    have hsig11 : (h.σ ^ 5) ((h.σ ^ 6) y) = y := by
+      show (h.σ ^ 5 * h.σ ^ 6) y = y
+      rw [← pow_add]
+      show (h.σ ^ 11) y = y
+      rw [h.σ_pow_eleven]; rfl
+    rw [hsig11, hy]
+  rw [← h_conj]
+  exact hlhs
+
 /-- 両ケース共通: τ は Fix(σ) を保つ.
 
 cyclic case では `(στ) x = (τσ) x ⟹ σ (τ x) = τ (σ x) = τ x`.
