@@ -1,4 +1,5 @@
 import Moore57.Order22OnMoore57.TraceNumber
+import Moore57.Order22OnMoore57.Parity
 
 /-!
 # 位数 22 の自己同型群は Moore57 に作用しない (conditional)

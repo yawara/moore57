@@ -353,4 +353,5 @@ import Moore57.Order22OnMoore57.BasicStructure
 import Moore57.Order22OnMoore57.TraceNumber
 import Moore57.Order22OnMoore57.TraceConstancy
 import Moore57.Order22OnMoore57.ModularF11
+import Moore57.Order22OnMoore57.Parity
 import Moore57.Order22OnMoore57.NoGo

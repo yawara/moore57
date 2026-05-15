@@ -45,15 +45,7 @@ theorem traceNumber_eq_five (h : Order22ActsOnMoore57 V Γ) :
     h.traceNumber = 5 := by
   sorry
 
-/-- **Phase 5 の結論 (要証明)**: `n` は偶数.
-
-自然言語証明 §5: τ が σ と可換 (cyclic case) なら τ-stable な内部辺軌道は
-N(u) 内の独立点軌道に限るが矛盾, よって内部辺軌道は τ-pair で偶数個ずつ.
-dihedral case では特殊軌道 B_0 が丁度 2 寄与し残りも対で寄与するので
-やはり偶数. -/
-theorem traceNumber_even (h : Order22ActsOnMoore57 V Γ) :
-    Even h.traceNumber := by
-  sorry
+-- `traceNumber_even` (Phase 5) は `Parity.lean` に分離.
 
 end Order22ActsOnMoore57
 
