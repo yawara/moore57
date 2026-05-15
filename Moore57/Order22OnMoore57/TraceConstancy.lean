@@ -1,5 +1,6 @@
 import Moore57.Order22OnMoore57.BasicStructure
 import Moore57.Order22OnMoore57.TraceNumber
+import Mathlib.GroupTheory.Perm.Cycle.Type
 
 /-!
 # 自然言語証明 §2: trace 数の組合せ的定義と一定性
@@ -41,13 +42,67 @@ theorem traceNumber_eq_Tk_one_div_eleven : h.traceNumber = h.Tk 1 / 11 := by
     = (Finset.univ.filter (fun x : V => Γ.Adj x ((h.σ ^ 1) x))).card / 11
   simp [pow_one]
 
-/-- **(Phase 2 残務)** `T_k` の 11 整除性.
+/-- `σ^n x = x` if `σ x = x`, 任意の `n` で. -/
+private theorem σ_pow_fix {x : V} (hx : h.σ x = x) (n : ℕ) :
+    (h.σ ^ n) x = x := by
+  induction n with
+  | zero => simp
+  | succ m ih =>
+    rw [pow_succ', Equiv.Perm.mul_apply, ih, hx]
 
-各長さ 11 の σ-軌道は内部 slope-k 辺を持つかどうかで丁度 11 か 0 を寄与する.
-σ の不動点では `σ^k x = x` だが Γ は loopless なので寄与しない.
-よって `T_k` は長さ 11 軌道の寄与のみで, 11 の倍数. -/
+/-- `T_k` の 11 整除性 (orbit 論証).
+
+`S = {x : Γ.Adj x (σ^k x)}` は σ-不変. σ を `Subtype S` に制限すると
+位数 11 の置換 τ. τ の不動点は σ 不動点 ∩ S だが,
+σ 不動点では `σ^k x = x` で `Γ.Adj x x = False` (loopless) ゆえ S に属さず空.
+よって `S.card ≡ 0 (mod 11)`. -/
 theorem eleven_dvd_Tk {k : ℕ} (hk : k % 11 ≠ 0) : 11 ∣ h.Tk k := by
-  sorry
+  classical
+  haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
+  -- σ-不変な述語 p
+  let p : V → Prop := fun x => Γ.Adj x ((h.σ ^ k) x)
+  -- σ と σ^k は可換
+  have hcomm : ∀ x : V, (h.σ ^ k) (h.σ x) = h.σ ((h.σ ^ k) x) := fun x => by
+    have heq : h.σ ^ k * h.σ = h.σ * h.σ ^ k := by
+      rw [← pow_succ, ← pow_succ']
+    have := congrArg (· x) heq
+    simpa [Equiv.Perm.mul_apply] using this
+  -- p の σ-不変性 (subtypePerm の要求形: p (σ x) ↔ p x)
+  have hp_iff : ∀ x : V, p (h.σ x) ↔ p x := fun x => by
+    show Γ.Adj (h.σ x) ((h.σ ^ k) (h.σ x)) ↔ Γ.Adj x ((h.σ ^ k) x)
+    rw [hcomm x]
+    exact (h.σ_aut x ((h.σ ^ k) x)).symm
+  -- σ を Subtype p に制限
+  let τ : Equiv.Perm (Subtype p) := h.σ.subtypePerm hp_iff
+  -- τ^11 = 1
+  have hτ_pow : τ ^ 11 ^ 1 = 1 := by
+    ext ⟨w, _⟩
+    show (h.σ ^ 11) w = w
+    rw [h.σ_pow_eleven]; rfl
+  -- 主補題: |Subtype p| ≡ |τ.supportᶜ| (mod 11)
+  have hmod := Equiv.Perm.card_compl_support_modEq
+    (α := Subtype p) (p := 11) (n := 1) (σ := τ) hτ_pow
+  -- τ の不動点は無い: |τ.supportᶜ| = 0
+  have hfix_empty : τ.supportᶜ.card = 0 := by
+    rw [Finset.card_eq_zero, Finset.eq_empty_iff_forall_notMem]
+    rintro ⟨w, hwp⟩ hw
+    rw [Finset.mem_compl, Equiv.Perm.mem_support] at hw
+    push_neg at hw
+    -- hw : τ ⟨w, hwp⟩ = ⟨w, hwp⟩ ⟹ σ w = w
+    have hwfix : h.σ w = w := congrArg Subtype.val hw
+    -- σ w = w → σ^k w = w
+    have hkfix : (h.σ ^ k) w = w := h.σ_pow_fix hwfix k
+    -- hwp : Γ.Adj w (σ^k w) = Γ.Adj w w (loopless 矛盾)
+    have hwp' : Γ.Adj w ((h.σ ^ k) w) := hwp
+    rw [hkfix] at hwp'
+    exact SimpleGraph.irrefl Γ hwp'
+  rw [hfix_empty] at hmod
+  -- |Subtype p| = Tk k
+  have hcard : Fintype.card (Subtype p) = h.Tk k := by
+    rw [Fintype.card_subtype]
+    rfl
+  rw [hcard] at hmod
+  exact Nat.modEq_zero_iff_dvd.mp hmod.symm
 
 /-- **(Phase 2 残務)** `T_k = T_1` for k = 1..10.
 
