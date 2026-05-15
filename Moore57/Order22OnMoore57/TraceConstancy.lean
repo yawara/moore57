@@ -113,14 +113,20 @@ theorem Tk_constant {k : ℕ} (hk1 : 1 ≤ k) (hk2 : k ≤ 10) :
     h.Tk k = h.Tk 1 := by
   sorry
 
-/-- 結論 (Phase 3-4 で利用): `T_k = 11 n` for k = 1..10.
-
-`Tk_constant` と `traceNumber` の定義から従う. -/
-theorem Tk_eq_eleven_mul_traceNumber {k : ℕ} (hk1 : 1 ≤ k) (hk2 : k ≤ 10) :
-    h.Tk k = 11 * h.traceNumber := by
-  rw [h.Tk_constant hk1 hk2, h.traceNumber_eq_Tk_one_div_eleven]
+/-- k = 1 の特別ケース (sorry-free, `eleven_dvd_Tk` のみに依存). -/
+theorem Tk_one_eq_eleven_mul_traceNumber : h.Tk 1 = 11 * h.traceNumber := by
+  rw [h.traceNumber_eq_Tk_one_div_eleven]
   have hdvd : 11 ∣ h.Tk 1 := h.eleven_dvd_Tk (by decide)
   omega
+
+/-- 結論 (Phase 3-4 で利用): `T_k = 11 n` for k = 1..10.
+
+`Tk_constant` と `traceNumber` の定義から従う.
+k = 1 では `Tk_one_eq_eleven_mul_traceNumber` で sorry なしに導出可. -/
+theorem Tk_eq_eleven_mul_traceNumber {k : ℕ} (hk1 : 1 ≤ k) (hk2 : k ≤ 10) :
+    h.Tk k = 11 * h.traceNumber := by
+  rw [h.Tk_constant hk1 hk2]
+  exact h.Tk_one_eq_eleven_mul_traceNumber
 
 end Order22ActsOnMoore57
 
