@@ -144,6 +144,22 @@ theorem dihedral_τσ_eq_σinv_τ_apply (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
 theorem σ_inv_pow_eleven : (h.σ⁻¹) ^ 11 = 1 := by
   rw [inv_pow, h.σ_pow_eleven, inv_one]
 
+/-- dihedral case の iterated 関係式: `τ σ^k = σ⁻¹^k τ` (任意 k). -/
+theorem dihedral_τ_σ_pow (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) (k : ℕ) :
+    h.τ * h.σ ^ k = (h.σ⁻¹) ^ k * h.τ := by
+  induction k with
+  | zero => simp
+  | succ n ih =>
+    have h_rel : h.τ * h.σ = h.σ⁻¹ * h.τ := h.dihedral_τσ_eq_σinv_τ hdihe
+    calc h.τ * h.σ ^ (n + 1)
+        = h.τ * (h.σ ^ n * h.σ) := by rw [pow_succ]
+      _ = (h.τ * h.σ ^ n) * h.σ := by rw [mul_assoc]
+      _ = ((h.σ⁻¹) ^ n * h.τ) * h.σ := by rw [ih]
+      _ = (h.σ⁻¹) ^ n * (h.τ * h.σ) := by rw [mul_assoc]
+      _ = (h.σ⁻¹) ^ n * (h.σ⁻¹ * h.τ) := by rw [h_rel]
+      _ = ((h.σ⁻¹) ^ n * h.σ⁻¹) * h.τ := by rw [mul_assoc]
+      _ = (h.σ⁻¹) ^ (n + 1) * h.τ := by rw [← pow_succ]
+
 /-- 両ケース共通: τ は Fix(σ) を保つ.
 
 cyclic case では `(στ) x = (τσ) x ⟹ σ (τ x) = τ (σ x) = τ x`.
