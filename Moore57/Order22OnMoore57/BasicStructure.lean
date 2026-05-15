@@ -134,6 +134,16 @@ theorem dihedral_τσ_eq_σinv_τ_apply (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
   have := congrArg (· x) heq
   simpa [Equiv.Perm.mul_apply] using this
 
+/-- τ⁻¹ = τ (τ² = 1 から). -/
+@[simp] theorem τ_inv_eq : h.τ⁻¹ = h.τ := by
+  have : h.τ * h.τ = 1 := by
+    rw [show h.τ * h.τ = h.τ ^ 2 from (pow_two _).symm, h.τ_pow_two]
+  exact inv_eq_of_mul_eq_one_right this
+
+/-- σ⁻¹ も位数 11 を満たす. -/
+theorem σ_inv_pow_eleven : (h.σ⁻¹) ^ 11 = 1 := by
+  rw [inv_pow, h.σ_pow_eleven, inv_one]
+
 /-- 両ケース共通: τ は Fix(σ) を保つ.
 
 cyclic case では `(στ) x = (τσ) x ⟹ σ (τ x) = τ (σ x) = τ x`.
