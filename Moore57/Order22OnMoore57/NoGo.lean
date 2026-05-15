@@ -1,19 +1,13 @@
-import Moore57.Order22OnMoore57.Action
+import Moore57.Order22OnMoore57.TraceNumber
 
 /-!
 # 位数 22 の自己同型群は Moore57 に作用しない (conditional)
 
-自然言語証明 `no_aut_order_22_moore57.md` の主結論.
+自然言語証明 `no_aut_order_22_moore57.md` §6 の最終組み立て.
 
-外部入力 (Fix(σ) ≅ C_5, Fix(τ) ≅ K_{1,55}) を `Order22ActsOnMoore57` 構造体の
-フィールドとして仮定した下での conditional theorem.
-
-証明本体は未完成 (自然言語証明 §2-§6 の形式化が必要):
-* §2: trace number `n` の定義と一定性.
-* §3: 複素 spectral 制限で `n ∈ {5, 20, 35, 50}`.
-* §4: modular F_11 trace で `n ≡ 5 (mod 11)`, 合わせて `n = 5`.
-* §5: involution の偶パリティ強制 (cyclic case + dihedral case の二分).
-* §6: 5 が奇で矛盾.
+`Order22ActsOnMoore57` から `traceNumber h = 5` (Phase 2-4) と
+`Even (traceNumber h)` (Phase 5) を組み合わせれば即矛盾.
+5 は奇なので両立しえない.
 -/
 
 namespace Moore57
@@ -21,11 +15,23 @@ namespace Moore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+namespace Order22ActsOnMoore57
+
+/-- §6: trace number が同時に 5 かつ偶であることは不可能. -/
+theorem false_of_raw_action (h : Order22ActsOnMoore57 V Γ) : False := by
+  have h5 : h.traceNumber = 5 := h.traceNumber_eq_five
+  have heven : Even h.traceNumber := h.traceNumber_even
+  rw [h5] at heven
+  exact (by decide : ¬ Even (5 : ℕ)) heven
+
+end Order22ActsOnMoore57
+
 /-- **主定理 (conditional)**: 固定部分グラフの外部入力
 (Fix(σ) ≅ C_5, Fix(τ) ≅ K_{1,55}) を仮定すれば,
 位数 22 の自己同型群は Moore57 graph 上に作用しない. -/
 theorem no_Order22_acts_on_Moore57 :
     ¬ Nonempty (Order22ActsOnMoore57 V Γ) := by
-  sorry
+  rintro ⟨h⟩
+  exact h.false_of_raw_action
 
 end Moore57
