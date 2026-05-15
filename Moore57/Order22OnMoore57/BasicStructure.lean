@@ -119,6 +119,43 @@ theorem σ_mem_neighborFinset_u_iff (x : V) :
   conv_lhs => rw [show h.u = h.σ h.u from h.σ_u_eq.symm]
   exact (h.σ_aut h.u x).symm
 
+/-- dihedral case 関係式: `τστ⁻¹ = σ⁻¹` から `τσ = σ⁻¹τ`. -/
+theorem dihedral_τσ_eq_σinv_τ (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
+    h.τ * h.σ = h.σ⁻¹ * h.τ := by
+  have : h.τ * h.σ * h.τ * h.τ = h.σ⁻¹ * h.τ := by rw [hdihe]
+  rw [mul_assoc (h.τ * h.σ), show h.τ * h.τ = 1 from by
+    rw [show h.τ * h.τ = h.τ ^ 2 from (pow_two _).symm, h.τ_pow_two], mul_one] at this
+  exact this
+
+/-- dihedral case の頂点単位の関係式: `τ (σ x) = σ⁻¹ (τ x)`. -/
+theorem dihedral_τσ_eq_σinv_τ_apply (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) (x : V) :
+    h.τ (h.σ x) = h.σ⁻¹ (h.τ x) := by
+  have heq : h.τ * h.σ = h.σ⁻¹ * h.τ := h.dihedral_τσ_eq_σinv_τ hdihe
+  have := congrArg (· x) heq
+  simpa [Equiv.Perm.mul_apply] using this
+
+/-- 両ケース共通: τ は Fix(σ) を保つ.
+
+cyclic case では `(στ) x = (τσ) x ⟹ σ (τ x) = τ (σ x) = τ x`.
+dihedral case では `τ (σ x) = σ⁻¹ (τ x), σ x = x ⟹ τ x = σ⁻¹ (τ x) ⟹ σ (τ x) = τ x`. -/
+theorem τ_preserves_σ_fix {x : V} (hx : h.σ x = x) :
+    h.σ (h.τ x) = h.τ x := by
+  rcases h.στ_relation with hcomm | hdihe
+  · -- cyclic: σ * τ = τ * σ
+    have := congrArg (· x) hcomm
+    simp only [Equiv.Perm.mul_apply, hx] at this
+    exact this
+  · -- dihedral: τ * σ * τ = σ⁻¹
+    have hτσ := h.dihedral_τσ_eq_σinv_τ_apply hdihe x
+    -- hτσ : τ (σ x) = σ⁻¹ (τ x); hx : σ x = x
+    rw [hx] at hτσ
+    -- hτσ : τ x = σ⁻¹ (τ x)
+    have hcancel : h.σ (h.σ⁻¹ (h.τ x)) = h.τ x := by
+      show (h.σ * h.σ⁻¹) (h.τ x) = h.τ x
+      rw [mul_inv_cancel]; rfl
+    have := congrArg h.σ hτσ
+    rwa [hcancel] at this
+
 /-- N(u) における σ の固定点は丁度 `{a, d}`. -/
 theorem σ_fixed_in_neighborFinset_u_iff_aOrD {x : V}
     (hx : x ∈ Γ.neighborFinset h.u) :
