@@ -1,0 +1,1077 @@
+% !TEX program = xelatex
+% Compile with: tectonic -X compile moore57_d19_contradiction.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=25mm]{geometry}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+% --- XeLaTeX / CJK ---
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont[BoldFont={Hiragino Mincho ProN W6}]{Hiragino Mincho ProN}
+\setCJKsansfont{Hiragino Sans W4}
+\setCJKmonofont{Hiragino Sans W4}
+\xeCJKsetup{CJKecglue={\hskip 0.15em plus 0.05em minus 0.05em}}
+
+% --- 行間調整 ---
+\linespread{1.15}
+
+% --- 定理環境 ---
+\theoremstyle{plain}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{proposition}[theorem]{命題}
+\newtheorem{lemma}[theorem]{補題}
+\newtheorem{corollary}[theorem]{系}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定義}
+\newtheorem*{fact*}{既知事実}
+\newtheorem{fact}[theorem]{既知事実}
+\newtheorem{notation}[theorem]{記法}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{注意}
+
+% --- 証明環境を「証明」に ---
+\renewcommand{\proofname}{\textbf{証明}}
+
+% --- hyperref 設定 ---
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!60!black,
+  citecolor=blue!50!black,
+  pdftitle={Moore graph of degree 57 における D_{19} 作用の高次整合性と矛盾},
+  pdfauthor={Yawara Ishida}
+}
+
+% --- マクロ ---
+\DeclareMathOperator{\Fix}{Fix}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\Tr}{Tr}
+
+\title{Moore graph of degree $57$ における $D_{19}$ 作用の高次整合性と矛盾}
+\author{Yawara Ishida\thanks{\texttt{yawara@aisr.dev}}}
+\date{2026年5月13日}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本稿では、仮想的な Moore graph $\Gamma$ of degree $57$ and diameter $2$ に、位数 $38$ の二面体群
+\[
+D_{19}=\langle r,t\mid r^{19}=t^2=1,\ trt=r^{-1}\rangle
+\]
+が自己同型群として作用する、あるいは少なくとも部分群として作用する、という仮定から矛盾を導く。
+
+使う既知事実は次の二つである。
+\begin{enumerate}[label=(\arabic*)]
+  \item Moore graph of diameter $2$ は、次数が $2,3,7,57$ の場合に限って算術的に可能であり、次数 $57$ の場合は未解決である。
+  \item Moore graph of degree $57$ の自己同型群が involution $t$ を含むなら、$\Fix(t)$ は $56$ 頂点からなる star である。
+\end{enumerate}
+
+主な新しい部分は、固定点 $u$ のまわりの $57$ 本の枝と $57\cdot 56$ 個の葉を、$D_{19}$-作用と枝間完全マッチングの整合性まで追跡するところにある。一次的な軌道分解
+\[
+1^1,\quad 19^{55},\quad 38^{58}
+\]
+だけでは矛盾しない。しかし、$A$-側 fiber 間の「中点反射」条件と、$B,C$-側の $4$-cycle 禁止を合わせると矛盾する。
+
+結論は次である。
+\begin{quote}
+仮想的 Moore graph $\Gamma$ of degree $57$ and diameter $2$ は、自己同型群に $D_{19}$ を部分群として含まない。特に、$\Aut(\Gamma)\simeq D_{19}$ は不可能である。
+\end{quote}
+
+\noindent 注意：本稿の主張は、下記既知事実を前提にした自前の整合性解析である。文献中の既成定理として引用しているものではない。
+\end{abstract}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{既知事実と基本記法}
+
+\begin{fact}[Moore graph of degree $57$]
+仮想的 Moore graph $\Gamma$ of degree $57$ and diameter $2$ は、存在すれば強正則グラフ
+\[
+(v,k,\lambda,\mu)=(3250,57,0,1)
+\]
+である。したがって、任意の隣接 $2$ 頂点は共通近傍を持たず、任意の非隣接 $2$ 頂点は一意の共通近傍を持つ。
+
+特に、$\Gamma$ は三角形も $4$-cycle も持たない。$4$-cycle があれば、対角の非隣接 $2$ 頂点が $2$ 個の共通近傍を持ち、$\mu=1$ に反するからである。
+
+隣接行列を $A$ とすると、
+\[
+A^2 = 56I - A + J
+\]
+であり、スペクトルは
+\[
+57^1,\qquad 7^{1729},\qquad (-8)^{1520}
+\]
+である。
+\end{fact}
+
+\begin{fact}[Moore graph の可能次数]
+Hoffman--Singleton 型の定理により、diameter $2$ の Moore graph の次数は
+\[
+2,3,7,57
+\]
+に限られる。したがって次数 $19$ または $38$ の Moore graph は存在しない。
+\end{fact}
+
+\begin{fact}[involution の固定点集合]
+Moore graph $\Gamma$ of degree $57$ の自己同型群が involution $t$ を含むなら、
+\[
+\Fix(t)
+\]
+は $56$ 頂点からなる star である。すなわち、ある中心頂点 $c$ と、その $55$ 個の固定近傍からなる
+\[
+K_{1,55}
+\]
+である。
+\end{fact}
+
+\begin{notation}
+自己同型 $g$ に対して、
+\[
+a_0(g) = |\Fix(g)|, \qquad
+a_1(g) = |\{x \in V(\Gamma) : x \sim g(x)\}|
+\]
+とおく。
+\end{notation}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{位数 $19$ の回転はただ $1$ 点を固定する}
+
+\begin{lemma}[固定部分グラフの次数は $0,19,38,57$ のいずれかである]\label{lem:degH}
+$r$ を位数 $19$ の自己同型とし、
+\[
+H = \Fix(r)
+\]
+を $r$ の固定頂点集合で誘導される部分グラフとする。
+
+任意の $x \in H$ について、$r$ は $x$ の $57$ 個の近傍を置換する。固定されない近傍は $19$ 周期に分かれるので、$H$ 内での $x$ の次数 $d_H(x)$ は
+\[
+57 - d_H(x) \equiv 0 \pmod{19}
+\]
+を満たす。ゆえに
+\[
+d_H(x) \in \{0,19,38,57\}.
+\]
+\end{lemma}
+
+\begin{proof}
+$r$ の近傍集合 $N(x)$ 上の作用の軌道長は $1$ または $19$ である。長さ $1$ の軌道が、ちょうど $H$ 内の近傍である。よって $57 - d_H(x)$ は $19$ の倍数である。$0 \le d_H(x) \le 57$ から結論が従う。
+\end{proof}
+
+\begin{lemma}[$|H|>1$ なら $H$ は正則 Moore graph である]\label{lem:HMoore}
+$|H|>1$ と仮定する。このとき $H$ は正則であり、その次数は
+\[
+19,38,57
+\]
+のいずれかである。さらに、次数が $d$ なら $H$ は Moore graph of diameter $2$ and degree $d$ であり、
+\[
+|H| = d^2 + 1
+\]
+である。
+\end{lemma}
+
+\begin{proof}
+まず、$H$ は辺を持つ。もし $x,y \in H$ が非隣接なら、$\mu = 1$ により $x,y$ の一意の共通近傍 $z$ が存在する。$x,y$ は $r$ で固定されるため、一意性から $z$ も $r$ で固定される。ゆえに $z \in H$ であり、$H$ には辺がある。
+
+次に正則性を示す。$x,y \in H$ が非隣接なら、$x,y$ の一意の共通近傍を $z$ とする。任意の
+\[
+a \in N_H(x) \setminus \{z\}
+\]
+について、$a$ と $y$ は非隣接である。もし $a \sim y$ なら、$x,y$ は $a$ と $z$ という $2$ つの共通近傍を持つからである。したがって、$a,y$ の一意の共通近傍が存在し、それは $N_H(y) \setminus \{z\}$ に入る。この対応は逆向きにも同様に作れ、単射性も一意性から従う。よって
+\[
+d_H(x) = d_H(y)
+\]
+である。
+
+次に $x \sim y$ の場合を考える。補題~\ref{lem:degH} より、$x$ と $y$ の $H$ 内次数は $0$ ではありえず、少なくとも $19$ である。したがって
+\[
+z \in N_H(x) \setminus \{y\}, \qquad w \in N_H(y) \setminus \{x\}
+\]
+を取れる。三角形がないので $z \not\sim y$ および $w \not\sim x$ である。また $z \sim w$ なら
+\[
+x - z - w - y - x
+\]
+が $4$-cycle になるので不可能である。よって
+\[
+z \not\sim y, \qquad z \not\sim w, \qquad w \not\sim x.
+\]
+非隣接頂点同士の次数一致を用いて、
+\[
+d_H(x) = d_H(w) = d_H(z) = d_H(y)
+\]
+を得る。したがって $H$ は正則である。
+
+次数を $d$ とする。補題~\ref{lem:degH} と $|H|>1$ から
+\[
+d \in \{19,38,57\}.
+\]
+$H$ は三角形を持たず、任意の非隣接 $2$ 頂点は $H$ 内に一意の共通近傍を持つ。したがって $H$ は直径 $2$、次数 $d$ の Moore graph であり、固定頂点 $x$ から数えると
+\[
+|H| = 1 + d + d(d-1) = d^2 + 1.
+\]
+\end{proof}
+
+\begin{proposition}[$r$ の固定点はただ $1$ 点である]\label{prop:fix1}
+位数 $19$ の自己同型 $r$ について、
+\[
+|\Fix(r)| = 1.
+\]
+\end{proposition}
+
+\begin{proof}
+頂点数は
+\[
+3250 \equiv 1 \pmod{19}
+\]
+なので、$r$ の固定点数は $1$ modulo $19$ である。したがって少なくとも $1$ 点は固定する。
+
+もし $|H|>1$ なら、補題~\ref{lem:HMoore} により $H$ は次数 $19,38,57$ のいずれかの Moore graph である。次数 $19$ または $38$ の Moore graph は存在しない。次数 $57$ の場合、$H$ の任意の頂点の全近傍が固定されるので、$\Gamma$ の連結性から $r$ は全頂点を固定し、$r = 1$ となる。これは $r$ の位数が $19$ であることに反する。
+
+よって $|H| = 1$ である。
+\end{proof}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{固定点 $u$ のまわりの枝と葉}
+
+命題~\ref{prop:fix1} により、$r$ の唯一の固定点を
+\[
+u
+\]
+と書く。$\langle r \rangle$ は $D_{19}$ の正規部分群であるから、この唯一の固定点 $u$ は $D_{19}$ 全体で固定される。
+
+\begin{definition}[枝と fiber]
+$u$ の近傍集合を $N(u)$ と呼び、その元を「枝」と呼ぶ。
+
+各枝 $b \in N(u)$ に対し、
+\[
+L_b = \{x \in V(\Gamma) : d(u,x) = 2,\ x \sim b\}
+\]
+とおく。$L_b$ を枝 $b$ の fiber と呼ぶ。
+
+$\mu = 1$ より、各距離 $2$ 頂点 $x$ は $u$ と一意の共通近傍を持つ。したがって
+\[
+V(\Gamma) = \{u\} \sqcup N(u) \sqcup \bigsqcup_{b \in N(u)} L_b,
+\]
+かつ
+\[
+|N(u)| = 57, \qquad |L_b| = 56.
+\]
+\end{definition}
+
+\begin{lemma}[異なる fiber 間には完全マッチングが入る]\label{lem:matching}
+異なる枝 $b,c \in N(u)$ に対し、$L_b$ と $L_c$ の間の辺は完全マッチングをなす。
+\end{lemma}
+
+\begin{proof}
+$x \in L_b$ を取る。$x$ は $u$ と非隣接であり、$u,x$ の一意の共通近傍は $b$ である。したがって $x$ は $c$ と隣接しない。よって $x,c$ は非隣接であり、$\mu = 1$ により一意の共通近傍を持つ。その共通近傍は $c$ に隣接し、かつ $u$ とは距離 $2$ にあるので、$L_c$ に属する。
+
+従って、任意の $x \in L_b$ は $L_c$ にちょうど $1$ 個の隣接点を持つ。同様に逆向きも成り立つので、$L_b$ と $L_c$ の間の辺は完全マッチングである。
+\end{proof}
+
+\begin{proposition}[枝集合上の $D_{19}$-作用]\label{prop:D19branches}
+添字を取り直すと、
+\[
+N(u) = A \sqcup B \sqcup C
+\]
+と書け、
+\begin{gather*}
+A = \{a_i : i \in \mathbb{Z}/19\}, \quad
+B = \{b_i : i \in \mathbb{Z}/19\}, \quad
+C = \{c_i : i \in \mathbb{Z}/19\}, \\
+r(a_i) = a_{i+1}, \qquad r(b_i) = b_{i+1}, \qquad r(c_i) = c_{i+1}, \\
+t(a_i) = a_{-i}, \qquad t(b_i) = c_{-i}, \qquad t(c_i) = b_{-i}
+\end{gather*}
+が成り立つ。
+\end{proposition}
+
+\begin{proof}
+$r$ は $N(u)$ 上に固定点を持たない。もし枝 $b \in N(u)$ を固定すれば、$b$ は $r$ の固定頂点になり、命題~\ref{prop:fix1} に反するからである。よって $57$ 本の枝は $r$ の $3$ 個の $19$ 周期に分かれる。
+
+反射 $t$ は $u$ を固定する。$\Fix(t)$ は $K_{1,55}$ である。もし $u$ がこの star の中心なら、$N(u)$ のうち $55$ 個の枝が $t$ で固定される。しかし $t$ は各 $19$ 周期上では高々 $1$ 点しか固定できないので、これは不可能である。
+
+したがって $u$ は固定 star の葉であり、固定 star の中心は $N(u)$ 内の枝である。その枝を $a_0$ とする。すると $t$ は $A$ を反転し、
+\[
+t(a_i) = a_{-i}
+\]
+となる。
+
+残り $2$ つの $19$ 周期について、$t$ がそれぞれを保存すると、それぞれに $1$ 個ずつ固定枝が生じる。しかし固定 star の中心は $a_0$ であり、他の固定枝は $a_0$ に隣接していなければ固定 star に入れない。枝同士はともに $u$ に隣接するため、三角形禁止により互いに隣接しない。よってこれは不可能である。
+
+したがって残り $2$ つの $19$ 周期は $t$ により交換される。添字を整えることで
+\[
+t(b_i) = c_{-i}, \qquad t(c_i) = b_{-i}
+\]
+を得る。
+\end{proof}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{$A$-fiber 間の完全マッチングと中点反射}
+
+以後、
+\[
+L_i := L_{a_i}
+\]
+と書く。
+
+\begin{definition}[$A$-fiber の座標化]\label{def:coords}
+$L_0$ を固定し、その $56$ 点集合を $P$ と同一視する。$r^i$ により、各 $L_i$ を
+\[
+L_i = \{(i,p) : p \in P\}
+\]
+と書く。すなわち
+\[
+r(i,p) = (i+1, p).
+\]
+
+$t$ の $L_0$ 上の作用を
+\[
+\theta : P \to P
+\]
+と書く。$t$ の固定 star は中心 $a_0$ を持ち、葉として $u$ と $L_0$ 内の $54$ 点を含む。したがって
+\[
+P = F \sqcup E, \qquad |F| = 54, \qquad E = \{+,-\},
+\]
+かつ
+\[
+\theta|_F = \mathrm{id}, \qquad \theta(+) = -, \qquad \theta(-) = +
+\]
+である。
+
+この座標化では
+\[
+t(i,p) = (-i, \theta p).
+\]
+
+さらに、
+\[
+t_h := r^h t r^{-h}
+\]
+とおくと、
+\[
+t_h(i,p) = (2h - i, \theta p).
+\]
+
+特に $t_h$ は $L_h$ を保存し、$L_h$ 内では $F$ 型の $54$ 点を固定し、$E$ 型の $2$ 点を交換する。
+\end{definition}
+
+\begin{definition}[完全マッチングを表す置換 $A_d$]
+$d \in \mathbb{Z}/19$, $d \neq 0$ に対し、$L_i$ と $L_{i+d}$ の間の完全マッチングを置換
+\[
+A_d \in \Sym(P)
+\]
+で表す。すなわち、
+\[
+(i,p) \sim (i+d, A_d(p))
+\]
+と定める。
+
+無向性と反射対称性から、
+\[
+A_{-d} = A_d^{-1} = \theta A_d \theta
+\]
+が成り立つ。
+\end{definition}
+
+\begin{lemma}[中点反射条件]\label{lem:midpoint}
+任意の $h \neq 0$ と $p \in P$ について、
+\[
+A_{2h}(p) = \theta p \quad \Longleftrightarrow \quad A_h(p) \in E.
+\]
+\end{lemma}
+
+\begin{proof}
+$x = (0,p)$ とおく。中点反射 $t_h$ は
+\[
+x = (0,p)
+\]
+を
+\[
+t_h x = (2h, \theta p)
+\]
+へ送る。
+
+まず、$x$ と $t_h x$ が隣接する条件は、$L_0$ と $L_{2h}$ のマッチングの定義より、
+\[
+A_{2h}(p) = \theta p
+\]
+である。
+
+次に、$x$ の $L_h$ 内の隣接点は
+\[
+(h, A_h(p))
+\]
+である。一方、$t_h x$ の $L_h$ 内の隣接点は、上の辺を $t_h$ で写すことで
+\[
+(h, \theta A_h(p))
+\]
+である。したがって、$x$ と $t_h x$ が $L_h$ 内に共通近傍を持つことと、
+\[
+A_h(p) = \theta A_h(p)
+\]
+は同値である。これは
+\[
+A_h(p) \in F
+\]
+と同値である。
+
+もし $A_h(p) \in F$ なら、$x$ と $t_h x$ は共通近傍を持つ。隣接していれば三角形ができるので、隣接しない。
+
+もし $A_h(p) \in E$ なら、$L_h$ 内に固定共通近傍はない。仮に $x$ と $t_h x$ が非隣接なら、$\mu = 1$ により一意の共通近傍 $z$ が存在する。$t_h$ は $x$ と $t_h x$ を交換するので、一意性から $z$ は $t_h$ で固定される。$t_h$ の固定 star の中心は $a_h$ であり、固定頂点は
+\[
+\{a_h, u\} \cup \{(h,f) : f \in F\}
+\]
+である。しかし $x, t_h x$ は $u$ にも $a_h$ にも隣接しないので、共通近傍は $L_h$ 内の固定点でなければならない。これは存在しない。よって $x$ と $t_h x$ は隣接する。
+
+以上より、
+\[
+A_{2h}(p) = \theta p \quad \Longleftrightarrow \quad A_h(p) \in E
+\]
+である。
+\end{proof}
+
+\begin{definition}[例外集合 $S_h$]
+$h \neq 0$ に対して
+\[
+S_h := A_h^{-1}(E)
+\]
+とおく。明らかに
+\[
+|S_h| = 2.
+\]
+補題~\ref{lem:midpoint} は、
+\[
+S_h = \{p \in P : A_{2h}(p) = \theta p\}
+\]
+と書き換えられる。また、
+\[
+S_{-h} = \theta(S_h)
+\]
+が成り立つ。
+\end{definition}
+
+\begin{lemma}[例外集合は $E$ と交わらない]\label{lem:ShE}
+任意の $h \neq 0$ について、
+\[
+S_h \cap E = \varnothing.
+\]
+\end{lemma}
+
+\begin{proof}
+\[
+e_h := |S_h \cap E|
+\]
+とおく。$p \in S_h \cap E$ なら、補題~\ref{lem:midpoint} の形
+\[
+A_{2h}(p) = \theta p
+\]
+より、$A_{2h}(p) \in E$ である。したがって
+\[
+p \in S_{2h}.
+\]
+よって
+\[
+S_h \cap E \subseteq S_{2h} \cap E,
+\]
+したがって
+\[
+e_h \le e_{2h}.
+\]
+$\mathbb{Z}_{19}^{\ast}$ 上で $h \mapsto 2h$ は $1$ つの巡回置換をなす。実際、
+\[
+2^9 \equiv -1 \pmod{19},
+\]
+なので $2$ の位数は $18$ である。従って、すべての $e_h$ は同じ値 $e$ を持つ。
+
+\medskip
+\noindent\textbf{$e = 1$ の排除.}\quad
+ある $p \in E$ が $S_h \cap E$ に入るとする。包含関係と濃度一定性から、同じ $p$ が
+\[
+S_h, S_{2h}, S_{4h}, \ldots
+\]
+すべてに入る。特に $2^9 h = -h$ なので、
+\[
+p \in S_{-h}.
+\]
+一方、
+\[
+S_{-h} = \theta(S_h)
+\]
+であり、$S_h \cap E = \{p\}$ なら
+\[
+S_{-h} \cap E = \{\theta p\}.
+\]
+$\theta p \neq p$ だから矛盾である。
+
+\medskip
+\noindent\textbf{$e = 2$ の排除.}\quad
+この場合、すべての $h \neq 0$ について
+\[
+S_h = E
+\]
+である。補題~\ref{lem:midpoint} より、任意の $d \neq 0$ について
+\[
+A_d(+) = -, \qquad A_d(-) = +.
+\]
+したがって、任意の $j \neq 0$ について、$(0,+)$ と $(j,+)$ は隣接しない。
+
+ところが、任意の $k \neq 0, j$ に対し、$(k,-)$ は $(0,+)$ と $(j,+)$ の共通近傍である。実際、
+\[
+A_k(+) = -, \qquad A_{k-j}(+) = -
+\]
+だからである。これは少なくとも $17$ 個の共通近傍を与え、$\mu = 1$ に反する。
+
+したがって $e = 0$ であり、
+\[
+S_h \cap E = \varnothing
+\]
+が従う。
+\end{proof}
+
+\begin{corollary}[$A$-側 fiber からの回転隣接寄与は常に $38$ である]\label{cor:Aside}
+任意の $d \neq 0$ について、$A$-側の葉
+\[
+\bigsqcup_i L_i
+\]
+から $a_1(r^d)$ への寄与はちょうど
+\[
+38
+\]
+である。
+\end{corollary}
+
+\begin{proof}
+$x = (i,p) \in L_i$ について、
+\[
+r^d x = (i+d, p).
+\]
+したがって $x \sim r^d x$ であることと、
+\[
+A_d(p) = p
+\]
+は同値である。
+
+$d = 2h$ と書く。補題~\ref{lem:midpoint} と例外集合 $S_h$ の定義より、
+\[
+S_h = \{p : A_d(p) = \theta p\}.
+\]
+補題~\ref{lem:ShE} により $S_h \subset F$ であるから、$p \in S_h$ では $\theta p = p$ であり、従って
+\[
+A_d(p) = p.
+\]
+逆に $A_d(p) = p$ なら、$p \notin E$ である。なぜなら $S_d = A_d^{-1}(E)$ は補題~\ref{lem:ShE} により $E$ と交わらず、$p \in E$ なら $A_d(p) = p \in E$ となって矛盾するからである。よって $p \in F$ であり、$\theta p = p$ なので $p \in S_h$ である。
+
+したがって $A_d$ の固定点はちょうど $S_h$ の $2$ 点である。各 fiber $L_i$ で $2$ 点、$i \in \mathbb{Z}/19$ が $19$ 個あるので、寄与は
+\[
+19 \cdot 2 = 38
+\]
+である。
+\end{proof}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{跡公式と表現論的制約}
+
+\begin{lemma}[Higman 型跡公式]\label{lem:Higman}
+任意の自己同型 $g$ について、$7$-固有空間上の指標値を $\chi_7(g)$ と書くと、
+\[
+\chi_7(g) = \frac{8 a_0(g) + a_1(g) - 65}{15}
+\]
+である。
+\end{lemma}
+
+\begin{proof}
+$7$-固有空間への射影は
+\[
+E_7 = \frac{A + 8I}{15} - \frac{J}{750}
+\]
+である。実際、$A$ の固有値 $57,7,-8$ に対して、この作用はそれぞれ $0,1,0$ になる。
+
+$g$ の置換行列を $P_g$ とする。すると
+\[
+\chi_7(g) = \Tr(E_7 P_g).
+\]
+ここで
+\[
+\Tr(P_g) = a_0(g), \qquad
+\Tr(A P_g) = a_1(g),
+\]
+かつ $J P_g = J$ なので
+\[
+\Tr(J P_g) = \Tr(J) = 3250.
+\]
+従って
+\[
+\chi_7(g) = \frac{a_1(g) + 8 a_0(g)}{15} - \frac{3250}{750} = \frac{8 a_0(g) + a_1(g) - 65}{15}.
+\]
+\end{proof}
+
+\begin{lemma}[反射の $a_0, a_1$ 値]\label{lem:reflection}
+反射 $t$ について、
+\[
+a_0(t) = 56, \qquad a_1(t) = 112.
+\]
+したがって
+\[
+\chi_7(t) = 33.
+\]
+\end{lemma}
+
+\begin{proof}
+$a_0(t) = 56$ は既知事実(involution の固定点集合)である。
+
+固定 star の中心を $c$ とする。$c$ は固定葉 $55$ 個と隣接しているので、固定集合の外へ出る辺は
+\[
+57 - 55 = 2
+\]
+本である。各固定葉は、固定集合内では中心 $c$ のみに隣接するので、固定集合の外へ
+\[
+57 - 1 = 56
+\]
+本の辺を出す。よって固定集合から非固定集合へ出る辺数は
+\[
+2 + 55 \cdot 56 = 3082
+\]
+である。
+
+非固定頂点は
+\[
+3250 - 56 = 3194
+\]
+個なので、$t$ の $2$ 点軌道は
+\[
+3194 / 2 = 1597
+\]
+個である。
+
+$2$ 点軌道 $\{x, tx\}$ が非隣接なら、$\mu = 1$ により一意の共通近傍が存在し、それは $t$ で固定される。逆に、固定頂点から非固定 $2$ 点軌道へ出る辺は、その非隣接 $2$ 点軌道に対して $2$ 本ずつ現れる。したがって、非隣接な $2$ 点軌道の数は
+\[
+3082 / 2 = 1541
+\]
+である。
+
+従って、隣接している $2$ 点軌道の数は
+\[
+1597 - 1541 = 56.
+\]
+$a_1(t)$ はその両端を数えるので、
+\[
+a_1(t) = 2 \cdot 56 = 112.
+\]
+
+補題~\ref{lem:Higman} より、
+\[
+\chi_7(t) = \frac{8 \cdot 56 + 112 - 65}{15} = 33.
+\]
+\end{proof}
+
+\begin{lemma}[頂点置換表現の分解]\label{lem:perm-decomp}
+$D_{19}$ の有理既約表現を
+\[
+\mathbf{1}, \qquad \varepsilon, \qquad \rho
+\]
+とする。ここで $\mathbf{1}$ は自明表現、$\varepsilon$ は反射に $-1$ を与える $1$ 次元表現、$\rho$ は $18$ 次元の有理既約表現であり、
+\[
+\rho(1) = 18, \qquad \rho(r^i) = -1\ (i \neq 0), \qquad \rho(t r^i) = 0
+\]
+である。
+
+このとき、頂点集合上の置換表現 $\pi$ は
+\[
+\pi = 114\,\mathbf{1} + 58\,\varepsilon + 171\,\rho
+\]
+と分解する。
+\end{lemma}
+
+\begin{proof}
+まず軌道構造を確認する。
+\begin{itemize}
+  \item $u$ は $D_{19}$ 全体で固定されるので、サイズ $1$ の軌道が $1$ 個ある。
+  \item 枝集合では、$A$ がサイズ $19$ の軌道、$B \cup C$ がサイズ $38$ の軌道である。
+  \item $A$-側の葉では、各 $f \in F$ からサイズ $19$ の軌道が $1$ 個ずつ出るので、サイズ $19$ の葉軌道が $54$ 個ある。また $E = \{+,-\}$ は反射で交換されるため、サイズ $38$ の葉軌道が $1$ 個ある。
+  \item $B,C$-側の葉は反射で交換され、反射固定点を持たない。したがってサイズ $38$ の軌道が
+  \[
+  \frac{2 \cdot 19 \cdot 56}{38} = 56
+  \]
+  個ある。
+\end{itemize}
+
+したがって全体の軌道構造は
+\[
+1^1, \qquad 19^{55}, \qquad 38^{58}.
+\]
+
+サイズ $19$ の軌道表現は
+\[
+\mathbf{1} + \rho
+\]
+であり、サイズ $38$ の正則軌道表現は
+\[
+\mathbf{1} + \varepsilon + 2\rho
+\]
+である。よって
+\[
+\pi = \mathbf{1} + 55(\mathbf{1} + \rho) + 58(\mathbf{1} + \varepsilon + 2\rho) = 114\,\mathbf{1} + 58\,\varepsilon + 171\,\rho.
+\]
+\end{proof}
+
+\begin{proposition}[非自明回転の $a_1$ 値の候補]\label{prop:a1cand}
+任意の $d \neq 0$ について、
+\[
+a_1(r^d) \in \{57, 342, 627, 912\}.
+\]
+\end{proposition}
+
+\begin{proof}
+$7$-固有空間上の有理表現を
+\[
+\chi_7 = \alpha\,\mathbf{1} + \beta\,\varepsilon + \gamma\,\rho
+\]
+と書く。
+
+補題~\ref{lem:reflection} より
+\[
+\alpha - \beta = 33.
+\]
+また $7$-固有空間の次元は $1729$ なので、
+\[
+\alpha + \beta + 18\gamma = 1729.
+\]
+非自明回転 $r^d$ については命題~\ref{prop:fix1} より
+\[
+a_0(r^d) = 1.
+\]
+補題~\ref{lem:Higman} から
+\[
+\chi_7(r^d) = \frac{a_1(r^d) - 57}{15}.
+\]
+一方、有理既約表現の値から
+\[
+\chi_7(r^d) = \alpha + \beta - \gamma.
+\]
+さらに、全頂点表現から定数表現と $7$-固有空間を除いた部分が $(-8)$-固有空間である。補題~\ref{lem:perm-decomp} より、
+\[
+\chi_{-8} = (114\,\mathbf{1} + 58\,\varepsilon + 171\,\rho) - \mathbf{1} - \chi_7.
+\]
+したがって各係数は非負整数でなければならない。
+
+上の条件を解くと、ある整数 $s$ について
+\[
+\alpha = 62 + 9s, \qquad \beta = 29 + 9s, \qquad \gamma = 91 - s,
+\]
+かつ
+\[
+\chi_7(r^d) = 19s.
+\]
+よって
+\[
+\frac{a_1(r^d) - 57}{15} = 19s,
+\]
+すなわち
+\[
+a_1(r^d) = 57 + 285s.
+\]
+
+$(-8)$-固有空間側の係数は
+\[
+(51 - 9s)\,\mathbf{1} + (29 - 9s)\,\varepsilon + (80 + s)\,\rho
+\]
+である。非負性と $a_1(r^d) \ge 0$ より、
+\[
+s = 0,1,2,3.
+\]
+したがって
+\[
+a_1(r^d) \in \{57, 342, 627, 912\}.
+\]
+\end{proof}
+
+\begin{corollary}[実際には $a_1(r^d) = 342$ または $912$]\label{cor:a1real}
+任意の $d \neq 0$ について、
+\[
+a_1(r^d) = 342 \quad\text{または}\quad 912.
+\]
+さらに、$B,C$-側のサイズ $38$ 軌道のうち、$r^d$ に対して寄与する軌道数を $N_d$ とすると、
+\[
+N_d = 8 \quad\text{または}\quad 23.
+\]
+特に
+\[
+N_d \ge 8 \qquad (d \neq 0)
+\]
+である。
+\end{corollary}
+
+\begin{proof}
+系~\ref{cor:Aside} より、$A$-側の葉からの寄与は常に $38$ である。枝そのものは $u$ に共通に隣接するため互いに隣接しないので、枝からの寄与はない。また $u$ 自身も寄与しない。
+
+$B,C$-側の葉はサイズ $38$ の $D_{19}$-軌道 $56$ 個に分かれる。各軌道は、ある $d$ に対して寄与するなら $38$ 頂点すべてで寄与し、寄与しないなら $0$ である。
+
+従って
+\[
+a_1(r^d) = 38 + 38 N_d
+\]
+と書ける。
+
+命題~\ref{prop:a1cand} の候補
+\[
+57, 342, 627, 912
+\]
+のうち、$38$ の倍数であるのは
+\[
+342, \qquad 912
+\]
+だけである。従って
+\[
+a_1(r^d) = 342 \quad\text{または}\quad 912.
+\]
+このとき
+\[
+N_d = \frac{a_1(r^d) - 38}{38}
+\]
+なので、
+\[
+N_d = 8 \quad\text{または}\quad 23.
+\]
+\end{proof}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{$B,C$-側の $4$-cycle 障害}
+
+\begin{definition}[$B,C$-側のサイズ $38$ 軌道]\label{def:BCorbit}
+$B,C$-側の葉軌道を $1$ つ固定し、
+\[
+Q_q = \{b_i^q, c_i^q : i \in \mathbb{Z}/19\}
+\]
+と書く。ただし
+\[
+r(b_i^q) = b_{i+1}^q, \qquad r(c_i^q) = c_{i+1}^q,
+\]
+かつ
+\[
+t(b_i^q) = c_{-i}^q
+\]
+となるように記号を選ぶ。
+
+この軌道の $B$-側について、
+\[
+D_q := \{d \in \mathbb{Z}_{19}^{\ast} : b_i^q \sim b_{i+d}^q\ \text{for all } i\}
+\]
+と定める。
+
+無向性により、
+\[
+d \in D_q \quad\Longrightarrow\quad -d \in D_q.
+\]
+また、$d \in D_q$ であることは、この軌道 $Q_q$ が $a_1(r^d)$ に寄与することと同値である。
+\end{definition}
+
+\begin{lemma}[各 $Q_q$ は高々 $1$ つの符号対しか持たない]\label{lem:Dqbound}
+任意の $q$ について、
+\[
+|D_q| \le 2.
+\]
+\end{lemma}
+
+\begin{proof}
+もし
+\[
+a, b \in D_q, \qquad a \neq \pm b
+\]
+なら、次の $4$ 頂点を考える:
+\[
+b_0^q, \qquad b_a^q, \qquad b_{a+b}^q, \qquad b_b^q.
+\]
+これらは相異なる。実際、$a, b \neq 0$ であり、$a = b$ も $a = -b$ も仮定に反する。
+
+$d = a$ と $d = b$ が $D_q$ に属するので、次の辺が存在する:
+\[
+b_0^q \sim b_a^q, \qquad b_a^q \sim b_{a+b}^q, \qquad b_{a+b}^q \sim b_b^q, \qquad b_b^q \sim b_0^q.
+\]
+したがって
+\[
+b_0^q - b_a^q - b_{a+b}^q - b_b^q - b_0^q
+\]
+は $4$-cycle である。しかし $\Gamma$ は $4$-cycle を持たない。矛盾。
+
+従って $D_q$ は高々 $1$ つの符号対 $\{d, -d\}$ しか含めず、
+\[
+|D_q| \le 2
+\]
+である。
+\end{proof}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{主定理}
+
+\begin{theorem}[$D_{19}$ 部分群は存在しない]\label{thm:main}
+仮想的 Moore graph $\Gamma$ of degree $57$ and diameter $2$ について、
+\[
+D_{19} \le \Aut(\Gamma)
+\]
+は不可能である。
+\end{theorem}
+
+\begin{proof}
+系~\ref{cor:a1real} により、任意の非零差
+\[
+d \in \mathbb{Z}_{19}^{\ast}
+\]
+について、$B,C$-側のサイズ $38$ 軌道のうち $a_1(r^d)$ に寄与する軌道数 $N_d$ は
+\[
+N_d \ge 8
+\]
+を満たす。
+
+一方、定義~\ref{def:BCorbit} より、
+\[
+N_d = |\{q : d \in D_q\}|.
+\]
+したがって
+\[
+\sum_{q} |D_q| = \sum_{d \in \mathbb{Z}_{19}^{\ast}} N_d \ge 18 \cdot 8 = 144.
+\]
+
+しかし、$B,C$-側のサイズ $38$ 軌道は $56$ 個であり、補題~\ref{lem:Dqbound} により各軌道について
+\[
+|D_q| \le 2
+\]
+である。従って
+\[
+\sum_q |D_q| \le 56 \cdot 2 = 112.
+\]
+
+これは
+\[
+144 \le 112
+\]
+という矛盾である。
+
+よって
+\[
+D_{19} \le \Aut(\Gamma)
+\]
+は不可能である。
+\end{proof}
+
+\begin{corollary}[自己同型群が位数 $38$ の二面体群である場合も不可能]
+\[
+\Aut(\Gamma) \simeq D_{19}
+\]
+は不可能である。
+\end{corollary}
+
+\begin{proof}
+もし $\Aut(\Gamma) \simeq D_{19}$ なら、当然 $D_{19} \le \Aut(\Gamma)$ である。これは定理~\ref{thm:main} に反する。
+\end{proof}
+
+\bigskip
+\hrule
+\bigskip
+
+\section{検証メモ}
+
+\subsection*{7.1\quad 一次軌道分解だけでは矛盾しない}
+
+$D_{19}$ 作用から得られる頂点軌道構造
+\[
+1^1, \qquad 19^{55}, \qquad 38^{58}
+\]
+は、頂点数
+\[
+1 + 55 \cdot 19 + 58 \cdot 38 = 3250
+\]
+と整合する。したがって矛盾は、単純な軌道長の割り算からは出ない。
+
+\subsection*{7.2\quad 反射 fixed star の中心は $u$ ではない}
+
+$u$ は全 $D_{19}$ で固定されるが、反射の固定 star の中心ではない。もし $u$ が中心なら、反射は $N(u)$ の $55$ 点を固定する必要がある。しかし $N(u)$ は $3$ つの $19$ 周期に分かれ、反射は各周期で高々 $1$ 点しか固定できない。
+
+したがって $u$ は固定 star の葉であり、中心はある枝 $a_i$ である。この点を誤ると、誤った即時矛盾が出る。
+
+\subsection*{7.3\quad 中点反射条件の注意点}
+
+補題~\ref{lem:midpoint} では、$(0,p)$ の $L_h$ 内隣接点は
+\[
+(h, A_h(p))
+\]
+であるが、$t_h(0,p)$ の $L_h$ 内隣接点は
+\[
+(h, \theta A_h(p))
+\]
+である。したがって、共通近傍が存在する条件は
+\[
+A_h(p) = \theta A_h(p),
+\]
+すなわち
+\[
+A_h(p) \in F
+\]
+である。この点を明示して検算した。
+
+\subsection*{7.4\quad 最終矛盾の数え上げ}
+
+$A$-側の寄与は各非零 $d$ について常に $38$ である。従って、表現論的候補
+\[
+57, 342, 627, 912
+\]
+のうち、全体が $38$ の倍数になる候補だけが残る。これが
+\[
+342, \qquad 912
+\]
+であり、$B,C$-側には各 $d$ につき少なくとも $8$ 個のサイズ $38$ 軌道が必要になる。
+
+一方、各 $B,C$ 軌道は $4$-cycle 禁止により高々 $1$ つの符号対 $\{d,-d\}$ にしか寄与できない。したがって全体の容量は
+\[
+56 \cdot 2 = 112
+\]
+であるが、必要量は
+\[
+18 \cdot 8 = 144
+\]
+である。この不等式衝突が最終矛盾である。
+
+\bigskip
+\hrule
+\bigskip
+
+\section*{参考文献}
+
+\begin{itemize}\setlength{\itemsep}{4pt}
+  \item M.~Miller and J.~Širáň, \textit{Moore graphs and beyond: A survey of the degree/diameter problem}, Electronic Journal of Combinatorics, Dynamic Survey DS14.\\
+  \url{https://www.combinatorics.org/files/Surveys/ds14/ds14v2-2013.pdf}\\
+  Diameter $2$ の Moore graph の可能次数、および degree $57$ の未解決性について参照。
+  \item A.~A.~Makhnev, \textit{Partial geometries and their extensions}, Russian Mathematical Surveys 53:6.\\
+  \url{https://www.mathnet.ru/php/getFT.phtml?jrnid=rm\&paperid=203\&what=fullteng}\\
+  Proposition 1.3 に、degree $57$ の Aschbacher graph に involution がある場合、固定点集合が $56$ 頂点の star であることが述べられている。
+  \item A.~E.~Brouwer and W.~H.~Haemers, \textit{Spectra of Graphs}.\\
+  \url{https://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf}\\
+  Higman method、association scheme の自己同型に対する跡公式、および Moore graph of degree $57$ に関する標準的制約について参照。
+\end{itemize}
+
+\end{document}
