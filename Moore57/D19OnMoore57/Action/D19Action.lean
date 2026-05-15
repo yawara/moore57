@@ -1,7 +1,7 @@
 import Mathlib.GroupTheory.SpecificGroups.Dihedral
 import Moore57.Moore57Graph.Moore57Definition
-import Moore57.D19OnMoore57.Counting.AbstractCounting
-import Moore57.D19OnMoore57.AbstractHypotheses
+import Moore57.Foundations.GraphTheory.AdjacentMovedCount
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # D₁₉ action structure on Moore57 graphs (Tier 3)
@@ -12,8 +12,6 @@ This file extracts the `D19ActsOnMoore57` structure from the original
 * `D19ActsOnMoore57` — Moore graph of degree 57 with a faithful D₁₉ action.
 * `rotation`, `a1`, `smulEquiv`, `smulIso` — derived action data.
 * Basic action lemmas.
-* `no_D19_acts_on_Moore57` — abstract version asserting that concrete orbit
-  data don't exist under a `D19ActsOnMoore57` witness.
 -/
 
 open Finset SimpleGraph
@@ -214,27 +212,5 @@ theorem fixedVertexCount_rotation_lt_card
     exact hall v (Finset.mem_univ v))
 
 end D19ActsOnMoore57
-
-/-- `D19ActsOnMoore57` から得られる Moore57 仮定の下で,
-`D19ConcreteHypotheses` は存在しない.
-
-この定理は `D19ConcreteHypotheses` を前提に取らない. 作用から具体軌道データを
-構成する橋渡しは未形式化なので, 結論は `False` ではなく具体軌道データの非存在として
-止めている. -/
-theorem no_D19_acts_on_Moore57
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
-    (h : D19ActsOnMoore57 V Γ) : ¬ Nonempty (D19ConcreteHypotheses Γ) :=
-  no_D19_concrete_hypotheses h.isMoore
-
-/-- 系 6.2 に向けた具体データ非存在版.
-
-現時点の Lean 版では, 作用から得られるはずの具体軌道データの非存在として述べる. -/
-theorem no_aut_iso_D19
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
-    (h : D19ActsOnMoore57 V Γ) : ¬ Nonempty (D19ConcreteHypotheses Γ) :=
-  no_D19_acts_on_Moore57 h
-
 
 end Moore57
