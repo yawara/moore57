@@ -605,6 +605,56 @@ theorem E3_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   _commute_preserves_ker_T_F11 h (E3MatrixF11 Γ)
     (E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut)
 
+/-! ### V_λ ⊓ V_μ = ⊥ (E_λ idempotent + orthogonality より)
+
+V_2, V_7, V_3 は pairwise disjoint な submodule. -/
+
+/-- 一般形: E idempotent + E·F = 0 ⟹ range E ⊓ range F = ⊥. -/
+private theorem _matrix_range_disjoint_of_idem_orth
+    (E F : Matrix V V (ZMod 11))
+    (h_E_idem : E * E = E)
+    (h_EF_orth : E * F = 0) :
+    E.toLin'.range ⊓ F.toLin'.range = (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_E, hv_F⟩ := hv
+  obtain ⟨u_E, hu_E⟩ := LinearMap.mem_range.mp hv_E
+  obtain ⟨u_F, hu_F⟩ := LinearMap.mem_range.mp hv_F
+  have h_Ev_eq_v : E.toLin' v = v := by
+    rw [← hu_E]
+    show (E.toLin') (E.toLin' u_E) = E.toLin' u_E
+    rw [show (E.toLin') (E.toLin' u_E) = (E * E).toLin' u_E from by
+        rw [Matrix.toLin'_mul]; rfl, h_E_idem]
+  have h_Ev_eq_zero : E.toLin' v = 0 := by
+    rw [← hu_F]
+    show (E.toLin') (F.toLin' u_F) = 0
+    rw [show (E.toLin') (F.toLin' u_F) = (E * F).toLin' u_F from by
+        rw [Matrix.toLin'_mul]; rfl, h_EF_orth]
+    show (0 : Matrix V V (ZMod 11)).toLin' u_F = 0
+    simp
+  rw [Submodule.mem_bot]
+  exact h_Ev_eq_v.symm.trans h_Ev_eq_zero
+
+/-- `V_2 ⊓ V_7 = ⊥`. -/
+theorem V2_inter_V7_eq_bot (hΓ : IsMoore57 Γ) :
+    V2Submodule Γ ⊓ V7Submodule Γ = (⊥ : Submodule (ZMod 11) (V → ZMod 11)) :=
+  _matrix_range_disjoint_of_idem_orth
+    (E2MatrixF11 Γ) (E7MatrixF11 Γ) (E2_idempotent hΓ) (E2_mul_E7_eq_zero hΓ)
+
+/-- `V_2 ⊓ V_3 = ⊥`. -/
+theorem V2_inter_V3_eq_bot (hΓ : IsMoore57 Γ) :
+    V2Submodule Γ ⊓ V3Submodule Γ = (⊥ : Submodule (ZMod 11) (V → ZMod 11)) :=
+  _matrix_range_disjoint_of_idem_orth
+    (E2MatrixF11 Γ) (E3MatrixF11 Γ) (E2_idempotent hΓ) (E2_mul_E3_eq_zero hΓ)
+
+/-- `V_7 ⊓ V_3 = ⊥`. -/
+theorem V7_inter_V3_eq_bot (hΓ : IsMoore57 Γ) :
+    V7Submodule Γ ⊓ V3Submodule Γ = (⊥ : Submodule (ZMod 11) (V → ZMod 11)) :=
+  _matrix_range_disjoint_of_idem_orth
+    (E7MatrixF11 Γ) (E3MatrixF11 Γ) (E7_idempotent hΓ) (E7_mul_E3_eq_zero hΓ)
+
 /-! ### A · E_λ = λ · E_λ: V_λ 上 A は scalar λ で作用
 
 A = 2 E_2 + 7 E_7 + 3 E_3 + E_λ orthogonality + idempotency より導出. -/
