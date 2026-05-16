@@ -78,17 +78,53 @@ theorem ten_traceNumber_eq_two_mul_num_orbits :
 
 /-- **(Phase 4 核心 sorry)**: `10 * traceNumber ≡ 6 (mod 11)`.
 
-これは F_11[C_11] modular rep theory の Krull-Schmidt 解析が必要:
-* V_perm = M_1^5 ⊕ M_11^295.
-* 各 A-固有空間 V_λ ⊂ V_perm は F_11[C_11]-submodule で
-  V_λ = M_1^{l_λ} ⊕ M_11^{k_λ}.
-* Σ l_λ = 5 (Krull-Schmidt 一意性).
-* l_λ ≡ dim V_λ (mod 11).
-* l_2 = 1, l_7 = 2, l_3 = 2 (一意).
-* a^{F_11}_λ = l_λ + k_λ: 1, 159, 140.
-* trace_F_11(A | V^σ) = 2·1 + 7·159 + 3·140 = 1535 ≡ 6 (mod 11).
+## 証明の Roadmap
 
-Mathlib に F_11[C_11] Krull-Schmidt が無く, 自前で構築要 (~500 行). -/
+Phase 3 から導出される整数等式と F_11 trace 計算の組合せ:
+
+### 整数レベル (Phase 3 から sorry-free, 一連の計算)
+
+* 11n = 25 + 15 (a₇ - c₇)   (Phase 3 A: spectral decomp of trace P_σ)
+* a₇ + 10 c₇ = 1729           (V_7 dim)
+* a₇ + a_{-8} = 299           (V^σ dim = 300, V_57^σ = 1)
+* 上記三つを整理 → 33 a₇ = 22 n + 5137, 11 で割って 3 a₇ = 2 n + 467.
+
+### F_11 trace 計算 (orbit basis 上で計算可能)
+
+V^σ の orbit basis B = {e_{u_i} : i ∈ Fin 5} ∪ {e_O : O free orbit} に対し
+E_λ = (1/15)(A + 8I) - (1/750) J, E_57 = (1/3250) J, E_-8 = I - E_7 - E_57 の
+diagonal entries を計算:
+
+* `[E_7]_{u_i, u_i}` = 3 (A e_{u_i})_{u_i} + 2 - 6 = 7 (mod 11), for each i.
+* `[E_7]_{e_O, e_O}` = 3 · n_{O,O} + 2 = 8 if O has internal edge, 2 else.
+* trace(E_7 | V^σ) mod 11 = 5·7 + 5n·8 + (295-5n)·2 = 625 + 30n ≡ 9 + 8n (mod 11).
+
+これは V_7 ∩ V^σ の F_11 次元 (= a^{F_11}_7) に等しい.
+
+### Krull-Schmidt 経由 (まだ未形式化)
+
+F_11[C_11] 上の Krull-Schmidt から:
+* V_perm = M_1^5 ⊕ M_11^295 (orbit decomp; F_11[X]/(X-1)^11 = M_11).
+* V_λ = M_1^{l_λ} ⊕ M_11^{k_λ}, 0 ≤ l_λ ≤ 5.
+* dim V_λ = 11 k_λ + l_λ, l_λ ≡ dim V_λ (mod 11).
+* l_7 ≡ 1729 ≡ 2 (mod 11), l_7 ∈ {0..5} ⟹ l_7 = 2.
+* a^{F_11}_7 = l_7 + k_7 = 2 + 157 = 159.
+
+### 結論
+
+a^{F_11}_7 = 159 (Krull-Schmidt) = a_7 (kernel monotonicity + sum constraint).
+Phase 3 candidate a_7 ∈ {159, 169, 179, 189} と合わせて a_7 = 159, n = 5.
+
+`10n ≡ 6 (mod 11)` が n = 5 から従う.
+
+## Mathlib インフラ
+
+`Module.equiv_directSum_of_isTorsion` (PID structure theorem) を F_11[X]-module
+V_perm に適用すれば V_perm ≅ ⊕ F_11[X]/(X-1)^{e_i} で e_i は uniquely determined.
+これを使えば Krull-Schmidt を直接 invoke できる可能性あり.
+
+実装規模: ~300-500 行 (orbit → F_11[X]-module 変換, V_λ の F_11[C_11]-submodule
+性, l_λ ≤ 5 の sum constraint). -/
 theorem ten_traceNumber_mod_eleven_eq_six :
     10 * h.traceNumber % 11 = 6 := by
   -- F_11 rep theory による証明:
