@@ -1,7 +1,9 @@
-import Moore57.Order22OnMoore57.Phase4RepTheory
+import Moore57.Order22OnMoore57.Action
 import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
 import Mathlib.Data.ZMod.Basic
 import Mathlib.LinearAlgebra.Matrix.ToLin
+import Mathlib.LinearAlgebra.Matrix.Permutation
+import Mathlib.Combinatorics.SimpleGraph.AdjMatrix
 
 /-!
 # Phase 4 F_11 framework: V → ZMod 11 setup

@@ -1,4 +1,5 @@
 import Moore57.Order22OnMoore57.Phase3FourCycleBound
+import Moore57.Order22OnMoore57.Phase4F11Assembly
 
 /-!
 # 自然言語証明 §4: F_11 modular rep theory による `10n ≡ 6 (mod 11)`
@@ -172,8 +173,8 @@ F_11[X] is PID, V_perm は torsion. これを使う.
 実装規模: ~300-500 行 (F_11 framework, orbit decomp, V_λ submodule analysis,
 K-S uniqueness invocation). -/
 theorem a7_eq_159_via_F11_KrullSchmidt :
-    ∃ a : ℕ, (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 ∧ a = 159 := by
-  sorry
+    ∃ a : ℕ, (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 ∧ a = 159 :=
+  h.a7_eq_159_from_F11_full
 
 /-- **Phase 4 派生**: `traceNumber = 5`. K-S 由来の `a_7 = 159` から導出. -/
 theorem traceNumber_eq_five_via_F11 :
