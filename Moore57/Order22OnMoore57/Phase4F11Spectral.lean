@@ -1,3 +1,4 @@
+import Moore57.Order22OnMoore57.Phase3FourCycleBound
 import Moore57.Order22OnMoore57.Phase4F11OrbitKernel
 import Moore57.Order22OnMoore57.TraceNumber
 import Mathlib.Algebra.Polynomial.Eval.Defs
@@ -466,21 +467,50 @@ theorem E3_commute_permMatrixF11 (hΓ : IsMoore57 Γ)
       adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11 Γ σ hσ,
       one_mul, mul_one, permMatrixF11_mul_allOnes, allOnes_mul_permMatrixF11]
 
-/-! ## 上界証明の主結果 (focused sorry) -/
+/-! ## 上界証明の主結果 -/
 
-/-- **Phase D 主結果 (sorry, F_11 spectral)**: `a_7 ≤ 160`. -/
+/-- **F_11 trace argument (focused sorry)**: σ-fixed subspace 上の A trace 計算より
+`10 * traceNumber ≡ 6 (mod 11)`.
+
+二通りで計算:
+* orbit basis: trace = 10 n (orbit 数 - fixed 数 を巻き込む計算).
+* spectral basis: trace = 2 · a^{F_11}_2 + 7 · a^{F_11}_7 + 3 · a^{F_11}_3.
+  Σ a^{F_11}_λ = 300 (`finrank_ker_T_F11_eq_300`), a^{F_11}_2 = 1,
+  a^{F_11}_7 ≡ 5 mod 11 (F_11[C_11] 構造より, l_7 ≡ 2 mod 11 から導出).
+  ⟹ trace ≡ 8 + 4 · 5 ≡ 6 mod 11.
+
+残作業: F_11[C_11] modular rep theory 経由で a^{F_11}_λ の mod 11 値を確定. -/
+theorem ten_traceNumber_mod_eleven_eq_six_via_F11_spectral
+    (h : Order22ActsOnMoore57 V Γ) :
+    10 * h.traceNumber % 11 = 6 := by
+  -- F_11 trace identity. Requires:
+  -- - dim V_λ values (rank E_λ = 1, 1729, 1520).
+  -- - F_11[C_11] structure on each V_λ (only blocks of size 1 or p = 11).
+  -- - Orbit-basis trace formula.
+  -- See Phase4F11Spectral.lean docstring for full strategy.
+  sorry
+
+/-- **Phase D 主結果**: `a_7 ≤ 160` (実際は = 159).
+
+`ten_traceNumber_mod_eleven_eq_six_via_F11_spectral` + Phase 3 候補
+`traceNumber_mem_candidates` の合成. -/
 theorem a7_le_160_via_F11_spectral_proof (h : Order22ActsOnMoore57 V Γ) :
     ∃ a : ℕ, (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 ∧ a ≤ 160 := by
-  -- 戦略 outline:
-  -- 1. F_11 spectral: V_F_11 = V_2 ⊕ V_7 ⊕ V_3 (E_λ idempotent + orthogonal + sum = I).
-  -- 2. σ-equivariance: V_λ は σ-invariant.
-  -- 3. Restricted Jordan: 各 V_λ 内 (σ - I)^11 = 0, dim ker(...)_j 線形.
-  -- 4. a^{F_11}_7 + 10 k_7 = 1729 (dim V_7), l_7 ≥ 0 ⟹ a^{F_11}_7 ≥ 158.
-  --    a^{F_11}_3 + 10 k_3 = 1520, l_3 ≥ 0 ⟹ a^{F_11}_3 ≥ 140.
-  -- 5. Sum a^{F_11}_2 + a^{F_11}_7 + a^{F_11}_3 = 300 ⟹ a^{F_11}_7 = 300 - 1 - a^{F_11}_3 ≤ 159.
-  -- 6. Kernel monotonicity: a_7 ≤ a^{F_11}_7 ≤ 159 ≤ 160.
-  -- 7. Phase 3: ∃ a, 3a = 2n + 467 ∧ a ≤ 160.
-  sorry
+  -- Step 1: F_11 trace argument gives 10n ≡ 6 (mod 11)
+  have h_mod : 10 * h.traceNumber % 11 = 6 :=
+    h.ten_traceNumber_mod_eleven_eq_six_via_F11_spectral
+  -- Step 2: Phase 3 candidates n ∈ {5, 20, 35, 50}. Only n = 5 has 10n ≡ 6 (mod 11):
+  --   10·5 = 50 ≡ 6, 10·20 = 200 ≡ 2, 10·35 = 350 ≡ 9, 10·50 = 500 ≡ 5 (mod 11).
+  have h_n : h.traceNumber = 5 := by
+    rcases h.traceNumber_mem_candidates with h5 | h20 | h35 | h50
+    · exact h5
+    · exfalso; rw [h20] at h_mod; omega
+    · exfalso; rw [h35] at h_mod; omega
+    · exfalso; rw [h50] at h_mod; omega
+  -- Step 3: With n = 5, witness a = 159: 3·159 = 477 = 2·5 + 467
+  refine ⟨159, ?_, by decide⟩
+  rw [h_n]
+  decide
 
 end Order22ActsOnMoore57
 
