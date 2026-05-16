@@ -65,73 +65,130 @@ theorem card_filter_slopesAdj_eq_one_eq_55n :
   rw [Finset.sum_ite]
   simp
 
-/-! ## (B-Step 1) 10n を整数として計算 (over ℤ) -/
+/-! ## (B-Step 1) 整数等式 `3 a₇ = 2 n + 467` (sorry-free, Phase 3 から) -/
 
-/-- `10 n = 2 · (内部辺ありの軌道数)`. これは Phase 3 (B) の式から:
-`Σ_x |slopesAdj h x| = 55n = 5 · (内部辺ありの軌道数 / orbit size 11) · 11 = 5n · 11 = 55n`,
-ここで `(内部辺ありの軌道数) = 5n` (Phase 3 (A) で 11n = 25 + 15m, Phase 3 (B) で 5n_d
-全 distinct slope class). -/
-theorem ten_traceNumber_eq_two_mul_num_orbits :
-    10 * h.traceNumber = 2 * (5 * h.traceNumber) := by ring
+/-- **Phase 3 帰結 (整数等式)**: ∃ a c, a + 10 c = 1729 ∧ 3 a = 2 n + 467.
 
-/-! ## (B-Step 2) F_11 spectral trace ≡ 6 (mod 11) (sorry, F_11 rep theory) -/
+派生:
+* `11n = 25 + 15(a - c)`, `a + 10c = 1729` (Phase 3 A) を解いて
+  `c = (1729 - a)/10`, `15c = 3(1729 - a)/2`. 整理して
+  `11n + 75c = 25 + 15a + 60c` ⟹ `11n + 15c = 25 + 15a` ⟹
+  `11n = 25 + 15(a - c)` (元の式).
+* もう一つ独立な関係: `2(11n) - 11(a + 10c) = 50 + 30(a-c) - 11a - 110c`
+  `= 50 + 30a - 30c - 11a - 110c = 50 + 19a - 140c`.
+  これは 22n - 11·1729 = 22n - 19019.
+  `50 + 19a - 140c = 22n - 19019`. 整理: `19a - 140c = 22n - 19069`. ない方向.
+* 直接: a + 10c = 1729 ⟹ 10c = 1729 - a ⟹ 30c = 3(1729 - a).
+  11n = 25 + 15a - 15c. 30倍: 330n = 750 + 450a - 450c
+  = 750 + 450a - 15 · 30c = 750 + 450a - 15·3·(1729-a) = 750 + 450a - 45·1729 + 45a
+  = 750 - 77805 + 495a = 495a - 77055. So 495a - 330n = 77055.
+  Divide by 165: 3a - 2n = 77055/165 = 467. ✓ -/
+theorem exists_a7_form_3a_eq_2n_plus_467 :
+    ∃ a c : ℕ, a + 10 * c = 1729 ∧ (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 := by
+  obtain ⟨a, c, h_eq, hdim⟩ := h.traceNumber_eq_25_plus_15_mul_dim_form
+  refine ⟨a, c, hdim, ?_⟩
+  -- 11n = 25 + 15(a - c), a + 10c = 1729 から 3a = 2n + 467
+  have h_dim_int : (a : ℤ) + 10 * c = 1729 := by exact_mod_cast hdim
+  -- 11n + 15c = 25 + 15a (from h_eq)
+  -- 165a = 11·15a = 11·(11n + 15c - 25) = 121n + 165c - 275
+  -- 165a - 165c = 121n - 275
+  -- 165(a-c) = 121n - 275 ... but also a+10c = 1729 so c = (1729-a)/10
+  -- Better: from 11n = 25 + 15a - 15c and a + 10c = 1729:
+  -- multiply first by 2: 22n = 50 + 30a - 30c
+  -- multiply second by 3: 3a + 30c = 5187
+  -- add: 22n + 3a = 50 + 33a + 5187 - 60c ... hmm let me just use linarith
+  linarith
 
-/-- **(Phase 4 核心 sorry)**: `10 * traceNumber ≡ 6 (mod 11)`.
+/-- **Phase 3 帰結 (候補列挙)**: ∃ a, 3 a = 2 n + 467 ∧ a ∈ {159, 169, 179, 189}.
 
-## 証明の Roadmap
+Phase 3 candidates n ∈ {5, 20, 35, 50} と integer relation `3a = 2n + 467` を組合せ. -/
+theorem exists_a7_in_phase3_candidates :
+    ∃ a : ℕ, (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 ∧
+      (a = 159 ∨ a = 169 ∨ a = 179 ∨ a = 189) := by
+  obtain ⟨a, c, _, ha_eq⟩ := h.exists_a7_form_3a_eq_2n_plus_467
+  refine ⟨a, ha_eq, ?_⟩
+  -- Phase 3 candidates n ∈ {5, 20, 35, 50} から a 候補列挙
+  rcases h.traceNumber_mem_candidates with h5 | h20 | h35 | h50
+  · -- n = 5: 3a = 10 + 467 = 477, a = 159
+    left; rw [h5] at ha_eq; omega
+  · -- n = 20: 3a = 40 + 467 = 507, a = 169
+    right; left; rw [h20] at ha_eq; omega
+  · -- n = 35: 3a = 70 + 467 = 537, a = 179
+    right; right; left; rw [h35] at ha_eq; omega
+  · -- n = 50: 3a = 100 + 467 = 567, a = 189
+    right; right; right; rw [h50] at ha_eq; omega
 
-Phase 3 から導出される整数等式と F_11 trace 計算の組合せ:
+/-! ## (B-Step 2) F_11 K-S 由来の上界 (sorry: 残った Phase 4 核心) -/
 
-### 整数レベル (Phase 3 から sorry-free, 一連の計算)
+/-- **(Phase 4 核心 sorry, focused form)**: `a_7 = 159`.
 
-* 11n = 25 + 15 (a₇ - c₇)   (Phase 3 A: spectral decomp of trace P_σ)
-* a₇ + 10 c₇ = 1729           (V_7 dim)
-* a₇ + a_{-8} = 299           (V^σ dim = 300, V_57^σ = 1)
-* 上記三つを整理 → 33 a₇ = 22 n + 5137, 11 で割って 3 a₇ = 2 n + 467.
+これが F_11 Krull-Schmidt の本質的内容. 派生として `n = 5`, `10n ≡ 6 (mod 11)` が従う.
 
-### F_11 trace 計算 (orbit basis 上で計算可能)
+## 証明スケッチ (F_11[C_11] Krull-Schmidt)
 
-V^σ の orbit basis B = {e_{u_i} : i ∈ Fin 5} ∪ {e_O : O free orbit} に対し
-E_λ = (1/15)(A + 8I) - (1/750) J, E_57 = (1/3250) J, E_-8 = I - E_7 - E_57 の
-diagonal entries を計算:
+V_perm = (V → F_11) を F_11[X]-module と見る (X = σ 作用).
+σ^{11} = 1 ⟹ V_perm は X^{11} - 1 = (X-1)^{11} torsion (over F_11, char 11).
 
-* `[E_7]_{u_i, u_i}` = 3 (A e_{u_i})_{u_i} + 2 - 6 = 7 (mod 11), for each i.
-* `[E_7]_{e_O, e_O}` = 3 · n_{O,O} + 2 = 8 if O has internal edge, 2 else.
-* trace(E_7 | V^σ) mod 11 = 5·7 + 5n·8 + (295-5n)·2 = 625 + 30n ≡ 9 + 8n (mod 11).
+**Step 1**: orbit decomp で V_perm = M_1^5 ⊕ M_{11}^{295} (F_11[X]-mod).
+* 各固定軌道 (singleton) は M_1 = F_11[X]/(X-1).
+* 各長さ 11 自由軌道は M_{11} = F_11[X]/(X^{11}-1) = F_11[X]/(X-1)^{11}.
 
-これは V_7 ∩ V^σ の F_11 次元 (= a^{F_11}_7) に等しい.
+**Step 2**: A の F_11-spectral 分解 (有理 spectral からの reduction).
+A mod 11 の最小多項式は (X-2)(X-7)(X-3) (distinct roots), なので A は
+F_11 上対角化可能. V_perm = V_2^{F_11} ⊕ V_7^{F_11} ⊕ V_3^{F_11},
+dimension は ℚ 上と同じ (char poly が ℤ 上同じ).
+* dim V_2^{F_11} = 1, dim V_7^{F_11} = 1729, dim V_3^{F_11} = 1520.
 
-### Krull-Schmidt 経由 (まだ未形式化)
+**Step 3**: Krull-Schmidt uniqueness applied.
+V_perm = V_2 ⊕ V_7 ⊕ V_3 (eigenspace decomp), and V_perm = M_1^5 ⊕ M_{11}^{295}
+(orbit decomp). 両者は K-S 一意性で一致. 各 V_λ は M_1, M_{11} のみで分解:
+V_λ = M_1^{l_λ} ⊕ M_{11}^{k_λ}.
+* dim V_λ = l_λ + 11 k_λ. l_λ + l_2 + l_3 = 5. k_λ + k_2 + k_3 = 295.
+* l_λ ≡ dim V_λ (mod 11), 0 ≤ l_λ ≤ 5.
 
-F_11[C_11] 上の Krull-Schmidt から:
-* V_perm = M_1^5 ⊕ M_11^295 (orbit decomp; F_11[X]/(X-1)^11 = M_11).
-* V_λ = M_1^{l_λ} ⊕ M_11^{k_λ}, 0 ≤ l_λ ≤ 5.
-* dim V_λ = 11 k_λ + l_λ, l_λ ≡ dim V_λ (mod 11).
-* l_7 ≡ 1729 ≡ 2 (mod 11), l_7 ∈ {0..5} ⟹ l_7 = 2.
-* a^{F_11}_7 = l_7 + k_7 = 2 + 157 = 159.
+**Step 4**: 数値計算.
+* l_2 ≡ 1 (mod 11), 0 ≤ l_2 ≤ 5 ⟹ l_2 = 1.
+* l_7 ≡ 1729 ≡ 2 (mod 11), 0 ≤ l_7 ≤ 5 ⟹ l_7 = 2.
+* l_3 ≡ 1520 ≡ 2 (mod 11), 0 ≤ l_3 ≤ 5 ⟹ l_3 = 2.
+* 各 k_λ: k_2 = 0, k_7 = 157, k_3 = 138.
 
-### 結論
+**Step 5**: a^{F_11}_λ = l_λ + k_λ:
+* a^{F_11}_2 = 1, a^{F_11}_7 = 159, a^{F_11}_3 = 140.
 
-a^{F_11}_7 = 159 (Krull-Schmidt) = a_7 (kernel monotonicity + sum constraint).
-Phase 3 candidate a_7 ∈ {159, 169, 179, 189} と合わせて a_7 = 159, n = 5.
+**Step 6**: Kernel monotonicity + Σ-conservation で a^{F_11}_λ = a_λ:
+* a^{F_11}_λ ≥ a_λ (ker((σ-I) over F_11) ⊇ ker (σ-I) over ℚ).
+* Σ a^{F_11}_λ = dim V_perm^{σ, F_11} = 300 = Σ a_λ.
+* 各 ≥ なので equality.
 
-`10n ≡ 6 (mod 11)` が n = 5 から従う.
+**結論**: a_7 = a^{F_11}_7 = 159. Phase 3 candidates a ∈ {159, 169, 179, 189}
+の中で 159 のみ. これが Phase 3 と整合し n = 5.
 
 ## Mathlib インフラ
 
-`Module.equiv_directSum_of_isTorsion` (PID structure theorem) を F_11[X]-module
-V_perm に適用すれば V_perm ≅ ⊕ F_11[X]/(X-1)^{e_i} で e_i は uniquely determined.
-これを使えば Krull-Schmidt を直接 invoke できる可能性あり.
+`Module.equiv_directSum_of_isTorsion` (in `Mathlib/Algebra/Module/PID.lean`):
+PID 上 torsion module の elementary divisor 分解 (existence + uniqueness).
+F_11[X] is PID, V_perm は torsion. これを使う.
 
-実装規模: ~300-500 行 (orbit → F_11[X]-module 変換, V_λ の F_11[C_11]-submodule
-性, l_λ ≤ 5 の sum constraint). -/
+実装規模: ~300-500 行 (F_11 framework, orbit decomp, V_λ submodule analysis,
+K-S uniqueness invocation). -/
+theorem a7_eq_159_via_F11_KrullSchmidt :
+    ∃ a : ℕ, (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 ∧ a = 159 := by
+  sorry
+
+/-- **Phase 4 派生**: `traceNumber = 5`. K-S 由来の `a_7 = 159` から導出. -/
+theorem traceNumber_eq_five_via_F11 :
+    h.traceNumber = 5 := by
+  obtain ⟨a, ha_eq, ha_159⟩ := h.a7_eq_159_via_F11_KrullSchmidt
+  rw [ha_159] at ha_eq
+  -- 3 · 159 = 477 = 2 n + 467 ⟹ n = 5
+  push_cast at ha_eq
+  have : (h.traceNumber : ℤ) = 5 := by linarith
+  exact_mod_cast this
+
+/-- **Phase 4 主結論**: `10 * traceNumber ≡ 6 (mod 11)`. -/
 theorem ten_traceNumber_mod_eleven_eq_six :
     10 * h.traceNumber % 11 = 6 := by
-  -- F_11 rep theory による証明:
-  -- have h_orbit : trace_F_11(A | V^σ) = 10 * h.traceNumber := orbit basis 計算
-  -- have h_spectral : trace_F_11(A | V^σ) % 11 = 6 := F_11 Krull-Schmidt
-  -- combine
-  sorry
+  rw [h.traceNumber_eq_five_via_F11]
 
 /-! ## 統合 -/
 
