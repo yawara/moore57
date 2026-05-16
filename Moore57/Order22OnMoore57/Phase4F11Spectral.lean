@@ -612,6 +612,26 @@ theorem adjMatrixF11_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   _commute_preserves_ker_T_F11 h (adjMatrixF11 Γ)
     (adjMatrixF11_commute_permMatrixF11_σ h)
 
+/-- `A` restricted to `ker T_F11`. -/
+noncomputable def adjMatrixF11_restrict_ker_T (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.ker (T_F11 h) →ₗ[ZMod 11] LinearMap.ker (T_F11 h) :=
+  ((adjMatrixF11 Γ).toLin').restrict h.adjMatrixF11_preserves_ker_T_F11
+
+/-- `E_2` restricted to `ker T_F11`. -/
+noncomputable def E2_restrict_ker_T (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.ker (T_F11 h) →ₗ[ZMod 11] LinearMap.ker (T_F11 h) :=
+  ((E2MatrixF11 Γ).toLin').restrict h.E2_preserves_ker_T_F11
+
+/-- `E_7` restricted to `ker T_F11`. -/
+noncomputable def E7_restrict_ker_T (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.ker (T_F11 h) →ₗ[ZMod 11] LinearMap.ker (T_F11 h) :=
+  ((E7MatrixF11 Γ).toLin').restrict h.E7_preserves_ker_T_F11
+
+/-- `E_3` restricted to `ker T_F11`. -/
+noncomputable def E3_restrict_ker_T (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.ker (T_F11 h) →ₗ[ZMod 11] LinearMap.ker (T_F11 h) :=
+  ((E3MatrixF11 Γ).toLin').restrict h.E3_preserves_ker_T_F11
+
 /-! ### V_λ ⊓ V_μ = ⊥ (E_λ idempotent + orthogonality より)
 
 V_2, V_7, V_3 は pairwise disjoint な submodule. -/
