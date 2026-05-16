@@ -235,10 +235,47 @@ theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
     rw [h.τ_pow_two]; rfl
   have hmod := Equiv.Perm.card_compl_support_modEq
     (α := Subtype p) (p := 2) (n := 1) (σ := τS) hτS_pow
-  -- 残務: τS.supportᶜ.card は偶数 (Fix(τ) ∩ S = 偶数).
-  -- 自然言語証明 §5.2 では 2 (B_0 の F_0 における fixed-star geometry から)
+  -- |Fix(τ|S)| は偶数 (外部入力 `fix_τ_adj_σ_card_even`).
+  -- 自然言語証明 §5.2: B_0 の F_0 における fixed-star geometry から丁度 2.
   have hfix_even : τS.supportᶜ.card % 2 = 0 := by
-    sorry
+    classical
+    -- τS.supportᶜ.card = #{x ∈ V : τ x = x ∧ x ~ σ x}
+    have hcard_eq : τS.supportᶜ.card =
+        (Finset.univ.filter (fun x : V => h.τ x = x ∧ Γ.Adj x (h.σ x))).card := by
+      let q : V → Prop := fun x => h.τ x = x ∧ Γ.Adj x (h.σ x)
+      -- bijection: w ∈ τS.supportᶜ ↔ τ-fix on the underlying vertex
+      have hsupp_compl_iff : ∀ w : Subtype p,
+          w ∈ τS.supportᶜ ↔ (h.τ w.val = w.val) := fun w => by
+        rw [Finset.mem_compl, Equiv.Perm.mem_support]
+        constructor
+        · intro hne
+          -- ¬ (τS w ≠ w), すなわち τS w = w
+          have : τS w = w := by
+            by_contra hne'
+            exact hne hne'
+          -- τS w = w → (τS w).val = w.val → τ w.val = w.val
+          have hval : (τS w).val = w.val := congrArg Subtype.val this
+          exact hval
+        · intro heq hne
+          apply hne
+          apply Subtype.ext
+          exact heq
+      -- 両側の cardinality を Finset.card_bij で対応
+      apply Finset.card_bij
+        (fun (w : Subtype p) (_hw : w ∈ τS.supportᶜ) => w.val)
+      · intro w hw
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+        exact ⟨(hsupp_compl_iff w).mp hw, w.property⟩
+      · intro w₁ hw₁ w₂ hw₂ heq
+        exact Subtype.ext heq
+      · intro x hx
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
+        refine ⟨⟨x, hx.2⟩, ?_, rfl⟩
+        rw [hsupp_compl_iff]
+        exact hx.1
+    rw [hcard_eq]
+    rcases h.fix_τ_adj_σ_card_even with ⟨k, hk⟩
+    omega
   -- |Subtype p| = Tk 1
   have hcard : Fintype.card (Subtype p) = h.Tk 1 := by
     show Fintype.card {x : V // Γ.Adj x (h.σ x)} = h.Tk 1
