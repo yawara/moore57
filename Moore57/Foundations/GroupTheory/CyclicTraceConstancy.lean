@@ -1,4 +1,5 @@
 import Moore57.Foundations.GroupTheory.CyclotomicPrimeTrace
+import Moore57.Foundations.LinearAlgebra.ProjectionTrace
 import Mathlib.Algebra.DirectSum.LinearMap
 
 /-!
@@ -320,6 +321,48 @@ theorem trace_pow_eq_of_pow_eq_one
       LinearMap.trace ℚ W₂ ((σ ^ k).restrict (hMaps_W₂ k)) := by
     rw [htrace_j, htrace_k, hγ_eq]
   rw [htrace_decomp j, htrace_decomp k, htrace_W₁_eq, htrace_W₂_eq]
+
+/-- **応用**: 冪零でないべき等射影 E が σ_lin と可換,かつ σ_lin^p = 1 (p 素数) のとき,
+`tr(E ∘ σ_lin^j) = tr(E ∘ σ_lin^k)` for j, k ∈ {1, ..., p-1}.
+
+E ∘ σ_lin^j の trace は σ_lin^j|_{range E} の trace に等しく (`trace_restrict_range...`),
+σ_lin|_{range E} の冪は (σ_lin|_{range E})^p = id を満たすので, `trace_pow_eq_of_pow_eq_one`
+が適用できる. -/
+theorem trace_idempotent_pow_constant_of_pow_eq_one
+    (p : ℕ) [hp : Fact (Nat.Prime p)]
+    (σ_lin : W →ₗ[ℚ] W) (hpow : σ_lin ^ p = 1)
+    (E : W →ₗ[ℚ] W) (hE_idem : IsIdempotentElem E) (hE_comm : Commute E σ_lin)
+    {j k : ℕ} (hj1 : 1 ≤ j) (hjp : j < p) (hk1 : 1 ≤ k) (hkp : k < p) :
+    LinearMap.trace ℚ W (E ∘ₗ σ_lin ^ j) = LinearMap.trace ℚ W (E ∘ₗ σ_lin ^ k) := by
+  -- σ_lin が range E を保つ
+  have hcomm_parts := (LinearMap.IsIdempotentElem.commute_iff hE_idem (T := σ_lin)).mp hE_comm
+  have hmaps : Set.MapsTo σ_lin (LinearMap.range E) (LinearMap.range E) :=
+    (Module.End.mem_invtSubmodule_iff_mapsTo (f := σ_lin)).mp hcomm_parts.1
+  -- σ_lin の range E への制限
+  let σ_r : LinearMap.range E →ₗ[ℚ] LinearMap.range E := σ_lin.restrict hmaps
+  -- σ_r^p = 1
+  have hσr_pow : σ_r ^ p = 1 := by
+    show (σ_lin.restrict hmaps) ^ p = 1
+    rw [Module.End.pow_restrict]
+    ext v
+    show ((σ_lin ^ p).restrict _ v : W) = (1 : LinearMap.range E →ₗ[ℚ] LinearMap.range E) v
+    rw [LinearMap.restrict_coe_apply, hpow]
+    rfl
+  -- trace_pow_eq_of_pow_eq_one
+  have h_eq : LinearMap.trace ℚ _ (σ_r ^ j) = LinearMap.trace ℚ _ (σ_r ^ k) :=
+    trace_pow_eq_of_pow_eq_one p σ_r hσr_pow hj1 hjp hk1 hkp
+  -- bridge to E ∘ σ_lin^n
+  have hE_comm_pow : ∀ n : ℕ, Commute E (σ_lin ^ n) := fun n => hE_comm.pow_right n
+  have hrewrite : ∀ n : ℕ,
+      LinearMap.trace ℚ (LinearMap.range E) (σ_r ^ n) =
+      LinearMap.trace ℚ W (E ∘ₗ σ_lin ^ n) := by
+    intro n
+    show LinearMap.trace ℚ (LinearMap.range E) ((σ_lin.restrict hmaps) ^ n) = _
+    rw [Module.End.pow_restrict]
+    exact Moore57.LinearMap.trace_restrict_range_eq_trace_comp_of_isIdempotentElem
+      E (σ_lin ^ n) hE_idem (hE_comm_pow n)
+  rw [← hrewrite j, ← hrewrite k]
+  exact h_eq
 
 end LinearMap
 
