@@ -337,4 +337,99 @@ theorem aut_involution_fixedInducedGraph_isStarWithCenter
     omega
   exact hstrong.exists_isStarWithCenter_of_not_regular hnot_regular
 
+/-! ### Phase 4: Assembled `K155FixedData` -/
+
+/-- **Main theorem**: For an involutive automorphism `σ ≠ 1` of a Moore57
+graph, the σ-fixed subgraph is the star `K_{1,55}` — a center adjacent to
+55 leaves, with no other edges.
+
+This packages the data as a `K155FixedData Γ σ` with an explicit `Fin 55`
+enumeration of the leaves. -/
+theorem aut_involution_nonempty_K155FixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hinv : Function.Involutive σ)
+    (hne : σ ≠ 1) :
+    Nonempty (K155FixedData Γ σ) := by
+  classical
+  -- Get star center c and fix(σ) cardinality.
+  obtain ⟨c, hstar⟩ :=
+    aut_involution_fixedInducedGraph_isStarWithCenter hΓ σ haut hinv hne
+  have hcard : fixedVertexCount σ = 56 :=
+    aut_involution_fixedVertexCount_eq_56 hΓ σ haut hinv hne
+  -- Set up the 55-vertex leaf Finset and its Fin 55 enumeration.
+  set Lfin : Finset V := (fixedFinset σ).erase c.val with hLfin_def
+  have hc_mem_fix : c.val ∈ fixedFinset σ := by
+    rw [mem_fixedFinset]; exact c.property
+  have hLcard : Lfin.card = 55 := by
+    rw [hLfin_def, Finset.card_erase_of_mem hc_mem_fix, fixedFinset_card, hcard]
+  have hcardL : Fintype.card {x // x ∈ Lfin} = 55 := by
+    rw [Fintype.card_coe]; exact hLcard
+  let leafEnum : Fin 55 ≃ {x // x ∈ Lfin} :=
+    (Fintype.equivFinOfCardEq hcardL).symm
+  let leafFn : Fin 55 → V := fun i => (leafEnum i).val
+  -- Membership characterization of leafFn.
+  have hleafFn_mem : ∀ i : Fin 55, leafFn i ∈ Lfin := fun i => (leafEnum i).property
+  have hleaf_in_fix : ∀ i : Fin 55, σ (leafFn i) = leafFn i := by
+    intro i
+    have := hleafFn_mem i
+    rw [hLfin_def, Finset.mem_erase, mem_fixedFinset] at this
+    exact this.2
+  have hleaf_ne_center : ∀ i : Fin 55, leafFn i ≠ c.val := by
+    intro i
+    have := hleafFn_mem i
+    rw [hLfin_def, Finset.mem_erase] at this
+    exact this.1
+  -- Build the K155FixedData.
+  refine ⟨{
+    center := c.val
+    leaf := leafFn
+    center_ne_leaf := ?_
+    leaf_injective := ?_
+    center_fixed := c.property
+    leaf_fixed := hleaf_in_fix
+    span := ?_
+    adj_center := ?_
+    no_leaf_leaf := ?_
+  }⟩
+  · -- center_ne_leaf
+    intro i hi
+    exact hleaf_ne_center i hi.symm
+  · -- leaf_injective
+    intro i j hij
+    have h1 : leafEnum i = leafEnum j := Subtype.ext hij
+    exact leafEnum.injective h1
+  · -- span
+    intro x hx
+    by_cases hxc : x = c.val
+    · left; exact hxc
+    · right
+      have hx_mem : x ∈ Lfin := by
+        rw [hLfin_def, Finset.mem_erase, mem_fixedFinset]
+        exact ⟨hxc, hx⟩
+      refine ⟨leafEnum.symm ⟨x, hx_mem⟩, ?_⟩
+      show x = (leafEnum (leafEnum.symm ⟨x, hx_mem⟩)).val
+      rw [Equiv.apply_symm_apply]
+  · -- adj_center
+    intro i
+    have hi_subtype : leafFn i ∈ fixedVertexSet σ := hleaf_in_fix i
+    have hstar_iff := hstar c ⟨leafFn i, hi_subtype⟩
+    have hAdj_sub : (autFixedInducedGraph Γ σ).Adj c ⟨leafFn i, hi_subtype⟩ := by
+      apply hstar_iff.mpr
+      left
+      refine ⟨rfl, ?_⟩
+      intro hcontra
+      exact hleaf_ne_center i (congrArg Subtype.val hcontra)
+    exact hAdj_sub
+  · -- no_leaf_leaf
+    intro i j hadj
+    have hi_subtype : leafFn i ∈ fixedVertexSet σ := hleaf_in_fix i
+    have hj_subtype : leafFn j ∈ fixedVertexSet σ := hleaf_in_fix j
+    have hadj_sub : (autFixedInducedGraph Γ σ).Adj
+        ⟨leafFn i, hi_subtype⟩ ⟨leafFn j, hj_subtype⟩ := hadj
+    rcases (hstar ⟨leafFn i, hi_subtype⟩ ⟨leafFn j, hj_subtype⟩).mp hadj_sub with
+      ⟨hi_c, _⟩ | ⟨hj_c, _⟩
+    · exact hleaf_ne_center i (congrArg Subtype.val hi_c)
+    · exact hleaf_ne_center j (congrArg Subtype.val hj_c)
+
 end Moore57
