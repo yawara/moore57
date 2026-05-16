@@ -161,10 +161,100 @@ theorem traceNumber_even_of_cyclic (hcomm : h.σ * h.τ = h.τ * h.σ) :
   have hn_even : h.traceNumber % 2 = 0 := by omega
   exact ⟨h.traceNumber / 2, by omega⟩
 
-/-- **Phase 5.2 主結論** (sorry): dihedral case で n は偶数. -/
+/-! ### Dihedral case helpers -/
+
+/-- 補題: 自己同型 σ が辺 x — σ x を保つ事から x ~ σ x ⟺ x ~ σ⁻¹ x. -/
+theorem adj_σ_iff_adj_σ_inv (x : V) :
+    Γ.Adj x (h.σ x) ↔ Γ.Adj x (h.σ⁻¹ x) := by
+  have hperm : h.σ (h.σ⁻¹ x) = x := by
+    have := h.σ.apply_symm_apply x; simpa [Equiv.Perm.inv_def] using this
+  constructor
+  · intro hx
+    -- σ_aut (σ⁻¹ x) x: Adj (σ⁻¹ x) x ↔ Adj (σ (σ⁻¹ x)) (σ x) = Adj x (σ x)
+    have hiff := h.σ_aut (h.σ⁻¹ x) x
+    rw [hperm] at hiff
+    exact (hiff.mpr hx).symm
+  · intro hx
+    -- σ_aut x (σ⁻¹ x): Adj x (σ⁻¹ x) ↔ Adj (σ x) (σ (σ⁻¹ x)) = Adj (σ x) x
+    have hiff := h.σ_aut x (h.σ⁻¹ x)
+    rw [hperm] at hiff
+    exact (hiff.mp hx).symm
+
+/-- dihedral case (τστ = σ⁻¹) では τσ = σ⁻¹τ. -/
+theorem dihedral_τ_σ_eq (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
+    h.τ * h.σ = h.σ⁻¹ * h.τ := by
+  have hτsq : h.τ * h.τ = (1 : Equiv.Perm V) := by
+    rw [← sq]; exact h.τ_pow_two
+  have h1 : (h.τ * h.σ * h.τ) * h.τ = h.σ⁻¹ * h.τ := by rw [hdihe]
+  rw [mul_assoc (h.τ * h.σ) h.τ h.τ, hτsq, mul_one] at h1
+  exact h1
+
+/-- dihedral case (τστ = σ⁻¹) では τ が S = {x : x ~ σ x} を保つ. -/
+theorem dihedral_τ_preserves_S (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) (x : V)
+    (hx : Γ.Adj x (h.σ x)) : Γ.Adj (h.τ x) (h.σ (h.τ x)) := by
+  -- x ~ σ x を τ で動かす: τ x ~ τ (σ x) = σ⁻¹ (τ x).
+  have hτadj : Γ.Adj (h.τ x) (h.τ (h.σ x)) := (h.τ_aut x (h.σ x)).mp hx
+  have hτσ : h.τ (h.σ x) = h.σ⁻¹ (h.τ x) := by
+    have heq := h.dihedral_τ_σ_eq hdihe
+    have hpt : (h.τ * h.σ) x = (h.σ⁻¹ * h.τ) x := by rw [heq]
+    simpa [Equiv.Perm.mul_apply] using hpt
+  rw [hτσ] at hτadj
+  -- 今 hτadj : Γ.Adj (τ x) (σ⁻¹ (τ x)). σ ↔ σ⁻¹ で書き換え.
+  exact (h.adj_σ_iff_adj_σ_inv (h.τ x)).mpr hτadj
+
+/-- **Phase 5.2 主結論 (involution parity への還元)**: dihedral case で n は偶数.
+
+|S| = 11n. τ は S を τ-不変 (`dihedral_τ_preserves_S`) で involution.
+`Equiv.Perm.card_compl_support_modEq` (p=2) で |S| ≡ |Fix(τ|S)| (mod 2).
+残務 (sorry): |Fix(τ) ∩ S| は偶数 (自然言語証明 §5.2 の `π_d` / `ρ_d` 解析). -/
 theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
     Even h.traceNumber := by
-  sorry
+  classical
+  haveI : Fact (Nat.Prime 2) := ⟨by decide⟩
+  -- |S| = 11 * n
+  have hTk1 : h.Tk 1 = 11 * h.traceNumber := h.Tk_one_eq_eleven_mul_traceNumber
+  -- τ は S を保つ
+  let p : V → Prop := fun x => Γ.Adj x (h.σ x)
+  have hτ_iff : ∀ x : V, p (h.τ x) ↔ p x := fun x => by
+    show Γ.Adj (h.τ x) (h.σ (h.τ x)) ↔ Γ.Adj x (h.σ x)
+    constructor
+    · intro hτx
+      -- τ x ~ σ (τ x) ⟹ τ (τ x) ~ σ (τ (τ x))  (involution 経由で巻き戻し)
+      have hττx : Γ.Adj (h.τ (h.τ x)) (h.σ (h.τ (h.τ x))) :=
+        h.dihedral_τ_preserves_S hdihe (h.τ x) hτx
+      have hinv : h.τ (h.τ x) = x := h.τ_involutive x
+      rw [hinv] at hττx
+      exact hττx
+    · intro hx
+      exact h.dihedral_τ_preserves_S hdihe x hx
+  let τS : Equiv.Perm (Subtype p) := h.τ.subtypePerm hτ_iff
+  have hτS_pow : τS ^ 2 ^ 1 = 1 := by
+    ext ⟨w, _⟩
+    show (h.τ ^ 2) w = w
+    rw [h.τ_pow_two]; rfl
+  have hmod := Equiv.Perm.card_compl_support_modEq
+    (α := Subtype p) (p := 2) (n := 1) (σ := τS) hτS_pow
+  -- 残務: τS.supportᶜ.card は偶数 (Fix(τ) ∩ S = 偶数).
+  -- 自然言語証明 §5.2 では 2 (B_0 の F_0 における fixed-star geometry から)
+  have hfix_even : τS.supportᶜ.card % 2 = 0 := by
+    sorry
+  -- |Subtype p| = Tk 1
+  have hcard : Fintype.card (Subtype p) = h.Tk 1 := by
+    show Fintype.card {x : V // Γ.Adj x (h.σ x)} = h.Tk 1
+    rw [Fintype.card_subtype]
+    show (Finset.univ.filter fun x : V => Γ.Adj x (h.σ x)).card =
+      (Finset.univ.filter fun x : V => Γ.Adj x ((h.σ ^ 1) x)).card
+    simp [pow_one]
+  rw [hcard] at hmod
+  -- hmod : τS.supportᶜ.card ≡ Tk 1 [MOD 2]
+  have hTk1_even : h.Tk 1 % 2 = 0 := by
+    have hcong : τS.supportᶜ.card % 2 = h.Tk 1 % 2 := hmod
+    omega
+  -- traceNumber は Tk 1 / 11 で, 11 odd なので n も偶
+  have hmul_even : (11 * h.traceNumber) % 2 = 0 := by
+    rw [← hTk1]; exact hTk1_even
+  have hn_even : h.traceNumber % 2 = 0 := by omega
+  exact ⟨h.traceNumber / 2, by omega⟩
 
 /-- **Phase 5 統合結論**: n は偶数 (cyclic / dihedral の場合分け). -/
 theorem traceNumber_even : Even h.traceNumber := by
