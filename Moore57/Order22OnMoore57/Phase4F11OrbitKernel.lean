@@ -156,17 +156,121 @@ private theorem cycleType_σ_card_eq_295 (h : Order22ActsOnMoore57 V Γ) :
   rw [h_card_fix, h_card_V, h_sum] at h_fix
   omega
 
-/-- `Fintype.card (Quotient (SameCycle.setoid σ))` を |Fix σ| + cycleFactorsFinset.card に
-分解する補題. 各 orbit は fixed point の singleton か, cycle factor の support に対応.
+/-! ### `Quotient (SameCycle.setoid σ) ≃ Fix σ ⊕ cycleFactorsFinset σ`
 
-実装 strategy: explicit Equiv `Quotient ≃ Function.fixedPoints σ ⊕ ↥cycleFactorsFinset σ`
-を構築. 詳細 (forward = if σv=v then inl else inr (cycleOf σ v); well-def by
-`SameCycle.cycleOf_eq`; backward = inr c ↦ [c.support.choose]). ~80-120 行. -/
+各 σ-orbit は (a) σ-fixed point の singleton か (b) cycle factor の support と一致.
+explicit Equiv を構築.
+
+**注意**: `DecidableRel σ.SameCycle` は explicit に渡さず, Mathlib の
+`Equiv.Perm.instDecidableRelSameCycle` ([DecidableEq V] [Fintype V] から) に頼る.
+これにより `cycleOf_mem_cycleFactorsFinset_iff` 等の lemma との instance 不整合を
+回避. -/
+
+/-- `σ v ≠ v ⟹ σ.cycleOf v ∈ σ.cycleFactorsFinset`. -/
+private theorem mem_factors_of_cycleOf {σ : Equiv.Perm V}
+    {v : V} (hv : σ v ≠ v) :
+    σ.cycleOf v ∈ σ.cycleFactorsFinset :=
+  Equiv.Perm.cycleOf_mem_cycleFactorsFinset_iff.mpr (Equiv.Perm.mem_support.mpr hv)
+
+/-- Forward map. -/
+private noncomputable def toFixOrCycleAux (σ : Equiv.Perm V) (v : V) :
+    {y : V // y ∈ Function.fixedPoints σ} ⊕
+      {p : Equiv.Perm V // p ∈ σ.cycleFactorsFinset} :=
+  if hv : σ v = v then Sum.inl ⟨v, hv⟩
+  else Sum.inr ⟨σ.cycleOf v, mem_factors_of_cycleOf hv⟩
+
+private theorem toFixOrCycleAux_eq_inl {σ : Equiv.Perm V}
+    {v : V} (hv : σ v = v) :
+    toFixOrCycleAux σ v = Sum.inl ⟨v, hv⟩ := by
+  unfold toFixOrCycleAux; rw [dif_pos hv]
+
+private theorem toFixOrCycleAux_eq_inr {σ : Equiv.Perm V}
+    {v : V} (hv : σ v ≠ v) :
+    toFixOrCycleAux σ v =
+      Sum.inr ⟨σ.cycleOf v, mem_factors_of_cycleOf hv⟩ := by
+  unfold toFixOrCycleAux; rw [dif_neg hv]
+
+/-- Representative of a cycle factor. -/
+private noncomputable def cycleRepAux (σ : Equiv.Perm V)
+    (c : {p : Equiv.Perm V // p ∈ σ.cycleFactorsFinset}) : V :=
+  ((Equiv.Perm.mem_cycleFactorsFinset_iff.mp c.prop).1.nonempty_support).choose
+
+private theorem cycleRepAux_mem (σ : Equiv.Perm V)
+    (c : {p : Equiv.Perm V // p ∈ σ.cycleFactorsFinset}) :
+    cycleRepAux σ c ∈ (c : Equiv.Perm V).support :=
+  ((Equiv.Perm.mem_cycleFactorsFinset_iff.mp c.prop).1.nonempty_support).choose_spec
+
+private theorem toFixOrCycleAux_well_def (σ : Equiv.Perm V)
+    {a b : V} (hab : σ.SameCycle a b) :
+    toFixOrCycleAux σ a = toFixOrCycleAux σ b := by
+  by_cases ha : σ a = a
+  · have hb : σ b = b := (Equiv.Perm.SameCycle.apply_eq_self_iff hab).mp ha
+    have hab_eq : a = b := Equiv.Perm.SameCycle.eq_of_left hab ha
+    rw [toFixOrCycleAux_eq_inl ha, toFixOrCycleAux_eq_inl hb]
+    subst hab_eq; rfl
+  · have hb : σ b ≠ b := fun hb_fix =>
+      ha ((Equiv.Perm.SameCycle.apply_eq_self_iff hab).mpr hb_fix)
+    rw [toFixOrCycleAux_eq_inr ha, toFixOrCycleAux_eq_inr hb]
+    refine congrArg Sum.inr (Subtype.ext ?_)
+    exact Equiv.Perm.SameCycle.cycleOf_eq hab
+
+private noncomputable def quotientSameCycleEquiv (σ : Equiv.Perm V) :
+    Quotient (Equiv.Perm.SameCycle.setoid σ) ≃
+      {y : V // y ∈ Function.fixedPoints σ} ⊕
+        {p : Equiv.Perm V // p ∈ σ.cycleFactorsFinset} where
+  toFun := Quotient.lift (toFixOrCycleAux σ) (fun _ _ => toFixOrCycleAux_well_def σ)
+  invFun := Sum.elim
+    (fun v => Quotient.mk (Equiv.Perm.SameCycle.setoid σ) v.1)
+    (fun c => Quotient.mk (Equiv.Perm.SameCycle.setoid σ) (cycleRepAux σ c))
+  left_inv := by
+    intro q
+    induction q using Quotient.ind with
+    | _ v =>
+      show Sum.elim
+          (fun (v : {y // y ∈ Function.fixedPoints σ}) =>
+            Quotient.mk (Equiv.Perm.SameCycle.setoid σ) v.1)
+          (fun c => Quotient.mk (Equiv.Perm.SameCycle.setoid σ) (cycleRepAux σ c))
+          (toFixOrCycleAux σ v) = Quotient.mk (Equiv.Perm.SameCycle.setoid σ) v
+      by_cases hv : σ v = v
+      · rw [toFixOrCycleAux_eq_inl hv, Sum.elim_inl]
+      · rw [toFixOrCycleAux_eq_inr hv, Sum.elim_inr]
+        apply Quotient.sound
+        have h_mem :=
+          cycleRepAux_mem σ ⟨σ.cycleOf v, mem_factors_of_cycleOf hv⟩
+        change cycleRepAux σ _ ∈ (σ.cycleOf v).support at h_mem
+        rw [Equiv.Perm.mem_support_cycleOf_iff] at h_mem
+        exact h_mem.1.symm
+  right_inv := by
+    rintro (⟨v, hv⟩ | ⟨c, hc⟩)
+    · show Quotient.lift (toFixOrCycleAux σ) _
+          (Quotient.mk (Equiv.Perm.SameCycle.setoid σ) v) = Sum.inl ⟨v, hv⟩
+      rw [Quotient.lift_mk, toFixOrCycleAux_eq_inl hv]
+    · show Quotient.lift (toFixOrCycleAux σ) _
+          (Quotient.mk (Equiv.Perm.SameCycle.setoid σ) (cycleRepAux σ ⟨c, hc⟩)) =
+            Sum.inr ⟨c, hc⟩
+      rw [Quotient.lift_mk]
+      have h_in_supp : cycleRepAux σ ⟨c, hc⟩ ∈ c.support := cycleRepAux_mem σ ⟨c, hc⟩
+      have hv_in_σ_supp : cycleRepAux σ ⟨c, hc⟩ ∈ σ.support :=
+        Equiv.Perm.mem_cycleFactorsFinset_support_le hc h_in_supp
+      have hv_not_fix : σ (cycleRepAux σ ⟨c, hc⟩) ≠ cycleRepAux σ ⟨c, hc⟩ :=
+        Equiv.Perm.mem_support.mp hv_in_σ_supp
+      rw [toFixOrCycleAux_eq_inr hv_not_fix]
+      refine congrArg Sum.inr (Subtype.ext ?_)
+      exact (Equiv.Perm.cycle_is_cycleOf h_in_supp hc).symm
+
+/-- `|Quotient (SameCycle.setoid σ)| = |Fix σ| + |cycleFactorsFinset σ|`. -/
 private theorem card_quotient_sameCycle_eq (h : Order22ActsOnMoore57 V Γ) :
     @Fintype.card (Quotient (Equiv.Perm.SameCycle.setoid h.σ))
         (@Quotient.fintype _ _ _ (fun _ _ => Classical.dec _)) =
       Fintype.card (Function.fixedPoints h.σ) + h.σ.cycleFactorsFinset.card := by
-  sorry
+  classical
+  haveI : Fintype (Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :=
+    Quotient.fintype _
+  have h_card : Fintype.card (Quotient (Equiv.Perm.SameCycle.setoid h.σ)) =
+      Fintype.card (Function.fixedPoints h.σ) + h.σ.cycleFactorsFinset.card := by
+    rw [Fintype.card_congr (quotientSameCycleEquiv h.σ), Fintype.card_sum,
+      Fintype.card_coe]
+  convert h_card using 2
 
 /-- `Fintype.card (Quotient (SameCycle.setoid h.σ)) = 300`. -/
 private theorem card_quotient_sameCycle_eq_300 (h : Order22ActsOnMoore57 V Γ) :
