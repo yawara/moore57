@@ -9,8 +9,8 @@ import Mathlib.GroupTheory.Perm.Cycle.Type
 
 主結果:
 * `traceNumber_eq_Tk_one_div_eleven`: 定義に従う `traceNumber h = T_1 / 11`.
-* `eleven_dvd_Tk` (sorry): `k ≠ 0 (mod 11)` のとき `11 ∣ T_k`
-  (orbit 寄与は 0 か 11).
+* `eleven_dvd_Tk` (完成): `k ≠ 0 (mod 11)` のとき `11 ∣ T_k`
+  (orbit 寄与は 0 か 11; Subtype σ + card_compl_support_modEq).
 * `Tk_constant` (sorry): `T_k = T_1` for k = 1..10
   (有理 C_11 表現の指標値が非自明元上で一定).
 * `Tk_eq_eleven_mul_traceNumber`: 上記 2 つから `T_k = 11 * n`

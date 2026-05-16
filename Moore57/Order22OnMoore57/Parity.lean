@@ -9,9 +9,10 @@ import Moore57.Order22OnMoore57.TraceConstancy
 dihedral (`τστ = σ⁻¹`) かに応じて, それぞれ §5.1 / §5.2 で
 `n` が偶数になることを示す.
 
-主結論 (sorry の集合):
-* `traceNumber_even_of_cyclic` (sorry, §5.1): στ = τσ の場合, n は偶数.
-* `traceNumber_even_of_dihedral` (sorry, §5.2): τστ = σ⁻¹ の場合, n は偶数.
+主結論:
+* `traceNumber_even_of_cyclic` (完成, §5.1): στ = τσ の場合, n は偶数.
+* `traceNumber_even_of_dihedral` (involution-parity に reduce, §5.2):
+  τστ = σ⁻¹ の場合, n は偶数. 残務は `|Fix(τ|S)|` 偶数性.
 * `traceNumber_even` (上の二つから case dispatch): 常に n は偶数.
 
 証明スケッチ:
