@@ -1,4 +1,5 @@
 import Moore57.Order22OnMoore57.Phase4F11OrbitKernel
+import Moore57.Order22OnMoore57.Phase4F11Spectral
 import Moore57.Order22OnMoore57.Phase3FourCycleBound
 import Moore57.Order22OnMoore57.TraceNumber
 
@@ -44,26 +45,11 @@ namespace Order22ActsOnMoore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Step 4 上界 (focused sorry, F_11 spectral)**: `a_7 ≤ 160` via F_11 eigenspace analysis. -/
+/-- **Step 4 上界**: `a_7 ≤ 160` via F_11 eigenspace analysis.
+`Phase4F11Spectral.a7_le_160_via_F11_spectral_proof` への wrapper. -/
 theorem a7_le_160_via_F11_spectral (h : Order22ActsOnMoore57 V Γ) :
-    ∃ a : ℕ, (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 ∧ a ≤ 160 := by
-  -- 戦略 (詳細実装 ~400-500 行):
-  -- 1. F_11 char poly of A factorizes as (X - 2)(X - 7)(X - 3) (since 57 ≡ 2, -8 ≡ 3 mod 11).
-  -- 2. Lagrange projection E_λ in Matrix V V (ZMod 11):
-  --    E_2 = 9 (A - 7I)(A - 3I), E_7 = 5 (A - 2I)(A - 3I), E_3 = 8 (A - 2I)(A - 7I).
-  -- 3. E_λ idempotent + orthogonal + sum = I.
-  -- 4. V_λ := image(E_λ.toLin') の各 σ-invariance (∵ A·σ = σ·A から E_λ · σ = σ · E_λ).
-  -- 5. T_λ = (σ|V_λ) - I.toLin', T_λ^11 = 0 on V_λ.
-  -- 6. Jordan monotonicity + 保存則 + V_2 trivial で:
-  --    μ_j(V_7) + μ_j(V_3) = 295 (j ∈ [2, 11]) ∧ 両者非増加 ⟹ 両者定数 k_7, k_3.
-  -- 7. dim V_7 = a^{F11}_7 + 10 k_7 = 1729.
-  --    dim V_3 = a^{F11}_3 + 10 k_3 = 1520.
-  --    a^{F11}_2 + a^{F11}_7 + a^{F11}_3 = 300 (Step 3.2).
-  -- 8. l_3 = a^{F11}_3 - k_3 ≥ 0 ⟹ 11 · a^{F11}_3 ≥ 1520 ⟹ a^{F11}_3 ≥ 139.
-  --    a^{F11}_7 = 300 - 1 - a^{F11}_3 ≤ 300 - 1 - 139 = 160.
-  -- 9. Kernel monotonicity ℚ → F_11: a_7 ≤ a^{F11}_7 ≤ 160.
-  -- 10. 3 a_7 = 2 n + 467 (Phase 3 via Phase4RepTheory.exists_a7_form_3a_eq_2n_plus_467).
-  sorry
+    ∃ a : ℕ, (3 * a : ℤ) = 2 * (h.traceNumber : ℤ) + 467 ∧ a ≤ 160 :=
+  h.a7_le_160_via_F11_spectral_proof
 
 /-- **Phase 3 → Phase 4 bridge**: `∃ a, 3a = 2n + 467` (Phase 3 dim relation). -/
 private theorem exists_a7_form_3a_eq_2n_plus_467 (h : Order22ActsOnMoore57 V Γ) :
