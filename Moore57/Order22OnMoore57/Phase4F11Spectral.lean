@@ -564,6 +564,47 @@ theorem V3Submodule_invariant_permMatrixF11 (h : Order22ActsOnMoore57 V Γ) :
         rw [Matrix.toLin'_mul]; rfl]
   rw [E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut]
 
+/-! ### E_λ は ker(T_F11) を保つ (σ と可換 ⟹ ker(σ - I) preservation) -/
+
+/-- 一般形: P_σ と可換な行列 E は ker T_F11 を保存. -/
+private theorem _commute_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ)
+    (E : Matrix V V (ZMod 11))
+    (hE : E * permMatrixF11 h.σ = permMatrixF11 h.σ * E) :
+    ∀ v ∈ LinearMap.ker (T_F11 h), E.toLin' v ∈ LinearMap.ker (T_F11 h) := by
+  intro v hv
+  rw [LinearMap.mem_ker, T_F11_def] at hv ⊢
+  show ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin') (E.toLin' v) = 0
+  calc ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin') (E.toLin' v)
+      = ((permMatrixF11 h.σ - 1) * E).toLin' v := by
+          rw [Matrix.toLin'_mul]; rfl
+    _ = (E * (permMatrixF11 h.σ - 1)).toLin' v := by
+          rw [sub_mul, one_mul, mul_sub, mul_one, ← hE]
+    _ = E.toLin' ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin' v) := by
+          rw [Matrix.toLin'_mul]; rfl
+    _ = E.toLin' 0 := by rw [hv]
+    _ = 0 := map_zero _
+
+/-- `E_2` は ker T_F11 を保つ. -/
+theorem E2_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ LinearMap.ker (T_F11 h),
+      (E2MatrixF11 Γ).toLin' v ∈ LinearMap.ker (T_F11 h) :=
+  _commute_preserves_ker_T_F11 h (E2MatrixF11 Γ)
+    (E2_commute_permMatrixF11 h.isMoore h.σ)
+
+/-- `E_7` は ker T_F11 を保つ. -/
+theorem E7_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ LinearMap.ker (T_F11 h),
+      (E7MatrixF11 Γ).toLin' v ∈ LinearMap.ker (T_F11 h) :=
+  _commute_preserves_ker_T_F11 h (E7MatrixF11 Γ)
+    (E7_commute_permMatrixF11 h.isMoore h.σ h.σ_aut)
+
+/-- `E_3` は ker T_F11 を保つ. -/
+theorem E3_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ LinearMap.ker (T_F11 h),
+      (E3MatrixF11 Γ).toLin' v ∈ LinearMap.ker (T_F11 h) :=
+  _commute_preserves_ker_T_F11 h (E3MatrixF11 Γ)
+    (E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut)
+
 /-! ### A · E_λ = λ · E_λ: V_λ 上 A は scalar λ で作用
 
 A = 2 E_2 + 7 E_7 + 3 E_3 + E_λ orthogonality + idempotency より導出. -/
