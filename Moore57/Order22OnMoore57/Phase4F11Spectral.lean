@@ -2,6 +2,8 @@ import Moore57.Order22OnMoore57.Phase3FourCycleBound
 import Moore57.Order22OnMoore57.Phase4F11OrbitKernel
 import Moore57.Order22OnMoore57.TraceNumber
 import Mathlib.Algebra.Polynomial.Eval.Defs
+import Mathlib.LinearAlgebra.Trace
+import Mathlib.LinearAlgebra.Projection
 
 /-!
 # Phase 4 F_11 spectral decomposition
@@ -1288,33 +1290,288 @@ theorem aF11_lambda_three_eq_140 (h : Order22ActsOnMoore57 V Γ) :
   have h_7 := h.aF11_lambda_seven_eq_159
   omega
 
-/-! ### F_11 trace identity (orbit + spectral bridge) -/
+/-! ### F_11 trace identity: spectral side (sorry-free) + orbital side (focused sorry)
 
-/-- F_11 trace identity **基幹 sorry** (orbit + spectral bridge):
+spectral basis:
+  trace(A | ker T_F11) = Σ_λ λ · dim(V_λ ∩ ker T_F11) over F_11
+  (A·E_λ = λ·E_λ から V_λ 上 A は λ·I で作用).
+
+orbital basis (separate sorry):
+  trace(A | ker T_F11) = 10n mod 11  (σ-不変性 + Tk_constant). -/
+
+/-- `E_2` restricted to ker T_F11 is idempotent (lifted from E_2 * E_2 = E_2). -/
+private theorem E2_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
+    IsIdempotentElem h.E2_restrict_ker_T := by
+  show h.E2_restrict_ker_T * h.E2_restrict_ker_T = h.E2_restrict_ker_T
+  apply LinearMap.ext
+  intro v
+  apply Subtype.ext
+  show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' v.val) = (E2MatrixF11 Γ).toLin' v.val
+  rw [show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' v.val) =
+        (E2MatrixF11 Γ * E2MatrixF11 Γ).toLin' v.val from by
+      rw [Matrix.toLin'_mul]; rfl,
+      E2_idempotent h.isMoore]
+
+/-- `E_7` restricted to ker T_F11 is idempotent. -/
+private theorem E7_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
+    IsIdempotentElem h.E7_restrict_ker_T := by
+  show h.E7_restrict_ker_T * h.E7_restrict_ker_T = h.E7_restrict_ker_T
+  apply LinearMap.ext
+  intro v
+  apply Subtype.ext
+  show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' v.val) = (E7MatrixF11 Γ).toLin' v.val
+  rw [show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' v.val) =
+        (E7MatrixF11 Γ * E7MatrixF11 Γ).toLin' v.val from by
+      rw [Matrix.toLin'_mul]; rfl,
+      E7_idempotent h.isMoore]
+
+/-- `E_3` restricted to ker T_F11 is idempotent. -/
+private theorem E3_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
+    IsIdempotentElem h.E3_restrict_ker_T := by
+  show h.E3_restrict_ker_T * h.E3_restrict_ker_T = h.E3_restrict_ker_T
+  apply LinearMap.ext
+  intro v
+  apply Subtype.ext
+  show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' v.val) = (E3MatrixF11 Γ).toLin' v.val
+  rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' v.val) =
+        (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' v.val from by
+      rw [Matrix.toLin'_mul]; rfl,
+      E3_idempotent h.isMoore]
+
+/-- range of `E_2_restrict_ker_T` (as Submodule of ker T_F11) mapped via subtype
+equals `V_2 ⊓ ker T_F11` (Submodule of V → ZMod 11). -/
+private theorem range_E2_restrict_ker_T_map_subtype_eq (h : Order22ActsOnMoore57 V Γ) :
+    Submodule.map (Submodule.subtype (LinearMap.ker (T_F11 h)))
+        (LinearMap.range h.E2_restrict_ker_T) =
+      V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) := by
+  classical
+  ext w
+  simp only [Submodule.mem_map, LinearMap.mem_range, Submodule.coe_subtype,
+             Submodule.mem_inf]
+  refine ⟨?_, ?_⟩
+  · -- forward: from `∃ z, z ∈ range E_2_restrict ∧ z.val = w`, derive w ∈ V_2 ∩ ker T.
+    rintro ⟨⟨z, hz_kerT⟩, ⟨u, hu⟩, hzw⟩
+    -- hzw : z = w (after Subtype.val unfolding)
+    have h_zw : z = w := hzw
+    have h_z_eq : (E2MatrixF11 Γ).toLin' u.val = z := congrArg Subtype.val hu
+    refine ⟨?_, ?_⟩
+    · -- w ∈ V_2
+      rw [V2Submodule, LinearMap.mem_range]
+      exact ⟨u.val, by rw [h_z_eq, h_zw]⟩
+    · -- w ∈ ker T_F11
+      rw [← h_zw]; exact hz_kerT
+  · -- backward: w ∈ V_2 ∩ ker T → w = E_2_restrict ⟨w, hwk⟩.val (since E_2 w = w).
+    rintro ⟨h_V2, h_kerT⟩
+    refine ⟨⟨w, h_kerT⟩, ⟨⟨w, h_kerT⟩, ?_⟩, rfl⟩
+    apply Subtype.ext
+    show (E2MatrixF11 Γ).toLin' w = w
+    obtain ⟨u, hu⟩ := LinearMap.mem_range.mp h_V2
+    rw [← hu]
+    show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) = (E2MatrixF11 Γ).toLin' u
+    rw [show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) =
+          (E2MatrixF11 Γ * E2MatrixF11 Γ).toLin' u from by
+        rw [Matrix.toLin'_mul]; rfl,
+        E2_idempotent h.isMoore]
+
+/-- range of `E_7_restrict_ker_T` mapped via subtype = `V_7 ⊓ ker T_F11`. -/
+private theorem range_E7_restrict_ker_T_map_subtype_eq (h : Order22ActsOnMoore57 V Γ) :
+    Submodule.map (Submodule.subtype (LinearMap.ker (T_F11 h)))
+        (LinearMap.range h.E7_restrict_ker_T) =
+      V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) := by
+  classical
+  ext w
+  simp only [Submodule.mem_map, LinearMap.mem_range, Submodule.coe_subtype,
+             Submodule.mem_inf]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨⟨z, hz_kerT⟩, ⟨u, hu⟩, hzw⟩
+    have h_zw : z = w := hzw
+    have h_z_eq : (E7MatrixF11 Γ).toLin' u.val = z := congrArg Subtype.val hu
+    refine ⟨?_, ?_⟩
+    · rw [V7Submodule, LinearMap.mem_range]
+      exact ⟨u.val, by rw [h_z_eq, h_zw]⟩
+    · rw [← h_zw]; exact hz_kerT
+  · rintro ⟨h_V7, h_kerT⟩
+    refine ⟨⟨w, h_kerT⟩, ⟨⟨w, h_kerT⟩, ?_⟩, rfl⟩
+    apply Subtype.ext
+    show (E7MatrixF11 Γ).toLin' w = w
+    obtain ⟨u, hu⟩ := LinearMap.mem_range.mp h_V7
+    rw [← hu]
+    show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u) = (E7MatrixF11 Γ).toLin' u
+    rw [show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u) =
+          (E7MatrixF11 Γ * E7MatrixF11 Γ).toLin' u from by
+        rw [Matrix.toLin'_mul]; rfl,
+        E7_idempotent h.isMoore]
+
+/-- range of `E_3_restrict_ker_T` mapped via subtype = `V_3 ⊓ ker T_F11`. -/
+private theorem range_E3_restrict_ker_T_map_subtype_eq (h : Order22ActsOnMoore57 V Γ) :
+    Submodule.map (Submodule.subtype (LinearMap.ker (T_F11 h)))
+        (LinearMap.range h.E3_restrict_ker_T) =
+      V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) := by
+  classical
+  ext w
+  simp only [Submodule.mem_map, LinearMap.mem_range, Submodule.coe_subtype,
+             Submodule.mem_inf]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨⟨z, hz_kerT⟩, ⟨u, hu⟩, hzw⟩
+    have h_zw : z = w := hzw
+    have h_z_eq : (E3MatrixF11 Γ).toLin' u.val = z := congrArg Subtype.val hu
+    refine ⟨?_, ?_⟩
+    · rw [V3Submodule, LinearMap.mem_range]
+      exact ⟨u.val, by rw [h_z_eq, h_zw]⟩
+    · rw [← h_zw]; exact hz_kerT
+  · rintro ⟨h_V3, h_kerT⟩
+    refine ⟨⟨w, h_kerT⟩, ⟨⟨w, h_kerT⟩, ?_⟩, rfl⟩
+    apply Subtype.ext
+    show (E3MatrixF11 Γ).toLin' w = w
+    obtain ⟨u, hu⟩ := LinearMap.mem_range.mp h_V3
+    rw [← hu]
+    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u) = (E3MatrixF11 Γ).toLin' u
+    rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u) =
+          (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u from by
+        rw [Matrix.toLin'_mul]; rfl,
+        E3_idempotent h.isMoore]
+
+/-- finrank(range E_2_restrict) = a^{F_11}_2 via subtype map equality + finrank_map_subtype. -/
+private theorem finrank_range_E2_restrict_eq_aF11_two (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (LinearMap.range h.E2_restrict_ker_T) =
+      Module.finrank (ZMod 11) (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+        Submodule (ZMod 11) (V → ZMod 11)) := by
+  rw [← range_E2_restrict_ker_T_map_subtype_eq h,
+      Submodule.finrank_map_subtype_eq]
+
+/-- finrank(range E_7_restrict) = a^{F_11}_7. -/
+private theorem finrank_range_E7_restrict_eq_aF11_seven (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (LinearMap.range h.E7_restrict_ker_T) =
+      Module.finrank (ZMod 11) (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+        Submodule (ZMod 11) (V → ZMod 11)) := by
+  rw [← range_E7_restrict_ker_T_map_subtype_eq h,
+      Submodule.finrank_map_subtype_eq]
+
+/-- finrank(range E_3_restrict) = a^{F_11}_3. -/
+private theorem finrank_range_E3_restrict_eq_aF11_three (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (LinearMap.range h.E3_restrict_ker_T) =
+      Module.finrank (ZMod 11) (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+        Submodule (ZMod 11) (V → ZMod 11)) := by
+  rw [← range_E3_restrict_ker_T_map_subtype_eq h,
+      Submodule.finrank_map_subtype_eq]
+
+/-- trace(E_2_restrict) over ZMod 11 = (a^{F_11}_2 : ZMod 11). -/
+private theorem trace_E2_restrict_ker_T_eq (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.trace (ZMod 11) _ h.E2_restrict_ker_T =
+      ((Module.finrank (ZMod 11) (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11) := by
+  have h_idem : IsIdempotentElem h.E2_restrict_ker_T := E2_restrict_ker_T_isIdempotent h
+  have h_isProj : LinearMap.IsProj (LinearMap.range h.E2_restrict_ker_T)
+      h.E2_restrict_ker_T :=
+    (LinearMap.isProj_range_iff_isIdempotentElem _).mpr h_idem
+  rw [h_isProj.trace, finrank_range_E2_restrict_eq_aF11_two h]
+
+/-- trace(E_7_restrict) over ZMod 11 = (a^{F_11}_7 : ZMod 11). -/
+private theorem trace_E7_restrict_ker_T_eq (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.trace (ZMod 11) _ h.E7_restrict_ker_T =
+      ((Module.finrank (ZMod 11) (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11) := by
+  have h_idem : IsIdempotentElem h.E7_restrict_ker_T := E7_restrict_ker_T_isIdempotent h
+  have h_isProj : LinearMap.IsProj (LinearMap.range h.E7_restrict_ker_T)
+      h.E7_restrict_ker_T :=
+    (LinearMap.isProj_range_iff_isIdempotentElem _).mpr h_idem
+  rw [h_isProj.trace, finrank_range_E7_restrict_eq_aF11_seven h]
+
+/-- trace(E_3_restrict) over ZMod 11 = (a^{F_11}_3 : ZMod 11). -/
+private theorem trace_E3_restrict_ker_T_eq (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.trace (ZMod 11) _ h.E3_restrict_ker_T =
+      ((Module.finrank (ZMod 11) (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11) := by
+  have h_idem : IsIdempotentElem h.E3_restrict_ker_T := E3_restrict_ker_T_isIdempotent h
+  have h_isProj : LinearMap.IsProj (LinearMap.range h.E3_restrict_ker_T)
+      h.E3_restrict_ker_T :=
+    (LinearMap.isProj_range_iff_isIdempotentElem _).mpr h_idem
+  rw [h_isProj.trace, finrank_range_E3_restrict_eq_aF11_three h]
+
+/-- A_restrict = 2 • E_2_restrict + 7 • E_7_restrict + 3 • E_3_restrict (linear map identity).
+Lifted from matrix identity `ELambda_decomp_A`. -/
+private theorem adjMatrixF11_restrict_eq_smul_sum (h : Order22ActsOnMoore57 V Γ) :
+    h.adjMatrixF11_restrict_ker_T =
+      (2 : ZMod 11) • h.E2_restrict_ker_T +
+      (7 : ZMod 11) • h.E7_restrict_ker_T +
+      (3 : ZMod 11) • h.E3_restrict_ker_T := by
+  apply LinearMap.ext
+  intro v
+  apply Subtype.ext
+  -- LHS.val = (adjMatrixF11 Γ).toLin' v.val
+  -- RHS.val = 2 • E_2 v.val + 7 • E_7 v.val + 3 • E_3 v.val (after unfolding smul and add on subtypes)
+  show (adjMatrixF11 Γ).toLin' v.val = _
+  -- From ELambda_decomp_A: 2 • E_2 + 7 • E_7 + 3 • E_3 = A.
+  have h_decomp_apply :
+      ((2 : ZMod 11) • E2MatrixF11 Γ + (7 : ZMod 11) • E7MatrixF11 Γ +
+          (3 : ZMod 11) • E3MatrixF11 Γ).toLin' v.val =
+      (adjMatrixF11 Γ).toLin' v.val := by
+    rw [ELambda_decomp_A]
+  rw [← h_decomp_apply]
+  -- LHS = sum.toLin' v.val. Unfold using toLin'_add and toLin'_smul.
+  show ((2 : ZMod 11) • E2MatrixF11 Γ + (7 : ZMod 11) • E7MatrixF11 Γ +
+        (3 : ZMod 11) • E3MatrixF11 Γ).toLin' v.val = _
+  have h_add_apply : ∀ (M N : Matrix V V (ZMod 11)),
+      (M + N).toLin' v.val = M.toLin' v.val + N.toLin' v.val := fun M N => by
+    simp [Matrix.toLin'_apply]
+  have h_smul_apply : ∀ (c : ZMod 11) (M : Matrix V V (ZMod 11)),
+      (c • M).toLin' v.val = c • M.toLin' v.val := fun c M => by
+    simp [Matrix.toLin'_apply]
+  rw [h_add_apply, h_add_apply, h_smul_apply, h_smul_apply, h_smul_apply]
+  rfl
+
+/-- **Spectral side of trace identity** (sorry-free):
+trace(A_restrict over ker T_F11) = 2·a^{F_11}_2 + 7·a^{F_11}_7 + 3·a^{F_11}_3 in ZMod 11.
+
+Uses `ELambda_decomp_A` (matrix-level) lifted to LinearMap.restrict,
+trace linearity, and `IsProj.trace` for each E_λ_restrict. -/
+theorem trace_adjMatrixF11_restrict_eq_spectral_side
+    (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.trace (ZMod 11) _ h.adjMatrixF11_restrict_ker_T =
+      (2 : ZMod 11) *
+        ((Module.finrank (ZMod 11)
+          (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+            Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11)
+    + (7 : ZMod 11) *
+        ((Module.finrank (ZMod 11)
+          (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+            Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11)
+    + (3 : ZMod 11) *
+        ((Module.finrank (ZMod 11)
+          (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+            Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11) := by
+  rw [adjMatrixF11_restrict_eq_smul_sum h]
+  rw [map_add, map_add, map_smul, map_smul, map_smul]
+  rw [trace_E2_restrict_ker_T_eq h, trace_E7_restrict_ker_T_eq h,
+      trace_E3_restrict_ker_T_eq h]
+  simp only [smul_eq_mul]
+
+/-- **Orbital side of trace identity** (focused sorry):
+trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11).
+
+証明戦略 (`orbital basis` approach):
+* ker T_F11 = span{δ_v : v fixed} ⊕ span{1_O : O free orbit} over F_11 (300-dim).
+* A_restrict diagonal in orbital basis:
+  - For δ_v (v σ-fixed): (A δ_v)(v) = A_{vv} = 0 (no loops).
+  - For 1_O (O free orbit): (A · 1_O)(v_O) = |N(v_O) ∩ O| = 2 m_O,
+    where m_O = # σ-edge orbits in O (each contributes 11 edges).
+* trace = Σ_O free orbit 2 m_O = 2 Σ_O m_O.
+* m_O = Σ_{k=1}^{5} ε_k(O) where ε_k(O) = [O has slope-k edges].
+* By `Tk_eq_eleven_mul_traceNumber`: each "slope-k count" Σ_O ε_k(O) = n.
+* Σ_O m_O = 5n, so trace = 10n.
+
+主依存: 軌道基底の明示構成 + 各 E_λ への trace 計算. ~200-300 行. -/
+theorem trace_adjMatrixF11_restrict_eq_orbital_side
+    (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.trace (ZMod 11) _ h.adjMatrixF11_restrict_ker_T =
+      ((10 * h.traceNumber : ℕ) : ZMod 11) := by
+  sorry
+
+/-- **F_11 trace identity** (sorry-free given orbital side):
 `10 * traceNumber ≡ 2 · a^{F_11}_2 + 7 · a^{F_11}_7 + 3 · a^{F_11}_3 (mod 11)`.
 
-orbital basis:
-  trace(A | ker T_F11) = 10n (mod 11)  -- σ-不変性 + Tk_constant.
-spectral basis:
-  trace(A | ker T_F11) = Σ_λ λ · dim(V_λ ∩ ker T_F11) over F_11.
-  (A·E_λ = λ·E_λ から V_λ 上 A は λ·I で作用.)
-
-Both equal: `10n ≡ Σ λ · a^{F_11}_λ mod 11`.
-
-証明戦略 (主依存):
-* A_F11 が ker T_F11 を保つ (A と σ が可換).
-* `A.restrict ker T : ker T → ker T` で trace を取れる.
-* Spectral side: trace = Σ_λ λ · trace(E_λ | ker T).
-  - Mathlib `IsProj.trace`: idempotent の trace = rank of image.
-  - `E_λ | ker T` is a projection onto `V_λ ∩ ker T` (E_λ idem + commutes σ).
-  - trace(E_λ | ker T) = dim(V_λ ∩ ker T) = a^{F_11}_λ.
-* Orbital side: trace via orbital basis = Σ_O free orbit |N(v_O) ∩ O| · 1.
-  - 各 free orbit O: diagonal coefficient = |N(v_O) ∩ O|.
-  - Sum = 10n (via Tk_constant + σ-equivariance).
-* Both equal.
-
-主依存: `LinearMap.trace` machinery + explicit orbit-basis trace computation.
-~250-300 lines. -/
+Direct corollary of spectral side (proved) + orbital side (focused sorry).
+Both sides equal `LinearMap.trace _ _ adjMatrixF11_restrict_ker_T`. -/
 theorem trace_identity_via_F11_spectral (h : Order22ActsOnMoore57 V Γ) :
     (10 * h.traceNumber : ZMod 11) =
       (2 : ZMod 11) *
@@ -1329,7 +1586,10 @@ theorem trace_identity_via_F11_spectral (h : Order22ActsOnMoore57 V Γ) :
         ((Module.finrank (ZMod 11)
           (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
             Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11) := by
-  sorry
+  have h_spec := trace_adjMatrixF11_restrict_eq_spectral_side h
+  have h_orb := trace_adjMatrixF11_restrict_eq_orbital_side h
+  push_cast at h_orb
+  rw [← h_orb, h_spec]
 
 /-! ## 上界証明の主結果 -/
 
