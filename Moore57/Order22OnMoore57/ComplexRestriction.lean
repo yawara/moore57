@@ -81,38 +81,9 @@ theorem traceNumber.mem_candidates_of_form
   have hs : s ≤ 3 := by omega
   interval_cases s <;> omega
 
-/-- **Phase 3 主結論** (sorry, 縮減版).
-
-`traceNumber_mem_candidates` の証明は以下に分解される:
-- (A) 11 * traceNumber = 25 + 15 * (a_7 - c_7) ∧ (a_7 - c_7) ≡ 2 (mod 11)
-  (rep theory: σ on V_7 の Q[C_11] 分解 + spectral decomp; ~300 行).
-- (B) traceNumber ≤ 59 (4-cycle bound: no_4_cycle + orbit counting; ~300 行).
-- 上記 + `eq_five_plus_fifteen_mul_of_modular` + `mem_candidates_of_form` で結論.
-
-(A), (B) のいずれも本セッションでは未実装. -/
-theorem traceNumber_mem_candidates :
-    h.traceNumber = 5 ∨ h.traceNumber = 20 ∨
-      h.traceNumber = 35 ∨ h.traceNumber = 50 := by
-  -- 次セッション以降の作業: (A) と (B) を埋める.
-  -- 実装後の組立は以下のとおり:
-  -- have h_rep : (11 * h.traceNumber : ℤ) = 25 + 15 * (a_7 - c_7) := <Phase 3 rep theory>
-  -- have h_mod : (a_7 - c_7) % 11 = 2 := <from spectral decomp>
-  -- have h_form := traceNumber.eq_five_plus_fifteen_mul_of_modular h_rep h_mod
-  -- have h_bound : h.traceNumber ≤ 59 := <4-cycle bound>
-  -- exact traceNumber.mem_candidates_of_form h_form h_bound
-  sorry
-
-/-- **Phase 3 + Phase 4 統合**: `n = 5`.
-
-Phase 4 で `n % 11 = 5`, Phase 3 で `n ∈ {5, 20, 35, 50}`.
-5 のみが mod 11 で 5 (∵ 20 % 11 = 9, 35 % 11 = 2, 50 % 11 = 6). -/
-theorem traceNumber_eq_five : h.traceNumber = 5 := by
-  have h_mod : h.traceNumber % 11 = 5 := h.traceNumber_mod_eleven_eq_five
-  rcases h.traceNumber_mem_candidates with h5 | h20 | h35 | h50
-  · exact h5
-  · exfalso; rw [h20] at h_mod; omega
-  · exfalso; rw [h35] at h_mod; omega
-  · exfalso; rw [h50] at h_mod; omega
+-- **Phase 3 主結論** `traceNumber_mem_candidates` および Phase 3 + Phase 4 統合
+-- `traceNumber_eq_five` は `Phase3FourCycleBound.lean` に移動.
+-- (Phase3RepTheory が ComplexRestriction を import する循環を避けるため.)
 
 end Order22ActsOnMoore57
 
