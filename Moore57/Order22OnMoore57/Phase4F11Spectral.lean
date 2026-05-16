@@ -265,6 +265,158 @@ theorem E2_idempotent (hΓ : IsMoore57 Γ) :
       allOnes_mul_allOnes hΓ, smul_smul, smul_smul,
       show ((9 : ZMod 11) * 9 * 5) = 9 from by decide]
 
+/-- F_11 上 `J · (A - 2 • I) = 0`: 固有値 2 のため J が右から (A - 2I) を消す. -/
+theorem allOnes_mul_A_sub_two (hΓ : IsMoore57 Γ) :
+    allOnesMatrixF11 V * (adjMatrixF11 Γ - (2 : ZMod 11) • 1) = 0 := by
+  rw [mul_sub, allOnes_mul_adjMatrixF11 hΓ, mul_smul_comm, mul_one, sub_self]
+
+/-- F_11 上 `(A - 2 • I) · J = 0` (双対形). -/
+theorem A_sub_two_mul_allOnes (hΓ : IsMoore57 Γ) :
+    (adjMatrixF11 Γ - (2 : ZMod 11) • 1) * allOnesMatrixF11 V = 0 := by
+  rw [sub_mul, adjMatrixF11_mul_allOnes hΓ, smul_mul_assoc, one_mul, sub_self]
+
+/-- Orthogonality: `E_2 · E_7 = 0`.
+
+E_2 = 9 J, E_7 = 5 (A - 2)(A - 3). J · (A - 2) = 0 から E_2 · E_7 = 0. -/
+theorem E2_mul_E7_eq_zero (hΓ : IsMoore57 Γ) :
+    E2MatrixF11 Γ * E7MatrixF11 Γ = 0 := by
+  classical
+  rw [E2_eq_nine_smul_allOnes hΓ]
+  unfold E7MatrixF11
+  rw [smul_mul_assoc, mul_smul_comm, smul_smul, ← mul_assoc,
+      allOnes_mul_A_sub_two hΓ, zero_mul, smul_zero]
+
+/-- Orthogonality: `E_2 · E_3 = 0`. -/
+theorem E2_mul_E3_eq_zero (hΓ : IsMoore57 Γ) :
+    E2MatrixF11 Γ * E3MatrixF11 Γ = 0 := by
+  classical
+  rw [E2_eq_nine_smul_allOnes hΓ]
+  unfold E3MatrixF11
+  rw [smul_mul_assoc, mul_smul_comm, smul_smul, ← mul_assoc,
+      allOnes_mul_A_sub_two hΓ, zero_mul, smul_zero]
+
+/-- Orthogonality: `E_7 · E_2 = 0`.
+
+(A - 3) · J = -J ⟹ (A - 2)(A - 3) · J = (A - 2)(-J) = -((A - 2) · J) = 0. -/
+theorem E7_mul_E2_eq_zero (hΓ : IsMoore57 Γ) :
+    E7MatrixF11 Γ * E2MatrixF11 Γ = 0 := by
+  classical
+  rw [E2_eq_nine_smul_allOnes hΓ]
+  unfold E7MatrixF11
+  rw [smul_mul_assoc, mul_smul_comm, smul_smul, mul_assoc]
+  have h1 : (adjMatrixF11 Γ - (3 : ZMod 11) • 1) * allOnesMatrixF11 V
+          = ((2 : ZMod 11) - 3) • allOnesMatrixF11 V := by
+    rw [sub_mul, adjMatrixF11_mul_allOnes hΓ, smul_mul_assoc, one_mul, ← sub_smul]
+  rw [h1, mul_smul_comm, A_sub_two_mul_allOnes hΓ, smul_zero, smul_zero]
+
+/-- Orthogonality: `E_3 · E_2 = 0`.
+
+(A - 7) · J = -5 J ⟹ (A - 2)(A - 7) · J = (A - 2)(-5 J) = -5 · ((A - 2) · J) = 0. -/
+theorem E3_mul_E2_eq_zero (hΓ : IsMoore57 Γ) :
+    E3MatrixF11 Γ * E2MatrixF11 Γ = 0 := by
+  classical
+  rw [E2_eq_nine_smul_allOnes hΓ]
+  unfold E3MatrixF11
+  rw [smul_mul_assoc, mul_smul_comm, smul_smul, mul_assoc]
+  have h1 : (adjMatrixF11 Γ - (7 : ZMod 11) • 1) * allOnesMatrixF11 V
+          = ((2 : ZMod 11) - 7) • allOnesMatrixF11 V := by
+    rw [sub_mul, adjMatrixF11_mul_allOnes hΓ, smul_mul_assoc, one_mul, ← sub_smul]
+  rw [h1, mul_smul_comm, A_sub_two_mul_allOnes hΓ, smul_zero, smul_zero]
+
+/-- F_11 上 `E_7 = 2 • 1 + 3 • A + 5 • J` (closed form). -/
+theorem E7_eq_closed (hΓ : IsMoore57 Γ) :
+    E7MatrixF11 Γ = (2 : ZMod 11) • (1 : Matrix V V (ZMod 11))
+        + (3 : ZMod 11) • adjMatrixF11 Γ + (5 : ZMod 11) • allOnesMatrixF11 V := by
+  classical
+  unfold E7MatrixF11
+  set A := adjMatrixF11 Γ
+  set J := allOnesMatrixF11 V
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  simp only [sub_mul, mul_sub, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one,
+             smul_sub]
+  rw [hsq]
+  match_scalars <;> decide
+
+/-- F_11 上 `E_3 = 10 • 1 + 8 • A + 8 • J` (closed form). -/
+theorem E3_eq_closed (hΓ : IsMoore57 Γ) :
+    E3MatrixF11 Γ = (10 : ZMod 11) • (1 : Matrix V V (ZMod 11))
+        + (8 : ZMod 11) • adjMatrixF11 Γ + (8 : ZMod 11) • allOnesMatrixF11 V := by
+  classical
+  unfold E3MatrixF11
+  set A := adjMatrixF11 Γ
+  set J := allOnesMatrixF11 V
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  simp only [sub_mul, mul_sub, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one,
+             smul_sub]
+  rw [hsq]
+  match_scalars <;> decide
+
+/-- F_11 上 E_7 idempotent: `E_7 · E_7 = E_7`. -/
+theorem E7_idempotent (hΓ : IsMoore57 Γ) :
+    E7MatrixF11 Γ * E7MatrixF11 Γ = E7MatrixF11 Γ := by
+  classical
+  rw [E7_eq_closed hΓ]
+  set A := adjMatrixF11 Γ
+  set J := allOnesMatrixF11 V
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
+  have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
+  have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  rw [hsq, hAJ, hJA, hJJ]
+  match_scalars <;> decide
+
+/-- F_11 上 E_3 idempotent: `E_3 · E_3 = E_3`. -/
+theorem E3_idempotent (hΓ : IsMoore57 Γ) :
+    E3MatrixF11 Γ * E3MatrixF11 Γ = E3MatrixF11 Γ := by
+  classical
+  rw [E3_eq_closed hΓ]
+  set A := adjMatrixF11 Γ
+  set J := allOnesMatrixF11 V
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
+  have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
+  have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  rw [hsq, hAJ, hJA, hJJ]
+  match_scalars <;> decide
+
+/-- Orthogonality: `E_7 · E_3 = 0`. -/
+theorem E7_mul_E3_eq_zero (hΓ : IsMoore57 Γ) :
+    E7MatrixF11 Γ * E3MatrixF11 Γ = 0 := by
+  classical
+  rw [E7_eq_closed hΓ, E3_eq_closed hΓ]
+  set A := adjMatrixF11 Γ
+  set J := allOnesMatrixF11 V
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
+  have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
+  have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  rw [hsq, hAJ, hJA, hJJ]
+  match_scalars <;> decide
+
+/-- Orthogonality: `E_3 · E_7 = 0`. -/
+theorem E3_mul_E7_eq_zero (hΓ : IsMoore57 Γ) :
+    E3MatrixF11 Γ * E7MatrixF11 Γ = 0 := by
+  classical
+  rw [E7_eq_closed hΓ, E3_eq_closed hΓ]
+  set A := adjMatrixF11 Γ
+  set J := allOnesMatrixF11 V
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
+  have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
+  have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  rw [hsq, hAJ, hJA, hJJ]
+  match_scalars <;> decide
+
 /-! ## 上界証明の主結果 (focused sorry) -/
 
 /-- **Phase D 主結果 (sorry, F_11 spectral)**: `a_7 ≤ 160`. -/
