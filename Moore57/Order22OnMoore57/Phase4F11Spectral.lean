@@ -95,19 +95,87 @@ theorem adjMatrixF11_sq_eq (hΓ : IsMoore57 Γ) :
     Matrix.of_apply]
   by_cases hvw : v = w
   · subst w
-    have h_no_loop : ¬ Γ.Adj v v := Γ.loopless.irrefl v
-    simp [h_no_loop]
+    simp
     decide
   · by_cases hadj : Γ.Adj v w
     · simp [hvw, hadj]
     · simp [hvw, hadj]
 
-/-- F_11 上 `(A - 2 I)(A - 7 I)(A - 3 I) = 0` (Q charpoly mod 11 factorization). -/
+/-- F_11 上 `A · J = 2 J` (regularity 57 ≡ 2 mod 11). -/
+theorem adjMatrixF11_mul_allOnes (hΓ : IsMoore57 Γ) :
+    adjMatrixF11 Γ * allOnesMatrixF11 V = (2 : ZMod 11) • allOnesMatrixF11 V := by
+  classical
+  ext v w
+  unfold adjMatrixF11 allOnesMatrixF11
+  rw [SimpleGraph.adjMatrix_mul_apply]
+  simp only [Matrix.of_apply, Matrix.smul_apply, smul_eq_mul, mul_one]
+  rw [Finset.sum_const, nsmul_eq_mul, mul_one,
+      SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular v]
+  decide
+
+/-- F_11 上 `J · A = 2 J` (regularity の双対形). -/
+theorem allOnes_mul_adjMatrixF11 (hΓ : IsMoore57 Γ) :
+    allOnesMatrixF11 V * adjMatrixF11 Γ = (2 : ZMod 11) • allOnesMatrixF11 V := by
+  classical
+  ext v w
+  unfold adjMatrixF11 allOnesMatrixF11
+  rw [SimpleGraph.mul_adjMatrix_apply]
+  simp only [Matrix.of_apply, Matrix.smul_apply, smul_eq_mul, mul_one]
+  rw [Finset.sum_const, nsmul_eq_mul, mul_one,
+      SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular w]
+  decide
+
+/-- F_11 上 `(A - 2 I)(A - 7 I)(A - 3 I) = 0` (Q charpoly mod 11 factorization).
+
+戦略: `match_scalars` で matrix 方程式を A, 1, J の係数比較に還元し,
+ZMod 11 数値計算は `decide` で閉じる. -/
 theorem adjMatrixF11_cubic_eq_zero (hΓ : IsMoore57 Γ) :
     (adjMatrixF11 Γ - (2 : ZMod 11) • 1) *
     (adjMatrixF11 Γ - (7 : ZMod 11) • 1) *
     (adjMatrixF11 Γ - (3 : ZMod 11) • 1) = 0 := by
-  sorry
+  classical
+  set A := adjMatrixF11 Γ with hAdef
+  set J := allOnesMatrixF11 V with hJdef
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
+  have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
+  -- Stage 1: A * (A * A) = 2•A - 1 + J を計算
+  have hA_AA : A * (A * A) = (2 : ZMod 11) • A - 1 + J := by
+    rw [hsq, mul_add, mul_sub, mul_one, hAJ, hsq]
+    match_scalars <;> decide
+  -- Stage 2: (A - 2•1)(A - 7•1) を展開, A*A を hsq で消す.
+  -- LHS = A*A - 7•A - 2•A + 14•1 = (1 - A + J) - 7•A - 2•A + 14•1
+  -- ZMod 11 で 4•1 + A + J になる
+  have hMN : (A - (2 : ZMod 11) • 1) * (A - (7 : ZMod 11) • 1) =
+      (4 : ZMod 11) • (1 : Matrix V V (ZMod 11)) + A + J := by
+    rw [sub_mul, mul_sub, mul_sub,
+        show A * ((7 : ZMod 11) • (1 : Matrix V V (ZMod 11))) = (7 : ZMod 11) • A from by
+          rw [mul_smul_comm, mul_one],
+        show ((2 : ZMod 11) • (1 : Matrix V V (ZMod 11))) * A = (2 : ZMod 11) • A from by
+          rw [smul_mul_assoc, one_mul],
+        show ((2 : ZMod 11) • (1 : Matrix V V (ZMod 11))) * ((7 : ZMod 11) • 1)
+            = ((2 : ZMod 11) * 7) • (1 : Matrix V V (ZMod 11)) from by
+          rw [smul_mul_assoc, one_mul, smul_smul],
+        hsq]
+    match_scalars <;> decide
+  -- Stage 3: (4•1 + A + J)(A - 3•1) = 0
+  -- LHS = 4•A - 12•1 + A*A - 3•A + J*A - 3•J
+  --     = 4•A - 12•1 + (1 - A + J) - 3•A + 2•J - 3•J
+  --     = (4 - 1 - 3)•A + (-12 + 1)•1 + (1 + 2 - 3)•J
+  --     = 0•A + (-11)•1 + 0•J = 0 in ZMod 11
+  rw [hMN, add_mul, add_mul, mul_sub, mul_sub, mul_sub,
+      show ((4 : ZMod 11) • (1 : Matrix V V (ZMod 11))) * A = (4 : ZMod 11) • A from by
+        rw [smul_mul_assoc, one_mul],
+      show ((4 : ZMod 11) • (1 : Matrix V V (ZMod 11))) * ((3 : ZMod 11) • 1)
+          = ((4 : ZMod 11) * 3) • (1 : Matrix V V (ZMod 11)) from by
+        rw [smul_mul_assoc, one_mul, smul_smul],
+      show A * ((3 : ZMod 11) • (1 : Matrix V V (ZMod 11))) = (3 : ZMod 11) • A from by
+        rw [mul_smul_comm, mul_one],
+      show J * ((3 : ZMod 11) • (1 : Matrix V V (ZMod 11))) = (3 : ZMod 11) • J from by
+        rw [mul_smul_comm, mul_one],
+      hsq, hJA]
+  match_scalars <;> decide
 
 /-! ## F_11 spectral projections (Lagrange interpolation) -/
 
