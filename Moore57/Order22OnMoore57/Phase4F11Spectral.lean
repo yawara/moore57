@@ -1212,12 +1212,24 @@ theorem aF11_lambda_two_eq_one (h : Order22ActsOnMoore57 V Γ) :
 /-- F_11 modular rep theory **基幹 sorry**:
 `a^{F_11}_7 := dim(V_7 ∩ ker T_F11) = 159`.
 
-証明戦略:
-* V_7 = M_1^{l_7} ⊕ M_11^{k_7} (F_11[C_11] 構造).
-* dim V_7 = l_7 + 11·k_7 = 1729 (rational rank, good reduction).
-* l_7 ≡ 1729 ≡ 2 mod 11, l_7 ∈ [0..5] ⟹ l_7 = 2.
-* k_7 = (1729 - 2)/11 = 157.
-* a^{F_11}_7 = l_7 + k_7 = 159. -/
+証明戦略 (依存):
+A. `dim V_7 over F_11 = 1729` — good reduction of rational rank.
+   * `IsMoore57.trace_E7Matrix_one : trace(E_7) = 1729` over ℚ (existing).
+   * Idempotent rank = trace ⟹ rank E_7 over ℚ = 1729.
+   * E_7 has integer entries scaled by units of ℤ_(11). Reduce mod 11.
+   * rank preservation under good reduction (denominators 15, 750 coprime to 11).
+B. `Σ l_λ = 5` — F_11[C_11] structure of V_perm = M_1^5 ⊕ M_11^{295}.
+   * Already have Σ a^{F_11}_λ = 300 (sorry-free), Σ k_λ = k_7 + k_3 + 0 = 295.
+   * l_λ := a^{F_11}_λ - k_λ ≥ 0 (from Im T^10 ⊆ ker T proved).
+   * Σ l_λ = 300 - 295 = 5 (provable directly from above).
+C. `l_7 ≡ dim V_7 mod 11 = 2` — F_11[C_11] structure (M_11 contributes 0 to σ-trace).
+   * Via trace(σ E_7) over F_11 = 2 (Higman + matrix computation).
+   * Identifies trace(σ on V_7) = l_7 over F_11.
+D. `l_7 = 2` — combining B (l_7 ≤ 4 from Σ = 5 and l_2 = 1, l_3 ≥ 0) + C (mod 11).
+E. `k_7 = 157` — A + D: dim V_7 = 11 k_7 + l_7 = 1729 = 11·157 + 2.
+F. `a^{F_11}_7 = l_7 + k_7 = 2 + 157 = 159`.
+
+主依存: A (good reduction) + C (F_11[C_11] σ-trace identification) — substantial. -/
 theorem aF11_lambda_seven_eq_159 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11)
         (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
@@ -1260,7 +1272,22 @@ spectral basis:
   trace(A | ker T_F11) = Σ_λ λ · dim(V_λ ∩ ker T_F11) over F_11.
   (A·E_λ = λ·E_λ から V_λ 上 A は λ·I で作用.)
 
-Both equal: `10n ≡ Σ λ · a^{F_11}_λ mod 11`. -/
+Both equal: `10n ≡ Σ λ · a^{F_11}_λ mod 11`.
+
+証明戦略 (主依存):
+* A_F11 が ker T_F11 を保つ (A と σ が可換).
+* `A.restrict ker T : ker T → ker T` で trace を取れる.
+* Spectral side: trace = Σ_λ λ · trace(E_λ | ker T).
+  - Mathlib `IsProj.trace`: idempotent の trace = rank of image.
+  - `E_λ | ker T` is a projection onto `V_λ ∩ ker T` (E_λ idem + commutes σ).
+  - trace(E_λ | ker T) = dim(V_λ ∩ ker T) = a^{F_11}_λ.
+* Orbital side: trace via orbital basis = Σ_O free orbit |N(v_O) ∩ O| · 1.
+  - 各 free orbit O: diagonal coefficient = |N(v_O) ∩ O|.
+  - Sum = 10n (via Tk_constant + σ-equivariance).
+* Both equal.
+
+主依存: `LinearMap.trace` machinery + explicit orbit-basis trace computation.
+~250-300 lines. -/
 theorem trace_identity_via_F11_spectral (h : Order22ActsOnMoore57 V Γ) :
     (10 * h.traceNumber : ZMod 11) =
       (2 : ZMod 11) *
