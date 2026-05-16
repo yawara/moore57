@@ -467,6 +467,50 @@ theorem E3_commute_permMatrixF11 (hΓ : IsMoore57 Γ)
       adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11 Γ σ hσ,
       one_mul, mul_one, permMatrixF11_mul_allOnes, allOnes_mul_permMatrixF11]
 
+/-! ## F_11 modular rep theory: V_λ 部分空間 -/
+
+/-- F_11 上の `V_2 := range E_2`. -/
+noncomputable def V2Submodule (Γ : SimpleGraph V) [DecidableRel Γ.Adj] :
+    Submodule (ZMod 11) (V → ZMod 11) :=
+  (E2MatrixF11 Γ).toLin'.range
+
+/-- F_11 上の `V_7 := range E_7`. -/
+noncomputable def V7Submodule (Γ : SimpleGraph V) [DecidableRel Γ.Adj] :
+    Submodule (ZMod 11) (V → ZMod 11) :=
+  (E7MatrixF11 Γ).toLin'.range
+
+/-- F_11 上の `V_3 := range E_3`. -/
+noncomputable def V3Submodule (Γ : SimpleGraph V) [DecidableRel Γ.Adj] :
+    Submodule (ZMod 11) (V → ZMod 11) :=
+  (E3MatrixF11 Γ).toLin'.range
+
+/-! ### Modular rep theory roadmap (詳細実装は別セッション)
+
+Phase D 完成への構造論的補題群:
+
+1. **dim V_λ values**: rank E_2 = 1, rank E_7 = 1729, rank E_3 = 1520.
+   - E_2 = 9 J ⟹ V_2 = span(1_V), dim 1.
+   - dim V_7, V_3: A の char poly multiplicity (over F_11, eigenvalue 7 mult 1729).
+
+2. **V_λ direct sum**: V_F_11 = V_2 ⊕ V_7 ⊕ V_3 (E_λ idempotent + orthogonal + sum=I).
+
+3. **V_λ σ-invariant**: E_λ commute with P_σ から V_λ は σ-stable.
+
+4. **F_11[C_11] block structure**: V_perm = M_1^5 ⊕ M_11^295 (orbit-based).
+   V_λ direct summand なので blocks のサイズは 1 か 11 のみ.
+
+5. **l_λ values**: Σ l_λ = 5, l_λ ≡ dim V_λ (mod 11).
+   ⟹ l_2 = 1, l_7 = 2, l_3 = 2 (from dim values).
+
+6. **a^{F_11}_λ values**: a^{F_11}_λ = l_λ + (dim V_λ - l_λ)/11 = 1, 159, 140.
+
+7. **F_11 trace identity**: σ-fixed subspace 上 A trace を二通り:
+   - orbit basis trace = 10n (Tk_constant 経由).
+   - spectral trace = 2·1 + 7·159 + 3·140 = 1535 ≡ 6 mod 11.
+
+8. 上 7 から 10n ≡ 6 mod 11 (= `ten_traceNumber_mod_eleven_eq_six_via_F11_spectral`).
+-/
+
 /-! ## 上界証明の主結果 -/
 
 /-- **F_11 trace argument (focused sorry)**: σ-fixed subspace 上の A trace 計算より
