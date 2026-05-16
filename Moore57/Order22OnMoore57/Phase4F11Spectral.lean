@@ -484,55 +484,253 @@ noncomputable def V3Submodule (Γ : SimpleGraph V) [DecidableRel Γ.Adj] :
     Submodule (ZMod 11) (V → ZMod 11) :=
   (E3MatrixF11 Γ).toLin'.range
 
-/-! ### Modular rep theory roadmap (詳細実装は別セッション)
+/-! ### Step 1: V_2 ⊆ ker(T_F11), V_2 σ-fixed -/
 
-Phase D 完成への構造論的補題群:
+/-- `P_σ · E_2 = E_2`: E_2 = 9·J で J は σ で不変. -/
+theorem permMatrixF11_mul_E2_eq_E2 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) :
+    permMatrixF11 σ * E2MatrixF11 Γ = E2MatrixF11 Γ := by
+  rw [E2_eq_nine_smul_allOnes hΓ, mul_smul_comm, permMatrixF11_mul_allOnes]
 
-1. **dim V_λ values**: rank E_2 = 1, rank E_7 = 1729, rank E_3 = 1520.
-   - E_2 = 9 J ⟹ V_2 = span(1_V), dim 1.
-   - dim V_7, V_3: A の char poly multiplicity (over F_11, eigenvalue 7 mult 1729).
+/-- `V_2 ⊆ ker(T_F11)`: V_2 = span(1_V) は σ-fixed. -/
+theorem V2Submodule_le_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    V2Submodule Γ ≤ LinearMap.ker (T_F11 h) := by
+  classical
+  intro f hf
+  rw [V2Submodule, LinearMap.mem_range] at hf
+  obtain ⟨g, hg⟩ := hf
+  rw [LinearMap.mem_ker, T_F11_def, ← hg]
+  -- Goal: ((P_σ - 1).toLin') ((E_2).toLin' g) = 0
+  have h_mat : (permMatrixF11 h.σ - 1) * E2MatrixF11 Γ = 0 := by
+    rw [sub_mul, one_mul, permMatrixF11_mul_E2_eq_E2 h.isMoore, sub_self]
+  show ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin')
+       ((E2MatrixF11 Γ).toLin' g) = 0
+  rw [show ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin')
+        ((E2MatrixF11 Γ).toLin' g) =
+      ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)) * E2MatrixF11 Γ).toLin' g from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [h_mat]
+  simp
 
-2. **V_λ direct sum**: V_F_11 = V_2 ⊕ V_7 ⊕ V_3 (E_λ idempotent + orthogonal + sum=I).
+/-- `a^{F_11}_2 := dim(V_2 ∩ ker(T_F11))`.
+V_2 ⊆ ker(T_F11) より = dim V_2. -/
+theorem aF11_lambda_two_eq_dim_V2 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+      Module.finrank (ZMod 11) (V2Submodule Γ) := by
+  classical
+  have h_eq : (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+                Submodule (ZMod 11) (V → ZMod 11)) = V2Submodule Γ :=
+    inf_eq_left.mpr (V2Submodule_le_ker_T_F11 h)
+  rw [h_eq]
 
-3. **V_λ σ-invariant**: E_λ commute with P_σ から V_λ は σ-stable.
+/-! ### Step 2: V_λ σ-invariance (E_λ と P_σ の可換性から) -/
 
-4. **F_11[C_11] block structure**: V_perm = M_1^5 ⊕ M_11^295 (orbit-based).
-   V_λ direct summand なので blocks のサイズは 1 か 11 のみ.
+/-- V_λ は σ-不変 (E_λ ∘ P_σ = P_σ ∘ E_λ から). -/
+theorem V7Submodule_invariant_permMatrixF11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ f ∈ V7Submodule Γ, (permMatrixF11 h.σ).toLin' f ∈ V7Submodule Γ := by
+  classical
+  intro f hf
+  rw [V7Submodule, LinearMap.mem_range] at hf ⊢
+  obtain ⟨g, hg⟩ := hf
+  refine ⟨(permMatrixF11 h.σ).toLin' g, ?_⟩
+  rw [← hg]
+  show ((E7MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+       ((permMatrixF11 h.σ).toLin') ((E7MatrixF11 Γ).toLin' g)
+  rw [show ((E7MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+        (E7MatrixF11 Γ * permMatrixF11 h.σ).toLin' g from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [show ((permMatrixF11 h.σ).toLin') ((E7MatrixF11 Γ).toLin' g) =
+        (permMatrixF11 h.σ * E7MatrixF11 Γ).toLin' g from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [E7_commute_permMatrixF11 h.isMoore h.σ h.σ_aut]
 
-5. **l_λ values**: Σ l_λ = 5, l_λ ≡ dim V_λ (mod 11).
-   ⟹ l_2 = 1, l_7 = 2, l_3 = 2 (from dim values).
+/-- V_3 は σ-不変. -/
+theorem V3Submodule_invariant_permMatrixF11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ f ∈ V3Submodule Γ, (permMatrixF11 h.σ).toLin' f ∈ V3Submodule Γ := by
+  classical
+  intro f hf
+  rw [V3Submodule, LinearMap.mem_range] at hf ⊢
+  obtain ⟨g, hg⟩ := hf
+  refine ⟨(permMatrixF11 h.σ).toLin' g, ?_⟩
+  rw [← hg]
+  show ((E3MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+       ((permMatrixF11 h.σ).toLin') ((E3MatrixF11 Γ).toLin' g)
+  rw [show ((E3MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+        (E3MatrixF11 Γ * permMatrixF11 h.σ).toLin' g from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [show ((permMatrixF11 h.σ).toLin') ((E3MatrixF11 Γ).toLin' g) =
+        (permMatrixF11 h.σ * E3MatrixF11 Γ).toLin' g from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut]
 
-6. **a^{F_11}_λ values**: a^{F_11}_λ = l_λ + (dim V_λ - l_λ)/11 = 1, 159, 140.
+/-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
-7. **F_11 trace identity**: σ-fixed subspace 上 A trace を二通り:
-   - orbit basis trace = 10n (Tk_constant 経由).
-   - spectral trace = 2·1 + 7·159 + 3·140 = 1535 ≡ 6 mod 11.
+各 V_λ は σ-不変な F_11 [C_11] 部分加群.
+V_perm = M_1^5 ⊕ M_11^295 (5 fixed orbits + 295 free orbits, |C_11| = 11) の
+直和因子なので, Krull-Schmidt によりブロックサイズは 1 か 11 のみ.
 
-8. 上 7 から 10n ≡ 6 mod 11 (= `ten_traceNumber_mod_eleven_eq_six_via_F11_spectral`).
--/
+各 V_λ = M_1^{l_λ} ⊕ M_11^{k_λ}:
+* dim V_λ = l_λ + 11 k_λ.
+* a^{F_11}_λ := dim(V_λ ∩ ker(T_F11)) = l_λ + k_λ.
+* l_λ ≡ dim V_λ (mod 11), Σ l_λ = 5.
+
+dim V_λ (= rank E_λ over F_11) は rational rank の good reduction:
+* dim V_2 = 1, dim V_7 = 1729, dim V_3 = 1520
+  (Moore57 char poly factorization, `IsMoore57.trace_E7Matrix_one` 等経由).
+
+⟹ l_2 = 1, l_7 = 2, l_3 = 2 (各 l_λ ∈ {0..5}, l_λ ≡ dim V_λ mod 11).
+⟹ a^{F_11}_λ = 1, 159, 140.
+
+下記 3 つを基幹 sorry として宣言. -/
+
+/-- `V_2 = span(1_V)`: V_2 = Im(9·J), 9·J·g = 9·(Σ g)·1_V, range = ℤ/11·1_V. -/
+theorem V2Submodule_eq_span_one (h : Order22ActsOnMoore57 V Γ) :
+    V2Submodule Γ =
+      Submodule.span (ZMod 11)
+        ({(fun _ : V => (1 : ZMod 11))} : Set (V → ZMod 11)) := by
+  classical
+  haveI : Nonempty V := ⟨h.σ_fix.v 0⟩
+  let v_0 : V := h.σ_fix.v 0
+  -- helper: E_2 · g = (9 · Σ g) • 1_V
+  have h_app : ∀ g : V → ZMod 11,
+      (E2MatrixF11 Γ).toLin' g =
+        ((9 : ZMod 11) * ∑ i, g i) • (fun _ : V => (1 : ZMod 11)) := by
+    intro g
+    ext w
+    rw [E2_eq_nine_smul_allOnes h.isMoore]
+    show ((9 : ZMod 11) • allOnesMatrixF11 V).mulVec g w =
+         (((9 : ZMod 11) * ∑ i, g i) • (fun _ : V => (1 : ZMod 11))) w
+    simp only [Matrix.mulVec, Matrix.smul_apply, dotProduct, smul_eq_mul,
+               Pi.smul_apply, mul_one, allOnesMatrixF11, Matrix.of_apply]
+    rw [← Finset.mul_sum]
+  apply le_antisymm
+  · -- V_2 ≤ span{1_V}
+    rintro v ⟨g, rfl⟩
+    rw [h_app]
+    exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self _)
+  · -- span{1_V} ≤ V_2
+    rw [Submodule.span_le]
+    rintro _ (rfl : _ = _)
+    show (fun _ : V => (1 : ZMod 11)) ∈ V2Submodule Γ
+    rw [V2Submodule, LinearMap.mem_range]
+    -- E_2 (5 • indicator v_0) = (9 · 5) • 1_V = 1_V (since 9·5 ≡ 1 mod 11)
+    refine ⟨fun w => if w = v_0 then (5 : ZMod 11) else 0, ?_⟩
+    rw [h_app]
+    have h_sum : (∑ i, (if i = v_0 then (5 : ZMod 11) else 0)) = 5 := by
+      rw [Finset.sum_ite_eq' Finset.univ v_0 (fun _ => (5 : ZMod 11))]
+      simp
+    rw [h_sum]
+    ext w
+    show ((9 : ZMod 11) * 5) • ((fun _ : V => (1 : ZMod 11)) w) = 1
+    simp only [Pi.smul_apply, smul_eq_mul, mul_one]
+    decide
+
+/-- `dim V_2 = 1` over F_11. -/
+theorem finrank_V2Submodule_eq_one (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V2Submodule Γ) = 1 := by
+  classical
+  haveI : Nonempty V := ⟨h.σ_fix.v 0⟩
+  rw [V2Submodule_eq_span_one h]
+  -- finrank (span {1_V}) = 1 since 1_V ≠ 0
+  rw [show (Submodule.span (ZMod 11)
+              ({(fun _ : V => (1 : ZMod 11))} : Set (V → ZMod 11))) =
+          (ZMod 11) ∙ (fun _ : V => (1 : ZMod 11)) from rfl]
+  apply finrank_span_singleton
+  intro h_zero
+  have h_ne : Nonempty V := ⟨h.σ_fix.v 0⟩
+  obtain ⟨v⟩ := h_ne
+  have : (fun _ : V => (1 : ZMod 11)) v = (0 : V → ZMod 11) v := by rw [h_zero]
+  simp at this
+
+/-- `a^{F_11}_2 := dim(V_2 ∩ ker T_F11) = 1`.
+
+V_2 = span(1_V), dim 1; V_2 ⊆ ker T_F11; ⟹ V_2 ∩ ker T = V_2. -/
+theorem aF11_lambda_two_eq_one (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) = 1 := by
+  rw [aF11_lambda_two_eq_dim_V2, finrank_V2Submodule_eq_one h]
+
+/-- F_11 modular rep theory **基幹 sorry**:
+`a^{F_11}_7 := dim(V_7 ∩ ker T_F11) = 159`.
+
+証明戦略:
+* V_7 = M_1^{l_7} ⊕ M_11^{k_7} (F_11[C_11] 構造).
+* dim V_7 = l_7 + 11·k_7 = 1729 (rational rank, good reduction).
+* l_7 ≡ 1729 ≡ 2 mod 11, l_7 ∈ [0..5] ⟹ l_7 = 2.
+* k_7 = (1729 - 2)/11 = 157.
+* a^{F_11}_7 = l_7 + k_7 = 159. -/
+theorem aF11_lambda_seven_eq_159 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) = 159 := by
+  sorry
+
+/-- F_11 modular rep theory **基幹 sorry**:
+`a^{F_11}_3 := dim(V_3 ∩ ker T_F11) = 140`.
+
+証明戦略:
+* V_3 = M_1^{l_3} ⊕ M_11^{k_3}, dim V_3 = 1520.
+* l_3 ≡ 1520 ≡ 2 mod 11, l_3 ∈ [0..5] ⟹ l_3 = 2.
+* k_3 = (1520 - 2)/11 = 138.
+* a^{F_11}_3 = l_3 + k_3 = 140. -/
+theorem aF11_lambda_three_eq_140 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) = 140 := by
+  sorry
+
+/-! ### F_11 trace identity (orbit + spectral bridge) -/
+
+/-- F_11 trace identity **基幹 sorry** (orbit + spectral bridge):
+`10 * traceNumber ≡ 2 · a^{F_11}_2 + 7 · a^{F_11}_7 + 3 · a^{F_11}_3 (mod 11)`.
+
+orbital basis:
+  trace(A | ker T_F11) = 10n (mod 11)  -- σ-不変性 + Tk_constant.
+spectral basis:
+  trace(A | ker T_F11) = Σ_λ λ · dim(V_λ ∩ ker T_F11) over F_11.
+  (A·E_λ = λ·E_λ から V_λ 上 A は λ·I で作用.)
+
+Both equal: `10n ≡ Σ λ · a^{F_11}_λ mod 11`. -/
+theorem trace_identity_via_F11_spectral (h : Order22ActsOnMoore57 V Γ) :
+    (10 * h.traceNumber : ZMod 11) =
+      (2 : ZMod 11) *
+        ((Module.finrank (ZMod 11)
+          (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+            Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11)
+    + (7 : ZMod 11) *
+        ((Module.finrank (ZMod 11)
+          (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+            Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11)
+    + (3 : ZMod 11) *
+        ((Module.finrank (ZMod 11)
+          (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+            Submodule (ZMod 11) (V → ZMod 11)) : ℕ) : ZMod 11) := by
+  sorry
 
 /-! ## 上界証明の主結果 -/
 
-/-- **F_11 trace argument (focused sorry)**: σ-fixed subspace 上の A trace 計算より
+/-- **F_11 spectral trace argument**:
 `10 * traceNumber ≡ 6 (mod 11)`.
 
-二通りで計算:
-* orbit basis: trace = 10 n (orbit 数 - fixed 数 を巻き込む計算).
-* spectral basis: trace = 2 · a^{F_11}_2 + 7 · a^{F_11}_7 + 3 · a^{F_11}_3.
-  Σ a^{F_11}_λ = 300 (`finrank_ker_T_F11_eq_300`), a^{F_11}_2 = 1,
-  a^{F_11}_7 ≡ 5 mod 11 (F_11[C_11] 構造より, l_7 ≡ 2 mod 11 から導出).
-  ⟹ trace ≡ 8 + 4 · 5 ≡ 6 mod 11.
-
-残作業: F_11[C_11] modular rep theory 経由で a^{F_11}_λ の mod 11 値を確定. -/
+合成: `trace_identity_via_F11_spectral` + a^{F_11}_λ 値 (1, 159, 140)
+⟹ 10n ≡ 2·1 + 7·159 + 3·140 ≡ 1535 ≡ 6 mod 11. -/
 theorem ten_traceNumber_mod_eleven_eq_six_via_F11_spectral
     (h : Order22ActsOnMoore57 V Γ) :
     10 * h.traceNumber % 11 = 6 := by
-  -- F_11 trace identity. Requires:
-  -- - dim V_λ values (rank E_λ = 1, 1729, 1520).
-  -- - F_11[C_11] structure on each V_λ (only blocks of size 1 or p = 11).
-  -- - Orbit-basis trace formula.
-  -- See Phase4F11Spectral.lean docstring for full strategy.
-  sorry
+  have h_id := trace_identity_via_F11_spectral h
+  rw [aF11_lambda_two_eq_one h, aF11_lambda_seven_eq_159 h,
+      aF11_lambda_three_eq_140 h] at h_id
+  -- h_id : 10 * (h.traceNumber : ZMod 11) = 2 * ↑1 + 7 * ↑159 + 3 * ↑140 (in ZMod 11)
+  -- Bridge to mod arithmetic: cast ℕ versions, use ZMod.natCast_eq_natCast_iff.
+  have h_six : ((10 * h.traceNumber : ℕ) : ZMod 11) = ((6 : ℕ) : ZMod 11) := by
+    push_cast
+    rw [h_id]
+    decide
+  have h_modeq : 10 * h.traceNumber % 11 = 6 % 11 :=
+    (ZMod.natCast_eq_natCast_iff _ _ 11).mp h_six
+  omega
 
 /-- **Phase D 主結果**: `a_7 ≤ 160` (実際は = 159).
 
