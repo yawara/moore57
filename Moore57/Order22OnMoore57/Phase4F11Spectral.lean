@@ -605,6 +605,13 @@ theorem E3_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   _commute_preserves_ker_T_F11 h (E3MatrixF11 Γ)
     (E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut)
 
+/-- `A` は ker T_F11 を保つ (A と σ が可換). -/
+theorem adjMatrixF11_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ LinearMap.ker (T_F11 h),
+      (adjMatrixF11 Γ).toLin' v ∈ LinearMap.ker (T_F11 h) :=
+  _commute_preserves_ker_T_F11 h (adjMatrixF11 Γ)
+    (adjMatrixF11_commute_permMatrixF11_σ h)
+
 /-! ### V_λ ⊓ V_μ = ⊥ (E_λ idempotent + orthogonality より)
 
 V_2, V_7, V_3 は pairwise disjoint な submodule. -/
