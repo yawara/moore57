@@ -189,6 +189,45 @@ theorem EMinus8Matrix_mul_permMatrix_eq_permMatrix_mul_EMinus8Matrix
   rw [E7Matrix_mul_permMatrix_eq_permMatrix_mul_E7Matrix Γ σ haut]
   rw [E57Matrix_mul_permMatrix_eq_permMatrix_mul_E57Matrix (V := V) σ]
 
+/-! ### Trace identities -/
+
+/-- `J σ = J` for any permutation matrix σ. -/
+theorem allOnesMatrix_mul_permMatrix (σ : Equiv.Perm V) :
+    allOnesMatrix V * permMatrix σ = allOnesMatrix V := by
+  classical
+  ext v w
+  rw [mul_permMatrix_apply]
+  simp [allOnesMatrix]
+
+/-- `tr(E_57 · permMatrix σ) = 1` for any permutation σ (Moore57 setting).
+これは k に依らず常に 1 (J σ = J かつ tr J = |V| = 3250 から). -/
+theorem trace_E57Matrix_mul_permMatrix (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) :
+    Matrix.trace (E57Matrix V * permMatrix σ) = 1 := by
+  classical
+  show Matrix.trace ((1 / 3250 : ℚ) • allOnesMatrix V * permMatrix σ) = 1
+  rw [Matrix.smul_mul, allOnesMatrix_mul_permMatrix σ]
+  rw [Matrix.trace_smul]
+  -- tr J = |V| = 3250
+  have htrJ : Matrix.trace (allOnesMatrix V) = (Fintype.card V : ℚ) := by
+    simp [Matrix.trace, allOnesMatrix]
+  rw [htrJ, hΓ.card]
+  norm_num
+
+/-- 各 σ-自己同型における `tr(σ^j) = (E_57 + E_7 + E_{-8}) · σ^j の trace`. -/
+theorem trace_decomp_via_spectral
+    (σ : Equiv.Perm V) (j : ℕ) :
+    Matrix.trace (permMatrix (σ ^ j)) =
+      Matrix.trace (E57Matrix V * permMatrix (σ ^ j)) +
+      Matrix.trace (E7Matrix Γ * permMatrix (σ ^ j)) +
+      Matrix.trace (EMinus8Matrix Γ * permMatrix (σ ^ j)) := by
+  classical
+  have hsum := E57_plus_E7_plus_EMinus8_eq_one (V := V) (Γ := Γ)
+  conv_lhs => rw [← Matrix.one_mul (permMatrix (σ ^ j)),
+    show (1 : Matrix V V ℚ) =
+      E57Matrix V + E7Matrix Γ + EMinus8Matrix Γ from hsum.symm,
+    Matrix.add_mul, Matrix.add_mul]
+  rw [Matrix.trace_add, Matrix.trace_add]
+
 end HigmanTrace
 
 end Moore57
