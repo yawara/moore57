@@ -655,6 +655,39 @@ theorem V7_inter_V3_eq_bot (hΓ : IsMoore57 Γ) :
   _matrix_range_disjoint_of_idem_orth
     (E7MatrixF11 Γ) (E3MatrixF11 Γ) (E7_idempotent hΓ) (E7_mul_E3_eq_zero hΓ)
 
+/-- E_λ 和分解: v = E_2 v + E_7 v + E_3 v (linear map レベル). -/
+theorem ELambda_sum_apply (v : V → ZMod 11) :
+    (E2MatrixF11 Γ).toLin' v + (E7MatrixF11 Γ).toLin' v + (E3MatrixF11 Γ).toLin' v = v := by
+  classical
+  have h_apply : ∀ M N : Matrix V V (ZMod 11),
+      (M + N).toLin' v = M.toLin' v + N.toLin' v := fun M N => by
+    simp [Matrix.toLin'_apply, Matrix.add_mulVec]
+  have h_sum : ((E2MatrixF11 Γ + E7MatrixF11 Γ + E3MatrixF11 Γ).toLin') v =
+      (E2MatrixF11 Γ).toLin' v + (E7MatrixF11 Γ).toLin' v + (E3MatrixF11 Γ).toLin' v := by
+    rw [h_apply (E2MatrixF11 Γ + E7MatrixF11 Γ) (E3MatrixF11 Γ),
+        h_apply (E2MatrixF11 Γ) (E7MatrixF11 Γ)]
+  rw [← h_sum, ELambda_sum_eq_one (Γ := Γ)]
+  show (1 : Matrix V V (ZMod 11)).toLin' v = v
+  rw [Matrix.toLin'_one]; rfl
+
+/-- `V_2 ⊔ V_7 ⊔ V_3 = ⊤`: V_F_11 全体を V_λ で被覆. -/
+theorem V2_sup_V7_sup_V3_eq_top :
+    V2Submodule Γ ⊔ V7Submodule Γ ⊔ V3Submodule Γ =
+      (⊤ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  rw [Submodule.eq_top_iff']
+  intro v
+  -- v = (E_2 v + E_7 v) + E_3 v
+  rw [Submodule.mem_sup]
+  refine ⟨(E2MatrixF11 Γ).toLin' v + (E7MatrixF11 Γ).toLin' v, ?_,
+          (E3MatrixF11 Γ).toLin' v, ?_, ELambda_sum_apply v⟩
+  · -- E_2 v + E_7 v ∈ V_2 ⊔ V_7
+    rw [Submodule.mem_sup]
+    exact ⟨(E2MatrixF11 Γ).toLin' v, LinearMap.mem_range.mpr ⟨v, rfl⟩,
+           (E7MatrixF11 Γ).toLin' v, LinearMap.mem_range.mpr ⟨v, rfl⟩, rfl⟩
+  · -- E_3 v ∈ V_3
+    exact LinearMap.mem_range.mpr ⟨v, rfl⟩
+
 /-! ### A · E_λ = λ · E_λ: V_λ 上 A は scalar λ で作用
 
 A = 2 E_2 + 7 E_7 + 3 E_3 + E_λ orthogonality + idempotency より導出. -/
