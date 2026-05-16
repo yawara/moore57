@@ -86,6 +86,73 @@ noncomputable def adjMatrixF11 (Γ : SimpleGraph V) [DecidableRel Γ.Adj] :
     Matrix V V (ZMod 11) :=
   Γ.adjMatrix (ZMod 11)
 
+/-! ## permMatrixF11 適用補題 (mul を計算) -/
+
+/-- 左から `permMatrixF11 σ` を掛けると行が `σ.symm` で置換される. -/
+theorem permMatrixF11_mul_apply (σ : Equiv.Perm V) (M : Matrix V V (ZMod 11)) (v w : V) :
+    (permMatrixF11 σ * M) v w = M (σ.symm v) w := by
+  classical
+  rw [Matrix.mul_apply]
+  calc
+    ∑ u : V, permMatrixF11 σ v u * M u w
+        = permMatrixF11 σ v (σ.symm v) * M (σ.symm v) w := by
+          refine Finset.sum_eq_single (σ.symm v) ?_ ?_
+          · intro u _ hu
+            have hne : σ.symm v ≠ u := hu.symm
+            simp [permMatrixF11, hne]
+          · intro h
+            exact False.elim (h (Finset.mem_univ _))
+    _ = M (σ.symm v) w := by
+          simp [permMatrixF11]
+
+/-- 右から `permMatrixF11 σ` を掛けると列が `σ` で置換される. -/
+theorem mul_permMatrixF11_apply (M : Matrix V V (ZMod 11)) (σ : Equiv.Perm V) (v w : V) :
+    (M * permMatrixF11 σ) v w = M v (σ w) := by
+  classical
+  rw [Matrix.mul_apply]
+  calc
+    ∑ u : V, M v u * permMatrixF11 σ u w
+        = M v (σ w) * permMatrixF11 σ (σ w) w := by
+          refine Finset.sum_eq_single (σ w) ?_ ?_
+          · intro u _ hu
+            have hne : w ≠ σ.symm u := by
+              intro hyp
+              apply hu
+              calc
+                u = σ (σ.symm u) := (σ.apply_symm_apply u).symm
+                _ = σ w := by rw [← hyp]
+            have hne' : σ.symm u ≠ w := fun hyp => hne hyp.symm
+            simp [permMatrixF11, hne']
+          · intro h
+            exact False.elim (h (Finset.mem_univ _))
+    _ = M v (σ w) := by
+          simp [permMatrixF11]
+
+/-! ## adjMatrixF11 と permMatrixF11 の可換性 -/
+
+/-- F_11 版: graph automorphism σ は adjacency matrix と (F_11 上) 可換. -/
+theorem adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V)
+    (haut : ∀ v w, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    adjMatrixF11 Γ * permMatrixF11 σ = permMatrixF11 σ * adjMatrixF11 Γ := by
+  classical
+  ext v w
+  rw [mul_permMatrixF11_apply, permMatrixF11_mul_apply]
+  show (Γ.adjMatrix (ZMod 11)) v (σ w) = (Γ.adjMatrix (ZMod 11)) (σ.symm v) w
+  have hAdj : Γ.Adj v (σ w) ↔ Γ.Adj (σ.symm v) w := by
+    simpa using (haut (σ.symm v) w).symm
+  by_cases h : Γ.Adj v (σ w)
+  · have h' : Γ.Adj (σ.symm v) w := hAdj.mp h
+    simp [h, h']
+  · have h' : ¬ Γ.Adj (σ.symm v) w := fun hyp => h (hAdj.mpr hyp)
+    simp [h, h']
+
+variable (h : Order22ActsOnMoore57 V Γ) in
+/-- `h.σ_aut` を使った可換版. -/
+theorem adjMatrixF11_commute_permMatrixF11_σ :
+    adjMatrixF11 Γ * permMatrixF11 h.σ = permMatrixF11 h.σ * adjMatrixF11 Γ :=
+  adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11 Γ h.σ h.σ_aut
+
 end Order22ActsOnMoore57
 
 end Moore57
