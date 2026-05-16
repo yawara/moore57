@@ -2,6 +2,7 @@ import Moore57.Order22OnMoore57.Phase4F11Module
 import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
 import Mathlib.LinearAlgebra.Matrix.CharP
 import Mathlib.Algebra.Field.ZMod
+import Mathlib.GroupTheory.Perm.Cycle.Type
 
 /-!
 # Phase 4 Step 3: dim ker((σ-I)^j on V_F_11) = 5 + 295 j
@@ -100,14 +101,104 @@ theorem kerDimSeq_eq (h : Order22ActsOnMoore57 V Γ) (k : ℕ) :
     kerDimSeq h k = Module.finrank (ZMod 11) (LinearMap.ker ((T_F11 h)^k)) := by
   unfold kerDimSeq; rfl
 
-/-- **Step 3.2 (sorry)**: `dim_F_11 ker T = #σ-orbits = 300`.
+/-! ### Step 3.2 用 helper: orbit count via cycleType -/
+
+/-- `|Fix(σ)| = 5` (`Function.fixedPoints` 形). -/
+private theorem card_fixedPoints_σ_eq_five (h : Order22ActsOnMoore57 V Γ) :
+    Fintype.card (Function.fixedPoints h.σ) = 5 := by
+  classical
+  -- Function.fixedPoints σ = {v : σ v = v} ↔ image of h.σ_fix.v.
+  have h_card_eq : Fintype.card (Function.fixedPoints (h.σ : V → V)) =
+      Fintype.card (Set.range h.σ_fix.v) := by
+    apply Fintype.card_congr
+    refine Equiv.setCongr ?_
+    ext v
+    simp only [Function.mem_fixedPoints, Function.IsFixedPt, Set.mem_range]
+    exact ⟨fun hv => (h.σ_fix.span v hv).imp (fun _ h => h.symm),
+           fun ⟨i, hi⟩ => hi ▸ h.σ_fix.v_fixed i⟩
+  rw [h_card_eq, Set.card_range_of_injective h.σ_fix.v_injective]
+  simp
+
+/-- σ has order 11 (prime). -/
+private theorem orderOf_σ_eq_11 (h : Order22ActsOnMoore57 V Γ) :
+    orderOf h.σ = 11 := by
+  haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
+  exact orderOf_eq_prime h.σ_pow_eleven h.σ_ne_one
+
+/-- σ.cycleType の全 entry が 11. -/
+private theorem cycleType_σ_eq_replicate (h : Order22ActsOnMoore57 V Γ) :
+    h.σ.cycleType = Multiset.replicate h.σ.cycleType.card 11 := by
+  haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
+  have h_prime : (orderOf h.σ).Prime := by
+    rw [orderOf_σ_eq_11 h]; exact (Fact.out : Nat.Prime 11)
+  obtain ⟨n, hn⟩ := Equiv.Perm.cycleType_prime_order h_prime
+  -- hn : h.σ.cycleType = Multiset.replicate (n+1) (orderOf h.σ)
+  have h_orderOf : orderOf h.σ = 11 := orderOf_σ_eq_11 h
+  rw [h_orderOf] at hn
+  -- hn : h.σ.cycleType = Multiset.replicate (n+1) 11
+  have h_card : h.σ.cycleType.card = n + 1 := by
+    rw [hn, Multiset.card_replicate]
+  conv_lhs => rw [hn]
+  rw [h_card]
+
+/-- σ.cycleType.card = 295. -/
+private theorem cycleType_σ_card_eq_295 (h : Order22ActsOnMoore57 V Γ) :
+    h.σ.cycleType.card = 295 := by
+  have h_card_fix := card_fixedPoints_σ_eq_five h
+  have h_card_V : Fintype.card V = 3250 := h.isMoore.card
+  have h_repl := cycleType_σ_eq_replicate h
+  have h_sum : h.σ.cycleType.sum = 11 * h.σ.cycleType.card := by
+    have h1 : h.σ.cycleType.sum = (h.σ.cycleType.card) • 11 := by
+      conv_lhs => rw [h_repl]
+      exact Multiset.sum_replicate _ _
+    rw [h1, smul_eq_mul, Nat.mul_comm]
+  have h_fix := Equiv.Perm.card_fixedPoints h.σ
+  rw [h_card_fix, h_card_V, h_sum] at h_fix
+  omega
+
+/-- `Fintype.card (Quotient (SameCycle.setoid σ))` を |Fix σ| + cycleFactorsFinset.card に
+分解する補題. 各 orbit は fixed point の singleton か, cycle factor の support に対応. -/
+private theorem card_quotient_sameCycle_eq (h : Order22ActsOnMoore57 V Γ) :
+    @Fintype.card (Quotient (Equiv.Perm.SameCycle.setoid h.σ))
+        (@Quotient.fintype _ _ _ (fun _ _ => Classical.dec _)) =
+      Fintype.card (Function.fixedPoints h.σ) + h.σ.cycleFactorsFinset.card := by
+  -- Bijection: Quotient ≃ Function.fixedPoints σ ⊕ cycleFactorsFinset σ.
+  -- Forward: [v] ↦ if σ v = v then inl ⟨v, hv⟩ else inr (cycleOf σ v).
+  -- Backward: inl ⟨v, _⟩ ↦ [v], inr c ↦ [some v ∈ support c].
+  sorry
+
+/-- `Fintype.card (Quotient (SameCycle.setoid h.σ)) = 300`. -/
+private theorem card_quotient_sameCycle_eq_300 (h : Order22ActsOnMoore57 V Γ) :
+    @Fintype.card (Quotient (Equiv.Perm.SameCycle.setoid h.σ))
+        (@Quotient.fintype _ _ _ (fun _ _ => Classical.dec _)) = 300 := by
+  rw [card_quotient_sameCycle_eq, card_fixedPoints_σ_eq_five]
+  -- Bridge cycleFactorsFinset.card to cycleType.card
+  have h_eq : h.σ.cycleFactorsFinset.card = h.σ.cycleType.card := by
+    rw [Equiv.Perm.cycleType_def]
+    simp [Multiset.card_map]
+  rw [h_eq, cycleType_σ_card_eq_295 h]
+
+/-- **Step 3.2**: `dim_F_11 ker T = #σ-orbits = 300`.
 
 Moore57 の σ (order 11, 5 fixed points, 295 free orbits) に対し orbit 数 300.
-σ-不変関数空間 = (Quotient (Equiv.Perm.SameCycle.setoid σ) → F_11), dim = 300.
-
-Mathlib: `Equiv.Perm.SameCycle.setoid`, `Quotient.lift`, `Module.finrank_pi`. -/
+σ-不変関数空間 ≃ (Quotient (Equiv.Perm.SameCycle.setoid σ) → F_11), dim = 300. -/
 theorem finrank_ker_T_F11_eq_300 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11) (LinearMap.ker (T_F11 h)) = 300 := by
+  classical
+  haveI : FiniteDimensional (ZMod 11) (V → ZMod 11) := by infer_instance
+  -- σ-orbit setoid
+  set s : Setoid V := Equiv.Perm.SameCycle.setoid h.σ with hs_def
+  haveI : DecidableRel s.r := fun _ _ => Classical.dec _
+  haveI : Fintype (Quotient s) := Quotient.fintype s
+  -- Pull-back along Quotient.mk
+  set pb : (Quotient s → ZMod 11) →ₗ[ZMod 11] (V → ZMod 11) :=
+    LinearMap.funLeft (ZMod 11) (ZMod 11) (Quotient.mk s) with hpb_def
+  -- pb injective from Quotient.mk surjective
+  have h_pb_inj : Function.Injective pb :=
+    LinearMap.funLeft_injective_of_surjective (ZMod 11) (ZMod 11)
+      (Quotient.mk s) Quotient.mk_surjective
+  -- TODO: range pb = ker T_F11 (matrix calculation)
+  -- TODO: LinearEquiv + finrank_pi + card_quotient_sameCycle_eq_300
   sorry
 
 /-! ## Step 3.3: dim range((σ - I)^10) = 295 (= #free orbits)
