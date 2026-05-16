@@ -1,6 +1,7 @@
 import Moore57.Order22OnMoore57.Phase4F11Module
 import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
 import Mathlib.LinearAlgebra.Matrix.CharP
+import Mathlib.Algebra.Field.ZMod
 
 /-!
 # Phase 4 Step 3: dim ker((σ-I)^j on V_F_11) = 5 + 295 j
@@ -72,10 +73,32 @@ linearly equivalence 付けて Module.finrank_pi で dim を出す.
 
 詳細実装は ~150 行. ここでは結論のみ sorry. -/
 
-/-- T := (permMatrixF11 σ - 1).toLin' (略記). -/
+/-- T := (permMatrixF11 σ - 1).toLin' (略記).
+`@[irreducible]` で whnf 暴走を抑制. -/
+@[irreducible]
 noncomputable def T_F11 (h : Order22ActsOnMoore57 V Γ) :
     (V → ZMod 11) →ₗ[ZMod 11] (V → ZMod 11) :=
   ((permMatrixF11 h.σ) - 1).toLin'
+
+theorem T_F11_def (h : Order22ActsOnMoore57 V Γ) :
+    T_F11 h = ((permMatrixF11 h.σ) - 1).toLin' := by
+  unfold T_F11; rfl
+
+/-- `(T_F11 h)^11 = 0`. `permMatrixF11_sub_one_toLin'_pow_eleven_eq_zero` の
+`T_F11` バージョン. -/
+theorem T_F11_pow_eleven_eq_zero (h : Order22ActsOnMoore57 V Γ) :
+    (T_F11 h) ^ 11 = 0 := by
+  rw [T_F11_def]
+  exact h.permMatrixF11_sub_one_toLin'_pow_eleven_eq_zero
+
+/-- F_11 kernel dim sequence (opaque wrapper to suppress unfolding). -/
+@[irreducible]
+noncomputable def kerDimSeq (h : Order22ActsOnMoore57 V Γ) (k : ℕ) : ℕ :=
+  Module.finrank (ZMod 11) (LinearMap.ker ((T_F11 h)^k))
+
+theorem kerDimSeq_eq (h : Order22ActsOnMoore57 V Γ) (k : ℕ) :
+    kerDimSeq h k = Module.finrank (ZMod 11) (LinearMap.ker ((T_F11 h)^k)) := by
+  unfold kerDimSeq; rfl
 
 /-- **Step 3.2 (sorry)**: `dim_F_11 ker T = #σ-orbits = 300`.
 
@@ -104,20 +127,73 @@ Steps 3.1 (T^11 = 0), 3.2 (dim ker T = 300), 3.3 (dim range T^10 = 295) と
 Jordan 単調性 (`Moore57.LinearAlgebra.finrank_ker_pow_concave`) から derive.
 
 戦略:
-* f(j) := dim ker T^j (j = 0, ..., 11).
-* f(0) = 0, f(1) = 300 (Step 3.2), f(11) = 3250 (Step 3.1 + ker_zero),
-  f(10) = 3250 - 295 = 2955 (Step 3.3 + rank-nullity).
-* μ_j := f(j) - f(j-1) は j 非増加 (Jordan).
-* μ_11 = 295. 非増加性 ⟹ μ_j ≥ 295 for j ∈ [2, 11].
-* Σ_{j=2}^{11} μ_j = 2950 = 10·295. 各 ≥ 295 ⟹ all = 295.
-* ⟹ f(j) = f(1) + 295(j-1) = 5 + 295 j for j ∈ [1, 11].
+* d(j) := dim ker T^j (j = 0, ..., 11).
+* d(0) = 0, d(1) = 300 (Step 3.2), d(11) = 3250 (Step 3.1 + ker_zero),
+  d(10) = 3250 - 295 = 2955 (Step 3.3 + rank-nullity).
+* m_k := d(k+1) - d(k) (in ℤ) は k 非増加 (Jordan).
+* m_10 = 295 (最小値). 非増加性 ⟹ m_k ≥ 295 for k ∈ [0, 10].
+* Σ_{k=1}^{10} m_k = d(11) - d(1) = 2950 = 10·295. 各 ≥ 295 ⟹ all = 295.
+* ⟹ d(j) = d(1) + 295·(j-1) = 5 + 295·j for j ∈ [1, 11].
 
-実装 ~80 行 (interval_cases + 各 ケース concavity + omega) で derivable.
--/
+実装は `Moore57.LinearAlgebra.concave_linearity_forcing` (pure ℕ helper) を経由. -/
 theorem finrank_ker_T_F11_pow (h : Order22ActsOnMoore57 V Γ)
     {j : ℕ} (hj : 1 ≤ j) (hj_le : j ≤ 11) :
     Module.finrank (ZMod 11) (LinearMap.ker ((T_F11 h)^j)) = 5 + 295 * j := by
-  sorry
+  -- Use opaque `kerDimSeq h` instead of `let f := fun k => ...` to avoid
+  -- aggressive unfolding of `(T_F11 h)^k` during helper application.
+  haveI : FiniteDimensional (ZMod 11) (V → ZMod 11) := by infer_instance
+  -- 凹性
+  have hf_concave : ∀ k, 1 ≤ k →
+      kerDimSeq h (k+1) + kerDimSeq h (k-1) ≤ 2 * kerDimSeq h k := by
+    intro k hk
+    rw [kerDimSeq_eq, kerDimSeq_eq, kerDimSeq_eq]
+    exact Moore57.LinearAlgebra.finrank_ker_pow_concave (T_F11 h) hk
+  -- 単調性
+  have hf_mono : ∀ k, kerDimSeq h k ≤ kerDimSeq h (k+1) := by
+    intro k
+    rw [kerDimSeq_eq, kerDimSeq_eq]
+    exact Submodule.finrank_mono
+      (Moore57.LinearAlgebra.ker_pow_le_succ (T_F11 h) k)
+  -- kerDimSeq h 0 = 0
+  have hf_0 : kerDimSeq h 0 = 0 := by
+    rw [kerDimSeq_eq, pow_zero,
+        show (1 : (V → ZMod 11) →ₗ[ZMod 11] (V → ZMod 11)) = LinearMap.id from rfl,
+        LinearMap.ker_id, finrank_bot]
+  -- kerDimSeq h 1 = 300
+  have hf_1 : kerDimSeq h 1 = 300 := by
+    rw [kerDimSeq_eq, pow_one]; exact h.finrank_ker_T_F11_eq_300
+  -- dim V_F11 = 3250
+  have h_dim_V : Module.finrank (ZMod 11) (V → ZMod 11) = 3250 := by
+    rw [Module.finrank_pi]; exact h.isMoore.card
+  -- kerDimSeq h 11 = 3250 (T^11 = 0)
+  have hf_N : kerDimSeq h 11 = 3250 := by
+    rw [kerDimSeq_eq, T_F11_pow_eleven_eq_zero, LinearMap.ker_zero, finrank_top]
+    exact h_dim_V
+  -- kerDimSeq h 10 = 2955 (rank-nullity)
+  have hf_Nm1 : kerDimSeq h 10 = 2955 := by
+    rw [kerDimSeq_eq]
+    have h_rk :
+        Module.finrank (ZMod 11) (LinearMap.range ((T_F11 h)^10)) +
+            Module.finrank (ZMod 11) (LinearMap.ker ((T_F11 h)^10)) =
+          Module.finrank (ZMod 11) (V → ZMod 11) := by
+      apply LinearMap.finrank_range_add_finrank_ker
+    rw [h_dim_V, h.finrank_range_T_F11_pow_ten_eq_295] at h_rk
+    omega
+  have h_consistency : 300 + (11 - 1) * (3250 - 2955) = 3250 := by decide
+  have hβγ : (2955 : ℕ) ≤ 3250 := by decide
+  have key : kerDimSeq h j = 300 + (j - 1) * (3250 - 2955) :=
+    Moore57.LinearAlgebra.concave_linearity_forcing (kerDimSeq h) (by omega)
+      hf_concave hf_mono hf_0 hf_1 hf_Nm1 hf_N h_consistency hβγ hj hj_le
+  have h_simp : 300 + (j - 1) * (3250 - 2955) = 5 + 295 * j := by
+    have h3 : (3250 - 2955 : ℕ) = 295 := by norm_num
+    rw [h3]
+    have hj' : j - 1 + 1 = j := Nat.sub_add_cancel hj
+    have : 295 * j = 295 * (j - 1) + 295 := by
+      conv_lhs => rw [← hj']
+      ring
+    linarith
+  -- Chain: goal ← kerDimSeq_eq ← key ← h_simp
+  exact (kerDimSeq_eq h j).symm.trans (key.trans h_simp)
 
 end Order22ActsOnMoore57
 

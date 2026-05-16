@@ -179,4 +179,136 @@ theorem mu_succ_le_mu (T : V →ₗ[F] V) {j : ℕ} (hj : 1 ≤ j) :
 
 end FiniteDim
 
+/-! ## Linearity forcing: pure ℕ formulation
+
+LinearMap の `HPow` 合成を回避するため, pure ℕ 関数として定式化. -/
+
+/-- **Linearity forcing (pure ℕ form)**: ℕ-valued concave function with endpoint
+values + 整合性条件 ⟹ 線形.
+
+* `f : ℕ → ℕ` concave (`f (k+1) + f (k-1) ≤ 2 * f k` for `k ≥ 1`),
+* `f(0) = 0`, `f(1) = α`, `f(N-1) = β`, `f(N) = γ`,
+* `β ≤ γ`, integrity: `α + (N - 1) * (γ - β) = γ`.
+* 結論: `f(j) = α + (j - 1) * (γ - β)` for `j ∈ [1, N]`. -/
+theorem concave_linearity_forcing
+    (f : ℕ → ℕ) {N α β γ : ℕ}
+    (hN : 1 ≤ N)
+    (hf_concave : ∀ k, 1 ≤ k → f (k+1) + f (k-1) ≤ 2 * f k)
+    (hf_mono : ∀ k, f k ≤ f (k+1))
+    (hf_0 : f 0 = 0)
+    (hf_1 : f 1 = α)
+    (hf_Nm1 : f (N-1) = β)
+    (hf_N : f N = γ)
+    (h_consistency : α + (N - 1) * (γ - β) = γ)
+    (hβγ : β ≤ γ)
+    {j : ℕ} (hj : 1 ≤ j) (hj_le : j ≤ N) :
+    f j = α + (j - 1) * (γ - β) := by
+  classical
+  -- m_k := f(k+1) - f(k) (ℤ) 非増加
+  have h_m_anti : ∀ a b : ℕ, a ≤ b →
+      (f (b+1) : ℤ) - f b ≤ (f (a+1) : ℤ) - f a := by
+    intro a b hab
+    induction b, hab using Nat.le_induction with
+    | base => exact le_refl _
+    | succ b _ ih =>
+      have h_step : (f (b+2) : ℤ) - f (b+1) ≤ (f (b+1) : ℤ) - f b := by
+        have hb1 : 1 ≤ b + 1 := Nat.succ_pos b
+        have h_conc := hf_concave (b+1) hb1
+        have heq : b + 1 - 1 = b := by omega
+        rw [heq, show b + 1 + 1 = b + 2 from rfl] at h_conc
+        omega
+      linarith
+  -- m_{N-1} = γ - β
+  have h_m_Nm1 : (f N : ℤ) - f (N-1) = (γ : ℤ) - β := by
+    rw [hf_N, hf_Nm1]
+  -- ∀ k ≤ N - 1, m_k ≥ γ - β
+  have h_m_lb : ∀ k : ℕ, k ≤ N - 1 →
+      ((γ : ℤ) - β) ≤ (f (k+1) : ℤ) - f k := by
+    intro k hk
+    have h_app := h_m_anti k (N-1) hk
+    have hN_eq : N - 1 + 1 = N := Nat.sub_add_cancel hN
+    rw [hN_eq] at h_app
+    linarith [h_m_Nm1]
+  -- Telescope
+  have h_telescope : ∀ n : ℕ,
+      (f n : ℤ) = ∑ i ∈ Finset.range n, ((f (i+1) : ℤ) - f i) := by
+    intro n
+    induction n with
+    | zero =>
+      simp only [Finset.range_zero, Finset.sum_empty]
+      exact_mod_cast hf_0
+    | succ n ih => rw [Finset.sum_range_succ]; linarith
+  -- range j = insert 0 (Ico 1 j)
+  have h_range_split : ∀ n : ℕ, 1 ≤ n →
+      Finset.range n = insert 0 (Finset.Ico 1 n) := by
+    intro n hn
+    ext k
+    simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Ico]
+    omega
+  -- ∑_{k ∈ Ico 1 N} m_k = γ - α
+  have h_sum_Ico :
+      ∑ k ∈ Finset.Ico 1 N, ((f (k+1) : ℤ) - f k) = (γ : ℤ) - α := by
+    have h_tot := h_telescope N
+    rw [h_range_split N hN, Finset.sum_insert (by simp)] at h_tot
+    have hfN_int : (f N : ℤ) = γ := by exact_mod_cast hf_N
+    have hf1_int : (f 1 : ℤ) = α := by exact_mod_cast hf_1
+    have hf0_int : (f 0 : ℤ) = 0 := by exact_mod_cast hf_0
+    linarith
+  -- (N - 1) * (γ - β) = γ - α
+  have h_consistency_int : ((N - 1 : ℕ) : ℤ) * ((γ : ℤ) - β) = (γ : ℤ) - α := by
+    have h1 : ((N - 1 : ℕ) : ℤ) = (N : ℤ) - 1 := by
+      have := Nat.cast_sub (R := ℤ) hN; simpa using this
+    have h2 : ((γ - β : ℕ) : ℤ) = (γ : ℤ) - β := by
+      have := Nat.cast_sub (R := ℤ) hβγ; simpa using this
+    have h_full : ((α + (N - 1) * (γ - β) : ℕ) : ℤ) = (γ : ℤ) := by
+      exact_mod_cast h_consistency
+    push_cast at h_full
+    rw [h1, h2] at h_full
+    rw [h1]; linarith
+  -- 各 m_k = γ - β for k ∈ Ico 1 N
+  have h_m_eq : ∀ k ∈ Finset.Ico 1 N, (f (k+1) : ℤ) - f k = (γ : ℤ) - β := by
+    have h_card_Ico : (Finset.Ico 1 N).card = N - 1 := Nat.card_Ico 1 N
+    have h_each_nn : ∀ k ∈ Finset.Ico 1 N,
+        (0 : ℤ) ≤ ((f (k+1) : ℤ) - f k - ((γ : ℤ) - β)) := by
+      intro k hk
+      rw [Finset.mem_Ico] at hk
+      have := h_m_lb k (by omega)
+      linarith
+    have h_sum_diff :
+        ∑ k ∈ Finset.Ico 1 N, ((f (k+1) : ℤ) - f k - ((γ : ℤ) - β)) = 0 := by
+      rw [Finset.sum_sub_distrib, Finset.sum_const, h_card_Ico, h_sum_Ico,
+          nsmul_eq_mul]
+      push_cast
+      linarith [h_consistency_int]
+    have h_each_zero := (Finset.sum_eq_zero_iff_of_nonneg h_each_nn).mp h_sum_diff
+    intro k hk
+    have := h_each_zero k hk
+    linarith
+  -- 結論: f(j) = α + (j - 1) * (γ - β)
+  have h_tel_j := h_telescope j
+  rw [h_range_split j hj, Finset.sum_insert (by simp)] at h_tel_j
+  have hf0_int : (f 0 : ℤ) = 0 := by exact_mod_cast hf_0
+  have hf1_int : (f 1 : ℤ) = α := by exact_mod_cast hf_1
+  have h_sum_j :
+      ∑ k ∈ Finset.Ico 1 j, ((f (k+1) : ℤ) - f k) =
+        ((j - 1 : ℕ) : ℤ) * ((γ : ℤ) - β) := by
+    have h_each : ∀ k ∈ Finset.Ico 1 j,
+        (f (k+1) : ℤ) - f k = (γ : ℤ) - β := by
+      intro k hk
+      have hk' : k ∈ Finset.Ico 1 N := by
+        rw [Finset.mem_Ico] at hk ⊢; omega
+      exact h_m_eq k hk'
+    rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.card_Ico]
+    push_cast; ring
+  rw [h_sum_j] at h_tel_j
+  have h_d_j_int : (f j : ℤ) = α + ((j - 1 : ℕ) : ℤ) * ((γ : ℤ) - β) := by
+    linarith
+  -- Cast back to ℕ
+  have h_cast_γβ : ((γ - β : ℕ) : ℤ) = (γ : ℤ) - β := by
+    have := Nat.cast_sub (R := ℤ) hβγ; simpa using this
+  zify [show (j - 1 : ℕ) * (γ - β) = ((j - 1) * (γ - β) : ℕ) from rfl]
+  rw [h_cast_γβ]
+  push_cast
+  linarith
+
 end Moore57.LinearAlgebra
