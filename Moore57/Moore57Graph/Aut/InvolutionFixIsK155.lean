@@ -285,4 +285,56 @@ theorem aut_involution_fixedVertexCount_eq_56_of_adjacent_moved
   rcases aut_involution_fixedVertexCount_candidates hΓ σ haut hinv hne with
     h | h | h | h | h | h | h | h | h | h <;> omega
 
+/-! ### Phase 1+2 combined: unconditional `|Fix(σ)| = 56` -/
+
+/-- **Cameron Theorem 3.13** (Higman): an involutive automorphism `σ ≠ 1` of a
+Moore57 graph fixes exactly 56 vertices. Combines Phase 1 (`∃ a, Γ.Adj a (σ a)`)
+with Phase 2 (the labeling argument). -/
+theorem aut_involution_fixedVertexCount_eq_56
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hinv : Function.Involutive σ)
+    (hne : σ ≠ 1) :
+    fixedVertexCount σ = 56 := by
+  obtain ⟨a, hAdj⟩ := aut_involution_exists_adjacent_moved hΓ σ haut hinv hne
+  exact aut_involution_fixedVertexCount_eq_56_of_adjacent_moved
+    hΓ σ haut hinv hne hAdj
+
+/-! ### Phase 3: Fix(σ) is a star
+
+With `|Fix(σ)| = 56` and the strong-`(0,1)` structure inherited from Moore57,
+the σ-fixed induced graph is non-regular (the regular case would force
+`|Fix| = k² + 1`, but `55` is not a perfect square) and hence a star with
+some center `c`. -/
+
+/-- For an involutive automorphism `σ ≠ 1` of a Moore57 graph, the σ-fixed
+induced subgraph is a star, i.e., has a center vertex adjacent to all 55
+other fixed vertices, with no other edges. -/
+theorem aut_involution_fixedInducedGraph_isStarWithCenter
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hinv : Function.Involutive σ)
+    (hne : σ ≠ 1) :
+    ∃ c : fixedVertexSet σ, IsStarWithCenter (autFixedInducedGraph Γ σ) c := by
+  classical
+  have hcard : fixedVertexCount σ = 56 :=
+    aut_involution_fixedVertexCount_eq_56 hΓ σ haut hinv hne
+  have hstrong : IsStrongZeroOne (autFixedInducedGraph Γ σ) :=
+    autFixedInducedGraph_isStrongZeroOne hΓ σ haut
+  -- Regular case is impossible: 56 = k² + 1 has no integer solution.
+  have hnot_regular :
+      ¬ ∃ k : ℕ, ∀ x : fixedVertexSet σ,
+        (autFixedInducedGraph Γ σ).degree x = k := by
+    rintro ⟨k, hreg⟩
+    have hpos : 0 < fixedVertexCount σ := by rw [hcard]; norm_num
+    have hkk : fixedVertexCount σ = k * k + 1 :=
+      aut_involution_fixedVertexCount_regular_eq_sq_add_one hΓ σ haut k hreg hpos
+    rw [hcard] at hkk
+    -- 56 = k * k + 1, so k * k = 55. But 7² = 49, 8² = 64, no integer k works.
+    have h55 : k * k = 55 := by omega
+    have hk_lt : k < 8 := by nlinarith
+    have hk_gt : 7 < k := by nlinarith
+    omega
+  exact hstrong.exists_isStarWithCenter_of_not_regular hnot_regular
+
 end Moore57
