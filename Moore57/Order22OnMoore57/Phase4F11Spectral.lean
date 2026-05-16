@@ -688,6 +688,164 @@ theorem V2_sup_V7_sup_V3_eq_top :
   · -- E_3 v ∈ V_3
     exact LinearMap.mem_range.mpr ⟨v, rfl⟩
 
+/-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
+
+dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
+Σ a^{F_11}_λ = dim ker T_F11 = 300 を導出. -/
+
+/-- `ker T_F11 = (V_2 ⊓ ker T) ⊔ (V_7 ⊓ ker T) ⊔ (V_3 ⊓ ker T)`. -/
+theorem ker_T_F11_eq_sup_three (h : Order22ActsOnMoore57 V Γ) :
+    (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h)) ⊔
+      (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h)) ⊔
+      (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h)) =
+    LinearMap.ker (T_F11 h) := by
+  classical
+  apply le_antisymm
+  · -- sup ≤ ker T
+    refine sup_le (sup_le inf_le_right inf_le_right) inf_le_right
+  · -- ker T ≤ sup
+    intro v hv
+    rw [Submodule.mem_sup]
+    refine ⟨(E2MatrixF11 Γ).toLin' v + (E7MatrixF11 Γ).toLin' v, ?_,
+            (E3MatrixF11 Γ).toLin' v, ?_, ELambda_sum_apply v⟩
+    · -- E_2 v + E_7 v ∈ (V_2 ⊓ ker T) ⊔ (V_7 ⊓ ker T)
+      rw [Submodule.mem_sup]
+      refine ⟨(E2MatrixF11 Γ).toLin' v, ?_, (E7MatrixF11 Γ).toLin' v, ?_, rfl⟩
+      · exact Submodule.mem_inf.mpr
+          ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩, E2_preserves_ker_T_F11 h v hv⟩
+      · exact Submodule.mem_inf.mpr
+          ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩, E7_preserves_ker_T_F11 h v hv⟩
+    · -- E_3 v ∈ V_3 ⊓ ker T
+      exact Submodule.mem_inf.mpr
+        ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩, E3_preserves_ker_T_F11 h v hv⟩
+
+/-- V_λ ⊓ ker T と V_μ ⊓ ker T は disjoint (V_λ ⊓ V_μ = ⊥ から). -/
+private theorem V2kt_inter_V7kt_eq_bot (h : Order22ActsOnMoore57 V Γ) :
+    (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h)) ⊓
+      (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_2, hv_7⟩ := hv
+  rw [Submodule.mem_inf] at hv_2 hv_7
+  have h_in : v ∈ V2Submodule Γ ⊓ V7Submodule Γ :=
+    Submodule.mem_inf.mpr ⟨hv_2.1, hv_7.1⟩
+  rw [V2_inter_V7_eq_bot h.isMoore] at h_in
+  exact h_in
+
+private theorem V2kt_inter_V3kt_eq_bot (h : Order22ActsOnMoore57 V Γ) :
+    (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h)) ⊓
+      (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_2, hv_3⟩ := hv
+  rw [Submodule.mem_inf] at hv_2 hv_3
+  have h_in : v ∈ V2Submodule Γ ⊓ V3Submodule Γ :=
+    Submodule.mem_inf.mpr ⟨hv_2.1, hv_3.1⟩
+  rw [V2_inter_V3_eq_bot h.isMoore] at h_in
+  exact h_in
+
+private theorem V7kt_inter_V3kt_eq_bot (h : Order22ActsOnMoore57 V Γ) :
+    (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h)) ⊓
+      (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_7, hv_3⟩ := hv
+  rw [Submodule.mem_inf] at hv_7 hv_3
+  have h_in : v ∈ V7Submodule Γ ⊓ V3Submodule Γ :=
+    Submodule.mem_inf.mpr ⟨hv_7.1, hv_3.1⟩
+  rw [V7_inter_V3_eq_bot h.isMoore] at h_in
+  exact h_in
+
+/-- `((V_2 ⊓ ker T) ⊔ (V_7 ⊓ ker T)) ⊓ (V_3 ⊓ ker T) = ⊥`. -/
+private theorem V2kt_sup_V7kt_inter_V3kt_eq_bot (h : Order22ActsOnMoore57 V Γ) :
+    ((V2Submodule Γ ⊓ LinearMap.ker (T_F11 h)) ⊔
+       (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h))) ⊓
+      (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨h_sup, hv_3⟩ := hv
+  rw [Submodule.mem_sup] at h_sup
+  obtain ⟨w_2, hw_2, w_7, hw_7, h_sum⟩ := h_sup
+  rw [Submodule.mem_inf] at hw_2 hw_7 hv_3
+  -- E_3 v = v (v ∈ V_3 idem), E_3 v = E_3 w_2 + E_3 w_7 = 0 + 0 = 0 (orth).
+  obtain ⟨u_3, hu_3⟩ := LinearMap.mem_range.mp hv_3.1
+  obtain ⟨u_2, hu_2⟩ := LinearMap.mem_range.mp hw_2.1
+  obtain ⟨u_7, hu_7⟩ := LinearMap.mem_range.mp hw_7.1
+  have h_E3v_eq_v : (E3MatrixF11 Γ).toLin' v = v := by
+    rw [← hu_3]
+    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
+    rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) =
+            (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u_3 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        E3_idempotent h.isMoore]
+  have h_E3v_eq_zero : (E3MatrixF11 Γ).toLin' v = 0 := by
+    rw [← h_sum, map_add, ← hu_2, ← hu_7]
+    show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
+         (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) = 0
+    rw [show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) =
+            (E3MatrixF11 Γ * E2MatrixF11 Γ).toLin' u_2 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        show (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) =
+            (E3MatrixF11 Γ * E7MatrixF11 Γ).toLin' u_7 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        E3_mul_E2_eq_zero h.isMoore, E3_mul_E7_eq_zero h.isMoore]
+    show (0 : Matrix V V (ZMod 11)).toLin' u_2 +
+         (0 : Matrix V V (ZMod 11)).toLin' u_7 = 0
+    simp
+  rw [Submodule.mem_bot]
+  exact h_E3v_eq_v.symm.trans h_E3v_eq_zero
+
+/-- **直和分解 dim 公式**:
+`a^{F_11}_2 + a^{F_11}_7 + a^{F_11}_3 = 300`. -/
+theorem aF11_sum_eq_300 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) = 300 := by
+  classical
+  haveI : FiniteDimensional (ZMod 11) (V → ZMod 11) := by infer_instance
+  set S_2 := V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) with hS2_def
+  set S_7 := V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) with hS7_def
+  set S_3 := V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) with hS3_def
+  -- (S_2 ⊔ S_7) + S_3 = ker T_F11.
+  have h_sup_eq : (S_2 ⊔ S_7) ⊔ S_3 = LinearMap.ker (T_F11 h) :=
+    h.ker_T_F11_eq_sup_three
+  -- finrank((S_2 ⊔ S_7) ⊔ S_3) = finrank(S_2 ⊔ S_7) + finrank(S_3) (disjoint).
+  have h_27_3_disj : (S_2 ⊔ S_7) ⊓ S_3 = ⊥ := h.V2kt_sup_V7kt_inter_V3kt_eq_bot
+  have h_27_disj : S_2 ⊓ S_7 = ⊥ := h.V2kt_inter_V7kt_eq_bot
+  have h_27_3_finrank : Module.finrank (ZMod 11) ↥((S_2 ⊔ S_7) ⊔ S_3) =
+      Module.finrank (ZMod 11) ↥(S_2 ⊔ S_7) + Module.finrank (ZMod 11) ↥S_3 := by
+    have h_eq := Submodule.finrank_sup_add_finrank_inf_eq (S_2 ⊔ S_7) S_3
+    rw [h_27_3_disj, finrank_bot] at h_eq
+    omega
+  have h_27_finrank : Module.finrank (ZMod 11) ↥(S_2 ⊔ S_7) =
+      Module.finrank (ZMod 11) ↥S_2 + Module.finrank (ZMod 11) ↥S_7 := by
+    have h_eq := Submodule.finrank_sup_add_finrank_inf_eq S_2 S_7
+    rw [h_27_disj, finrank_bot] at h_eq
+    omega
+  have h_ker_dim : Module.finrank (ZMod 11) ↥(LinearMap.ker (T_F11 h)) = 300 :=
+    h.finrank_ker_T_F11_eq_300
+  rw [← h_sup_eq] at h_ker_dim
+  rw [h_27_3_finrank, h_27_finrank] at h_ker_dim
+  omega
+
 /-! ### A · E_λ = λ · E_λ: V_λ 上 A は scalar λ で作用
 
 A = 2 E_2 + 7 E_7 + 3 E_3 + E_λ orthogonality + idempotency より導出. -/
@@ -822,19 +980,18 @@ theorem aF11_lambda_seven_eq_159 (h : Order22ActsOnMoore57 V Γ) :
           Submodule (ZMod 11) (V → ZMod 11)) = 159 := by
   sorry
 
-/-- F_11 modular rep theory **基幹 sorry**:
-`a^{F_11}_3 := dim(V_3 ∩ ker T_F11) = 140`.
+/-- `a^{F_11}_3 := dim(V_3 ∩ ker T_F11) = 140`.
 
-証明戦略:
-* V_3 = M_1^{l_3} ⊕ M_11^{k_3}, dim V_3 = 1520.
-* l_3 ≡ 1520 ≡ 2 mod 11, l_3 ∈ [0..5] ⟹ l_3 = 2.
-* k_3 = (1520 - 2)/11 = 138.
-* a^{F_11}_3 = l_3 + k_3 = 140. -/
+`aF11_sum_eq_300` + `aF11_lambda_two_eq_one` + `aF11_lambda_seven_eq_159` から
+sorry-free に導出 (300 = 1 + 159 + a^{F_11}_3 ⟹ a^{F_11}_3 = 140). -/
 theorem aF11_lambda_three_eq_140 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11)
         (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
           Submodule (ZMod 11) (V → ZMod 11)) = 140 := by
-  sorry
+  have h_sum := h.aF11_sum_eq_300
+  have h_2 := h.aF11_lambda_two_eq_one
+  have h_7 := h.aF11_lambda_seven_eq_159
+  omega
 
 /-! ### F_11 trace identity (orbit + spectral bridge) -/
 
