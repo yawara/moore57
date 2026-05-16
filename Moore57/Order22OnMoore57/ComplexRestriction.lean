@@ -38,10 +38,68 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
 variable (h : Order22ActsOnMoore57 V Γ)
 
-/-- **Phase 3 主結論** (sorry): `n ∈ {5, 20, 35, 50}`. -/
+/-- **Algebraic backbone (pure mod arithmetic)**: `11n = 25 + 15m` で `m ≡ 2 (mod 11)`
+かつ `n : ℕ` のとき, `∃ s : ℕ, n = 5 + 15 * s`.
+
+これは Phase 3 の中核 mod arithmetic. 11n = 25 + 15(a_7 - c_7) と
+(a_7 - c_7) ≡ 2 (mod 11) (これらは rep theory output) を仮定すれば直ちに従う. -/
+theorem traceNumber.eq_five_plus_fifteen_mul_of_modular
+    {n : ℕ} {m : ℤ} (h_eq : (11 * n : ℤ) = 25 + 15 * m) (h_mod : m % 11 = 2) :
+    ∃ s : ℕ, n = 5 + 15 * s := by
+  -- m = 11k + 2 for some k : ℤ
+  have hk_exists : ∃ k : ℤ, m = 11 * k + 2 := by
+    refine ⟨m / 11, ?_⟩
+    have := Int.emod_add_ediv m 11
+    omega
+  obtain ⟨k, hk⟩ := hk_exists
+  -- 11n = 25 + 15(11k + 2) = 55 + 165k = 11(5 + 15k)
+  rw [hk] at h_eq
+  have h_n_int : (n : ℤ) = 5 + 15 * k := by linarith
+  -- n ≥ 0 ⟹ k ≥ 0
+  have hk_nn : (0 : ℤ) ≤ k := by
+    have hn_nn : (0 : ℤ) ≤ (n : ℤ) := Int.natCast_nonneg n
+    by_contra h_neg
+    push_neg at h_neg
+    have hk_le : k ≤ -1 := by linarith
+    have : (n : ℤ) ≤ 5 + 15 * (-1) := by
+      rw [h_n_int]; linarith
+    linarith
+  obtain ⟨s, rfl⟩ := Int.eq_ofNat_of_zero_le hk_nn
+  refine ⟨s, ?_⟩
+  have : (n : ℤ) = ((5 + 15 * s : ℕ) : ℤ) := by
+    rw [h_n_int]; push_cast; ring
+  exact_mod_cast this
+
+/-- **Phase 3 中間補題**: `traceNumber = 5 + 15s ∧ traceNumber ≤ 59 → traceNumber ∈ {5,20,35,50}`.
+
+純算術. `s ≤ 3` から enumeration. -/
+theorem traceNumber.mem_candidates_of_form
+    {n : ℕ} (h_form : ∃ s : ℕ, n = 5 + 15 * s) (h_bound : n ≤ 59) :
+    n = 5 ∨ n = 20 ∨ n = 35 ∨ n = 50 := by
+  obtain ⟨s, rfl⟩ := h_form
+  -- 5 + 15s ≤ 59 → s ≤ 3
+  have hs : s ≤ 3 := by omega
+  interval_cases s <;> omega
+
+/-- **Phase 3 主結論** (sorry, 縮減版).
+
+`traceNumber_mem_candidates` の証明は以下に分解される:
+- (A) 11 * traceNumber = 25 + 15 * (a_7 - c_7) ∧ (a_7 - c_7) ≡ 2 (mod 11)
+  (rep theory: σ on V_7 の Q[C_11] 分解 + spectral decomp; ~300 行).
+- (B) traceNumber ≤ 59 (4-cycle bound: no_4_cycle + orbit counting; ~300 行).
+- 上記 + `eq_five_plus_fifteen_mul_of_modular` + `mem_candidates_of_form` で結論.
+
+(A), (B) のいずれも本セッションでは未実装. -/
 theorem traceNumber_mem_candidates :
     h.traceNumber = 5 ∨ h.traceNumber = 20 ∨
       h.traceNumber = 35 ∨ h.traceNumber = 50 := by
+  -- 次セッション以降の作業: (A) と (B) を埋める.
+  -- 実装後の組立は以下のとおり:
+  -- have h_rep : (11 * h.traceNumber : ℤ) = 25 + 15 * (a_7 - c_7) := <Phase 3 rep theory>
+  -- have h_mod : (a_7 - c_7) % 11 = 2 := <from spectral decomp>
+  -- have h_form := traceNumber.eq_five_plus_fifteen_mul_of_modular h_rep h_mod
+  -- have h_bound : h.traceNumber ≤ 59 := <4-cycle bound>
+  -- exact traceNumber.mem_candidates_of_form h_form h_bound
   sorry
 
 /-- **Phase 3 + Phase 4 統合**: `n = 5`.
