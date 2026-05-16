@@ -58,6 +58,32 @@ private theorem range_aeval_cyclotomic_le_ker_sub_one
     rw [h4]; simp
   simpa using this
 
+/-- (X - 1) と Φ_p (cyclotomic p) は ℚ[X] で互いに素. -/
+theorem isCoprime_X_sub_one_cyclotomic
+    (p : ℕ) [hp : Fact (Nat.Prime p)] :
+    IsCoprime ((Polynomial.X : ℚ[X]) - 1) (Polynomial.cyclotomic p ℚ) := by
+  -- Φ_p(1) = p ≠ 0 in ℚ, so X - 1 doesn't divide Φ_p, hence coprime.
+  have hΦp_one : (Polynomial.cyclotomic p ℚ).eval 1 = (p : ℚ) := by
+    rw [Polynomial.cyclotomic_prime ℚ p]
+    simp
+  set Q := Polynomial.cyclotomic p ℚ
+  have hp_ne : (p : ℚ) ≠ 0 := by
+    have hp_pos : 0 < p := hp.out.pos
+    exact_mod_cast hp_pos.ne'
+  let b : ℚ[X] := Polynomial.C (1 / (p : ℚ))
+  have hb_eval : (b * Q).eval 1 = 1 := by
+    simp [b, hΦp_one, hp_ne]
+  have hroot : ((1 : ℚ[X]) - b * Q).IsRoot 1 := by
+    show ((1 : ℚ[X]) - b * Q).eval 1 = 0
+    simp [hb_eval]
+  obtain ⟨a, ha⟩ := Polynomial.dvd_iff_isRoot.mpr hroot
+  refine ⟨a, b, ?_⟩
+  -- ha : 1 - b * Q = (X - C 1) * a
+  -- Goal: a * (X - 1) + b * Q = 1
+  have hC1 : (Polynomial.C 1 : ℚ[X]) = 1 := Polynomial.C_1
+  rw [hC1] at ha
+  linear_combination -ha
+
 /-- σ^p = 1 のとき, W = ker(σ - 1) ⊕ ker Φ_p(σ) (Bezout による直和分解).
 
 (X - 1) と Φ_p(X) は ℚ[X] で互いに素 (Bezout で 1 = a(X-1) + bΦ_p),
@@ -68,7 +94,8 @@ theorem isCompl_ker_sub_one_and_ker_aeval_cyclotomic
     IsCompl (LinearMap.ker (σ - 1)) (LinearMap.ker
       (Polynomial.aeval σ (Polynomial.cyclotomic p ℚ))) := by
   -- TODO (Stage 3 完了に必要): Bezout argument の Lean 化.
-  -- 1 = a (X-1) + b Φ_p ⟹ id = a(σ)(σ-1) + b(σ)Φ_p(σ).
+  -- 1 = a (X-1) + b Φ_p (isCoprime_X_sub_one_cyclotomic 経由) ⟹
+  -- id = a(σ)(σ-1) + b(σ)Φ_p(σ).
   -- intersection: σ v = v かつ Φ_p(σ) v = 0 ⟹ p v = 0 ⟹ v = 0.
   sorry
 
