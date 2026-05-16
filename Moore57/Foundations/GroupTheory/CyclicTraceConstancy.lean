@@ -364,6 +364,118 @@ theorem trace_idempotent_pow_constant_of_pow_eq_one
   rw [← hrewrite j, ← hrewrite k]
   exact h_eq
 
+/-- **次元・トレース公式 (σ^p = 1)**: ∃ c : ℕ で
+- dim W = dim ker(σ - 1) + (p-1) c
+- tr(σ^k) = dim ker(σ - 1) - c  (1 ≤ k < p)
+
+これは `trace_pow_eq_of_pow_eq_one` の中で抽出される γ を c として表に出した形.
+具体的な数値 (a := dim ker(σ-1), c := γ) は Phase 3 の T_1 = 25 + 15(a-c) 公式に直結. -/
+theorem exists_dim_trace_decomp_of_pow_eq_one
+    (p : ℕ) [hp : Fact (Nat.Prime p)]
+    (σ : W →ₗ[ℚ] W) (hpow : σ ^ p = 1) :
+    ∃ c : ℕ,
+      Module.finrank ℚ W =
+        Module.finrank ℚ (LinearMap.ker (σ - 1)) + (p - 1) * c ∧
+      ∀ {k : ℕ}, 1 ≤ k → k < p →
+        LinearMap.trace ℚ W (σ ^ k) =
+          (Module.finrank ℚ (LinearMap.ker (σ - 1)) : ℚ) - c := by
+  classical
+  set W₁ : Submodule ℚ W := LinearMap.ker (σ - 1) with hW₁_def
+  set W₂ : Submodule ℚ W :=
+    LinearMap.ker (Polynomial.aeval σ (Polynomial.cyclotomic p ℚ)) with hW₂_def
+  have hcompl : IsCompl W₁ W₂ := isCompl_ker_sub_one_and_ker_aeval_cyclotomic p σ hpow
+  have hMaps_W₁ : ∀ n : ℕ, Set.MapsTo (σ ^ n) W₁ W₁ := fun n => mapsTo_pow_ker_sub_one σ n
+  have hMaps_W₂ : ∀ n : ℕ, Set.MapsTo (σ ^ n) W₂ W₂ := fun n =>
+    mapsTo_pow_ker_aeval σ (Polynomial.cyclotomic p ℚ) n
+  -- Bool 添字で IsInternal
+  let N : Bool → Submodule ℚ W := fun b => bif b then W₂ else W₁
+  have hN_univ : (Set.univ : Set Bool) = {false, true} := by
+    ext b; cases b <;> simp
+  have hIsInternal : DirectSum.IsInternal N := by
+    rw [DirectSum.isInternal_submodule_iff_isCompl N
+        (i := false) (j := true) (by decide) hN_univ]
+    exact hcompl
+  have hMaps : ∀ n : ℕ, ∀ b : Bool, Set.MapsTo (σ ^ n) (N b) (N b) := by
+    intros n b
+    cases b
+    · exact hMaps_W₁ n
+    · exact hMaps_W₂ n
+  -- W₁ 上 σ^n v = v
+  have h_W₁_pow_val : ∀ n : ℕ, ∀ v : W₁, (σ ^ n) v.val = v.val := by
+    intros n v
+    have hv : (σ - 1) v.val = 0 := v.property
+    have hv' : σ v.val = v.val := by
+      rw [LinearMap.sub_apply, sub_eq_zero] at hv
+      simpa using hv
+    induction n with
+    | zero => simp
+    | succ m ih => rw [pow_succ, Module.End.mul_apply, hv', ih]
+  have h_W₁_restrict_id : ∀ n : ℕ,
+      (σ ^ n).restrict (hMaps_W₁ n) = (LinearMap.id : W₁ →ₗ[ℚ] W₁) := by
+    intro n
+    ext v
+    show ((σ ^ n).restrict (hMaps_W₁ n) v : W) = v.val
+    rw [LinearMap.restrict_apply]
+    exact h_W₁_pow_val n v
+  -- W₂ 上 aeval (σ|_{W₂}) Φ_p = 0
+  have h_aeval_zero_on_W₂ : ∀ {n : ℕ} (hn1 : 1 ≤ n) (hnp : n < p),
+      Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n)) (Polynomial.cyclotomic p ℚ) = 0 := by
+    intros n hn1 hnp
+    ext v
+    show ((Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n))
+          (Polynomial.cyclotomic p ℚ)) v : W) = 0
+    rw [Polynomial.cyclotomic_prime, map_sum]
+    simp only [Polynomial.aeval_X_pow]
+    rw [LinearMap.sum_apply, Submodule.coe_sum]
+    have hpow_apply : ∀ i ∈ Finset.range p,
+        (↑((((σ ^ n).restrict (hMaps_W₂ n)) ^ i) v) : W) = ((σ ^ n) ^ i) v.val := by
+      intros i _
+      rw [Module.End.pow_restrict, LinearMap.restrict_coe_apply]
+    rw [Finset.sum_congr rfl hpow_apply]
+    have h_unfolded : ∑ i ∈ Finset.range p, ((σ ^ n) ^ i) v.val =
+        Polynomial.aeval (σ ^ n) (Polynomial.cyclotomic p ℚ) v.val := by
+      rw [Polynomial.cyclotomic_prime, map_sum]
+      simp [Polynomial.aeval_X_pow]
+    rw [h_unfolded]
+    rw [aeval_cyclotomic_pow_eq_self_of_pow_eq_one σ hpow hn1 hnp]
+    exact v.property
+  -- σ on W₂: aeval (σ^1|W₂) Φ_p = 0
+  have hp_one_lt : 1 < p := hp.out.one_lt
+  have h_aeval_W₂_1 := h_aeval_zero_on_W₂ (n := 1) (by linarith) hp_one_lt
+  obtain ⟨c, hdim_W₂, _⟩ :=
+    trace_package_of_cyclotomic_prime_aeval_eq_zero p _ h_aeval_W₂_1
+  refine ⟨c, ?_, ?_⟩
+  · -- finrank W = finrank W₁ + (p-1) * c
+    have hsum : Module.finrank ℚ W₁ + Module.finrank ℚ W₂ = Module.finrank ℚ W := by
+      have := Submodule.finrank_sup_add_finrank_inf_eq W₁ W₂
+      rw [hcompl.codisjoint.eq_top, hcompl.disjoint.eq_bot] at this
+      simp at this
+      linarith
+    rw [← hsum, hdim_W₂]
+  · -- trace
+    intros k hk1 hkp
+    -- trace(σ^k) = trace(σ^k|W₁) + trace(σ^k|W₂)
+    have htrace_decomp :
+        LinearMap.trace ℚ W (σ ^ k) =
+          LinearMap.trace ℚ W₁ ((σ ^ k).restrict (hMaps_W₁ k)) +
+          LinearMap.trace ℚ W₂ ((σ ^ k).restrict (hMaps_W₂ k)) := by
+      rw [LinearMap.trace_eq_sum_trace_restrict hIsInternal (hMaps k)]
+      rw [Fintype.sum_bool]
+      exact add_comm _ _
+    rw [htrace_decomp]
+    -- trace(σ^k|W₁) = dim W₁
+    rw [h_W₁_restrict_id k, LinearMap.trace_id]
+    -- trace(σ^k|W₂): apply trace_package to σ^k|_W₂
+    have h_aeval_W₂_k := h_aeval_zero_on_W₂ hk1 hkp
+    obtain ⟨c_k, hdim_W₂_k, htrace_W₂_k⟩ :=
+      trace_package_of_cyclotomic_prime_aeval_eq_zero p _ h_aeval_W₂_k
+    have hp_minus_one_pos : 0 < p - 1 := Nat.sub_pos_of_lt hp.out.one_lt
+    have hc_eq : c_k = c := by
+      have h_dim_eq := hdim_W₂_k.symm.trans hdim_W₂
+      exact Nat.eq_of_mul_eq_mul_left hp_minus_one_pos h_dim_eq
+    rw [htrace_W₂_k, hc_eq]
+    ring
+
 end LinearMap
 
 end Moore57
