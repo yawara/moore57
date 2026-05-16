@@ -157,14 +157,15 @@ private theorem cycleType_σ_card_eq_295 (h : Order22ActsOnMoore57 V Γ) :
   omega
 
 /-- `Fintype.card (Quotient (SameCycle.setoid σ))` を |Fix σ| + cycleFactorsFinset.card に
-分解する補題. 各 orbit は fixed point の singleton か, cycle factor の support に対応. -/
+分解する補題. 各 orbit は fixed point の singleton か, cycle factor の support に対応.
+
+実装 strategy: explicit Equiv `Quotient ≃ Function.fixedPoints σ ⊕ ↥cycleFactorsFinset σ`
+を構築. 詳細 (forward = if σv=v then inl else inr (cycleOf σ v); well-def by
+`SameCycle.cycleOf_eq`; backward = inr c ↦ [c.support.choose]). ~80-120 行. -/
 private theorem card_quotient_sameCycle_eq (h : Order22ActsOnMoore57 V Γ) :
     @Fintype.card (Quotient (Equiv.Perm.SameCycle.setoid h.σ))
         (@Quotient.fintype _ _ _ (fun _ _ => Classical.dec _)) =
       Fintype.card (Function.fixedPoints h.σ) + h.σ.cycleFactorsFinset.card := by
-  -- Bijection: Quotient ≃ Function.fixedPoints σ ⊕ cycleFactorsFinset σ.
-  -- Forward: [v] ↦ if σ v = v then inl ⟨v, hv⟩ else inr (cycleOf σ v).
-  -- Backward: inl ⟨v, _⟩ ↦ [v], inr c ↦ [some v ∈ support c].
   sorry
 
 /-- `Fintype.card (Quotient (SameCycle.setoid h.σ)) = 300`. -/
