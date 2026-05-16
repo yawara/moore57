@@ -1224,6 +1224,18 @@ theorem aF11_lambda_seven_eq_159 (h : Order22ActsOnMoore57 V Γ) :
           Submodule (ZMod 11) (V → ZMod 11)) = 159 := by
   sorry
 
+/-- `a^{F_11}_7 + a^{F_11}_3 = 299` (= 300 - a^{F_11}_2 with a^{F_11}_2 = 1). -/
+theorem aF11_seven_plus_three_eq_299 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+          Submodule (ZMod 11) (V → ZMod 11)) = 299 := by
+  have h_sum := h.aF11_sum_eq_300
+  have h_2 := h.aF11_lambda_two_eq_one
+  omega
+
 /-- `a^{F_11}_3 := dim(V_3 ∩ ker T_F11) = 140`.
 
 `aF11_sum_eq_300` + `aF11_lambda_two_eq_one` + `aF11_lambda_seven_eq_159` から
