@@ -867,6 +867,125 @@ theorem T_F11_pow_ten_V2_eq_zero (h : Order22ActsOnMoore57 V Γ) :
   rw [LinearMap.mem_ker] at h_ker
   exact _pow_apply_eq_zero (T_F11 h) v h_ker 10 (by norm_num)
 
+/-- E と T_F11^10 が可換 (P_σ-commute + Commute.pow_left). -/
+private theorem _E_preserves_range_T_F11_pow_ten
+    (h : Order22ActsOnMoore57 V Γ)
+    (E : Matrix V V (ZMod 11))
+    (hE : E * permMatrixF11 h.σ = permMatrixF11 h.σ * E) :
+    ∀ v ∈ LinearMap.range ((T_F11 h)^10), E.toLin' v ∈ LinearMap.range ((T_F11 h)^10) := by
+  intro v hv
+  obtain ⟨u, hu⟩ := LinearMap.mem_range.mp hv
+  refine LinearMap.mem_range.mpr ⟨E.toLin' u, ?_⟩
+  rw [← hu]
+  have h_pow_mat : (T_F11 h)^10 = ((permMatrixF11 h.σ - 1)^10).toLin' := by
+    rw [T_F11_def, ← Matrix.toLin'_pow]
+  rw [h_pow_mat]
+  have hMM : (((permMatrixF11 h.σ - 1)^10) * E).toLin' u =
+             ((permMatrixF11 h.σ - 1)^10).toLin' (E.toLin' u) := by
+    rw [Matrix.toLin'_mul]; rfl
+  have hNN : (E * (permMatrixF11 h.σ - 1)^10).toLin' u =
+             E.toLin' (((permMatrixF11 h.σ - 1)^10).toLin' u) := by
+    rw [Matrix.toLin'_mul]; rfl
+  rw [← hMM, _matrix_pow_ten_commute_of_commute E h.σ hE, hNN]
+
+/-- `Im T_F11^10 ⊆ (V_7 ⊓ Im T_F11^10) ⊔ (V_3 ⊓ Im T_F11^10)`:
+V_2 ⊆ ker T_F11 ⟹ V_2 部分は 0. -/
+theorem range_T_F11_pow_ten_eq_sup_two (h : Order22ActsOnMoore57 V Γ) :
+    (V7Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10)) ⊔
+      (V3Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10)) =
+    LinearMap.range ((T_F11 h)^10) := by
+  classical
+  apply le_antisymm
+  · refine sup_le inf_le_right inf_le_right
+  · intro v hv
+    -- E_2 v ∈ V_2 ∩ Im T^10. We show E_2 v = 0 (since V_2 ⊆ ker T, T^10 V_2 = 0).
+    obtain ⟨u, hu⟩ := LinearMap.mem_range.mp hv
+    have h_E2v_in_V2 : (E2MatrixF11 Γ).toLin' v ∈ V2Submodule Γ :=
+      LinearMap.mem_range.mpr ⟨v, rfl⟩
+    have h_E2v_in_range : (E2MatrixF11 Γ).toLin' v ∈ LinearMap.range ((T_F11 h)^10) :=
+      _E_preserves_range_T_F11_pow_ten h (E2MatrixF11 Γ)
+        (E2_commute_permMatrixF11 h.isMoore h.σ) v hv
+    have h_E2v_zero : (E2MatrixF11 Γ).toLin' v = 0 := by
+      -- E_2 v ∈ V_2 ∩ Im T^10. But V_2 ⊓ Im T^10 ⊆ V_2 ⊓ ker T (via Im T^10 ⊆ ker T).
+      -- And V_2 ∩ ker T = V_2 (since V_2 ⊆ ker T). So E_2 v ∈ V_2.
+      -- Now E_2 v is also in Im T^10, so E_2 v = T^10 w for some w.
+      -- Apply T^10 to E_2 v: T^10 (E_2 v) = 0 (since V_2 ⊆ ker T).
+      -- But E_2 v ∈ Im T^10 means E_2 v = T^10 w. So E_2 v = T^10 w and T^10 (E_2 v) = 0.
+      -- This doesn't directly give E_2 v = 0 without more work.
+      -- Alternative direct approach: E_2 v = E_2 (T^10 u) = T^10 (E_2 u). E_2 u ∈ V_2, so T^10 (E_2 u) = 0.
+      rw [← hu]
+      have h_E2u_in_V2 : (E2MatrixF11 Γ).toLin' u ∈ V2Submodule Γ :=
+        LinearMap.mem_range.mpr ⟨u, rfl⟩
+      have h_T10_E2u_zero : ((T_F11 h)^10) ((E2MatrixF11 Γ).toLin' u) = 0 :=
+        T_F11_pow_ten_V2_eq_zero h _ h_E2u_in_V2
+      -- E_2 (T^10 u) = T^10 (E_2 u) via commute (matrix-level).
+      have h_pow_mat : (T_F11 h)^10 = ((permMatrixF11 h.σ - 1)^10).toLin' := by
+        rw [T_F11_def, ← Matrix.toLin'_pow]
+      have h_comm : (E2MatrixF11 Γ).toLin' (((T_F11 h)^10) u) =
+                    ((T_F11 h)^10) ((E2MatrixF11 Γ).toLin' u) := by
+        rw [h_pow_mat]
+        have hMM : (E2MatrixF11 Γ * (permMatrixF11 h.σ - 1)^10).toLin' u =
+                   (E2MatrixF11 Γ).toLin' (((permMatrixF11 h.σ - 1)^10).toLin' u) := by
+          rw [Matrix.toLin'_mul]; rfl
+        have hNN : (((permMatrixF11 h.σ - 1)^10) * E2MatrixF11 Γ).toLin' u =
+                   ((permMatrixF11 h.σ - 1)^10).toLin' ((E2MatrixF11 Γ).toLin' u) := by
+          rw [Matrix.toLin'_mul]; rfl
+        rw [← hMM, ← _matrix_pow_ten_commute_of_commute (E2MatrixF11 Γ) h.σ
+            (E2_commute_permMatrixF11 h.isMoore h.σ), hNN]
+      rw [h_comm, h_T10_E2u_zero]
+    rw [Submodule.mem_sup]
+    refine ⟨(E7MatrixF11 Γ).toLin' v, ?_, (E3MatrixF11 Γ).toLin' v, ?_, ?_⟩
+    · exact Submodule.mem_inf.mpr ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩,
+        _E_preserves_range_T_F11_pow_ten h (E7MatrixF11 Γ)
+          (E7_commute_permMatrixF11 h.isMoore h.σ h.σ_aut) v hv⟩
+    · exact Submodule.mem_inf.mpr ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩,
+        _E_preserves_range_T_F11_pow_ten h (E3MatrixF11 Γ)
+          (E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut) v hv⟩
+    · have h_sum := ELambda_sum_apply (Γ := Γ) v
+      rw [h_E2v_zero, zero_add] at h_sum
+      exact h_sum
+
+/-- (V_7 ⊓ Im T^10) ⊓ (V_3 ⊓ Im T^10) = ⊥. -/
+private theorem V7range_inter_V3range_eq_bot (h : Order22ActsOnMoore57 V Γ) :
+    (V7Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10)) ⊓
+      (V3Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_7, hv_3⟩ := hv
+  rw [Submodule.mem_inf] at hv_7 hv_3
+  have h_in : v ∈ V7Submodule Γ ⊓ V3Submodule Γ :=
+    Submodule.mem_inf.mpr ⟨hv_7.1, hv_3.1⟩
+  rw [V7_inter_V3_eq_bot h.isMoore] at h_in
+  exact h_in
+
+/-- **Σ k_λ = 295 (over ℕ via direct sum decomp of Im T^10 within V_7 ⊕ V_3)**. -/
+theorem k_seven_plus_k_three_eq_295 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10) :
+          Submodule (ZMod 11) (V → ZMod 11)) = 295 := by
+  classical
+  haveI : FiniteDimensional (ZMod 11) (V → ZMod 11) := by infer_instance
+  set K_7 := V7Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10) with hK7_def
+  set K_3 := V3Submodule Γ ⊓ LinearMap.range ((T_F11 h)^10) with hK3_def
+  have h_sup_eq : K_7 ⊔ K_3 = LinearMap.range ((T_F11 h)^10) :=
+    h.range_T_F11_pow_ten_eq_sup_two
+  have h_73_disj : K_7 ⊓ K_3 = ⊥ := h.V7range_inter_V3range_eq_bot
+  have h_finrank : Module.finrank (ZMod 11) ↥(K_7 ⊔ K_3) =
+      Module.finrank (ZMod 11) ↥K_7 + Module.finrank (ZMod 11) ↥K_3 := by
+    have h_eq := Submodule.finrank_sup_add_finrank_inf_eq K_7 K_3
+    rw [h_73_disj, finrank_bot] at h_eq
+    omega
+  rw [h_sup_eq] at h_finrank
+  have h_range_dim : Module.finrank (ZMod 11) ↥(LinearMap.range ((T_F11 h)^10)) = 295 :=
+    h.finrank_range_T_F11_pow_ten_eq_295
+  omega
+
 /-- **直和分解 dim 公式**:
 `a^{F_11}_2 + a^{F_11}_7 + a^{F_11}_3 = 300`. -/
 theorem aF11_sum_eq_300 (h : Order22ActsOnMoore57 V Γ) :
