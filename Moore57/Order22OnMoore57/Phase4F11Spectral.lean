@@ -125,6 +125,17 @@ theorem allOnes_mul_adjMatrixF11 (hΓ : IsMoore57 Γ) :
       SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular w]
   decide
 
+/-- F_11 上 `J · J = 5 J` (|V| = 3250 ≡ 5 mod 11). -/
+theorem allOnes_mul_allOnes (hΓ : IsMoore57 Γ) :
+    allOnesMatrixF11 V * allOnesMatrixF11 V = (5 : ZMod 11) • allOnesMatrixF11 V := by
+  classical
+  ext v w
+  unfold allOnesMatrixF11
+  rw [Matrix.mul_apply]
+  simp only [Matrix.of_apply, Matrix.smul_apply, smul_eq_mul, mul_one]
+  rw [Finset.sum_const, nsmul_eq_mul, mul_one, Finset.card_univ, hΓ.card]
+  decide
+
 /-- F_11 上 `(A - 2 I)(A - 7 I)(A - 3 I) = 0` (Q charpoly mod 11 factorization).
 
 戦略: `match_scalars` で matrix 方程式を A, 1, J の係数比較に還元し,
@@ -196,6 +207,63 @@ noncomputable def E3MatrixF11 (Γ : SimpleGraph V) [DecidableRel Γ.Adj] :
     Matrix V V (ZMod 11) :=
   (8 : ZMod 11) • ((adjMatrixF11 Γ - (2 : ZMod 11) • 1) *
                    (adjMatrixF11 Γ - (7 : ZMod 11) • 1))
+
+/-! ## E_λ algebraic identities -/
+
+/-- E_2 + E_7 + E_3 = I (Lagrange completeness over F_11).
+
+多項式 `9 (X - 7)(X - 3) + 5 (X - 2)(X - 3) + 8 (X - 2)(X - 7) = 1` の
+F_11 [X] 上の等式が, X = A の matrix algebra 評価で恒等的に成り立つ.
+hsq 不要 (純粋多項式恒等式). -/
+theorem ELambda_sum_eq_one :
+    E2MatrixF11 Γ + E7MatrixF11 Γ + E3MatrixF11 Γ = 1 := by
+  classical
+  unfold E2MatrixF11 E7MatrixF11 E3MatrixF11
+  set A := adjMatrixF11 Γ
+  simp only [sub_mul, mul_sub, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one,
+             smul_sub]
+  match_scalars <;> decide
+
+/-- `A = 2 E_2 + 7 E_7 + 3 E_3` (eigenvalue decomposition over F_11).
+
+多項式 `2·9(X-7)(X-3) + 7·5(X-2)(X-3) + 3·8(X-2)(X-7) = X` の F_11 [X] 上恒等式.
+hsq 不要. -/
+theorem ELambda_decomp_A :
+    (2 : ZMod 11) • E2MatrixF11 Γ + (7 : ZMod 11) • E7MatrixF11 Γ
+      + (3 : ZMod 11) • E3MatrixF11 Γ = adjMatrixF11 Γ := by
+  classical
+  unfold E2MatrixF11 E7MatrixF11 E3MatrixF11
+  set A := adjMatrixF11 Γ
+  simp only [sub_mul, mul_sub, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one,
+             smul_sub]
+  match_scalars <;> decide
+
+/-- F_11 上 `E_2 = 9 J` (V_2 は constant vector subspace = span J の 1 次元).
+
+実は (A - 7)(A - 3) = A^2 - 10 A + 21 を hsq で展開すると 22 - 11 A + J = J (mod 11).
+よって E_2 = 9 (A - 7)(A - 3) = 9 J. -/
+theorem E2_eq_nine_smul_allOnes (hΓ : IsMoore57 Γ) :
+    E2MatrixF11 Γ = (9 : ZMod 11) • allOnesMatrixF11 V := by
+  classical
+  unfold E2MatrixF11
+  set A := adjMatrixF11 Γ
+  set J := allOnesMatrixF11 V
+  have hsq : A * A = 1 - A + J := by
+    rw [show A * A = A ^ 2 from (sq A).symm, adjMatrixF11_sq_eq hΓ]
+  simp only [sub_mul, mul_sub, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one,
+             smul_sub]
+  rw [hsq]
+  match_scalars <;> decide
+
+/-- F_11 上 E_2 が idempotent: `E_2 · E_2 = E_2`.
+
+E_2 = 9 J + J · J = 5 J ⟹ E_2 · E_2 = 81 · J · J = 81 · 5 J = 405 J = 9 J = E_2 (mod 11). -/
+theorem E2_idempotent (hΓ : IsMoore57 Γ) :
+    E2MatrixF11 Γ * E2MatrixF11 Γ = E2MatrixF11 Γ := by
+  classical
+  rw [E2_eq_nine_smul_allOnes hΓ, smul_mul_assoc, mul_smul_comm,
+      allOnes_mul_allOnes hΓ, smul_smul, smul_smul,
+      show ((9 : ZMod 11) * 9 * 5) = 9 from by decide]
 
 /-! ## 上界証明の主結果 (focused sorry) -/
 
