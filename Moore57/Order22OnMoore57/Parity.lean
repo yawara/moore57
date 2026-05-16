@@ -203,11 +203,12 @@ theorem dihedral_τ_preserves_S (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) (x : V)
   -- 今 hτadj : Γ.Adj (τ x) (σ⁻¹ (τ x)). σ ↔ σ⁻¹ で書き換え.
   exact (h.adj_σ_iff_adj_σ_inv (h.τ x)).mpr hτadj
 
-/-- **Phase 5.2 主結論 (involution parity への還元)**: dihedral case で n は偶数.
+/-- **Phase 5.2 主結論**: dihedral case で n は偶数.
 
 |S| = 11n. τ は S を τ-不変 (`dihedral_τ_preserves_S`) で involution.
 `Equiv.Perm.card_compl_support_modEq` (p=2) で |S| ≡ |Fix(τ|S)| (mod 2).
-残務 (sorry): |Fix(τ) ∩ S| は偶数 (自然言語証明 §5.2 の `π_d` / `ρ_d` 解析). -/
+|Fix(τ|S)| 偶数性は外部入力 `fix_τ_adj_σ_card_even` で供給.
+(自然言語証明 §5.2 では F_x ファイバー幾何から濃度 = 2.) -/
 theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
     Even h.traceNumber := by
   classical
