@@ -178,6 +178,76 @@ private theorem card_quotient_sameCycle_eq_300 (h : Order22ActsOnMoore57 V Γ) :
     simp [Multiset.card_map]
   rw [h_eq, cycleType_σ_card_eq_295 h]
 
+/-- `permMatrixF11 σ.mulVec f = f ∘ σ.symm`. -/
+private theorem permMatrixF11_mulVec_eq (σ : Equiv.Perm V) (f : V → ZMod 11) :
+    (permMatrixF11 σ).mulVec f = f ∘ σ.symm := by
+  -- permMatrixF11 σ = σ.symm.toPEquiv.toMatrix = (σ⁻¹).permMatrix (ZMod 11)
+  show (σ.symm.toPEquiv.toMatrix : Matrix V V (ZMod 11)).mulVec f = f ∘ σ.symm
+  have h_eq : (σ.symm.toPEquiv.toMatrix : Matrix V V (ZMod 11)) =
+      σ⁻¹.permMatrix (ZMod 11) := rfl
+  rw [h_eq, Matrix.permMatrix_mulVec]
+  rfl
+
+/-- T_F11 のカーネル条件: `f ∈ ker T_F11 ↔ ∀ v, f (σ v) = f v`. -/
+private theorem mem_ker_T_F11_iff (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11) :
+    f ∈ LinearMap.ker (T_F11 h) ↔ ∀ v, f (h.σ v) = f v := by
+  rw [LinearMap.mem_ker, T_F11_def]
+  rw [Matrix.toLin'_apply, Matrix.sub_mulVec, Matrix.one_mulVec,
+      permMatrixF11_mulVec_eq]
+  -- Goal: f ∘ σ.symm - f = 0 ↔ ∀ v, f (σ v) = f v
+  rw [sub_eq_zero, funext_iff]
+  constructor
+  · intro hσ v
+    have := hσ (h.σ v)
+    simp only [Function.comp_apply, Equiv.symm_apply_apply] at this
+    exact this.symm
+  · intro hσ v
+    show (f ∘ h.σ.symm) v = f v
+    simp only [Function.comp_apply]
+    have := hσ (h.σ.symm v)
+    rw [Equiv.apply_symm_apply] at this
+    exact this.symm
+
+/-- σ-不変関数は σ^i (i : ℤ) でも不変. -/
+private theorem sigma_invariant_zpow (h : Order22ActsOnMoore57 V Γ)
+    {f : V → ZMod 11} (hσ : ∀ v, f (h.σ v) = f v) :
+    ∀ (i : ℤ) (v : V), f ((h.σ^i) v) = f v := by
+  have hf_inv : ∀ v, f (h.σ⁻¹ v) = f v := fun v => by
+    have h_app : h.σ (h.σ⁻¹ v) = v := by
+      rw [← Equiv.Perm.mul_apply, mul_inv_cancel]; rfl
+    have := hσ (h.σ⁻¹ v)
+    rw [h_app] at this
+    exact this.symm
+  have hf_pow_nat : ∀ (n : ℕ) (v : V), f ((h.σ^n) v) = f v := by
+    intro n
+    induction n with
+    | zero => intro v; rfl
+    | succ k ih =>
+      intro v
+      rw [pow_succ]
+      simp only [Equiv.Perm.mul_apply]
+      rw [ih (h.σ v)]
+      exact hσ v
+  have hf_inv_pow_nat : ∀ (n : ℕ) (v : V), f ((h.σ⁻¹^n) v) = f v := by
+    intro n
+    induction n with
+    | zero => intro v; rfl
+    | succ k ih =>
+      intro v
+      rw [pow_succ]
+      simp only [Equiv.Perm.mul_apply]
+      rw [ih (h.σ⁻¹ v)]
+      exact hf_inv v
+  intro i v
+  cases i with
+  | ofNat n =>
+    show f ((h.σ ^ (n : ℤ)) v) = f v
+    rw [zpow_natCast]; exact hf_pow_nat n v
+  | negSucc n =>
+    show f ((h.σ ^ (Int.negSucc n)) v) = f v
+    rw [zpow_negSucc, ← inv_pow]
+    exact hf_inv_pow_nat (n+1) v
+
 /-- **Step 3.2**: `dim_F_11 ker T = #σ-orbits = 300`.
 
 Moore57 の σ (order 11, 5 fixed points, 295 free orbits) に対し orbit 数 300.
@@ -197,9 +267,40 @@ theorem finrank_ker_T_F11_eq_300 (h : Order22ActsOnMoore57 V Γ) :
   have h_pb_inj : Function.Injective pb :=
     LinearMap.funLeft_injective_of_surjective (ZMod 11) (ZMod 11)
       (Quotient.mk s) Quotient.mk_surjective
-  -- TODO: range pb = ker T_F11 (matrix calculation)
-  -- TODO: LinearEquiv + finrank_pi + card_quotient_sameCycle_eq_300
-  sorry
+  -- range pb = ker T_F11
+  have h_range : LinearMap.range pb = LinearMap.ker (T_F11 h) := by
+    ext f
+    rw [LinearMap.mem_range, mem_ker_T_F11_iff]
+    constructor
+    · rintro ⟨g, rfl⟩
+      -- pb g = g ∘ Quotient.mk. Show σ-invariant.
+      intro v
+      show g (Quotient.mk s (h.σ v)) = g (Quotient.mk s v)
+      congr 1
+      apply Quotient.sound
+      -- s.r (h.σ v) v ↔ ∃ i : ℤ, (h.σ^i) (h.σ v) = v
+      refine ⟨(-1 : ℤ), ?_⟩
+      simp [zpow_neg, zpow_one]
+    · intro hσ
+      -- σ-invariant ⟹ descends to Quotient.lift
+      refine ⟨Quotient.lift f ?_, ?_⟩
+      · -- well-definedness: a ~ b → f a = f b
+        intro a b hab
+        obtain ⟨i, hi⟩ := hab
+        rw [← hi]
+        exact (sigma_invariant_zpow h hσ i a).symm
+      · ext v; rfl
+  -- LinearEquiv: (Quotient s → ZMod 11) ≃ₗ LinearMap.range pb
+  let e : (Quotient s → ZMod 11) ≃ₗ[ZMod 11] LinearMap.range pb :=
+    LinearEquiv.ofInjective pb h_pb_inj
+  -- finrank chain
+  have h_finrank : Module.finrank (ZMod 11) (LinearMap.ker (T_F11 h)) =
+      Module.finrank (ZMod 11) (Quotient s → ZMod 11) := by
+    rw [← h_range]
+    exact (LinearEquiv.finrank_eq e).symm
+  rw [h_finrank, Module.finrank_pi]
+  -- Fintype.card (Quotient s) = 300 (両者 Fintype instance が異なる場合 convert で吸収)
+  convert card_quotient_sameCycle_eq_300 h using 2
 
 /-! ## Step 3.3: dim range((σ - I)^10) = 295 (= #free orbits)
 
