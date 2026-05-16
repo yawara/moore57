@@ -476,6 +476,51 @@ theorem exists_dim_trace_decomp_of_pow_eq_one
     rw [htrace_W₂_k, hc_eq]
     ring
 
+/-- **応用 (Phase 3 直結形)**: 冪零でないべき等射影 E が σ_lin と可換,
+かつ σ_lin^p = 1 (p 素数) のとき, ∃ a c : ℕ で
+- dim (range E) = a + (p - 1) c
+- tr(E ∘ σ_lin^k) = a - c  (1 ≤ k < p)
+
+`exists_dim_trace_decomp_of_pow_eq_one` を σ_lin の range E への制限に適用し,
+`trace_restrict_range_eq_trace_comp_of_isIdempotentElem` で E ∘ σ_lin^k 形に bridge.
+Phase 3 では E = E_57, E_7, E_{-8} に適用し, a_λ, c_λ を抽出する. -/
+theorem exists_dim_trace_decomp_of_idempotent_pow_eq_one
+    (p : ℕ) [hp : Fact (Nat.Prime p)]
+    (σ_lin : W →ₗ[ℚ] W) (hpow : σ_lin ^ p = 1)
+    (E : W →ₗ[ℚ] W) (hE_idem : IsIdempotentElem E) (hE_comm : Commute E σ_lin) :
+    ∃ a c : ℕ,
+      Module.finrank ℚ (LinearMap.range E) = a + (p - 1) * c ∧
+      ∀ {k : ℕ}, 1 ≤ k → k < p →
+        LinearMap.trace ℚ W (E ∘ₗ σ_lin ^ k) = (a : ℚ) - c := by
+  -- σ_lin の range E への制限
+  have hcomm_parts := (LinearMap.IsIdempotentElem.commute_iff hE_idem (T := σ_lin)).mp hE_comm
+  have hmaps : Set.MapsTo σ_lin (LinearMap.range E) (LinearMap.range E) :=
+    (Module.End.mem_invtSubmodule_iff_mapsTo (f := σ_lin)).mp hcomm_parts.1
+  let σ_r : LinearMap.range E →ₗ[ℚ] LinearMap.range E := σ_lin.restrict hmaps
+  -- σ_r^p = 1
+  have hσr_pow : σ_r ^ p = 1 := by
+    show (σ_lin.restrict hmaps) ^ p = 1
+    rw [Module.End.pow_restrict]
+    ext v
+    show ((σ_lin ^ p).restrict _ v : W) = (1 : LinearMap.range E →ₗ[ℚ] LinearMap.range E) v
+    rw [LinearMap.restrict_coe_apply, hpow]
+    rfl
+  -- Apply exists_dim_trace_decomp_of_pow_eq_one to σ_r
+  obtain ⟨c, hdim, htrace⟩ := exists_dim_trace_decomp_of_pow_eq_one p σ_r hσr_pow
+  set a : ℕ := Module.finrank ℚ (LinearMap.ker (σ_r - 1))
+  refine ⟨a, c, hdim, ?_⟩
+  intros k hk1 hkp
+  -- bridge trace(σ_r^k) ↔ trace(E ∘ σ_lin^k)
+  have hE_comm_pow : Commute E (σ_lin ^ k) := hE_comm.pow_right k
+  have hbridge : LinearMap.trace ℚ (LinearMap.range E) (σ_r ^ k) =
+      LinearMap.trace ℚ W (E ∘ₗ σ_lin ^ k) := by
+    show LinearMap.trace ℚ (LinearMap.range E) ((σ_lin.restrict hmaps) ^ k) = _
+    rw [Module.End.pow_restrict]
+    exact Moore57.LinearMap.trace_restrict_range_eq_trace_comp_of_isIdempotentElem
+      E (σ_lin ^ k) hE_idem hE_comm_pow
+  rw [← hbridge]
+  exact htrace hk1 hkp
+
 end LinearMap
 
 end Moore57
