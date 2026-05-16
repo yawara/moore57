@@ -807,6 +807,66 @@ private theorem V2kt_sup_V7kt_inter_V3kt_eq_bot (h : Order22ActsOnMoore57 V Γ) 
   rw [Submodule.mem_bot]
   exact h_E3v_eq_v.symm.trans h_E3v_eq_zero
 
+/-- 行列レベル: E が P_σ と可換なら, (P_σ - 1)^10 と E も可換. -/
+private theorem _matrix_pow_ten_commute_of_commute
+    (E : Matrix V V (ZMod 11)) (σ : Equiv.Perm V)
+    (hE : E * permMatrixF11 σ = permMatrixF11 σ * E) :
+    (permMatrixF11 σ - 1)^10 * E = E * (permMatrixF11 σ - 1)^10 := by
+  have h_mat_comm : Commute (permMatrixF11 σ - 1) E := by
+    show (permMatrixF11 σ - 1) * E = E * (permMatrixF11 σ - 1)
+    rw [sub_mul, one_mul, mul_sub, mul_one, hE]
+  exact (h_mat_comm.pow_left 10).eq
+
+/-- V_λ (= range E) は T_F11^10 で安定. -/
+theorem T_F11_pow_ten_preserves_V_lambda
+    (h : Order22ActsOnMoore57 V Γ)
+    (E : Matrix V V (ZMod 11))
+    (hE : E * permMatrixF11 h.σ = permMatrixF11 h.σ * E) :
+    ∀ v ∈ E.toLin'.range, ((T_F11 h)^10) v ∈ E.toLin'.range := by
+  intro v hv
+  obtain ⟨u, hu⟩ := LinearMap.mem_range.mp hv
+  rw [LinearMap.mem_range]
+  refine ⟨((T_F11 h)^10) u, ?_⟩
+  rw [← hu]
+  -- Goal: E.toLin' (T^10 u) = T^10 (E.toLin' u)
+  have h_pow_mat : (T_F11 h)^10 = ((permMatrixF11 h.σ - 1)^10).toLin' := by
+    rw [T_F11_def, ← Matrix.toLin'_pow]
+  rw [h_pow_mat]
+  -- Goal: E.toLin' (((P-1)^10).toLin' u) = ((P-1)^10).toLin' (E.toLin' u)
+  have hMM : (E * (permMatrixF11 h.σ - 1)^10).toLin' u =
+             E.toLin' (((permMatrixF11 h.σ - 1)^10).toLin' u) := by
+    rw [Matrix.toLin'_mul]; rfl
+  have hNN : ((permMatrixF11 h.σ - 1)^10 * E).toLin' u =
+             ((permMatrixF11 h.σ - 1)^10).toLin' (E.toLin' u) := by
+    rw [Matrix.toLin'_mul]; rfl
+  rw [← hMM, ← hNN, _matrix_pow_ten_commute_of_commute E h.σ hE]
+
+/-- 一般形 helper: T v = 0 ⟹ (T^n) v = 0 for n ≥ 1. -/
+private theorem _pow_apply_eq_zero
+    {M : Type*} [AddCommGroup M] [Module (ZMod 11) M]
+    (T : M →ₗ[ZMod 11] M) (v : M) (h : T v = 0) :
+    ∀ n : ℕ, n ≥ 1 → (T^n) v = 0 := by
+  intro n hn
+  induction n with
+  | zero => omega
+  | succ k ih =>
+    by_cases hk : k = 0
+    · subst hk; rw [pow_one]; exact h
+    · have hk_pos : k ≥ 1 := Nat.one_le_iff_ne_zero.mpr hk
+      have h_ih := ih hk_pos
+      rw [pow_succ]
+      show (T^k * T) v = 0
+      change (T^k) (T v) = 0
+      rw [h, map_zero]
+
+/-- V_2 ⊆ ker T_F11 ⟹ T_F11^10 V_2 = 0. -/
+theorem T_F11_pow_ten_V2_eq_zero (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ V2Submodule Γ, ((T_F11 h)^10) v = 0 := by
+  intro v hv
+  have h_ker : v ∈ LinearMap.ker (T_F11 h) := V2Submodule_le_ker_T_F11 h hv
+  rw [LinearMap.mem_ker] at h_ker
+  exact _pow_apply_eq_zero (T_F11 h) v h_ker 10 (by norm_num)
+
 /-- **直和分解 dim 公式**:
 `a^{F_11}_2 + a^{F_11}_7 + a^{F_11}_3 = 300`. -/
 theorem aF11_sum_eq_300 (h : Order22ActsOnMoore57 V Γ) :
