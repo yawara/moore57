@@ -417,6 +417,55 @@ theorem E3_mul_E7_eq_zero (hΓ : IsMoore57 Γ) :
   rw [hsq, hAJ, hJA, hJJ]
   match_scalars <;> decide
 
+/-! ## σ-equivariance of E_λ -/
+
+/-- F_11 上 `P_σ · J = J`: 置換行列が全 1 行列を保つ. -/
+theorem permMatrixF11_mul_allOnes (σ : Equiv.Perm V) :
+    permMatrixF11 σ * allOnesMatrixF11 V = allOnesMatrixF11 V := by
+  classical
+  ext v w
+  unfold allOnesMatrixF11
+  rw [permMatrixF11_mul_apply]
+  simp [Matrix.of_apply]
+
+/-- F_11 上 `J · P_σ = J` (双対形). -/
+theorem allOnes_mul_permMatrixF11 (σ : Equiv.Perm V) :
+    allOnesMatrixF11 V * permMatrixF11 σ = allOnesMatrixF11 V := by
+  classical
+  ext v w
+  unfold allOnesMatrixF11
+  rw [mul_permMatrixF11_apply]
+  simp [Matrix.of_apply]
+
+/-- F_11 上 `E_2` が σ と可換. E_2 = 9 J, J commutes with P_σ. -/
+theorem E2_commute_permMatrixF11 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) :
+    E2MatrixF11 Γ * permMatrixF11 σ = permMatrixF11 σ * E2MatrixF11 Γ := by
+  classical
+  rw [E2_eq_nine_smul_allOnes hΓ, smul_mul_assoc, mul_smul_comm,
+      allOnes_mul_permMatrixF11, permMatrixF11_mul_allOnes]
+
+/-- F_11 上 `E_7` が σ と可換. closed form 経由. -/
+theorem E7_commute_permMatrixF11 (hΓ : IsMoore57 Γ)
+    (σ : Equiv.Perm V) (hσ : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    E7MatrixF11 Γ * permMatrixF11 σ = permMatrixF11 σ * E7MatrixF11 Γ := by
+  classical
+  rw [E7_eq_closed hΓ]
+  rw [add_mul, add_mul, mul_add, mul_add, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      mul_smul_comm, mul_smul_comm, mul_smul_comm,
+      adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11 Γ σ hσ,
+      one_mul, mul_one, permMatrixF11_mul_allOnes, allOnes_mul_permMatrixF11]
+
+/-- F_11 上 `E_3` が σ と可換. -/
+theorem E3_commute_permMatrixF11 (hΓ : IsMoore57 Γ)
+    (σ : Equiv.Perm V) (hσ : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    E3MatrixF11 Γ * permMatrixF11 σ = permMatrixF11 σ * E3MatrixF11 Γ := by
+  classical
+  rw [E3_eq_closed hΓ]
+  rw [add_mul, add_mul, mul_add, mul_add, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      mul_smul_comm, mul_smul_comm, mul_smul_comm,
+      adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11 Γ σ hσ,
+      one_mul, mul_one, permMatrixF11_mul_allOnes, allOnes_mul_permMatrixF11]
+
 /-! ## 上界証明の主結果 (focused sorry) -/
 
 /-- **Phase D 主結果 (sorry, F_11 spectral)**: `a_7 ≤ 160`. -/
