@@ -1003,6 +1003,29 @@ private theorem V7range_inter_V3range_eq_bot (h : Order22ActsOnMoore57 V Γ) :
   rw [V7_inter_V3_eq_bot h.isMoore] at h_in
   exact h_in
 
+/-- `Im T_F11^10 ⊆ ker T_F11`: T^11 = 0 から T (T^10 v) = T^11 v = 0. -/
+theorem range_T_F11_pow_ten_le_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.range ((T_F11 h)^10) ≤ LinearMap.ker (T_F11 h) := by
+  intro v hv
+  obtain ⟨u, hu⟩ := LinearMap.mem_range.mp hv
+  rw [LinearMap.mem_ker, ← hu]
+  show (T_F11 h) (((T_F11 h)^10) u) = 0
+  -- T (T^10 u) = T^11 u via pow_succ', and T^11 = 0.
+  have h_split : (T_F11 h) (((T_F11 h)^10) u) = ((T_F11 h)^11) u := by
+    show ((T_F11 h) * ((T_F11 h)^10)) u = ((T_F11 h)^11) u
+    rw [show ((T_F11 h) * ((T_F11 h)^10)) = ((T_F11 h)^11) from
+        (pow_succ' (T_F11 h) 10).symm]
+  rw [h_split]
+  show ((T_F11 h)^11) u = 0
+  have h11 := h.T_F11_pow_eleven_eq_zero
+  rw [h11]; rfl
+
+/-- `V_λ ⊓ Im T^10 ⊆ V_λ ⊓ ker T` (Im T^10 ⊆ ker T から). -/
+theorem V_lambda_inter_range_le_V_lambda_inter_ker
+    (h : Order22ActsOnMoore57 V Γ) (W : Submodule (ZMod 11) (V → ZMod 11)) :
+    W ⊓ LinearMap.range ((T_F11 h)^10) ≤ W ⊓ LinearMap.ker (T_F11 h) := by
+  exact inf_le_inf le_rfl h.range_T_F11_pow_ten_le_ker_T_F11
+
 /-- **Σ k_λ = 295 (over ℕ via direct sum decomp of Im T^10 within V_7 ⊕ V_3)**. -/
 theorem k_seven_plus_k_three_eq_295 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11)
