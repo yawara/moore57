@@ -131,7 +131,7 @@ private theorem moore57_permMatrix_mul_local (σ τ : Equiv.Perm V) :
   rw [mul_inv_rev, Matrix.permMatrix_mul]
 
 /-- σ permutation matrix の冪と permMatrix の冪は等しい (Moore57 convention). -/
-private theorem permMatrix_pow_eq (σ : Equiv.Perm V) (n : ℕ) :
+theorem permMatrix_pow_eq (σ : Equiv.Perm V) (n : ℕ) :
     (permMatrix σ : Matrix V V ℚ) ^ n = permMatrix (σ ^ n) := by
   induction n with
   | zero =>
