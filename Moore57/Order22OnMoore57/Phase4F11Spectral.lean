@@ -564,6 +564,37 @@ theorem V3Submodule_invariant_permMatrixF11 (h : Order22ActsOnMoore57 V Γ) :
         rw [Matrix.toLin'_mul]; rfl]
   rw [E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut]
 
+/-! ### A · E_λ = λ · E_λ: V_λ 上 A は scalar λ で作用
+
+A = 2 E_2 + 7 E_7 + 3 E_3 + E_λ orthogonality + idempotency より導出. -/
+
+/-- A · E_2 = 2 · E_2 (V_2 上 A は scalar 2). -/
+theorem adjMatrixF11_mul_E2_eq_two_smul_E2 (hΓ : IsMoore57 Γ) :
+    adjMatrixF11 Γ * E2MatrixF11 Γ = (2 : ZMod 11) • E2MatrixF11 Γ := by
+  classical
+  have h_decomp := ELambda_decomp_A (Γ := Γ)
+  rw [← h_decomp, add_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      E2_idempotent hΓ, E7_mul_E2_eq_zero hΓ, E3_mul_E2_eq_zero hΓ,
+      smul_zero, smul_zero, add_zero, add_zero]
+
+/-- A · E_7 = 7 · E_7 (V_7 上 A は scalar 7). -/
+theorem adjMatrixF11_mul_E7_eq_seven_smul_E7 (hΓ : IsMoore57 Γ) :
+    adjMatrixF11 Γ * E7MatrixF11 Γ = (7 : ZMod 11) • E7MatrixF11 Γ := by
+  classical
+  have h_decomp := ELambda_decomp_A (Γ := Γ)
+  rw [← h_decomp, add_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      E2_mul_E7_eq_zero hΓ, E7_idempotent hΓ, E3_mul_E7_eq_zero hΓ,
+      smul_zero, smul_zero, zero_add, add_zero]
+
+/-- A · E_3 = 3 · E_3 (V_3 上 A は scalar 3). -/
+theorem adjMatrixF11_mul_E3_eq_three_smul_E3 (hΓ : IsMoore57 Γ) :
+    adjMatrixF11 Γ * E3MatrixF11 Γ = (3 : ZMod 11) • E3MatrixF11 Γ := by
+  classical
+  have h_decomp := ELambda_decomp_A (Γ := Γ)
+  rw [← h_decomp, add_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      E2_mul_E3_eq_zero hΓ, E7_mul_E3_eq_zero hΓ, E3_idempotent hΓ,
+      smul_zero, smul_zero, zero_add, zero_add]
+
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
 各 V_λ は σ-不変な F_11 [C_11] 部分加群.
