@@ -267,7 +267,7 @@ theorem traceNumber_le_59 :
   -- 55 * traceNumber ≤ 3250 ⟹ traceNumber ≤ 59
   omega
 
-/-! ## (B-5) Phase 3 主結論 + Phase 4 統合 -/
+/-! ## (B-5) Phase 3 主結論 -/
 
 /-- **Phase 3 主結論 (sorry-free)**: `traceNumber ∈ {5, 20, 35, 50}`. -/
 theorem traceNumber_mem_candidates :
@@ -277,17 +277,8 @@ theorem traceNumber_mem_candidates :
   have h_bound := h.traceNumber_le_59
   exact Moore57.Order22ActsOnMoore57.traceNumber.mem_candidates_of_form h_form h_bound
 
-/-- **Phase 3 + Phase 4 統合**: `n = 5`.
-
-Phase 4 で `n % 11 = 5`, Phase 3 で `n ∈ {5, 20, 35, 50}`.
-5 のみが mod 11 で 5 (∵ 20 % 11 = 9, 35 % 11 = 2, 50 % 11 = 6). -/
-theorem traceNumber_eq_five : h.traceNumber = 5 := by
-  have h_mod : h.traceNumber % 11 = 5 := h.traceNumber_mod_eleven_eq_five
-  rcases h.traceNumber_mem_candidates with h5 | h20 | h35 | h50
-  · exact h5
-  · exfalso; rw [h20] at h_mod; omega
-  · exfalso; rw [h35] at h_mod; omega
-  · exfalso; rw [h50] at h_mod; omega
+-- Phase 3 + Phase 4 統合 (traceNumber_eq_five) は `Phase4RepTheory.lean` に
+-- 移動 (Phase 4 への依存があるため).
 
 end Order22ActsOnMoore57
 

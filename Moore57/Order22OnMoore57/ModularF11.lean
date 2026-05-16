@@ -62,27 +62,8 @@ theorem traceNumber_mod_eleven_eq_five_of_ten_mul_modular
     n % 11 = 5 := by
   omega
 
-/-- **Phase 4 主結論** (sorry, 縮減版).
-
-`traceNumber_mod_eleven_eq_five` の証明は以下に分解される:
-- (C) `10 * traceNumber % 11 = 6` (F_11 representation:
-  σ-fixed subspace 上 A の trace を 2 通り計算; ~500 行).
-- 上記 + `traceNumber_mod_eleven_eq_five_of_ten_mul_modular` で結論.
-
-(C) の証明は本セッションでは未実装. F_11[C_11] modular rep theory が必要.
-
-代替経路: a_7 ≡ 5 (mod 11) を示す (Phase 3 の a_7 ∈ {159, 169, 179, 189} と
-合わせて 159 一意).
-- a_7 ≤ a^{F_11}_7 = 159 (kernel monotonicity mod p) + Phase 3 candidates.
-- a^{F_11}_7 = 159 自体は F_11 Krull-Schmidt 必要.
-
-いずれにせよ F_11[C_11] modular rep theory のインフラ整備が必要. -/
-theorem traceNumber_mod_eleven_eq_five : h.traceNumber % 11 = 5 := by
-  -- 次セッション以降の作業: F_11 modular rep theory.
-  -- 実装後の組立:
-  -- have h_ten : 10 * h.traceNumber % 11 = 6 := <Phase 4 F_11 rep theory>
-  -- exact traceNumber_mod_eleven_eq_five_of_ten_mul_modular h_ten
-  sorry
+-- **Phase 4 主結論** `traceNumber_mod_eleven_eq_five` は `Phase4RepTheory.lean` に
+-- 移動 (Phase 3 (B) の `sum_slopesAdj` 等を使うため).
 
 end Order22ActsOnMoore57
 
