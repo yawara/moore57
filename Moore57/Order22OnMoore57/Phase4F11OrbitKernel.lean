@@ -1,5 +1,6 @@
 import Moore57.Order22OnMoore57.Phase4F11Module
 import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
+import Moore57.Foundations.LinearAlgebra.GeomSeriesCharP
 import Mathlib.LinearAlgebra.Matrix.CharP
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.GroupTheory.Perm.Cycle.Type
@@ -409,14 +410,327 @@ theorem finrank_ker_T_F11_eq_300 (h : Order22ActsOnMoore57 V Γ) :
 
 /-! ## Step 3.3: dim range((σ - I)^10) = 295 (= #free orbits)
 
-(σ - I)^10 = Σ_{k=0}^{10} σ^k (F_11 binomial; C(10, k) ≡ ±1 mod 11 + 符号統合).
-この operator は each free orbit の orbit-sum を返し, fixed orbit には 0.
-よって range = span of free orbit-sum, dim = #free orbits = 295. -/
+(σ - I)^10 = Σ_{k=0}^{10} σ^k (F_11 binomial; `sub_one_pow_prime_sub_one_eq_geom_sum`).
+この operator は each free orbit の orbit-sum を返し, fixed orbit には 0. -/
 
-/-- **Step 3.3 (sorry)**: `dim_F_11 range(T^10) = 295`. -/
+/-- F_11 binomial: `(P - 1)^10 = Σ_k P^k` over Matrix V V (ZMod 11). -/
+private theorem permMatrixF11_sub_one_pow_ten (h : Order22ActsOnMoore57 V Γ) :
+    (permMatrixF11 h.σ - 1)^10 =
+      ∑ k ∈ Finset.range 11, (permMatrixF11 h.σ)^k :=
+  Moore57.LinearAlgebra.sub_one_pow_prime_sub_one_eq_geom_sum (p := 11)
+    (R := Matrix V V (ZMod 11)) (permMatrixF11 h.σ)
+
+/-- `(T_F11 h)^10 = Σ_k ((permMatrixF11 h.σ)^k).toLin'`. -/
+private theorem T_F11_pow_ten_eq_sum_toLin' (h : Order22ActsOnMoore57 V Γ) :
+    (T_F11 h)^10 = ∑ k ∈ Finset.range 11,
+      ((permMatrixF11 h.σ : Matrix V V (ZMod 11))^k).toLin' := by
+  rw [T_F11_def]
+  rw [show ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin')^10 =
+      ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11))^10).toLin' from
+    (Matrix.toLin'_pow _ _).symm]
+  rw [permMatrixF11_sub_one_pow_ten h]
+  exact map_sum _ _ _
+
+/-- `((permMatrixF11 σ)^k).toLin' f v = f((σ^k).symm v)`. -/
+private theorem permMatrixF11_pow_toLin'_apply
+    (h : Order22ActsOnMoore57 V Γ) (k : ℕ) (f : V → ZMod 11) (v : V) :
+    ((permMatrixF11 h.σ : Matrix V V (ZMod 11))^k).toLin' f v =
+      f ((h.σ^k).symm v) := by
+  rw [Matrix.toLin'_apply, permMatrixF11_pow, permMatrixF11_mulVec_eq]
+  rfl
+
+/-- Pointwise: `((T_F11 h)^10) f v = Σ_k f((σ^k).symm v)`. -/
+private theorem T_F11_pow_ten_apply
+    (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11) (v : V) :
+    ((T_F11 h)^10) f v = ∑ k ∈ Finset.range 11, f ((h.σ^k).symm v) := by
+  have h_eq := T_F11_pow_ten_eq_sum_toLin' h
+  have h_apply : ((T_F11 h)^10) f v =
+      (∑ k ∈ Finset.range 11,
+        ((permMatrixF11 h.σ : Matrix V V (ZMod 11))^k).toLin') f v := by rw [h_eq]
+  rw [h_apply, LinearMap.sum_apply, Finset.sum_apply]
+  exact Finset.sum_congr rfl fun k _ => permMatrixF11_pow_toLin'_apply h k f v
+
+/-- σ^k preserves σ-fixed points (any k ∈ ℕ). -/
+private theorem σ_pow_fix_of_fix (h : Order22ActsOnMoore57 V Γ)
+    {v : V} (hv : h.σ v = v) (k : ℕ) : (h.σ^k) v = v := by
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    rw [pow_succ, Equiv.Perm.mul_apply, hv, ih]
+
+/-- σ^k.symm preserves σ-fixed points. -/
+private theorem σ_pow_symm_fix_of_fix (h : Order22ActsOnMoore57 V Γ)
+    {v : V} (hv : h.σ v = v) (k : ℕ) : (h.σ^k).symm v = v := by
+  have h_inv : (h.σ^k) v = v := σ_pow_fix_of_fix h hv k
+  have h_app : (h.σ^k) ((h.σ^k).symm v) = v := (h.σ^k).apply_symm_apply v
+  exact (h.σ^k).injective (h_app.trans h_inv.symm)
+
+/-- v σ-fixed ⟹ `((T_F11 h)^10) f v = 0`. -/
+private theorem T_F11_pow_ten_apply_of_fixed
+    (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11)
+    {v : V} (hv : h.σ v = v) :
+    ((T_F11 h)^10) f v = 0 := by
+  rw [T_F11_pow_ten_apply]
+  have h_each : ∀ k ∈ Finset.range 11, f ((h.σ^k).symm v) = f v :=
+    fun k _ => by rw [σ_pow_symm_fix_of_fix h hv k]
+  rw [Finset.sum_congr rfl h_each, Finset.sum_const, Finset.card_range,
+      nsmul_eq_mul]
+  have h11 : ((11 : ℕ) : ZMod 11) = 0 := by decide
+  rw [h11, zero_mul]
+
+/-- σ.cycleOf v の support の card = 11 (cycleType analysis). -/
+private theorem card_support_cycleOf_eq_eleven
+    (h : Order22ActsOnMoore57 V Γ) {v : V} (hv : h.σ v ≠ v) :
+    (h.σ.cycleOf v).support.card = 11 := by
+  have h_mem : h.σ.cycleOf v ∈ h.σ.cycleFactorsFinset :=
+    Equiv.Perm.cycleOf_mem_cycleFactorsFinset_iff.mpr (Equiv.Perm.mem_support.mpr hv)
+  have h_in_type : ((h.σ.cycleOf v).support.card : ℕ) ∈ h.σ.cycleType := by
+    rw [Equiv.Perm.cycleType_def]
+    exact Multiset.mem_map.mpr ⟨h.σ.cycleOf v, h_mem, rfl⟩
+  rw [cycleType_σ_eq_replicate h] at h_in_type
+  exact Multiset.eq_of_mem_replicate h_in_type
+
+/-- For v ∈ σ-orbit (σv ≠ v), (σ^k).symm v stays in cycle support. -/
+private theorem σ_pow_symm_mem_cycle_support
+    (h : Order22ActsOnMoore57 V Γ) {v : V} (hv : h.σ v ≠ v) (k : ℕ) :
+    (h.σ^k).symm v ∈ (h.σ.cycleOf v).support := by
+  rw [Equiv.Perm.mem_support_cycleOf_iff]
+  refine ⟨⟨-(k : ℤ), ?_⟩, Equiv.Perm.mem_support.mpr
+    ((Equiv.Perm.cycleOf_apply_self h.σ v).symm ▸ hv)⟩
+  show (h.σ^(-(k : ℤ))) v = (h.σ^k).symm v
+  rw [zpow_neg, zpow_natCast]; rfl
+
+/-- The map `k ↦ (σ^k).symm v` is InjOn `range 11` (for v in free orbit). -/
+private theorem σ_pow_symm_injOn
+    (h : Order22ActsOnMoore57 V Γ) {v : V} (hv : h.σ v ≠ v) :
+    Set.InjOn (fun k : ℕ => (h.σ^k).symm v) (Finset.range 11) := by
+  intro k1 hk1 k2 hk2 h_eq
+  simp only [Finset.coe_range, Set.mem_Iio] at hk1 hk2
+  -- Apply h.σ^k1 to both sides: σ^k1 (σ^k1.symm v) = v and σ^k1 (σ^k2.symm v) = ?
+  -- σ^k1 * σ^k2.symm = σ^k1 * (σ^k2)⁻¹ = σ^(k1-k2).
+  -- σ^(k1-k2) v = v ⟹ k1 ≡ k2 mod 11.
+  change (h.σ^k1).symm v = (h.σ^k2).symm v at h_eq
+  have h_pow_v : (h.σ^((k1 : ℤ) - k2)) v = v := by
+    have h_factor : h.σ^((k1 : ℤ) - k2) = h.σ^(k1 : ℤ) * (h.σ^(k2 : ℤ))⁻¹ := by
+      rw [sub_eq_add_neg, zpow_add, zpow_neg]
+    rw [h_factor]
+    show ((h.σ^(k1 : ℤ)) * (h.σ^(k2 : ℤ))⁻¹) v = v
+    rw [Equiv.Perm.mul_apply]
+    rw [show ((h.σ^(k2 : ℤ))⁻¹ : Equiv.Perm V) = (h.σ^k2).symm from by
+      rw [zpow_natCast]; rfl]
+    rw [← h_eq, zpow_natCast]
+    exact (h.σ^k1).apply_symm_apply v
+  -- v ∈ cycle support, IsCycleOn ⟹ (σ^m) v = v iff #support ∣ m.
+  have h_v_mem : v ∈ (h.σ.cycleOf v).support :=
+    Equiv.Perm.mem_support.mpr ((Equiv.Perm.cycleOf_apply_self h.σ v).symm ▸ hv)
+  have h_cycleOn := h.σ.isCycleOn_support_cycleOf v
+  have h_card := card_support_cycleOf_eq_eleven h hv
+  have h_dvd : (11 : ℤ) ∣ ((k1 : ℤ) - k2) := by
+    have := (h_cycleOn.zpow_apply_eq h_v_mem (n := (k1 : ℤ) - k2)).mp h_pow_v
+    rwa [h_card] at this
+  -- |k1 - k2| < 11, so k1 = k2.
+  have h_bound : -11 < (k1 : ℤ) - k2 ∧ (k1 : ℤ) - k2 < 11 := by omega
+  have : (k1 : ℤ) = k2 := by
+    rcases h_dvd with ⟨m, hm⟩
+    omega
+  exact_mod_cast this
+
+/-- The image of `range 11` via `σ^·.symm v` = cycle support. -/
+private theorem image_σ_pow_symm_eq_cycle_support
+    (h : Order22ActsOnMoore57 V Γ) {v : V} (hv : h.σ v ≠ v) :
+    (Finset.range 11).image (fun k : ℕ => (h.σ^k).symm v) =
+      (h.σ.cycleOf v).support := by
+  classical
+  have h_card := card_support_cycleOf_eq_eleven h hv
+  have h_inj := σ_pow_symm_injOn h hv
+  have h_image_card :
+      ((Finset.range 11).image (fun k : ℕ => (h.σ^k).symm v)).card = 11 := by
+    rw [Finset.card_image_of_injOn h_inj, Finset.card_range]
+  have h_image_subset :
+      (Finset.range 11).image (fun k : ℕ => (h.σ^k).symm v) ⊆
+        (h.σ.cycleOf v).support := by
+    intro u hu
+    rw [Finset.mem_image] at hu
+    obtain ⟨k, _, rfl⟩ := hu
+    exact σ_pow_symm_mem_cycle_support h hv k
+  exact Finset.eq_of_subset_of_card_le h_image_subset
+    (by rw [h_card, h_image_card])
+
+/-- Free orbit case: `((T^10) f) v = Σ_{u ∈ (σ.cycleOf v).support} f u`. -/
+private theorem T_F11_pow_ten_apply_of_cycle
+    (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11)
+    {v : V} (hv : h.σ v ≠ v) :
+    ((T_F11 h)^10) f v = ∑ u ∈ (h.σ.cycleOf v).support, f u := by
+  classical
+  rw [T_F11_pow_ten_apply]
+  have h_inj := σ_pow_symm_injOn h hv
+  have h_image := image_σ_pow_symm_eq_cycle_support h hv
+  calc ∑ k ∈ Finset.range 11, f ((h.σ^k).symm v)
+      = ∑ u ∈ (Finset.range 11).image (fun k : ℕ => (h.σ^k).symm v), f u :=
+        (Finset.sum_image (fun k1 hk1 k2 hk2 => h_inj hk1 hk2)).symm
+    _ = ∑ u ∈ (h.σ.cycleOf v).support, f u := by rw [h_image]
+
+/-! ### orbitSumProj LinearMap and surjectivity -/
+
+/-- Orbit sum projection: `f ↦ (c ↦ Σ_{u ∈ c.support} f u)`. -/
+noncomputable def orbitSumProj (h : Order22ActsOnMoore57 V Γ) :
+    (V → ZMod 11) →ₗ[ZMod 11]
+      ({p : Equiv.Perm V // p ∈ h.σ.cycleFactorsFinset} → ZMod 11) where
+  toFun f c := ∑ u ∈ (c : Equiv.Perm V).support, f u
+  map_add' f g := by ext c; simp [Finset.sum_add_distrib]
+  map_smul' a f := by
+    ext c
+    simp only [RingHom.id_apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
+
+private theorem orbitSumProj_apply (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11)
+    (c : {p : Equiv.Perm V // p ∈ h.σ.cycleFactorsFinset}) :
+    orbitSumProj h f c = ∑ u ∈ (c : Equiv.Perm V).support, f u := rfl
+
+/-- Different cycles have disjoint supports. -/
+private theorem disjoint_support_of_ne_cycles (h : Order22ActsOnMoore57 V Γ)
+    {c1 c2 : {p : Equiv.Perm V // p ∈ h.σ.cycleFactorsFinset}} (h_ne : c1 ≠ c2) :
+    _root_.Disjoint (c1 : Equiv.Perm V).support (c2 : Equiv.Perm V).support := by
+  have h_perm_disj : (c1 : Equiv.Perm V).Disjoint (c2 : Equiv.Perm V) := by
+    apply h.σ.cycleFactorsFinset_pairwise_disjoint c1.prop c2.prop
+    intro h_eq
+    exact h_ne (Subtype.ext h_eq)
+  exact h_perm_disj.disjoint_support
+
+/-- cycleRepAux c1 ∉ c2.support for c1 ≠ c2 (disjoint supports). -/
+private theorem cycleRepAux_not_mem_of_ne (h : Order22ActsOnMoore57 V Γ)
+    {c1 c2 : {p : Equiv.Perm V // p ∈ h.σ.cycleFactorsFinset}} (h_ne : c1 ≠ c2) :
+    cycleRepAux h.σ c1 ∉ (c2 : Equiv.Perm V).support := by
+  have h_mem := cycleRepAux_mem h.σ c1
+  exact Finset.disjoint_left.mp (disjoint_support_of_ne_cycles h h_ne) h_mem
+
+/-- orbitSumProj is surjective. Use `g ↦ Σ_c g c · indicator(cycleRepAux c)`. -/
+private theorem orbitSumProj_surjective (h : Order22ActsOnMoore57 V Γ) :
+    Function.Surjective (orbitSumProj h) := by
+  classical
+  intro g
+  -- Define f := Σ_c g c · (indicator at cycleRepAux c).
+  refine ⟨fun v => ∑ c : {p : Equiv.Perm V // p ∈ h.σ.cycleFactorsFinset},
+            if v = cycleRepAux h.σ c then g c else 0, ?_⟩
+  ext c0
+  rw [orbitSumProj_apply]
+  -- Σ_{u ∈ c0.support} Σ_c (if u = cycleRepAux c then g c else 0).
+  -- Swap sums.
+  rw [Finset.sum_comm]
+  -- Σ_c Σ_{u ∈ c0.support} (if u = cycleRepAux c then g c else 0)
+  -- = Σ_c g c · (if cycleRepAux c ∈ c0.support then 1 else 0).
+  -- = g c0 (only c0 contributes).
+  have h_inner : ∀ c : {p : Equiv.Perm V // p ∈ h.σ.cycleFactorsFinset},
+      ∑ u ∈ (c0 : Equiv.Perm V).support,
+        (if u = cycleRepAux h.σ c then g c else 0) =
+      if c = c0 then g c0 else 0 := by
+    intro c
+    by_cases h_eq : c = c0
+    · subst h_eq
+      -- Σ_{u ∈ c.support} (if u = cycleRepAux c then g c else 0).
+      -- Exactly one term has u = cycleRepAux c (= the rep).
+      have h_rep_mem : cycleRepAux h.σ c ∈ (c : Equiv.Perm V).support :=
+        cycleRepAux_mem h.σ c
+      rw [Finset.sum_ite_eq' (c : Equiv.Perm V).support (cycleRepAux h.σ c)
+        (fun _ => g c)]
+      simp [h_rep_mem]
+    · -- c ≠ c0. cycleRepAux c ∉ c0.support. All terms are 0.
+      have h_not_mem : cycleRepAux h.σ c ∉ (c0 : Equiv.Perm V).support :=
+        cycleRepAux_not_mem_of_ne h h_eq
+      rw [if_neg h_eq]
+      refine Finset.sum_eq_zero fun u hu => ?_
+      rw [if_neg]
+      intro h_u_eq
+      exact h_not_mem (h_u_eq ▸ hu)
+  rw [Finset.sum_congr rfl (fun c _ => h_inner c)]
+  -- Σ_c (if c = c0 then g c0 else 0) = g c0.
+  rw [Finset.sum_ite_eq' Finset.univ c0 (fun _ => g c0)]
+  simp
+
+/-- ker(T^10) = ker(orbitSumProj). -/
+private theorem ker_T_F11_pow_ten_eq_ker_orbitSumProj
+    (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.ker ((T_F11 h)^10) = LinearMap.ker (orbitSumProj h) := by
+  ext f
+  rw [LinearMap.mem_ker, LinearMap.mem_ker]
+  constructor
+  · intro h_T
+    -- (T^10 f) = 0 ⟹ orbitSumProj f = 0.
+    ext c
+    -- (T^10 f) v = 0 ∀ v. Pick v = cycleRepAux c ∈ c.support.
+    have h_rep_mem : cycleRepAux h.σ c ∈ (c : Equiv.Perm V).support :=
+      cycleRepAux_mem h.σ c
+    have h_not_fixed : h.σ (cycleRepAux h.σ c) ≠ cycleRepAux h.σ c := by
+      have h_in_σ_supp : cycleRepAux h.σ c ∈ h.σ.support :=
+        Equiv.Perm.mem_cycleFactorsFinset_support_le c.prop h_rep_mem
+      exact Equiv.Perm.mem_support.mp h_in_σ_supp
+    have h_apply := T_F11_pow_ten_apply_of_cycle h f h_not_fixed
+    have h_zero : ((T_F11 h)^10) f (cycleRepAux h.σ c) = 0 := by
+      rw [h_T]; rfl
+    rw [h_zero] at h_apply
+    -- h_apply : 0 = Σ_{u ∈ (σ.cycleOf (cycleRepAux c)).support} f u.
+    have h_cycle_eq : h.σ.cycleOf (cycleRepAux h.σ c) = c :=
+      (Equiv.Perm.cycle_is_cycleOf h_rep_mem c.prop).symm
+    rw [h_cycle_eq] at h_apply
+    show (orbitSumProj h f) c = 0
+    rw [orbitSumProj_apply]
+    exact h_apply.symm
+  · intro h_orbit
+    -- orbitSumProj f = 0 ⟹ (T^10 f) = 0.
+    ext v
+    show ((T_F11 h)^10) f v = (0 : V → ZMod 11) v
+    show ((T_F11 h)^10) f v = 0
+    by_cases hv : h.σ v = v
+    · exact T_F11_pow_ten_apply_of_fixed h f hv
+    · rw [T_F11_pow_ten_apply_of_cycle h f hv]
+      have h_mem : h.σ.cycleOf v ∈ h.σ.cycleFactorsFinset :=
+        Equiv.Perm.cycleOf_mem_cycleFactorsFinset_iff.mpr
+          (Equiv.Perm.mem_support.mpr hv)
+      have h_orbit_at := congrFun h_orbit ⟨h.σ.cycleOf v, h_mem⟩
+      simp only [orbitSumProj_apply, Pi.zero_apply] at h_orbit_at
+      exact h_orbit_at
+
+/-- **Step 3.3**: `dim_F_11 range(T^10) = 295`. -/
 theorem finrank_range_T_F11_pow_ten_eq_295 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11) (LinearMap.range ((T_F11 h)^10)) = 295 := by
-  sorry
+  classical
+  haveI : FiniteDimensional (ZMod 11) (V → ZMod 11) := by infer_instance
+  -- dim range orbitSumProj = #cycleFactorsFinset = 295 (surjective).
+  -- ker T^10 = ker orbitSumProj.
+  -- dim range orbitSumProj + dim ker orbitSumProj = dim V_F_11 = 3250.
+  -- dim range T^10 + dim ker T^10 = 3250.
+  -- ⟹ dim range T^10 = dim range orbitSumProj = 295.
+  have h_dim_V : Module.finrank (ZMod 11) (V → ZMod 11) = 3250 := by
+    rw [Module.finrank_pi]; exact h.isMoore.card
+  have h_dim_target :
+      Module.finrank (ZMod 11)
+        ({p : Equiv.Perm V // p ∈ h.σ.cycleFactorsFinset} → ZMod 11) = 295 := by
+    rw [Module.finrank_pi, Fintype.card_coe]
+    -- σ.cycleFactorsFinset.card = σ.cycleType.card (cycleType_def + card_map).
+    have h_card : h.σ.cycleFactorsFinset.card = h.σ.cycleType.card := by
+      rw [Equiv.Perm.cycleType_def]; simp [Multiset.card_map]
+    rw [h_card, cycleType_σ_card_eq_295 h]
+  have h_orbit_surj : Function.Surjective (orbitSumProj h) :=
+    orbitSumProj_surjective h
+  have h_dim_range_orbit :
+      Module.finrank (ZMod 11) (LinearMap.range (orbitSumProj h)) = 295 := by
+    rw [LinearMap.range_eq_top.mpr h_orbit_surj]
+    rw [finrank_top]
+    exact h_dim_target
+  have h_rank_orbit :
+      Module.finrank (ZMod 11) (LinearMap.range (orbitSumProj h)) +
+        Module.finrank (ZMod 11) (LinearMap.ker (orbitSumProj h)) =
+      Module.finrank (ZMod 11) (V → ZMod 11) :=
+    LinearMap.finrank_range_add_finrank_ker _
+  have h_rank_T10 :
+      Module.finrank (ZMod 11) (LinearMap.range ((T_F11 h)^10)) +
+        Module.finrank (ZMod 11) (LinearMap.ker ((T_F11 h)^10)) =
+      Module.finrank (ZMod 11) (V → ZMod 11) :=
+    LinearMap.finrank_range_add_finrank_ker _
+  have h_ker_eq := ker_T_F11_pow_ten_eq_ker_orbitSumProj h
+  rw [h_ker_eq] at h_rank_T10
+  rw [h_dim_range_orbit, h_dim_V] at h_rank_orbit
+  rw [h_dim_V] at h_rank_T10
+  omega
 
 /-! ## Step 3.4: 主 dim formula `dim ker((σ-I)^j) = 5 + 295 j`
 
