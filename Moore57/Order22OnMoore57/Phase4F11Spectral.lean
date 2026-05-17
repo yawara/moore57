@@ -1547,20 +1547,87 @@ theorem trace_adjMatrixF11_restrict_eq_spectral_side
   simp only [smul_eq_mul]
 
 /-- **Orbital side of trace identity** (focused sorry):
-trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11).
+`trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
 
-証明戦略 (`orbital basis` approach):
-* ker T_F11 = span{δ_v : v fixed} ⊕ span{1_O : O free orbit} over F_11 (300-dim).
-* A_restrict diagonal in orbital basis:
-  - For δ_v (v σ-fixed): (A δ_v)(v) = A_{vv} = 0 (no loops).
-  - For 1_O (O free orbit): (A · 1_O)(v_O) = |N(v_O) ∩ O| = 2 m_O,
-    where m_O = # σ-edge orbits in O (each contributes 11 edges).
-* trace = Σ_O free orbit 2 m_O = 2 Σ_O m_O.
-* m_O = Σ_{k=1}^{5} ε_k(O) where ε_k(O) = [O has slope-k edges].
-* By `Tk_eq_eleven_mul_traceNumber`: each "slope-k count" Σ_O ε_k(O) = n.
-* Σ_O m_O = 5n, so trace = 10n.
+## 数学的内容 (Macaj-Siran/Cameron Higman framework)
 
-主依存: 軌道基底の明示構成 + 各 E_λ への trace 計算. ~200-300 行. -/
+中核: 整数行列レベルで `trace(A · P_int) = 110 n` (where `P_int = Σ_{k=0}^{10} σ^k`),
+そこから軌道基底経由で `trace(A | ker T_F11) = 10 n` を引き出す.
+
+### Step 1: 整数 trace identity (using `Tk_eq_eleven_mul_traceNumber`)
+
+`Tk_eq_eleven_mul_traceNumber : T_k = 11n` for `k = 1..10` (既証, over ℚ).
+`T_0 = trace(A) = 0` (no loops).
+
+`Σ_{k=0}^{10} T_k = 0 + 10 · 11n = 110n` over ℤ.
+
+### Step 2: `trace(A · P_int) = 110n`
+
+`P_int = Σ_{k=0}^{10} σ^k` as ℤ-matrix.
+`trace(A · P_int) = Σ_k trace(A σ^k) = Σ_k T_k = 110n`.
+
+### Step 3: P_int の軌道構造
+
+`P_int(u, v) = #{k ∈ [0, 10] : σ^k(v) = u}`:
+- `v = u` fixed: `11`
+- `u ∈ orbit(v), u ≠ v`: `1`
+- `v free, u = v`: `1` (k=0)
+- それ以外: `0`
+
+`(A · P_int)(v, v) = Σ_u A(v, u) P_int(u, v)`:
+- `v` fixed: `= 11 · A(v, v) = 0`
+- `v` free: `= Σ_{u ∈ orbit(v)} A(v, u) = |N(v) ∩ orbit(v)|`
+
+`trace(A · P_int) = Σ_{v free} |N(v) ∩ orbit(v)| = 2 · #{internal edges in free orbits} = 110n`.
+
+### Step 4: σ-不変性で軌道平均
+
+各 free orbit `O` で `|N(v) ∩ O|` は `v ∈ O` で一定 (`σ`-equivariance).
+`11 · |N(v_O) ∩ O| = Σ_{v ∈ O} |N(v) ∩ O|`.
+
+### Step 5: 軌道基底 trace の計算
+
+`ker T_F11 ≃ (V/σ → F_11)` via `funLeft (Quotient.mk s)`.
+軌道基底 `{1_O : O ∈ V/σ}` の下で `A_restrict` の matrix:
+`[A_restrict]_{O', O} = |N(v_{O'}) ∩ O|` (F_11 cast).
+
+対角 `[A_restrict]_{O, O} = |N(v_O) ∩ O|`:
+- `O` fixed (singleton): `0`.
+- `O` free: `(1/11) · Σ_v ∈ O |N(v) ∩ O| = (2/11) · #(internal edges in O)`.
+
+`#(internal edges in O)` is divisible by 11 (σ acts freely on edges within O,
+each edge orbit has length exactly 11 since |O|=11 prime).
+
+So `|N(v_O) ∩ O| = 2 m_O` where `m_O := #(internal edges in O)/11 ∈ ℕ`.
+
+### Step 6: 総和 = 10n
+
+`Σ_O |N(v_O) ∩ O| = Σ_O free 2 m_O = (2/11) · Σ_O #(internal edges in O)
+                  = (2/11) · 55n = 10n`.
+
+(Using Step 4 sum identity = 110n divided by 11 averaging.)
+
+So `trace(A_restrict) = Σ_O |N(v_O) ∩ O| = 10n` over ℤ. Mod 11: `10n mod 11`.
+
+## Lean 形式化の主要 components
+
+1. `kerTF11_quotientEquiv : (Quotient s → F_11) ≃ₗ ker T_F11` (extract from `finrank_ker_T_F11_eq_300` proof).
+2. `LinearMap.trace_conj` で trace を Quotient 側に転送.
+3. `LinearMap.trace_eq_matrix_trace` with `Pi.basisFun` で対角和に展開.
+4. 各対角 = `|N(v_O) ∩ O|` を直接計算.
+5. 総和 = `10n mod 11` を Step 1-6 のアルゴリズム + `Tk_eq_eleven_mul_traceNumber` で確立.
+
+実装規模: ~200-300 行 (主に Step 5 の組合せ部分が重い).
+依存: 主に既存 `Tk_eq_eleven_mul_traceNumber` (sorry-free) + `funLeft Quotient iso` (in `finrank_ker_T_F11_eq_300`).
+
+## 戦略的位置付け (2026-05-17 web search + analysis)
+
+このルートは Macaj-Siran 2010 (`tmp/pdfs/j.laa.2009.07.018.txt`) の Higman trace
+identity を F_11 へ persist する形. `a_F11_7 = 159` (good reduction) が独立必要
+であるため, 本 sorry を閉じても次の sorry が残る. しかし trace identity を
+完全に分離することで, Phase 4F11Spectral の各部品が明確化される.
+
+未実装. -/
 theorem trace_adjMatrixF11_restrict_eq_orbital_side
     (h : Order22ActsOnMoore57 V Γ) :
     LinearMap.trace (ZMod 11) _ h.adjMatrixF11_restrict_ker_T =
