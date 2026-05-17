@@ -2338,6 +2338,46 @@ theorem finrank_V7Submodule_eq_rootMultiplicity (h : Order22ActsOnMoore57 V Γ) 
   rw [V7Submodule_eq_maxGenEigenspace h]
   exact LinearMap.finrank_maxGenEigenspace_eq _ _
 
+/-! ### Phase D-A Step 5: adjMatrixF11 を ℤ-adj の reduction として識別
+
+`(adjMatrixF11 Γ) = (Γ.adjMatrix ℤ).map (Int.castRingHom)`.
+`Matrix.charpoly_map` で charpoly も同様に reduce する. -/
+
+/-- F_11 adjacency は ℤ-adjacency の Int.cast による reduction. -/
+private lemma adjMatrixF11_eq_intCast_map :
+    (adjMatrixF11 Γ) = (Γ.adjMatrix ℤ).map (Int.castRingHom (ZMod 11)) := by
+  classical
+  ext v w
+  show (Γ.adjMatrix (ZMod 11)) v w =
+       Int.castRingHom (ZMod 11) ((Γ.adjMatrix ℤ) v w)
+  simp only [SimpleGraph.adjMatrix_apply, eq_intCast]
+  by_cases h : Γ.Adj v w
+  · simp [h]
+  · simp [h]
+
+/-- F_11-charpoly は ℤ-charpoly の reduction. -/
+theorem adjMatrixF11_charpoly_eq_intCast_map :
+    (adjMatrixF11 Γ).charpoly =
+    (Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom (ZMod 11)) := by
+  rw [adjMatrixF11_eq_intCast_map]
+  exact Matrix.charpoly_map _ _
+
+/-- ℚ-charpoly は ℤ-charpoly の reduction. -/
+theorem adjMatrix_ℚ_charpoly_eq_intCast_map :
+    (Γ.adjMatrix ℚ).charpoly =
+    (Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom ℚ) := by
+  classical
+  have h_eq : (Γ.adjMatrix ℚ) = (Γ.adjMatrix ℤ).map (Int.castRingHom ℚ) := by
+    ext v w
+    show (Γ.adjMatrix ℚ) v w =
+         Int.castRingHom ℚ ((Γ.adjMatrix ℤ) v w)
+    simp only [SimpleGraph.adjMatrix_apply, eq_intCast]
+    by_cases h : Γ.Adj v w
+    · simp [h]
+    · simp [h]
+  rw [h_eq]
+  exact Matrix.charpoly_map _ _
+
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
 各 V_λ は σ-不変な F_11 [C_11] 部分加群.
