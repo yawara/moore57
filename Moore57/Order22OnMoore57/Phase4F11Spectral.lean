@@ -1626,19 +1626,51 @@ private noncomputable def orbitNeighborSumF11
   ∑ w : V, (adjMatrixF11 Γ) v w *
     (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w))
 
-/-- **σ-invariance of orbitNeighborSumF11** (focused sub-sorry).
+/-- **σ-invariance of orbitNeighborSumF11** (sorry-free).
 For `a ~ b` (same σ-cycle), `orbitNeighborSumF11 a = orbitNeighborSumF11 b`.
 
-証明戦略: `b = σ^i a` から `(adjMatrixF11 Γ) b w = (adjMatrixF11 Γ) a (σ^{-i} w)`
-(σ-automorphism). 代入 `w' = σ^{-i} w` で sum 再写像. `Quotient.mk (σ^i w') = Quotient.mk w'`
-(同 cycle) で `Pi.basisFun O (Quotient.mk w)` も保存. -/
+証明: First show σ-step invariance `orbitNeighborSumF11 (σ v) = orbitNeighborSumF11 v`
+via `Equiv.sum_comp h.σ` substitution + σ-aut of Γ + Quotient.mk respect for σ.
+Then `sigma_invariant_zpow` lifts to σ^i invariance, giving the SameCycle result. -/
 private theorem orbitNeighborSumF11_sigma_invariant
     (h : Order22ActsOnMoore57 V Γ)
     [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
     (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :
     ∀ a b : V, (Equiv.Perm.SameCycle.setoid h.σ).r a b →
       h.orbitNeighborSumF11 O a = h.orbitNeighborSumF11 O b := by
-  sorry
+  -- Step 1: σ-step invariance.
+  have h_step : ∀ v : V,
+      h.orbitNeighborSumF11 O (h.σ v) = h.orbitNeighborSumF11 O v := by
+    intro v
+    unfold orbitNeighborSumF11
+    -- Σ_w (adj Γ) (σ v) w * g(w) = Σ_w (adj Γ) v w * g(w)
+    -- where g(w) = Pi.basisFun O (Quotient.mk w).
+    -- Substitute w → σ w using Equiv.sum_comp.
+    rw [← Equiv.sum_comp h.σ (fun w : V =>
+        (adjMatrixF11 Γ) (h.σ v) w *
+          (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w)))]
+    apply Finset.sum_congr rfl
+    intro w _
+    congr 1
+    · -- (adjMatrixF11 Γ) (σ v) (σ w) = (adjMatrixF11 Γ) v w  (σ-aut)
+      unfold adjMatrixF11
+      rw [SimpleGraph.adjMatrix_apply, SimpleGraph.adjMatrix_apply]
+      by_cases hadj : Γ.Adj v w
+      · rw [if_pos hadj, if_pos ((h.σ_aut v w).mp hadj)]
+      · rw [if_neg hadj, if_neg (fun h' => hadj ((h.σ_aut v w).mpr h'))]
+    · -- Pi.basisFun O (Quotient.mk (σ w)) = Pi.basisFun O (Quotient.mk w)
+      -- since Quotient.mk (σ w) = Quotient.mk w (same cycle).
+      have h_mk : Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) (h.σ w) =
+          Quotient.mk _ w := by
+        apply Quotient.sound
+        refine ⟨(-1 : ℤ), ?_⟩
+        simp [zpow_neg, zpow_one]
+      rw [h_mk]
+  -- Step 2: lift to σ^i invariance via sigma_invariant_zpow.
+  intro a b hab
+  obtain ⟨i, hi⟩ := hab
+  rw [← hi]
+  exact (sigma_invariant_zpow h h_step i a).symm
 
 /-- Descended orbit-neighbor count function on `Quotient`. -/
 private noncomputable def orbitNeighborSumQuot
