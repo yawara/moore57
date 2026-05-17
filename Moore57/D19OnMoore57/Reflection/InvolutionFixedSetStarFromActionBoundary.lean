@@ -48,6 +48,24 @@ theorem reflection_smulEquiv_automorphism
       (h.smul (DihedralGroup.sr k) w)
   exact h.smul_adj (DihedralGroup.sr k) v w
 
+/-- A reflection is non-trivial as a vertex permutation (faithfulness +
+constructor distinctness `sr k ≠ r 0`). -/
+theorem reflection_smulEquiv_ne_one
+    (k : ZMod 19) :
+    h.smulEquiv (DihedralGroup.sr k) ≠ 1 := by
+  intro hone
+  have hgroup : DihedralGroup.sr k = (1 : DihedralGroup 19) := by
+    apply h.faithful (DihedralGroup.sr k) 1
+    intro v
+    have hv : h.smul (DihedralGroup.sr k) v = v := by
+      have hv' : h.smulEquiv (DihedralGroup.sr k) v = (1 : Equiv.Perm V) v := by
+        rw [hone]
+      simpa using hv'
+    rw [h.one_smul]
+    exact hv
+  rw [show (1 : DihedralGroup 19) = DihedralGroup.r 0 from rfl] at hgroup
+  cases hgroup
+
 /-- Direct constructor for the paper-shaped fixed-star statement for a raw
 reflection: only the fixed count and star-center geometry remain as inputs. -/
 theorem involutionFixedSetStar56_of_reflection_fixedVertexCount_and_fixedSetStarWithCenter

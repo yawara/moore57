@@ -1,15 +1,21 @@
-import Moore57.D19OnMoore57.Reflection.AdjacentSwapFixedCount
-import Moore57.D19OnMoore57.Reflection.TraceSmallCandidateReduction
+import Moore57.D19OnMoore57.Reflection.InvolutionFixedSetStarFromActionBoundary
+import Moore57.D19OnMoore57.Reflection.TraceCandidateLowerBoundBridge
+import Moore57.Moore57Graph.Aut.InvolutionFixIsK155
 
 /-!
 # Reflections have positive adjacent-moved count
 
-The adjacent-swap branch is already closed by
-`ReflectionAdjacentSwapFixedCount`.  This file closes its complement.  The
-trace-refined raw fixed-count candidates give `a₀ ≤ 56` for a reflection, while
-the involution edge-count formula makes `a₁ = 0` impossible under that bound.
-Thus every reflection has positive adjacent-moved count, and the adjacent-swap
-fixed-count theorem applies uniformly.
+`fixedVertexCount_reflection_eq_56_of_raw_action` を Tier-2 抽象 API
+`Moore57.aut_involution_fixedVertexCount_eq_56` (Cameron Theorem 3.13,
+sorry-free) に直接 reduce する.
+
+これにより以前の trace-candidate 経由
+(`Reflection.TraceSmallCandidateReduction` +
+`Reflection.AdjacentSwapFixedCount` の Cameron Step 2 複製) は本ファイル
+からは不要となり, D19 reflection chain が大幅に短縮される.
+
+なお `reflection_adjacentMovedCount_pos` も Tier-2 で得られる
+`|Fix(σ)| = 56` から involution edge-count formula 経由で導出する.
 -/
 
 namespace Moore57
@@ -25,16 +31,25 @@ namespace D19ActsOnMoore57
 
 variable {h : D19ActsOnMoore57 V Γ}
 
-/-- The trace-refined raw reflection candidate list gives the coarse upper
-bound `a₀ ≤ 56`. -/
-theorem fixedVertexCount_reflection_trace_refined_le_fiftySix
-    (k : ZMod 19) :
-    fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) ≤ 56 := by
-  rcases h.fixedVertexCount_reflection_trace_refined_raw_candidates k with
-      h6 | h10 | h16 | h26 | h36 | h46 | h56 <;> omega
+/-- Raw action data already gives the exact Cameron/Higman reflection fixed
+count `56` for every reflection.
 
-/-- A reflection cannot have `a₁ = 0`: the trace-refined bound `a₀ ≤ 56` and
-the involution edge-count formula force `a₁ ≥ 2`. -/
+旧版では trace-candidate (`fixedVertexCount_reflection_trace_refined_raw_candidates`
+の 7 候補 {6, 10, 16, 26, 36, 46, 56}) を `reflection_adjacentMovedCount_pos`
+の involution edge-count formula 議論で 56 に絞っていたが,
+本版では Tier-2 `Moore57.aut_involution_fixedVertexCount_eq_56`
+(Cameron Theorem 3.13, sorry-free, Cameron Step 1+2 を完備) に直接 reduce する.
+-/
+theorem fixedVertexCount_reflection_eq_56_of_raw_action
+    (k : ZMod 19) :
+    fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56 :=
+  Moore57.aut_involution_fixedVertexCount_eq_56
+    h.isMoore (h.smulEquiv (DihedralGroup.sr k))
+    (h.reflection_smulEquiv_automorphism k)
+    (h.reflection_smulEquiv_involutive k)
+    (h.reflection_smulEquiv_ne_one k)
+
+/-- Tier-2 経由で得られる reflection の `a₁ > 0` (旧 trace 候補経由を経ない). -/
 theorem reflection_adjacentMovedCount_pos
     (k : ZMod 19) :
     0 < adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr k)) := by
@@ -42,11 +57,9 @@ theorem reflection_adjacentMovedCount_pos
   have hzero :
       adjacentMovedCount Γ (h.smulEquiv (DihedralGroup.sr k)) = 0 :=
     Nat.eq_zero_of_not_pos hnot
-  have hleNat :=
-    h.fixedVertexCount_reflection_trace_refined_le_fiftySix k
-  have hleInt :
-      (fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) : ℤ) ≤ 56 := by
-    exact_mod_cast hleNat
+  have hfix :
+      fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56 :=
+    h.fixedVertexCount_reflection_eq_56_of_raw_action k
   have hedgeNonneg :
       0 ≤
         ((h.fixedInducedGraph (DihedralGroup.sr k)).edgeFinset.card : ℤ) := by
@@ -61,17 +74,10 @@ theorem reflection_adjacentMovedCount_pos
       (Γ := Γ) h.isMoore
       (h.reflection_smulEquiv_involutive k)
       (h.reflection_smulEquiv_automorphism k)
-  rw [hzero] at hformula
-  norm_num at hformula
-  nlinarith
-
-/-- Raw action data already gives the exact Cameron/Higman reflection fixed
-count `56` for every reflection. -/
-theorem fixedVertexCount_reflection_eq_56_of_raw_action
-    (k : ZMod 19) :
-    fixedVertexCount (h.smulEquiv (DihedralGroup.sr k)) = 56 :=
-  h.fixedVertexCount_reflection_eq_56_of_adjacentMovedCount_pos
-    k (h.reflection_adjacentMovedCount_pos k)
+  rw [hzero, hfix] at hformula
+  push_cast at hformula
+  -- 0 = 3250 - 58·56 + 2·E = 2 + 2·E ⟹ 2·E = -2, but E ≥ 0 contradicts.
+  omega
 
 /-- Package form of the raw-action reflection fixed-count theorem. -/
 def reflectionFixedCountLower47_of_raw_action :
