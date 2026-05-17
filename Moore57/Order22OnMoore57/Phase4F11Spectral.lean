@@ -1639,6 +1639,83 @@ private theorem dim_V3_plus_9_aF11_three_eq_10_g2
   simp only [hg_def] at h_add
   exact_mod_cast h_add
 
+/-! ### Phase D-A: Σ dim V_λ = 3250 (V_F_11 direct sum) -/
+
+/-- `(V_2 ⊔ V_7) ⊓ V_3 = ⊥` (orthogonality of E_λ). -/
+private theorem V2_sup_V7_inter_V3_eq_bot (h : Order22ActsOnMoore57 V Γ) :
+    (V2Submodule Γ ⊔ V7Submodule Γ) ⊓ V3Submodule Γ =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨h_sup, hv_3⟩ := hv
+  rw [Submodule.mem_sup] at h_sup
+  obtain ⟨w_2, hw_2, w_7, hw_7, h_sum⟩ := h_sup
+  obtain ⟨u_3, hu_3⟩ := LinearMap.mem_range.mp hv_3
+  obtain ⟨u_2, hu_2⟩ := LinearMap.mem_range.mp hw_2
+  obtain ⟨u_7, hu_7⟩ := LinearMap.mem_range.mp hw_7
+  have h_E3v_eq_v : (E3MatrixF11 Γ).toLin' v = v := by
+    rw [← hu_3]
+    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
+    rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) =
+            (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u_3 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        E3_idempotent h.isMoore]
+  have h_E3v_eq_zero : (E3MatrixF11 Γ).toLin' v = 0 := by
+    rw [← h_sum, map_add, ← hu_2, ← hu_7]
+    show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
+         (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) = 0
+    rw [show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) =
+            (E3MatrixF11 Γ * E2MatrixF11 Γ).toLin' u_2 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        show (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) =
+            (E3MatrixF11 Γ * E7MatrixF11 Γ).toLin' u_7 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        E3_mul_E2_eq_zero h.isMoore, E3_mul_E7_eq_zero h.isMoore]
+    show (0 : Matrix V V (ZMod 11)).toLin' u_2 +
+         (0 : Matrix V V (ZMod 11)).toLin' u_7 = 0
+    simp
+  rw [Submodule.mem_bot]
+  exact h_E3v_eq_v.symm.trans h_E3v_eq_zero
+
+/-- Σ_λ dim V_λ = 3250 over F_11. -/
+theorem finrank_sum_V_lambda_eq_3250 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V2Submodule Γ) +
+      Module.finrank (ZMod 11) (V7Submodule Γ) +
+      Module.finrank (ZMod 11) (V3Submodule Γ) =
+    Module.finrank (ZMod 11) (V → ZMod 11) := by
+  classical
+  haveI : FiniteDimensional (ZMod 11) (V → ZMod 11) := by infer_instance
+  set S_2 := V2Submodule Γ with hS2_def
+  set S_7 := V7Submodule Γ with hS7_def
+  set S_3 := V3Submodule Γ with hS3_def
+  have h_sup_eq : (S_2 ⊔ S_7) ⊔ S_3 = ⊤ := V2_sup_V7_sup_V3_eq_top
+  have h_27_3_disj : (S_2 ⊔ S_7) ⊓ S_3 = ⊥ := V2_sup_V7_inter_V3_eq_bot h
+  have h_27_disj : S_2 ⊓ S_7 = ⊥ := V2_inter_V7_eq_bot h.isMoore
+  have h_27_3_finrank : Module.finrank (ZMod 11) ↥((S_2 ⊔ S_7) ⊔ S_3) =
+      Module.finrank (ZMod 11) ↥(S_2 ⊔ S_7) + Module.finrank (ZMod 11) ↥S_3 := by
+    have h_eq := Submodule.finrank_sup_add_finrank_inf_eq (S_2 ⊔ S_7) S_3
+    rw [h_27_3_disj, finrank_bot] at h_eq
+    omega
+  have h_27_finrank : Module.finrank (ZMod 11) ↥(S_2 ⊔ S_7) =
+      Module.finrank (ZMod 11) ↥S_2 + Module.finrank (ZMod 11) ↥S_7 := by
+    have h_eq := Submodule.finrank_sup_add_finrank_inf_eq S_2 S_7
+    rw [h_27_disj, finrank_bot] at h_eq
+    omega
+  rw [h_sup_eq, finrank_top] at h_27_3_finrank
+  omega
+
+/-- `Σ_λ dim V_λ = 3250` (整数値版). -/
+theorem finrank_sum_V_lambda_eq_card_V (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V2Submodule Γ) +
+      Module.finrank (ZMod 11) (V7Submodule Γ) +
+      Module.finrank (ZMod 11) (V3Submodule Γ) = 3250 := by
+  rw [finrank_sum_V_lambda_eq_3250 h]
+  rw [show Module.finrank (ZMod 11) (V → ZMod 11) = Fintype.card V from by
+    rw [Module.finrank_fintype_fun_eq_card]]
+  exact h.isMoore.card
+
 /-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
 
 dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
@@ -2160,6 +2237,26 @@ theorem aF11_lambda_two_eq_one (h : Order22ActsOnMoore57 V Γ) :
           Submodule (ZMod 11) (V → ZMod 11)) = 1 := by
   rw [aF11_lambda_two_eq_dim_V2, finrank_V2Submodule_eq_one h]
 
+/-- **Phase D-A focused sorry**: `dim V_7 over F_11 = 1729`.
+
+良還元 (good reduction): A の特性多項式 (X-57)(X-7)^1729(X+8)^1520 が
+mod 11 で squarefree 化 ((X-2)(X-7)(X-3) distinct) であるため,
+dim_F_11 V_7 = dim_ℚ V_7 = 1729.
+
+実装: charpoly approach + Matrix.charpoly_map or rank inequality via
+integer matrix lift. -/
+theorem finrank_V7Submodule_eq_1729 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V7Submodule Γ) = 1729 := by
+  sorry
+
+/-- `dim V_3 over F_11 = 1520` (derived from dim V_2 + dim V_7 + Σ = 3250). -/
+theorem finrank_V3Submodule_eq_1520 (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V3Submodule Γ) = 1520 := by
+  have h_sum := finrank_sum_V_lambda_eq_card_V h
+  have h_2 := finrank_V2Submodule_eq_one h
+  have h_7 := finrank_V7Submodule_eq_1729 h
+  omega
+
 /-- F_11 modular rep theory **基幹 sorry**:
 `a^{F_11}_7 := dim(V_7 ∩ ker T_F11) = 159`.
 
@@ -2221,7 +2318,57 @@ theorem aF11_lambda_seven_eq_159 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11)
         (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
           Submodule (ZMod 11) (V → ZMod 11)) = 159 := by
-  sorry
+  -- Phase D-D wire-up: combine Phase D-B (linearity) + Phase D-A (dim V_λ) + concavity.
+  -- (1) dim V_λ + 9 a_F11_λ = 10 g_λ(2)  (telescoped linearity from j=1 to j=11).
+  -- (2) g_λ(2) ≤ 2 a_F11_λ                (concavity at j=1 with g_λ(0) = 0).
+  -- (3) a_F11_2 + a_F11_7 + a_F11_3 = 300 (direct sum decomposition).
+  -- (4) a_F11_2 = 1                        (V_2 = span(1_V)).
+  -- omega over ℕ handles: a_F11_7 ∈ [158, 160] AND a_F11_7 ≡ 9 (mod 10) ⟹ = 159.
+  classical
+  -- Abbreviations.
+  set a2 := Module.finrank (ZMod 11)
+    (V2Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+      Submodule (ZMod 11) (V → ZMod 11)) with ha2_def
+  set a7 := Module.finrank (ZMod 11)
+    (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+      Submodule (ZMod 11) (V → ZMod 11)) with ha7_def
+  set a3 := Module.finrank (ZMod 11)
+    (V3Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
+      Submodule (ZMod 11) (V → ZMod 11)) with ha3_def
+  set b7 := Module.finrank (ZMod 11)
+    (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+      Submodule (ZMod 11) (V → ZMod 11)) with hb7_def
+  set b3 := Module.finrank (ZMod 11)
+    (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+      Submodule (ZMod 11) (V → ZMod 11)) with hb3_def
+  -- (1) Linearity relations (Phase D-B finalize).
+  have h_lin_7 : 1729 + 9 * a7 = 10 * b7 := by
+    have key := dim_V7_plus_9_aF11_seven_eq_10_g2 h
+    rw [finrank_V7Submodule_eq_1729 h, pow_one] at key
+    exact key
+  have h_lin_3 : 1520 + 9 * a3 = 10 * b3 := by
+    have key := dim_V3_plus_9_aF11_three_eq_10_g2 h
+    rw [finrank_V3Submodule_eq_1520 h, pow_one] at key
+    exact key
+  -- (2) Concavity at j=1: b_λ + g_λ(0) ≤ 2 * a_λ, with g_λ(0) = 0.
+  have h_ker0 : LinearMap.ker ((T_F11 h)^0) = (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+    rw [pow_zero, Module.End.one_eq_id, LinearMap.ker_id]
+  have h_concave_7 : b7 ≤ 2 * a7 := by
+    have key := finrank_V7_inter_ker_T_F11_pow_concave h (show (1:ℕ) ≤ 1 from le_refl _)
+    rw [show (1:ℕ) + 1 = 2 from rfl, show (1:ℕ) - 1 = 0 from rfl,
+        h_ker0, inf_bot_eq, finrank_bot, pow_one] at key
+    omega
+  have h_concave_3 : b3 ≤ 2 * a3 := by
+    have key := finrank_V3_inter_ker_T_F11_pow_concave h (show (1:ℕ) ≤ 1 from le_refl _)
+    rw [show (1:ℕ) + 1 = 2 from rfl, show (1:ℕ) - 1 = 0 from rfl,
+        h_ker0, inf_bot_eq, finrank_bot, pow_one] at key
+    omega
+  -- (3) Sum decomposition.
+  have h_sum : a2 + a7 + a3 = 300 := h.aF11_sum_eq_300
+  -- (4) a_F11_2 = 1.
+  have h_a2 : a2 = 1 := h.aF11_lambda_two_eq_one
+  -- Combine: omega solves a7 ∈ [158, 160] ∩ {a : a ≡ 9 (mod 10)} = {159}.
+  omega
 
 /-- `a^{F_11}_7 + a^{F_11}_3 = 299` (= 300 - a^{F_11}_2 with a^{F_11}_2 = 1). -/
 theorem aF11_seven_plus_three_eq_299 (h : Order22ActsOnMoore57 V Γ) :
