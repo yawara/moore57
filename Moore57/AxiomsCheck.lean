@@ -1,6 +1,7 @@
 import Lean
 import Moore57.Phases.FinalAssembly
 import Moore57.Order22OnMoore57.NoGo
+import Moore57.Order22OnMoore57.GroupAction
 
 /-!
 # Axioms check for the main theorem
@@ -56,3 +57,5 @@ elab "#assert_only_allowed_axioms " name:ident : command => do
 #assert_only_allowed_axioms Moore57.no_C38_acts_on_Moore57_unconditional
 #assert_only_allowed_axioms Moore57.Moore57_no_order38_structure
 #assert_only_allowed_axioms Moore57.no_Order22_acts_on_Moore57
+#assert_only_allowed_axioms Moore57.no_Order22_group_acts_on_Moore57
+#assert_only_allowed_axioms Moore57.no_Order110_group_acts_on_Moore57

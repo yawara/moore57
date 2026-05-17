@@ -403,4 +403,24 @@ theorem order22_raw_of_orderN_22 (h22 : OrderN_GroupActsOnMoore57 22 V Γ) :
     στ_relation := hRel
   }⟩
 
+/-! ## Step 4: 主結果 — 位数 22, 110 の Aut(Γ) 部分群は Moore57 上に存在しない -/
+
+/-- **位数 22 の Aut(Γ) 部分群は Moore57 上に作用しない**.
+
+(Subgroup form of `no_Order22_acts_on_Moore57`.) -/
+theorem no_Order22_group_acts_on_Moore57 :
+    ¬ Nonempty (OrderN_GroupActsOnMoore57 22 V Γ) := by
+  rintro ⟨h22⟩
+  obtain ⟨hraw⟩ := order22_raw_of_orderN_22 h22
+  exact hraw.false_of_raw_action
+
+/-- **位数 110 の Aut(Γ) 部分群は Moore57 上に作用しない**.
+
+|G| = 110 = 2·5·11 から位数 22 の部分群を抽出 (Sylow 11 unique で normal,
+Cauchy で involution τ, P_11 ⊔ ⟨τ⟩ で order 22). あとは `no_Order22_group_acts_on_Moore57`. -/
+theorem no_Order110_group_acts_on_Moore57 :
+    ¬ Nonempty (OrderN_GroupActsOnMoore57 110 V Γ) := by
+  rintro ⟨h110⟩
+  exact no_Order22_group_acts_on_Moore57 (orderN_22_of_orderN_110 h110)
+
 end Moore57
