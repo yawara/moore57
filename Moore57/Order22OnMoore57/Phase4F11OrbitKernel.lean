@@ -295,7 +295,7 @@ private theorem permMatrixF11_mulVec_eq (σ : Equiv.Perm V) (f : V → ZMod 11) 
   rfl
 
 /-- T_F11 のカーネル条件: `f ∈ ker T_F11 ↔ ∀ v, f (σ v) = f v`. -/
-private theorem mem_ker_T_F11_iff (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11) :
+theorem mem_ker_T_F11_iff (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11) :
     f ∈ LinearMap.ker (T_F11 h) ↔ ∀ v, f (h.σ v) = f v := by
   rw [LinearMap.mem_ker, T_F11_def]
   rw [Matrix.toLin'_apply, Matrix.sub_mulVec, Matrix.one_mulVec,
@@ -315,7 +315,7 @@ private theorem mem_ker_T_F11_iff (h : Order22ActsOnMoore57 V Γ) (f : V → ZMo
     exact this.symm
 
 /-- σ-不変関数は σ^i (i : ℤ) でも不変. -/
-private theorem sigma_invariant_zpow (h : Order22ActsOnMoore57 V Γ)
+theorem sigma_invariant_zpow (h : Order22ActsOnMoore57 V Γ)
     {f : V → ZMod 11} (hσ : ∀ v, f (h.σ v) = f v) :
     ∀ (i : ℤ) (v : V), f ((h.σ^i) v) = f v := by
   have hf_inv : ∀ v, f (h.σ⁻¹ v) = f v := fun v => by
@@ -407,6 +407,57 @@ theorem finrank_ker_T_F11_eq_300 (h : Order22ActsOnMoore57 V Γ) :
   rw [h_finrank, Module.finrank_pi]
   -- Fintype.card (Quotient s) = 300 (両者 Fintype instance が異なる場合 convert で吸収)
   convert card_quotient_sameCycle_eq_300 h using 2
+
+/-! ### LinearEquiv: ker T_F11 ≃ (V/σ → F_11)
+
+軌道基底経由の trace 計算で利用. `funLeft (Quotient.mk s)` を pullback とする
+構成で, image が `ker T_F11` と一致する. -/
+
+/-- **Top-level iso**: `(Quotient (SameCycle.setoid σ) → F_11) ≃ₗ ker T_F11`.
+
+`f : Quotient → F_11` に対し `f ∘ Quotient.mk : V → F_11` は σ-不変 (同じ軌道で
+同じ値) なので `ker T_F11` に属する. 逆に σ-不変な V→F_11 は Quotient.lift で
+Quotient 上の関数に降下する.
+
+軌道基底 trace の formulation で使う中核 LinearEquiv. -/
+noncomputable def kerTF11_quotientEquiv (h : Order22ActsOnMoore57 V Γ) :
+    (Quotient (Equiv.Perm.SameCycle.setoid h.σ) → ZMod 11) ≃ₗ[ZMod 11]
+      LinearMap.ker (T_F11 h) := by
+  classical
+  set s : Setoid V := Equiv.Perm.SameCycle.setoid h.σ with hs_def
+  haveI : DecidableRel s.r := fun _ _ => Classical.dec _
+  haveI : Fintype (Quotient s) := Quotient.fintype s
+  set pb : (Quotient s → ZMod 11) →ₗ[ZMod 11] (V → ZMod 11) :=
+    LinearMap.funLeft (ZMod 11) (ZMod 11) (Quotient.mk s) with hpb_def
+  have h_pb_inj : Function.Injective pb :=
+    LinearMap.funLeft_injective_of_surjective (ZMod 11) (ZMod 11)
+      (Quotient.mk s) Quotient.mk_surjective
+  have h_range : LinearMap.range pb = LinearMap.ker (T_F11 h) := by
+    ext f
+    rw [LinearMap.mem_range, mem_ker_T_F11_iff]
+    constructor
+    · rintro ⟨g, rfl⟩
+      intro v
+      show g (Quotient.mk s (h.σ v)) = g (Quotient.mk s v)
+      congr 1
+      apply Quotient.sound
+      refine ⟨(-1 : ℤ), ?_⟩
+      simp [zpow_neg, zpow_one]
+    · intro hσ
+      refine ⟨Quotient.lift f ?_, ?_⟩
+      · intro a b hab
+        obtain ⟨i, hi⟩ := hab
+        rw [← hi]
+        exact (sigma_invariant_zpow h hσ i a).symm
+      · ext v; rfl
+  exact (LinearEquiv.ofInjective pb h_pb_inj).trans (LinearEquiv.ofEq _ _ h_range)
+
+/-- **Application formula**: pullback action.
+`(kerTF11_quotientEquiv h f).val v = f (Quotient.mk _ v)`. -/
+theorem kerTF11_quotientEquiv_apply (h : Order22ActsOnMoore57 V Γ)
+    (f : Quotient (Equiv.Perm.SameCycle.setoid h.σ) → ZMod 11) (v : V) :
+    ((kerTF11_quotientEquiv h f) : V → ZMod 11) v =
+      f (Quotient.mk _ v) := rfl
 
 /-! ## Step 3.3: dim range((σ - I)^10) = 295 (= #free orbits)
 

@@ -1546,6 +1546,38 @@ theorem trace_adjMatrixF11_restrict_eq_spectral_side
       trace_E3_restrict_ker_T_eq h]
   simp only [smul_eq_mul]
 
+/-! ### 軌道側 trace identity 形式化のための infrastructure
+
+`kerTF11_quotientEquiv` (Phase4F11OrbitKernel) を使い trace を `(V/σ → F_11)` 側に
+転送. 軌道基底 = Pi.basisFun で対角和に展開. -/
+
+/-- Conjugate of `A_restrict` to `(Quotient → F_11)` via `kerTF11_quotientEquiv`. -/
+noncomputable def adjMatrixF11_quot (h : Order22ActsOnMoore57 V Γ) :
+    (Quotient (Equiv.Perm.SameCycle.setoid h.σ) → ZMod 11) →ₗ[ZMod 11]
+      (Quotient (Equiv.Perm.SameCycle.setoid h.σ) → ZMod 11) :=
+  ((h.kerTF11_quotientEquiv).symm.toLinearMap).comp
+    (h.adjMatrixF11_restrict_ker_T.comp (h.kerTF11_quotientEquiv).toLinearMap)
+
+/-- `kerTF11_quotientEquiv.conj` of `adjMatrixF11_quot` recovers `A_restrict`. -/
+private theorem kerTF11_quotientEquiv_conj_adjMatrixF11_quot
+    (h : Order22ActsOnMoore57 V Γ) :
+    h.kerTF11_quotientEquiv.conj h.adjMatrixF11_quot =
+      h.adjMatrixF11_restrict_ker_T := by
+  apply LinearMap.ext
+  intro v
+  simp only [LinearEquiv.conj_apply_apply, adjMatrixF11_quot, LinearMap.comp_apply,
+             LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply]
+
+/-- **Trace equality via conjugation** (sorry-free):
+`trace(A_restrict over ker T_F11) = trace(A_quot over V/σ → F_11)`.
+
+`LinearMap.trace_conj'` から従う. -/
+theorem trace_adjMatrixF11_restrict_eq_trace_quot (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.trace (ZMod 11) _ h.adjMatrixF11_restrict_ker_T =
+      LinearMap.trace (ZMod 11) _ h.adjMatrixF11_quot := by
+  rw [← kerTF11_quotientEquiv_conj_adjMatrixF11_quot h]
+  exact LinearMap.trace_conj' _ _
+
 /-- **Orbital side of trace identity** (focused sorry):
 `trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
 
