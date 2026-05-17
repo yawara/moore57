@@ -1292,6 +1292,353 @@ private theorem finrank_sum_V_lambda_inter_ker_T_F11_pow
     omega
   rw [← h_sup_eq, h_27_3_finrank, h_27_finrank]
 
+/-! ### Linearity forcing: concave summing to linear ⟹ each linear -/
+
+/-- For each λ and j ∈ [2, 10], the concavity inequality is **equality**:
+`g_λ(j+1) + g_λ(j-1) = 2 g_λ(j)`.
+
+理由: Σ_λ concavity gives Σ ≤. But Σ g_λ = g_total = 5 + 295j is linear on [1, 11].
+For j ∈ [2, 10], g_total(j+1) + g_total(j-1) = 2 g_total(j). So Σ inequality is
+equality, hence each individual inequality is equality. -/
+private theorem g_V_lambda_linearity_inner_eq
+    (h : Order22ActsOnMoore57 V Γ) {j : ℕ}
+    (hj_ge : 2 ≤ j) (hj_le : j ≤ 10) :
+    -- V_2
+    (Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    2 * Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11))) ∧
+    -- V_7
+    (Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    2 * Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11))) ∧
+    -- V_3
+    (Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    2 * Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11))) := by
+  -- Concavity inequalities.
+  have h_concave_2 := finrank_V2_inter_ker_T_F11_pow_concave h (by omega : 1 ≤ j)
+  have h_concave_7 := finrank_V7_inter_ker_T_F11_pow_concave h (by omega : 1 ≤ j)
+  have h_concave_3 := finrank_V3_inter_ker_T_F11_pow_concave h (by omega : 1 ≤ j)
+  -- Σ identities at j+1, j, j-1.
+  have h_sum_jp1 := finrank_sum_V_lambda_inter_ker_T_F11_pow h (j+1)
+  have h_sum_j := finrank_sum_V_lambda_inter_ker_T_F11_pow h j
+  have h_sum_jm1 := finrank_sum_V_lambda_inter_ker_T_F11_pow h (j-1)
+  -- g_total(k) = 5 + 295 k for k ∈ [1, 11].
+  have h_total_jp1 := h.finrank_ker_T_F11_pow (by omega : 1 ≤ j+1) (by omega : j+1 ≤ 11)
+  have h_total_j := h.finrank_ker_T_F11_pow (by omega : 1 ≤ j) (by omega : j ≤ 11)
+  have h_total_jm1 := h.finrank_ker_T_F11_pow (by omega : 1 ≤ j-1) (by omega : j-1 ≤ 11)
+  -- Combine: Σ (g_λ(j+1) + g_λ(j-1)) ≤ Σ 2 g_λ(j). With Σ = 2 Σ from linear total.
+  -- Hence each ≤ becomes =.
+  omega
+
+/-- For each λ, `g_λ(j+1) - g_λ(j) = g_λ(j) - g_λ(j-1)` for j ∈ [2, 10]. -/
+private theorem g_V7_difference_eq_at_inner
+    (h : Order22ActsOnMoore57 V Γ) {j : ℕ}
+    (hj_ge : 2 ≤ j) (hj_le : j ≤ 10) :
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) -
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) -
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  have ⟨_, h_7, _⟩ := g_V_lambda_linearity_inner_eq h hj_ge hj_le
+  omega
+
+private theorem g_V2_difference_eq_at_inner
+    (h : Order22ActsOnMoore57 V Γ) {j : ℕ}
+    (hj_ge : 2 ≤ j) (hj_le : j ≤ 10) :
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) -
+      Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) -
+      Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  have ⟨h_2, _, _⟩ := g_V_lambda_linearity_inner_eq h hj_ge hj_le
+  omega
+
+private theorem g_V3_difference_eq_at_inner
+    (h : Order22ActsOnMoore57 V Γ) {j : ℕ}
+    (hj_ge : 2 ≤ j) (hj_le : j ≤ 10) :
+    Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) -
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) -
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  have ⟨_, _, h_3⟩ := g_V_lambda_linearity_inner_eq h hj_ge hj_le
+  omega
+
+/-- **Linearity result (additive form)**: For V_7,
+`g_λ(j+1) + g_λ(1) = g_λ(j) + g_λ(2)` for j ∈ [1, 10].
+これは `g_λ(j+1) - g_λ(j) = g_λ(2) - g_λ(1)` の加法形 (ℕ subtraction 回避). -/
+private theorem g_V7_linear_add_form (h : Order22ActsOnMoore57 V Γ) :
+    ∀ {j : ℕ}, 1 ≤ j → j ≤ 10 →
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^1) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  intro j hj_ge hj_le
+  induction j with
+  | zero => omega
+  | succ k ih =>
+    by_cases hk0 : k = 0
+    · subst hk0; ring
+    · have hk_pos : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk0
+      have hk_le : k ≤ 10 := by omega
+      have h_step_all :=
+        g_V_lambda_linearity_inner_eq h (by omega : 2 ≤ k+1) (by omega : k+1 ≤ 10)
+      have h_idx : k + 1 - 1 = k := by omega
+      rw [h_idx] at h_step_all
+      have h_ih := ih hk_pos hk_le
+      omega
+
+private theorem g_V2_linear_add_form (h : Order22ActsOnMoore57 V Γ) :
+    ∀ {j : ℕ}, 1 ≤ j → j ≤ 10 →
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^1) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  intro j hj_ge hj_le
+  induction j with
+  | zero => omega
+  | succ k ih =>
+    by_cases hk0 : k = 0
+    · subst hk0; ring
+    · have hk_pos : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk0
+      have hk_le : k ≤ 10 := by omega
+      have h_step_all :=
+        g_V_lambda_linearity_inner_eq h (by omega : 2 ≤ k+1) (by omega : k+1 ≤ 10)
+      have h_idx : k + 1 - 1 = k := by omega
+      rw [h_idx] at h_step_all
+      have h_ih := ih hk_pos hk_le
+      omega
+
+private theorem g_V3_linear_add_form (h : Order22ActsOnMoore57 V Γ) :
+    ∀ {j : ℕ}, 1 ≤ j → j ≤ 10 →
+    Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^1) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  intro j hj_ge hj_le
+  induction j with
+  | zero => omega
+  | succ k ih =>
+    by_cases hk0 : k = 0
+    · subst hk0; ring
+    · have hk_pos : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk0
+      have hk_le : k ≤ 10 := by omega
+      have h_step_all :=
+        g_V_lambda_linearity_inner_eq h (by omega : 2 ≤ k+1) (by omega : k+1 ≤ 10)
+      have h_idx : k + 1 - 1 = k := by omega
+      rw [h_idx] at h_step_all
+      have h_ih := ih hk_pos hk_le
+      omega
+
+/-! ### dim V_λ relation from linearity at j = 11 -/
+
+/-- `(T_F11 h)^11 = 0` から `ker (T_F11 h)^11 = ⊤`. -/
+private theorem ker_T_F11_pow_eleven_eq_top (h : Order22ActsOnMoore57 V Γ) :
+    LinearMap.ker ((T_F11 h)^11) = (⊤ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  rw [h.T_F11_pow_eleven_eq_zero, LinearMap.ker_zero]
+
+/-- g_λ(11) = dim V_λ for each λ. -/
+private theorem g_V7_eleven_eq_dim (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^11) :
+        Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11) (V7Submodule Γ) := by
+  rw [ker_T_F11_pow_eleven_eq_top, inf_top_eq]
+
+private theorem g_V2_eleven_eq_dim (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^11) :
+        Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11) (V2Submodule Γ) := by
+  rw [ker_T_F11_pow_eleven_eq_top, inf_top_eq]
+
+private theorem g_V3_eleven_eq_dim (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^11) :
+        Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11) (V3Submodule Γ) := by
+  rw [ker_T_F11_pow_eleven_eq_top, inf_top_eq]
+
+/-- **Phase D-B main relation** for V_7: `dim V_7 + 9 * a_F11_7 = 10 * g_7(2)`.
+すなわち `g_7(11) + 9 g_7(1) = 10 g_7(2)` (linearity at j = 11 via telescoping). -/
+private theorem dim_V7_plus_9_aF11_seven_eq_10_g2
+    (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V7Submodule Γ) +
+      9 * Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^1) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    10 * Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  -- 線形性 g(j+1) - g(j) = g(2) - g(1) を ℤ で取り扱う.
+  set g : ℕ → ℤ := fun j =>
+    (Module.finrank (ZMod 11) (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+        Submodule (ZMod 11) (V → ZMod 11)) : ℤ) with hg_def
+  have h_lin : ∀ {j : ℕ}, 1 ≤ j → j ≤ 10 → g (j+1) + g 1 = g j + g 2 := by
+    intro j hj_ge hj_le
+    have := g_V7_linear_add_form h hj_ge hj_le
+    push_cast [hg_def]
+    exact_mod_cast this
+  have h_dim : g 11 = (Module.finrank (ZMod 11) (V7Submodule Γ) : ℤ) := by
+    push_cast [hg_def]
+    exact_mod_cast g_V7_eleven_eq_dim h
+  -- Telescope: g 11 = g 1 + 10 * (g 2 - g 1) = 10 g 2 - 9 g 1.
+  have h_telescope : g 11 = 10 * g 2 - 9 * g 1 := by
+    have h10 := h_lin (show 1 ≤ 10 from by omega) (show 10 ≤ 10 from by omega)
+    have h9 := h_lin (show 1 ≤ 9 from by omega) (show 9 ≤ 10 from by omega)
+    have h8 := h_lin (show 1 ≤ 8 from by omega) (show 8 ≤ 10 from by omega)
+    have h7 := h_lin (show 1 ≤ 7 from by omega) (show 7 ≤ 10 from by omega)
+    have h6 := h_lin (show 1 ≤ 6 from by omega) (show 6 ≤ 10 from by omega)
+    have h5 := h_lin (show 1 ≤ 5 from by omega) (show 5 ≤ 10 from by omega)
+    have h4 := h_lin (show 1 ≤ 4 from by omega) (show 4 ≤ 10 from by omega)
+    have h3 := h_lin (show 1 ≤ 3 from by omega) (show 3 ≤ 10 from by omega)
+    have h2 := h_lin (show 1 ≤ 2 from by omega) (show 2 ≤ 10 from by omega)
+    have h1 := h_lin (show 1 ≤ 1 from by omega) (show 1 ≤ 10 from by omega)
+    linarith
+  rw [h_dim] at h_telescope
+  -- h_telescope: dim V_7 (cast) = 10 g 2 - 9 g 1.
+  have h_add : (Module.finrank (ZMod 11) (V7Submodule Γ) : ℤ) +
+      9 * g 1 = 10 * g 2 := by linarith
+  simp only [hg_def] at h_add
+  exact_mod_cast h_add
+
+private theorem dim_V2_plus_9_aF11_two_eq_10_g2
+    (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V2Submodule Γ) +
+      9 * Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^1) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    10 * Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  set g : ℕ → ℤ := fun j =>
+    (Module.finrank (ZMod 11) (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+        Submodule (ZMod 11) (V → ZMod 11)) : ℤ) with hg_def
+  have h_lin : ∀ {j : ℕ}, 1 ≤ j → j ≤ 10 → g (j+1) + g 1 = g j + g 2 := by
+    intro j hj_ge hj_le
+    have := g_V2_linear_add_form h hj_ge hj_le
+    push_cast [hg_def]
+    exact_mod_cast this
+  have h_dim : g 11 = (Module.finrank (ZMod 11) (V2Submodule Γ) : ℤ) := by
+    push_cast [hg_def]
+    exact_mod_cast g_V2_eleven_eq_dim h
+  have h_telescope : g 11 = 10 * g 2 - 9 * g 1 := by
+    have h10 := h_lin (show 1 ≤ 10 from by omega) (show 10 ≤ 10 from by omega)
+    have h9 := h_lin (show 1 ≤ 9 from by omega) (show 9 ≤ 10 from by omega)
+    have h8 := h_lin (show 1 ≤ 8 from by omega) (show 8 ≤ 10 from by omega)
+    have h7 := h_lin (show 1 ≤ 7 from by omega) (show 7 ≤ 10 from by omega)
+    have h6 := h_lin (show 1 ≤ 6 from by omega) (show 6 ≤ 10 from by omega)
+    have h5 := h_lin (show 1 ≤ 5 from by omega) (show 5 ≤ 10 from by omega)
+    have h4 := h_lin (show 1 ≤ 4 from by omega) (show 4 ≤ 10 from by omega)
+    have h3 := h_lin (show 1 ≤ 3 from by omega) (show 3 ≤ 10 from by omega)
+    have h2 := h_lin (show 1 ≤ 2 from by omega) (show 2 ≤ 10 from by omega)
+    have h1 := h_lin (show 1 ≤ 1 from by omega) (show 1 ≤ 10 from by omega)
+    linarith
+  rw [h_dim] at h_telescope
+  have h_add : (Module.finrank (ZMod 11) (V2Submodule Γ) : ℤ) +
+      9 * g 1 = 10 * g 2 := by linarith
+  simp only [hg_def] at h_add
+  exact_mod_cast h_add
+
+private theorem dim_V3_plus_9_aF11_three_eq_10_g2
+    (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V3Submodule Γ) +
+      9 * Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^1) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    10 * Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^2) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  set g : ℕ → ℤ := fun j =>
+    (Module.finrank (ZMod 11) (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+        Submodule (ZMod 11) (V → ZMod 11)) : ℤ) with hg_def
+  have h_lin : ∀ {j : ℕ}, 1 ≤ j → j ≤ 10 → g (j+1) + g 1 = g j + g 2 := by
+    intro j hj_ge hj_le
+    have := g_V3_linear_add_form h hj_ge hj_le
+    push_cast [hg_def]
+    exact_mod_cast this
+  have h_dim : g 11 = (Module.finrank (ZMod 11) (V3Submodule Γ) : ℤ) := by
+    push_cast [hg_def]
+    exact_mod_cast g_V3_eleven_eq_dim h
+  have h_telescope : g 11 = 10 * g 2 - 9 * g 1 := by
+    have h10 := h_lin (show 1 ≤ 10 from by omega) (show 10 ≤ 10 from by omega)
+    have h9 := h_lin (show 1 ≤ 9 from by omega) (show 9 ≤ 10 from by omega)
+    have h8 := h_lin (show 1 ≤ 8 from by omega) (show 8 ≤ 10 from by omega)
+    have h7 := h_lin (show 1 ≤ 7 from by omega) (show 7 ≤ 10 from by omega)
+    have h6 := h_lin (show 1 ≤ 6 from by omega) (show 6 ≤ 10 from by omega)
+    have h5 := h_lin (show 1 ≤ 5 from by omega) (show 5 ≤ 10 from by omega)
+    have h4 := h_lin (show 1 ≤ 4 from by omega) (show 4 ≤ 10 from by omega)
+    have h3 := h_lin (show 1 ≤ 3 from by omega) (show 3 ≤ 10 from by omega)
+    have h2 := h_lin (show 1 ≤ 2 from by omega) (show 2 ≤ 10 from by omega)
+    have h1 := h_lin (show 1 ≤ 1 from by omega) (show 1 ≤ 10 from by omega)
+    linarith
+  rw [h_dim] at h_telescope
+  have h_add : (Module.finrank (ZMod 11) (V3Submodule Γ) : ℤ) +
+      9 * g 1 = 10 * g 2 := by linarith
+  simp only [hg_def] at h_add
+  exact_mod_cast h_add
+
 /-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
 
 dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
