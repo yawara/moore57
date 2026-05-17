@@ -2241,63 +2241,137 @@ theorem aF11_lambda_two_eq_one (h : Order22ActsOnMoore57 V Γ) :
 
 ## 数学的構造 (good reduction)
 
-A の特性多項式 (X-57)(X-7)^1729(X+8)^1520 が mod 11 で squarefree 化
+A の特性多項式 (X-57)(X-7)^1729(X+8)^1520 が mod 11 で
 ((X-2)(X-7)(X-3) distinct) であるため, dim_F_11 V_7 = dim_ℚ V_7 = 1729.
 
-## 形式化 roadmap (~250-450 行, Phase E)
+## 形式化 roadmap (~250-450 行, 次セッション)
 
-### Step 1: ℤ-adjacency と ℚ-charpoly factorization (~150 行)
+### Mathlib インフラ (confirmed exists)
 
-A_ℤ := Γ.adjMatrix ℤ (integer matrix).
-A_ℚ := Γ.adjMatrix ℚ = A_ℤ.map (Int.cast).
-A_ℚ.charpoly = (X - 57)(X - 7)^1729 (X + 8)^1520 over ℚ[X].
+- `Matrix.charpoly_map` (`Mathlib.LinearAlgebra.Matrix.Charpoly.Basic:173`):
+  `(M.map f).charpoly = M.charpoly.map f`.
+- `LinearMap.charpoly_baseChange`
+  (`Mathlib.LinearAlgebra.Charpoly.BaseChange:23`):
+  `(f.baseChange A).charpoly = f.charpoly.map (algebraMap R A)`.
+- `finrank_maxGenEigenspace_eq`
+  (`Mathlib.LinearAlgebra.Eigenspace.Zero:202`):
+  `finrank K (φ.maxGenEigenspace μ) = φ.charpoly.rootMultiplicity μ`.
+- `Module.End.isSemisimple_of_squarefree_aeval_eq_zero`
+  (`Mathlib.LinearAlgebra.Semisimple:227`):
+  Squarefree p + aeval f p = 0 ⟹ f.IsSemisimple.
+- `IsSemisimple.minpoly_squarefree`
+  (`Mathlib.LinearAlgebra.Semisimple:253`).
 
-依存:
-- A_ℚ diagonalizable (min poly = (X-57)(X-7)(X+8) squarefree).
-  既存: `(A - 57)(A - 7)(A + 8) = 0` over ℚ. SRG + A·J = 57·J から導出可能.
-- dim V_λ_ℚ = (1, 1729, 1520).
-  既存: `finrank_range_E7Matrix_eq_1729`, `finrank_range_EMinus8Matrix_eq_1520`.
-- charpoly of diagonalizable = ∏ (X - λ)^{eigenspace dim}.
-  Mathlib `Module.End.charpoly` for diagonalizable LinearMap. 直接の lemma が
-  ない場合は spectrum/charpoly bridge.
+### Existing local infrastructure
 
-### Step 2: ℤ → F_11 reduction (~50 行)
+ℚ side:
+- `finrank_range_E7Matrix_eq_1729`: `dim V_7_ℚ = 1729`.
+- `finrank_range_EMinus8Matrix_eq_1520`: `dim V_{-8}_ℚ = 1520`.
+- `trace_E7Matrix_eq_1729_helper`, `E7Matrix_toLin'_isIdempotentElem''`.
 
-A_F11.charpoly = A_ℤ.charpoly.map (Int.cast).
-        = ((X-57)(X-7)^1729 (X+8)^1520).map (Int.cast)
-        = (X - 2)(X - 7)^1729 (X - 3)^1520 over F_11.
+F_11 side:
+- `adjMatrixF11_cubic_eq_zero`: `(A-2)(A-7)(A-3) = 0` over F_11.
+- `adjMatrixF11_mul_E_λ_eq_λ_smul_E_λ` (λ ∈ {2, 7, 3}).
+- `V2_inter_V7_eq_bot` 等: V_λ pairwise disjoint.
+- `V2_sup_V7_sup_V3_eq_top`: V_2 ⊔ V_7 ⊔ V_3 = ⊤.
+- `finrank_sum_V_lambda_eq_3250` (本セッション追加).
+- `finrank_V2Submodule_eq_one`: dim V_2_F11 = 1.
 
-Mathlib: `Matrix.charpoly_map` (sorry-free).
+### Step 1: F_11 で V_λ = ker(A_F11 - λ I) を establish (~50 行)
 
-### Step 3: F_11 diagonalizability + dim formula (~100 行)
+```lean
+theorem V7Submodule_eq_eigenspace (h : Order22ActsOnMoore57 V Γ) :
+    V7Submodule Γ =
+    LinearMap.ker (((adjMatrixF11 Γ) - (7 : ZMod 11) • 1 : Matrix V V (ZMod 11)).toLin') := by
+  -- ⊆ : v = E_7 w, (A - 7 I) v = (A E_7 - 7 E_7) w = 0 from adjMatrixF11_mul_E7_eq.
+  -- ⊇ : (A - 7) v = 0 ⟹ v = (E_2 + E_7 + E_3) v with E_μ v ∈ V_μ.
+  --   A v = 7 v = 2 E_2 v + 7 E_7 v + 3 E_3 v (using A E_μ = μ E_μ).
+  --   (2-7) E_2 v + 0 + (3-7) E_3 v = 0 ⟹ direct sum ⟹ E_2 v = E_3 v = 0.
+  -- ~50 行.
+  sorry  -- TODO Phase D-A step 1
+```
 
-A_F11 satisfies (A-2)(A-7)(A-3) = 0 (既存 `adjMatrixF11_cubic_eq_zero` sorry-free).
-Squarefree min poly ⟹ A_F11 diagonalizable.
-For diagonalizable A_F11 with charpoly = ∏ (X - λ)^{m_λ}:
-    dim ker(A_F11 - λ I) = m_λ.
-dim V_λ_F11 = dim ker(A_F11 - λ I) (eigenspace).
-∴ dim V_7_F11 = mult of (X - 7) in A_F11.charpoly = 1729.
+V_λ = maxGenEigenspace λ (diagonalizable):
+```lean
+theorem V7Submodule_eq_maxGenEigenspace : V7Submodule Γ =
+    ((adjMatrixF11 Γ).toLin' : Module.End (ZMod 11) (V → ZMod 11)).maxGenEigenspace 7
+```
 
-### Step 4: Wire-up (~30 行)
+### Step 2: A_F11.charpoly = (charpoly_ℤ).map via base change (~50 行)
 
-`dim V_7_F11 = 1729` から本 sorry を close.
+```lean
+theorem adjMatrixF11_charpoly_eq_charpoly_intCast :
+    (adjMatrixF11 Γ).charpoly =
+    (Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom (ZMod 11)) := by
+  rw [adjMatrixF11, Γ.adjMatrix_intCast (ZMod 11)]
+  -- adjMatrix R = (adjMatrix ℤ).map (Int.cast).
+  exact Matrix.charpoly_map _ _
+```
 
-## Alternative (簡略, ~100-200 行)
+### Step 3: ℚ-charpoly factorization (~150 行) — bottleneck
 
-Rank-via-trace を使う簡略ルート:
-- E_7 is idempotent ⟹ rank = trace (mod 11 で 2 ⟹ 1 mod 11 制約のみ).
-- Trace 単独では不十分; charpoly factorization が必要.
+```lean
+theorem adjMatrix_ℚ_charpoly_factored (hΓ : IsMoore57 Γ) :
+    (Γ.adjMatrix ℚ).charpoly =
+    (X - C (57 : ℚ)) * (X - C 7) ^ 1729 * (X + C 8) ^ 1520 := by
+  -- Strategy:
+  -- (a) (A - 57)(A - 7)(A + 8) = 0 over ℚ (cubic from A^2 + A - 56 = J + AJ = 57 J).
+  -- (b) Min poly | cubic, and 57, 7, -8 are eigenvalues, so min poly = cubic.
+  -- (c) Min poly squarefree ⟹ A diagonalizable (IsSemisimple via Mathlib).
+  -- (d) charpoly | min poly^N. charpoly degree = 3250. Roots ⊂ {57, 7, -8}.
+  -- (e) charpoly = (X-57)^a (X-7)^b (X+8)^c with a+b+c = 3250.
+  -- (f) finrank_maxGenEigenspace_eq + V_λ = maxGenEigenspace ⟹ a, b, c = 1, 1729, 1520.
+  sorry
+```
 
-## Mathlib infrastructure 確認状況
+### Step 4: ℤ-charpoly factorization (Gauss lemma) (~30 行)
 
-- ✓ `Matrix.charpoly_map`: sorry-free, exists.
-- ✓ `Matrix.charpoly_diagonal`: 対角行列の charpoly.
-- ✓ `finrank_range_E7Matrix_eq_1729` (local): ℚ rank.
-- ? `charpoly of diagonalizable matrix = ∏`: ad hoc proof if not available.
+ℚ-factorization with integer coefficients ⟹ ℤ-factorization.
+`Polynomial.coe_lift` or factoring through ℤ[X].
 
-## 残課題 (~250-450 行 total)
+### Step 5: Reduce mod 11 (~30 行)
 
-主依存: charpoly factorization over ℚ (Step 1) — 唯一の大きな task. -/
+```lean
+theorem adjMatrixF11_charpoly_factored :
+    (adjMatrixF11 Γ).charpoly =
+    (X - C (2 : ZMod 11)) * (X - C 7) ^ 1729 * (X - C 3) ^ 1520 := by
+  rw [adjMatrixF11_charpoly_eq_charpoly_intCast, adjMatrix_ℤ_charpoly_factored]
+  -- Map (X-57)(X-7)^1729(X+8)^1520 via ℤ → F_11.
+  -- 57 ↦ 2, -8 ↦ 3 (≡ -8 mod 11).
+  simp [Polynomial.map_mul, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_C,
+        Polynomial.map_sub, Polynomial.map_add]
+  -- ring or decide for ZMod numerics.
+```
+
+### Step 6: rootMultiplicity (~20 行)
+
+`(X-2)(X-7)^1729(X-3)^1520).rootMultiplicity 7 = 1729` (distinct roots).
+Use `Polynomial.rootMultiplicity_X_sub_C_pow` + product/coprime lemmas.
+
+### Step 7: Wire-up (~20 行)
+
+```lean
+theorem finrank_V7Submodule_eq_1729 :
+    Module.finrank (ZMod 11) (V7Submodule Γ) = 1729 := by
+  rw [V7Submodule_eq_maxGenEigenspace h, finrank_maxGenEigenspace_eq]
+  rw [adjMatrixF11_charpoly_factored h]
+  -- (X-2)(X-7)^1729(X-3)^1520).rootMultiplicity 7 = 1729.
+  ...
+```
+
+## 主依存
+
+Step 3 (ℚ-charpoly factorization) が中核. 詳細:
+- `Module.End.IsSemisimple` from squarefree min poly (Mathlib).
+- charpoly factorization for diagonalizable (custom proof via decomposition).
+  Mathlib に直接 lemma がない場合は構築要.
+
+## Mathlib search needed
+
+- `Module.End.IsSemisimple` + charpoly factorization 直接 lemma?
+- `Polynomial.rootMultiplicity_map` で root preservation 直接 lemma?
+
+## Estimated total: ~350 行 sorry-free + 1 sorry remaining (or 0 if all closed). -/
 theorem finrank_V7Submodule_eq_1729 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11) (V7Submodule Γ) = 1729 := by
   sorry
