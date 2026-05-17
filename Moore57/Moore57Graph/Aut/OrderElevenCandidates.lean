@@ -1,6 +1,7 @@
 import Moore57.Moore57Graph.Aut.InducedSubgraph
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.FixedCount
+import Moore57.Moore57Graph.Aut.SRGKSquarePlusOne
 import Moore57.D19OnMoore57.Fixed.InducedStarEdgeFormula
 import Moore57.Foundations.GraphTheory.StrongZeroOne
 import Mathlib.Combinatorics.SimpleGraph.StronglyRegular
@@ -199,5 +200,81 @@ theorem aut_fixedInducedGraph_regular_degree_modEq_two_of_pow_eleven
     aut_card_fixedNeighborFinset_modEq_two_of_pow_eleven hΓ σ smul_adj pow_eleven hxFix
   rw [hk_eq] at hmod
   exact hmod
+
+/-! ### Stage 5: k = 57 exclusion via σ ≠ 1 -/
+
+/-- If the regular degree `k` equals 57, then `|Fix(σ)| = 3250 = |V|`,
+forcing `σ = 1`. So for `σ ≠ 1` the degree is `< 57`. -/
+theorem aut_fixedInducedGraph_regular_degree_ne_57_of_pow_eleven_of_ne_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_eleven : σ ^ 11 = 1)
+    (hne : σ ≠ 1)
+    (k : ℕ)
+    (hreg : ∀ x : fixedVertexSet σ, (autFixedInducedGraph Γ σ).degree x = k) :
+    k ≠ 57 := by
+  intro hk57
+  subst hk57
+  have hcard : fixedVertexCount σ = 57 * 57 + 1 :=
+    aut_fixedVertexCount_eq_sq_add_one_of_regular_of_pow_eleven
+      hΓ σ smul_adj pow_eleven 57 hreg
+  have hcardV : Fintype.card V = 3250 := hΓ.card
+  have hlt : fixedVertexCount σ < Fintype.card V :=
+    aut_fixedVertexCount_lt_card σ hne
+  omega
+
+/-! ### Stage 6: |Fix(σ)| = 5 -/
+
+/-- **Main theorem for Stage 6**: For an automorphism `σ` of Moore57 with
+`σ^11 = 1` and `σ ≠ 1`, the fixed-vertex count equals exactly 5.
+
+Reasoning:
+1. (Stage 3) Regular case ⟹ |Fix(σ)| = k² + 1 for some `k`, with k ≡ 2 (mod 11).
+2. (Stage 4 axiom) SRG(k²+1, k, 0, 1) exists ⟹ k ∈ {0, 1, 2, 3, 7, 57}.
+3. Intersecting with k ≡ 2 (mod 11): k ∈ {2, 57}.
+4. (Stage 5) k = 57 excluded by σ ≠ 1.
+5. k = 0: |Fix| = 1, but Stage 1 says |Fix| ≥ 5 (Cauchy mod 11). Excluded.
+6. k = 1: |Fix| = 2, but |Fix| ≥ 5. Excluded.
+7. (Stages 2,3) Hence k = 2, |Fix(σ)| = 5. -/
+theorem aut_order_eleven_fixedVertexCount_eq_five
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_eleven : σ ^ 11 = 1) (hne : σ ≠ 1) :
+    fixedVertexCount σ = 5 := by
+  classical
+  rcases aut_fixedVertexCount_eq_sq_add_one_of_pow_eleven hΓ σ smul_adj pow_eleven
+    with ⟨k, hcard, hreg⟩
+  -- SRG classification
+  have hsrg :
+      (autFixedInducedGraph Γ σ).IsSRGWith (k * k + 1) k 0 1 := by
+    rw [← hcard]
+    exact autFixedInducedGraph_isSRGWith_of_regular hΓ σ smul_adj k hreg
+  have hk_class :=
+    srg_k_sq_plus_one_degree_classification (autFixedInducedGraph Γ σ) k hsrg
+  have hk_mod : k ≡ 2 [MOD 11] :=
+    aut_fixedInducedGraph_regular_degree_modEq_two_of_pow_eleven
+      hΓ σ smul_adj pow_eleven k hreg
+  have hk57_ne :=
+    aut_fixedInducedGraph_regular_degree_ne_57_of_pow_eleven_of_ne_one
+      hΓ σ smul_adj pow_eleven hne k hreg
+  have hge5 : 5 ≤ fixedVertexCount σ :=
+    aut_fixedVertexCount_ge_five_of_pow_eleven hΓ σ pow_eleven
+  -- Now case on k ∈ {0, 1, 2, 3, 7, 57}.
+  rcases hk_class with hk0 | hk1 | hk2 | hk3 | hk7 | hk57
+  · -- k = 0: |Fix| = 0² + 1 = 1, but |Fix| ≥ 5. Contradiction.
+    subst hk0; rw [hcard]; omega
+  · -- k = 1: |Fix| = 1² + 1 = 2, but |Fix| ≥ 5. Contradiction.
+    subst hk1; rw [hcard] at hge5; omega
+  · -- k = 2: |Fix| = 2² + 1 = 5. ✓
+    subst hk2
+    omega
+  · -- k = 3: |Fix| = 3² + 1 = 10. But k ≡ 2 (mod 11): 3 ≡ 2? No.
+    subst hk3
+    exact absurd hk_mod (by decide)
+  · -- k = 7: 7 ≡ 2 (mod 11)? No.
+    subst hk7
+    exact absurd hk_mod (by decide)
+  · -- k = 57: excluded by Stage 5.
+    exact absurd hk57 hk57_ne
 
 end Moore57
