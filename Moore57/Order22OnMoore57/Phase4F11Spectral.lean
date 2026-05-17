@@ -6,6 +6,7 @@ import Mathlib.LinearAlgebra.Trace
 import Mathlib.LinearAlgebra.Projection
 import Mathlib.LinearAlgebra.Semisimple
 import Mathlib.LinearAlgebra.Eigenspace.Semisimple
+import Mathlib.LinearAlgebra.Eigenspace.Zero
 import Mathlib.FieldTheory.Separable
 
 /-!
@@ -2307,6 +2308,35 @@ theorem adjMatrixF11_toLin'_isSemisimple (h : Order22ActsOnMoore57 V Γ) :
   Module.End.isSemisimple_of_squarefree_aeval_eq_zero
     adjMatrixF11_cubic_polynomial_squarefree
     (adjMatrixF11_toLin'_aeval_cubic_eq_zero h)
+
+/-! ### Phase D-A Step 3: V_λ = maxGenEigenspace λ (via Semisimple) -/
+
+/-- `V_7 = maxGenEigenspace 7` の identification (semisimple via Step 1, 2). -/
+theorem V7Submodule_eq_maxGenEigenspace (h : Order22ActsOnMoore57 V Γ) :
+    V7Submodule Γ =
+    Module.End.maxGenEigenspace
+      ((adjMatrixF11 Γ).toLin' : Module.End (ZMod 11) (V → ZMod 11))
+      (7 : ZMod 11) := by
+  -- maxGenEigenspace = eigenspace (via Semisimple).
+  rw [(adjMatrixF11_toLin'_isSemisimple h).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace]
+  -- eigenspace = ker(f - μ • 1).
+  rw [Module.End.eigenspace_def]
+  -- Bridge ker((A - 7 • 1).toLin') = ker(A.toLin' - 7 • 1).
+  rw [V7Submodule_eq_ker_A_sub_seven h]
+  congr 1
+  rw [map_sub, map_smul, Matrix.toLin'_one, ← Module.End.one_eq_id]
+
+/-! ### Phase D-A Step 4: finrank V_7 = A_F11.toLin'.charpoly.rootMultiplicity 7
+
+`finrank_maxGenEigenspace_eq` (sorry-free Mathlib): finrank maxGenEigenspace = rootMultiplicity. -/
+
+/-- `dim V_7 = A_F11.toLin'.charpoly.rootMultiplicity 7`. -/
+theorem finrank_V7Submodule_eq_rootMultiplicity (h : Order22ActsOnMoore57 V Γ) :
+    Module.finrank (ZMod 11) (V7Submodule Γ) =
+    ((adjMatrixF11 Γ).toLin' :
+      Module.End (ZMod 11) (V → ZMod 11)).charpoly.rootMultiplicity (7 : ZMod 11) := by
+  rw [V7Submodule_eq_maxGenEigenspace h]
+  exact LinearMap.finrank_maxGenEigenspace_eq _ _
 
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
