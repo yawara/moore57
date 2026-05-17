@@ -908,6 +908,21 @@ theorem V3_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   refine Submodule.sub_mem _ ?_ hv
   exact h.V3Submodule_invariant_permMatrixF11 v hv
 
+/-- T_F11 restricted to V_2. -/
+private noncomputable def T_F11_V2 (h : Order22ActsOnMoore57 V Γ) :
+    V2Submodule Γ →ₗ[ZMod 11] V2Submodule Γ :=
+  (T_F11 h).restrict (V2_invariant_T_F11 h)
+
+/-- T_F11 restricted to V_7. -/
+private noncomputable def T_F11_V7 (h : Order22ActsOnMoore57 V Γ) :
+    V7Submodule Γ →ₗ[ZMod 11] V7Submodule Γ :=
+  (T_F11 h).restrict (V7_invariant_T_F11 h)
+
+/-- T_F11 restricted to V_3. -/
+private noncomputable def T_F11_V3 (h : Order22ActsOnMoore57 V Γ) :
+    V3Submodule Γ →ₗ[ZMod 11] V3Submodule Γ :=
+  (T_F11 h).restrict (V3_invariant_T_F11 h)
+
 /-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
 
 dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
