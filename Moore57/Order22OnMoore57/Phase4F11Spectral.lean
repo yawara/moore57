@@ -1053,6 +1053,56 @@ private lemma finrank_ker_T_F11_V3_pow_eq (h : Order22ActsOnMoore57 V Γ) (j : �
   rw [← map_subtype_ker_T_F11_V3_pow_eq h j]
   exact Submodule.finrank_map_subtype_eq _ _
 
+/-- 一般形: P_σ と可換な行列 E は ker T_F11^j を保つ (各 j). -/
+private theorem _commute_preserves_ker_T_F11_pow (h : Order22ActsOnMoore57 V Γ)
+    (E : Matrix V V (ZMod 11))
+    (hE : E * permMatrixF11 h.σ = permMatrixF11 h.σ * E) (j : ℕ) :
+    ∀ v ∈ LinearMap.ker ((T_F11 h)^j), E.toLin' v ∈ LinearMap.ker ((T_F11 h)^j) := by
+  -- E commutes with (P_σ - 1) (from commutes with P_σ).
+  have h_comm_T : E * (permMatrixF11 h.σ - 1) = (permMatrixF11 h.σ - 1) * E := by
+    rw [mul_sub, sub_mul, mul_one, one_mul, hE]
+  -- E commutes with (P_σ - 1)^j by induction.
+  have h_comm_T_pow : E * ((permMatrixF11 h.σ - 1)^j) =
+      ((permMatrixF11 h.σ - 1)^j) * E := by
+    induction j with
+    | zero => simp
+    | succ k ih =>
+      rw [pow_succ, ← mul_assoc, ih, mul_assoc, h_comm_T, ← mul_assoc]
+  intro v hv
+  rw [LinearMap.mem_ker] at hv ⊢
+  rw [T_F11_def] at hv ⊢
+  rw [show (((permMatrixF11 h.σ) - 1).toLin')^j =
+        (((permMatrixF11 h.σ) - 1)^j).toLin' from (Matrix.toLin'_pow _ _).symm] at hv ⊢
+  -- Now hv : ((P_σ - 1)^j).toLin' v = 0.
+  -- Goal : ((P_σ - 1)^j).toLin' (E.toLin' v) = 0.
+  rw [show (((permMatrixF11 h.σ) - 1)^j).toLin' (E.toLin' v) =
+        ((((permMatrixF11 h.σ) - 1)^j) * E).toLin' v from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [← h_comm_T_pow]
+  show (E * ((permMatrixF11 h.σ - 1)^j)).toLin' v = 0
+  rw [show (E * ((permMatrixF11 h.σ - 1)^j)).toLin' v =
+        E.toLin' ((((permMatrixF11 h.σ) - 1)^j).toLin' v) from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [hv]; exact map_zero _
+
+private theorem E2_preserves_ker_T_F11_pow (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    ∀ v ∈ LinearMap.ker ((T_F11 h)^j),
+      (E2MatrixF11 Γ).toLin' v ∈ LinearMap.ker ((T_F11 h)^j) :=
+  _commute_preserves_ker_T_F11_pow h (E2MatrixF11 Γ)
+    (E2_commute_permMatrixF11 h.isMoore h.σ) j
+
+private theorem E7_preserves_ker_T_F11_pow (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    ∀ v ∈ LinearMap.ker ((T_F11 h)^j),
+      (E7MatrixF11 Γ).toLin' v ∈ LinearMap.ker ((T_F11 h)^j) :=
+  _commute_preserves_ker_T_F11_pow h (E7MatrixF11 Γ)
+    (E7_commute_permMatrixF11 h.isMoore h.σ h.σ_aut) j
+
+private theorem E3_preserves_ker_T_F11_pow (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    ∀ v ∈ LinearMap.ker ((T_F11 h)^j),
+      (E3MatrixF11 Γ).toLin' v ∈ LinearMap.ker ((T_F11 h)^j) :=
+  _commute_preserves_ker_T_F11_pow h (E3MatrixF11 Γ)
+    (E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut) j
+
 /-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
 
 dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
