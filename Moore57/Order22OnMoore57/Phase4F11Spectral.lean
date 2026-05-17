@@ -2239,12 +2239,65 @@ theorem aF11_lambda_two_eq_one (h : Order22ActsOnMoore57 V Γ) :
 
 /-- **Phase D-A focused sorry**: `dim V_7 over F_11 = 1729`.
 
-良還元 (good reduction): A の特性多項式 (X-57)(X-7)^1729(X+8)^1520 が
-mod 11 で squarefree 化 ((X-2)(X-7)(X-3) distinct) であるため,
-dim_F_11 V_7 = dim_ℚ V_7 = 1729.
+## 数学的構造 (good reduction)
 
-実装: charpoly approach + Matrix.charpoly_map or rank inequality via
-integer matrix lift. -/
+A の特性多項式 (X-57)(X-7)^1729(X+8)^1520 が mod 11 で squarefree 化
+((X-2)(X-7)(X-3) distinct) であるため, dim_F_11 V_7 = dim_ℚ V_7 = 1729.
+
+## 形式化 roadmap (~250-450 行, Phase E)
+
+### Step 1: ℤ-adjacency と ℚ-charpoly factorization (~150 行)
+
+A_ℤ := Γ.adjMatrix ℤ (integer matrix).
+A_ℚ := Γ.adjMatrix ℚ = A_ℤ.map (Int.cast).
+A_ℚ.charpoly = (X - 57)(X - 7)^1729 (X + 8)^1520 over ℚ[X].
+
+依存:
+- A_ℚ diagonalizable (min poly = (X-57)(X-7)(X+8) squarefree).
+  既存: `(A - 57)(A - 7)(A + 8) = 0` over ℚ. SRG + A·J = 57·J から導出可能.
+- dim V_λ_ℚ = (1, 1729, 1520).
+  既存: `finrank_range_E7Matrix_eq_1729`, `finrank_range_EMinus8Matrix_eq_1520`.
+- charpoly of diagonalizable = ∏ (X - λ)^{eigenspace dim}.
+  Mathlib `Module.End.charpoly` for diagonalizable LinearMap. 直接の lemma が
+  ない場合は spectrum/charpoly bridge.
+
+### Step 2: ℤ → F_11 reduction (~50 行)
+
+A_F11.charpoly = A_ℤ.charpoly.map (Int.cast).
+        = ((X-57)(X-7)^1729 (X+8)^1520).map (Int.cast)
+        = (X - 2)(X - 7)^1729 (X - 3)^1520 over F_11.
+
+Mathlib: `Matrix.charpoly_map` (sorry-free).
+
+### Step 3: F_11 diagonalizability + dim formula (~100 行)
+
+A_F11 satisfies (A-2)(A-7)(A-3) = 0 (既存 `adjMatrixF11_cubic_eq_zero` sorry-free).
+Squarefree min poly ⟹ A_F11 diagonalizable.
+For diagonalizable A_F11 with charpoly = ∏ (X - λ)^{m_λ}:
+    dim ker(A_F11 - λ I) = m_λ.
+dim V_λ_F11 = dim ker(A_F11 - λ I) (eigenspace).
+∴ dim V_7_F11 = mult of (X - 7) in A_F11.charpoly = 1729.
+
+### Step 4: Wire-up (~30 行)
+
+`dim V_7_F11 = 1729` から本 sorry を close.
+
+## Alternative (簡略, ~100-200 行)
+
+Rank-via-trace を使う簡略ルート:
+- E_7 is idempotent ⟹ rank = trace (mod 11 で 2 ⟹ 1 mod 11 制約のみ).
+- Trace 単独では不十分; charpoly factorization が必要.
+
+## Mathlib infrastructure 確認状況
+
+- ✓ `Matrix.charpoly_map`: sorry-free, exists.
+- ✓ `Matrix.charpoly_diagonal`: 対角行列の charpoly.
+- ✓ `finrank_range_E7Matrix_eq_1729` (local): ℚ rank.
+- ? `charpoly of diagonalizable matrix = ∏`: ad hoc proof if not available.
+
+## 残課題 (~250-450 行 total)
+
+主依存: charpoly factorization over ℚ (Step 1) — 唯一の大きな task. -/
 theorem finrank_V7Submodule_eq_1729 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11) (V7Submodule Γ) = 1729 := by
   sorry
