@@ -229,4 +229,28 @@ theorem srg_kk_plus_one_perron_collinear
 /-- `(k : ℝ) ^ 2 + 1 ≠ 0`. -/
 private theorem k_sq_plus_one_ne_zero (k : ℕ) : ((k : ℝ) ^ 2 + 1) ≠ 0 := by positivity
 
+/-! ### S4 Hermitian setup -/
+
+/-- The adjacency matrix of a simple graph over `ℝ` is Hermitian. -/
+theorem adjMatrix_real_isHermitian {G : SimpleGraph W} [DecidableRel G.Adj] :
+    (G.adjMatrix ℝ).IsHermitian :=
+  SimpleGraph.isHermitian_adjMatrix (R := ℝ) (G := G)
+
+/-- Every eigenvalue of `A` (from `IsHermitian.eigenvalues`) satisfies the
+dichotomy: equals `k` or is a root of `X² + X - (k - 1)`. -/
+theorem srg_kk_plus_one_eigenvalue_classification
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) (i : W) :
+    hHerm.eigenvalues i = (k : ℝ) ∨
+      (hHerm.eigenvalues i) ^ 2 + hHerm.eigenvalues i - ((k : ℝ) - 1) = 0 := by
+  have hmv := hHerm.mulVec_eigenvectorBasis i
+  have hne_basis : hHerm.eigenvectorBasis i ≠ 0 :=
+    hHerm.eigenvectorBasis.orthonormal.ne_zero i
+  have hne : ⇑(hHerm.eigenvectorBasis i) ≠ 0 := by
+    intro h
+    apply hne_basis
+    exact (WithLp.ofLp_eq_zero (p := 2)).mp h
+  exact srg_kk_plus_one_eigenvalue_dichotomy hsrg hne hmv
+
 end Moore57
