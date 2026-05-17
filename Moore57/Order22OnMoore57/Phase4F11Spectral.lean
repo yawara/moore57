@@ -1241,24 +1241,60 @@ theorem aF11_lambda_two_eq_one (h : Order22ActsOnMoore57 V Γ) :
 /-- F_11 modular rep theory **基幹 sorry**:
 `a^{F_11}_7 := dim(V_7 ∩ ker T_F11) = 159`.
 
-証明戦略 (依存):
-A. `dim V_7 over F_11 = 1729` — good reduction of rational rank.
-   * `IsMoore57.trace_E7Matrix_one : trace(E_7) = 1729` over ℚ (existing).
-   * Idempotent rank = trace ⟹ rank E_7 over ℚ = 1729.
-   * E_7 has integer entries scaled by units of ℤ_(11). Reduce mod 11.
-   * rank preservation under good reduction (denominators 15, 750 coprime to 11).
-B. `Σ l_λ = 5` — F_11[C_11] structure of V_perm = M_1^5 ⊕ M_11^{295}.
-   * Already have Σ a^{F_11}_λ = 300 (sorry-free), Σ k_λ = k_7 + k_3 + 0 = 295.
-   * l_λ := a^{F_11}_λ - k_λ ≥ 0 (from Im T^10 ⊆ ker T proved).
-   * Σ l_λ = 300 - 295 = 5 (provable directly from above).
-C. `l_7 ≡ dim V_7 mod 11 = 2` — F_11[C_11] structure (M_11 contributes 0 to σ-trace).
-   * Via trace(σ E_7) over F_11 = 2 (Higman + matrix computation).
-   * Identifies trace(σ on V_7) = l_7 over F_11.
-D. `l_7 = 2` — combining B (l_7 ≤ 4 from Σ = 5 and l_2 = 1, l_3 ≥ 0) + C (mod 11).
-E. `k_7 = 157` — A + D: dim V_7 = 11 k_7 + l_7 = 1729 = 11·157 + 2.
-F. `a^{F_11}_7 = l_7 + k_7 = 2 + 157 = 159`.
+## 戦略分析 (2026-05-17 詳細評価)
 
-主依存: A (good reduction) + C (F_11[C_11] σ-trace identification) — substantial. -/
+### 数学的構造 (hybrid B + A)
+
+(a) **Jordan 単調性 (Option B)**: `g_λ(j) := dim(V_λ ∩ ker T_F11^j)` は concave,
+    非減少。 `Σ_λ g_λ(j) = g_total(j) = 5 + 295 j` (j ∈ [1, 11]) は線形
+    (`finrank_ker_T_F11_pow` sorry-free).
+
+    Concave 関数の和が線形 ⟹ 各 g_λ が `[1, 11]` 上で線形。
+    Slope k_λ = (dim V_λ - a_F11_λ) / 10。
+    ⟹ V_λ の Jordan 構造は **size 1 と 11 のブロックのみ**:
+    `V_λ = M_1^{l_λ} ⊕ M_11^{k_λ}` で `l_λ + k_λ = a_F11_λ`, `l_λ + 11 k_λ = dim V_λ`.
+
+(b) **σ-trace = l_λ (F_11 上)**: `trace(σ ∘ E_λ) over F_11 = l_λ`.
+    各 M_11 で `trace σ = 11 ≡ 0 (mod 11)`, M_1 で `trace σ = 1`.
+    Σ l_λ = 5 (= #Fix σ from `σ_fix`).
+
+    具体的計算 (Moore57 + σ_pow_eleven):
+    - trace(σ · E_2) = 1 over F_11 (`l_2 = 1`)
+    - trace(σ · E_7) = 2 over F_11 (`l_7 = 2`)
+    - trace(σ · E_3) = 2 over F_11 (`l_3 = 2`)
+
+    確認: 1 + 2 + 2 = 5 ✓
+
+(c) **dim V_λ over F_11 (Option A; good reduction)**: 主要 bottleneck.
+    `dim V_7 over F_11 = 1729` を ℚ-rank からの reduction で導出する必要あり。
+
+    Mathlib infrastructure:
+    - `Matrix.charpoly_map`: charpoly 保存 (sorry-free).
+    - `Polynomial.rootMultiplicity` + diagonalizability (`finrank_maxGenEigenspace_eq`).
+    - 不足: A diagonalizable over ℚ + charpoly = ∏ (X - λ)^{dim V_λ} の formalization.
+
+    ad-hoc 代替: rank E_7 over F_11 ≤ rank E_7 over ℚ = 1729 (semi-continuity)
+    + Σ rank E_λ over F_11 = 3250 + rank E_2 = 1 + rank E_3 ≤ 1520 ⟹ 等式強制。
+
+### 最終チェーン
+
+dim V_7 = 1729 + (a) Jordan + (b) σ-trace ⟹
+* l_7 = 2 (intrinsic from σ-trace + Σ l_λ = 5 と l_λ ∈ [0, 4]).
+* k_7 = (dim V_7 - l_7) / 11 = (1729 - 2) / 11 = 157.
+* a^{F_11}_7 = l_7 + k_7 = 159. ✓
+
+### 工数見積 (~600-1000 行 total)
+
+* B framework (concave linearity for V_λ): ~200-300 行.
+* σ-trace identification (with KS): ~150-250 行.
+* dim V_λ via good reduction (or alternative): ~250-450 行.
+* Final wire-up: ~50 行.
+
+### 残課題
+
+主依存: (c) dim V_λ over F_11 — good reduction の formalization が中核。
+σ-trace計算 (b) は sorry-free に可能だが KS identification を要する。
+Jordan 単調性 (a) は既存 `finrank_ker_pow_concave` + `concave_linearity_forcing` で実現可能。 -/
 theorem aF11_lambda_seven_eq_159 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11)
         (V7Submodule Γ ⊓ LinearMap.ker (T_F11 h) :
