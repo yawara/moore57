@@ -2585,6 +2585,104 @@ private theorem rootMultiplicity_F11_3_ge_1520 (hΓ : IsMoore57 Γ) :
   rw [← adjMatrixF11_charpoly_eq_intCast_map] at h_le
   exact (rootMultiplicity_intCast_minusEight_ge_1520 hΓ).trans h_le
 
+/-! ### Phase D-A Step 7b: Sum forcing + wire-up
+
+`(X - 2)^m_2 * (X - 7)^m_7 * (X - 3)^m_3 | p` (pairwise coprime),
+degree of product = m_2 + m_7 + m_3 ≤ natDegree p = 3250. -/
+
+/-- 3 distinct linear factors の rootMultiplicity sum は natDegree 以下. -/
+private theorem sum_three_rootMultiplicity_le_natDegree
+    {F : Type*} [Field F] (p : Polynomial F) (hp : p ≠ 0)
+    (a b c : F) (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
+    p.rootMultiplicity a + p.rootMultiplicity b + p.rootMultiplicity c ≤ p.natDegree := by
+  set m_a := p.rootMultiplicity a
+  set m_b := p.rootMultiplicity b
+  set m_c := p.rootMultiplicity c
+  have h_dvd_a : (Polynomial.X - Polynomial.C a) ^ m_a ∣ p := p.pow_rootMultiplicity_dvd a
+  have h_dvd_b : (Polynomial.X - Polynomial.C b) ^ m_b ∣ p := p.pow_rootMultiplicity_dvd b
+  have h_dvd_c : (Polynomial.X - Polynomial.C c) ^ m_c ∣ p := p.pow_rootMultiplicity_dvd c
+  have h_co_ab : IsCoprime (Polynomial.X - Polynomial.C a) (Polynomial.X - Polynomial.C b) :=
+    Polynomial.isCoprime_X_sub_C_of_isUnit_sub
+      (IsUnit.mk0 _ (sub_ne_zero_of_ne hab))
+  have h_co_ac : IsCoprime (Polynomial.X - Polynomial.C a) (Polynomial.X - Polynomial.C c) :=
+    Polynomial.isCoprime_X_sub_C_of_isUnit_sub
+      (IsUnit.mk0 _ (sub_ne_zero_of_ne hac))
+  have h_co_bc : IsCoprime (Polynomial.X - Polynomial.C b) (Polynomial.X - Polynomial.C c) :=
+    Polynomial.isCoprime_X_sub_C_of_isUnit_sub
+      (IsUnit.mk0 _ (sub_ne_zero_of_ne hbc))
+  have h_dvd_ab : (Polynomial.X - Polynomial.C a) ^ m_a *
+                   (Polynomial.X - Polynomial.C b) ^ m_b ∣ p :=
+    h_co_ab.pow.mul_dvd h_dvd_a h_dvd_b
+  have h_co_ab_c :
+      IsCoprime ((Polynomial.X - Polynomial.C a) ^ m_a *
+                  (Polynomial.X - Polynomial.C b) ^ m_b)
+                ((Polynomial.X - Polynomial.C c) ^ m_c) :=
+    IsCoprime.mul_left h_co_ac.pow h_co_bc.pow
+  have h_dvd_abc :
+      ((Polynomial.X - Polynomial.C a) ^ m_a *
+        (Polynomial.X - Polynomial.C b) ^ m_b) *
+        (Polynomial.X - Polynomial.C c) ^ m_c ∣ p :=
+    h_co_ab_c.mul_dvd h_dvd_ab h_dvd_c
+  have h_deg_le := Polynomial.natDegree_le_of_dvd h_dvd_abc hp
+  -- natDegree of LHS = m_a + m_b + m_c
+  have h_deg_eq : (((Polynomial.X - Polynomial.C a) ^ m_a *
+                   (Polynomial.X - Polynomial.C b) ^ m_b) *
+                   (Polynomial.X - Polynomial.C c) ^ m_c).natDegree =
+                  m_a + m_b + m_c := by
+    rw [Polynomial.natDegree_mul, Polynomial.natDegree_mul,
+        Polynomial.natDegree_pow, Polynomial.natDegree_pow, Polynomial.natDegree_pow,
+        Polynomial.natDegree_X_sub_C, Polynomial.natDegree_X_sub_C,
+        Polynomial.natDegree_X_sub_C]
+    · ring
+    · exact pow_ne_zero _ (Polynomial.X_sub_C_ne_zero a)
+    · exact pow_ne_zero _ (Polynomial.X_sub_C_ne_zero b)
+    · exact mul_ne_zero (pow_ne_zero _ (Polynomial.X_sub_C_ne_zero a))
+                       (pow_ne_zero _ (Polynomial.X_sub_C_ne_zero b))
+    · exact pow_ne_zero _ (Polynomial.X_sub_C_ne_zero c)
+  rw [h_deg_eq] at h_deg_le
+  exact h_deg_le
+
+/-- F_11-charpoly の natDegree = Fintype.card V. -/
+private theorem adjMatrixF11_charpoly_natDegree_eq (h : Order22ActsOnMoore57 V Γ) :
+    (adjMatrixF11 Γ).charpoly.natDegree = 3250 := by
+  rw [Matrix.charpoly_natDegree_eq_dim]
+  exact h.isMoore.card
+
+/-- F_11-side rootMultiplicity sum (forced to equality). -/
+private theorem rootMultiplicity_F11_sum_eq_3250 (h : Order22ActsOnMoore57 V Γ) :
+    (adjMatrixF11 Γ).charpoly.rootMultiplicity (2 : ZMod 11) +
+    (adjMatrixF11 Γ).charpoly.rootMultiplicity (7 : ZMod 11) +
+    (adjMatrixF11 Γ).charpoly.rootMultiplicity (3 : ZMod 11) = 3250 := by
+  have h_lower :
+      1 + 1729 + 1520 ≤
+      (adjMatrixF11 Γ).charpoly.rootMultiplicity (2 : ZMod 11) +
+      (adjMatrixF11 Γ).charpoly.rootMultiplicity (7 : ZMod 11) +
+      (adjMatrixF11 Γ).charpoly.rootMultiplicity (3 : ZMod 11) := by
+    have h_2 := rootMultiplicity_F11_2_ge_one h.isMoore
+    have h_7 := rootMultiplicity_F11_7_ge_1729 h.isMoore
+    have h_3 := rootMultiplicity_F11_3_ge_1520 h.isMoore
+    omega
+  have h_upper :
+      (adjMatrixF11 Γ).charpoly.rootMultiplicity (2 : ZMod 11) +
+      (adjMatrixF11 Γ).charpoly.rootMultiplicity (7 : ZMod 11) +
+      (adjMatrixF11 Γ).charpoly.rootMultiplicity (3 : ZMod 11) ≤
+      (adjMatrixF11 Γ).charpoly.natDegree :=
+    sum_three_rootMultiplicity_le_natDegree (adjMatrixF11 Γ).charpoly
+      (adjMatrixF11 Γ).charpoly_monic.ne_zero
+      (2 : ZMod 11) (7 : ZMod 11) (3 : ZMod 11)
+      (by decide) (by decide) (by decide)
+  rw [adjMatrixF11_charpoly_natDegree_eq h] at h_upper
+  omega
+
+/-- Final: `rootMultiplicity 7 in (adjMatrixF11 Γ).charpoly = 1729`. -/
+theorem rootMultiplicity_F11_7_eq_1729 (h : Order22ActsOnMoore57 V Γ) :
+    (adjMatrixF11 Γ).charpoly.rootMultiplicity (7 : ZMod 11) = 1729 := by
+  have h_sum := rootMultiplicity_F11_sum_eq_3250 h
+  have h_2 := rootMultiplicity_F11_2_ge_one h.isMoore
+  have h_7 := rootMultiplicity_F11_7_ge_1729 h.isMoore
+  have h_3 := rootMultiplicity_F11_3_ge_1520 h.isMoore
+  omega
+
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
 各 V_λ は σ-不変な F_11 [C_11] 部分加群.
@@ -2810,15 +2908,8 @@ Step 3 (ℚ-charpoly factorization) が中核. 詳細:
 ## Estimated total: ~350 行 sorry-free + 1 sorry remaining (or 0 if all closed). -/
 theorem finrank_V7Submodule_eq_1729 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11) (V7Submodule Γ) = 1729 := by
-  -- Phase D-A Steps 1-4 経由で:
-  -- dim V_7 = A_F11.toLin'.charpoly.rootMultiplicity 7 = adjMatrixF11.charpoly.rootMultiplicity 7.
   rw [finrank_V7Submodule_eq_rootMultiplicity h, Matrix.charpoly_toLin']
-  -- 残作業: (adjMatrixF11 Γ).charpoly.rootMultiplicity (7 : ZMod 11) = 1729.
-  -- 戦略: adjMatrixF11.charpoly = (Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom (ZMod 11))
-  --       (Γ.adjMatrix ℚ).charpoly = (X - 57)(X - 7)^1729 (X + 8)^1520 over ℚ[X]
-  --       reduce mod 11: (X - 2)(X - 7)^1729 (X - 3)^1520 over F_11[X]
-  --       rootMultiplicity (7) = 1729 (distinct roots).
-  sorry
+  exact rootMultiplicity_F11_7_eq_1729 h
 
 /-- `dim V_3 over F_11 = 1520` (derived from dim V_2 + dim V_7 + Σ = 3250). -/
 theorem finrank_V3Submodule_eq_1520 (h : Order22ActsOnMoore57 V Γ) :
