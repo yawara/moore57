@@ -1907,6 +1907,26 @@ theorem trace_adjMatrixF11_restrict_eq_orbital_side
     (h : Order22ActsOnMoore57 V Γ) :
     LinearMap.trace (ZMod 11) _ h.adjMatrixF11_restrict_ker_T =
       ((10 * h.traceNumber : ℕ) : ZMod 11) := by
+  classical
+  haveI : DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r := fun _ _ => Classical.dec _
+  haveI : Fintype (Quotient (Equiv.Perm.SameCycle.setoid h.σ)) := Quotient.fintype _
+  rw [trace_adjMatrixF11_restrict_eq_sum_over_vertices]
+  -- Goal: Σ_w (adjMatrixF11 Γ) (Quotient.out (Quotient.mk w)) w = ((10n : ℕ) : ZMod 11)
+  -- Step A: Convert each matrix entry to if-then-else form.
+  have h_unfold : (∑ w : V, (adjMatrixF11 Γ)
+        (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w)) w) =
+      ∑ w : V, (if Γ.Adj
+          (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w)) w
+        then (1 : ZMod 11) else 0) := by
+    apply Finset.sum_congr rfl
+    intro w _
+    unfold adjMatrixF11
+    rw [SimpleGraph.adjMatrix_apply]
+  rw [h_unfold]
+  -- Step B: sum_boole to convert to count cast.
+  rw [Finset.sum_boole]
+  -- Goal: (#{w ∈ univ | Γ.Adj (rep w) w} : ZMod 11) = ((10 * n : ℕ) : ZMod 11)
+  -- Step C: prove count = 10n in ℕ via orbit partition + Tk identity.
   sorry
 
 /-- **F_11 trace identity** (sorry-free given orbital side):
