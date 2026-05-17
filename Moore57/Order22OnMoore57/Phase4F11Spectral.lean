@@ -469,6 +469,142 @@ theorem E3_commute_permMatrixF11 (hΓ : IsMoore57 Γ)
       adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11 Γ σ hσ,
       one_mul, mul_one, permMatrixF11_mul_allOnes, allOnes_mul_permMatrixF11]
 
+/-! ## Phase D-C: σ-trace computations over F_11
+
+`trace(E_λ · P_σ)` over F_11 を closed forms 経由で計算.
+結果: (1, 2, 2). Krull-Schmidt 構造 (Phase D-B 完成後) 経由で
+これらが `l_λ + 11 k_λ ≡ l_λ (mod 11) = dim V_λ mod 11` であることが分かる.
+
+要素別の helper:
+- `trace(P_σ) = fixedVertexCount σ` (over F_11): #Fix σ.
+- `trace(A · P_σ) = adjacentMovedCount Γ σ` (over F_11): T_1 mod 11 = 0.
+- `trace(J · P_σ) = |V|` (over F_11): 3250 mod 11 = 5.
+-/
+
+/-- F_11 上 `trace(P_σ) = fixedVertexCount σ`. -/
+theorem trace_permMatrixF11_eq_fixedVertexCount (σ : Equiv.Perm V) :
+    Matrix.trace (permMatrixF11 σ) = (Moore57.fixedVertexCount σ : ZMod 11) := by
+  classical
+  rw [Matrix.trace]
+  calc
+    ∑ v : V, Matrix.diag (permMatrixF11 σ) v
+        = ∑ v : V, if σ v = v then (1 : ZMod 11) else 0 := by
+          refine Finset.sum_congr rfl ?_
+          intro v _
+          have h := mul_permMatrixF11_apply (M := (1 : Matrix V V (ZMod 11))) σ v v
+          simpa [Matrix.diag, Matrix.one_mul, Matrix.one_apply, eq_comm] using h
+    _ = (Moore57.fixedVertexCount σ : ZMod 11) := by
+          simp [Moore57.fixedVertexCount]
+
+/-- F_11 上 `trace(A · P_σ) = adjacentMovedCount Γ σ`. -/
+theorem trace_adjMatrixF11_mul_permMatrixF11_eq_adjacentMovedCount
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V) :
+    Matrix.trace (adjMatrixF11 Γ * permMatrixF11 σ) =
+      (Moore57.adjacentMovedCount Γ σ : ZMod 11) := by
+  classical
+  rw [Matrix.trace]
+  calc
+    ∑ v : V, Matrix.diag (adjMatrixF11 Γ * permMatrixF11 σ) v
+        = ∑ v : V, if Γ.Adj v (σ v) then (1 : ZMod 11) else 0 := by
+          refine Finset.sum_congr rfl ?_
+          intro v _
+          change (adjMatrixF11 Γ * permMatrixF11 σ) v v =
+            if Γ.Adj v (σ v) then (1 : ZMod 11) else 0
+          rw [mul_permMatrixF11_apply]
+          unfold adjMatrixF11
+          rw [SimpleGraph.adjMatrix_apply]
+    _ = (Moore57.adjacentMovedCount Γ σ : ZMod 11) := by
+          simp [Moore57.adjacentMovedCount]
+
+/-- F_11 上 `trace(J · P_σ) = |V|`. -/
+theorem trace_allOnesMatrixF11_mul_permMatrixF11
+    (σ : Equiv.Perm V) :
+    Matrix.trace (allOnesMatrixF11 V * permMatrixF11 σ) =
+      (Fintype.card V : ZMod 11) := by
+  classical
+  rw [Matrix.trace]
+  calc
+    ∑ v : V, Matrix.diag (allOnesMatrixF11 V * permMatrixF11 σ) v
+        = ∑ _v : V, (1 : ZMod 11) := by
+          refine Finset.sum_congr rfl ?_
+          intro v _
+          change (allOnesMatrixF11 V * permMatrixF11 σ) v v = 1
+          rw [allOnes_mul_permMatrixF11]
+          unfold allOnesMatrixF11
+          simp [Matrix.of_apply]
+    _ = (Fintype.card V : ZMod 11) := by
+          rw [Finset.sum_const, Finset.card_univ]
+          simp
+
+/-! ### σ-trace specializations to Order22 -/
+
+/-- F_11 上 `trace(P_σ) = 5` (since #Fix σ = 5 by `σ_fix`). -/
+theorem trace_permMatrixF11_σ_eq_five (h : Order22ActsOnMoore57 V Γ) :
+    Matrix.trace (permMatrixF11 h.σ) = (5 : ZMod 11) := by
+  rw [trace_permMatrixF11_eq_fixedVertexCount, h.fixedVertexCount_σ_eq_five]
+  rfl
+
+/-- F_11 上 `trace(A · P_σ) = 0` (since T_1 = 11n ≡ 0 mod 11). -/
+theorem trace_adjMatrixF11_mul_permMatrixF11_σ_eq_zero
+    (h : Order22ActsOnMoore57 V Γ) :
+    Matrix.trace (adjMatrixF11 Γ * permMatrixF11 h.σ) = (0 : ZMod 11) := by
+  rw [trace_adjMatrixF11_mul_permMatrixF11_eq_adjacentMovedCount]
+  -- adjacentMovedCount Γ σ = T_1 = 11 * traceNumber.
+  have h_T1 : Moore57.adjacentMovedCount Γ h.σ = 11 * h.traceNumber := by
+    show (Finset.univ.filter (fun v : V => Γ.Adj v (h.σ v))).card = 11 * h.traceNumber
+    have h_Tk1 : h.Tk 1 = 11 * h.traceNumber :=
+      h.Tk_eq_eleven_mul_traceNumber (le_refl _) (by omega)
+    have h_Tk_def : h.Tk 1 = (Finset.univ.filter (fun x : V => Γ.Adj x ((h.σ ^ 1) x))).card := rfl
+    rw [pow_one] at h_Tk_def
+    rw [← h_Tk_def, h_Tk1]
+  rw [h_T1]
+  push_cast
+  rw [show (11 : ZMod 11) = 0 from by decide]
+  ring
+
+/-- F_11 上 `trace(J · P_σ) = 5` (|V| = 3250 ≡ 5 mod 11). -/
+theorem trace_allOnesMatrixF11_mul_permMatrixF11_σ_eq_five
+    (h : Order22ActsOnMoore57 V Γ) :
+    Matrix.trace (allOnesMatrixF11 V * permMatrixF11 h.σ) = (5 : ZMod 11) := by
+  rw [trace_allOnesMatrixF11_mul_permMatrixF11, h.isMoore.card]
+  decide
+
+/-! ### trace(E_λ · P_σ) over F_11 -/
+
+/-- F_11 上 `trace(E_2 · P_σ) = 1`. E_2 = 9·J ⟹ trace = 9·5 = 1. -/
+theorem trace_E2MatrixF11_mul_permMatrixF11_σ_eq_one
+    (h : Order22ActsOnMoore57 V Γ) :
+    Matrix.trace (E2MatrixF11 Γ * permMatrixF11 h.σ) = (1 : ZMod 11) := by
+  rw [E2_eq_nine_smul_allOnes h.isMoore, Matrix.smul_mul, Matrix.trace_smul,
+      trace_allOnesMatrixF11_mul_permMatrixF11_σ_eq_five h]
+  decide
+
+/-- F_11 上 `trace(E_7 · P_σ) = 2`. E_7 = 2·I + 3·A + 5·J ⟹ trace = 2·5 + 3·0 + 5·5 = 2 mod 11. -/
+theorem trace_E7MatrixF11_mul_permMatrixF11_σ_eq_two
+    (h : Order22ActsOnMoore57 V Γ) :
+    Matrix.trace (E7MatrixF11 Γ * permMatrixF11 h.σ) = (2 : ZMod 11) := by
+  rw [E7_eq_closed h.isMoore]
+  rw [add_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc, one_mul]
+  rw [Matrix.trace_add, Matrix.trace_add, Matrix.trace_smul, Matrix.trace_smul,
+      Matrix.trace_smul]
+  rw [trace_permMatrixF11_σ_eq_five h,
+      trace_adjMatrixF11_mul_permMatrixF11_σ_eq_zero h,
+      trace_allOnesMatrixF11_mul_permMatrixF11_σ_eq_five h]
+  decide
+
+/-- F_11 上 `trace(E_3 · P_σ) = 2`. E_3 = 10·I + 8·A + 8·J ⟹ trace = 10·5 + 8·0 + 8·5 = 2 mod 11. -/
+theorem trace_E3MatrixF11_mul_permMatrixF11_σ_eq_two
+    (h : Order22ActsOnMoore57 V Γ) :
+    Matrix.trace (E3MatrixF11 Γ * permMatrixF11 h.σ) = (2 : ZMod 11) := by
+  rw [E3_eq_closed h.isMoore]
+  rw [add_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc, one_mul]
+  rw [Matrix.trace_add, Matrix.trace_add, Matrix.trace_smul, Matrix.trace_smul,
+      Matrix.trace_smul]
+  rw [trace_permMatrixF11_σ_eq_five h,
+      trace_adjMatrixF11_mul_permMatrixF11_σ_eq_zero h,
+      trace_allOnesMatrixF11_mul_permMatrixF11_σ_eq_five h]
+  decide
+
 /-! ## F_11 modular rep theory: V_λ 部分空間 -/
 
 /-- F_11 上の `V_2 := range E_2`. -/
