@@ -1867,16 +1867,32 @@ So `|N(v_O) ∩ O| = 2 m_O` where `m_O := #(internal edges in O)/11 ∈ ℕ`.
 
 So `trace(A_restrict) = Σ_O |N(v_O) ∩ O| = 10n` over ℤ. Mod 11: `10n mod 11`.
 
-## Lean 形式化の主要 components
+## Lean 形式化の現状 (2026-05-17, 多数 commits)
 
-1. `kerTF11_quotientEquiv : (Quotient s → F_11) ≃ₗ ker T_F11` (extract from `finrank_ker_T_F11_eq_300` proof).
-2. `LinearMap.trace_conj` で trace を Quotient 側に転送.
-3. `LinearMap.trace_eq_matrix_trace` with `Pi.basisFun` で対角和に展開.
-4. 各対角 = `|N(v_O) ∩ O|` を直接計算.
-5. 総和 = `10n mod 11` を Step 1-6 のアルゴリズム + `Tk_eq_eleven_mul_traceNumber` で確立.
+実装済み (sorry-free):
+1. ✓ `kerTF11_quotientEquiv : (Quotient s → F_11) ≃ₗ ker T_F11`.
+2. ✓ `trace_adjMatrixF11_restrict_eq_trace_quot` (LinearMap.trace_conj').
+3. ✓ `trace_adjMatrixF11_quot_eq_sum` (Pi.basisFun 経由).
+4. ✓ `adjMatrixF11_quot_basisFun_eq_orbitNeighborSumQuot`.
+5. ✓ `adjMatrixF11_quot_diagonal_eq_orbitNeighborSumF11_out` (Quotient.inductionOn + σ-inv).
+6. ✓ `trace_adjMatrixF11_restrict_eq_sum_over_vertices`:
+   `trace = Σ_w (adjMatrixF11 Γ) (Quotient.out (Quotient.mk w)) w` (in F_11).
 
-実装規模: ~200-300 行 (主に Step 5 の組合せ部分が重い).
-依存: 主に既存 `Tk_eq_eleven_mul_traceNumber` (sorry-free) + `funLeft Quotient iso` (in `finrank_ker_T_F11_eq_300`).
+**残作業** (sorry-free 化可能, ~60-100 行):
+`Σ_w (adjMatrixF11 Γ) (Quotient.out (Quotient.mk w)) w = ((10 * traceNumber : ℕ) : ZMod 11)`.
+
+戦略:
+- LHS = (count : F_11) where count = #{w : Γ.Adj (rep(w)) w}, rep(w) = Quotient.out (Quotient.mk w).
+- count を σ-orbit + slope analysis で 10n と identify:
+  - For each free orbit O, w ∈ O iff w = σ^k (rep_O) for unique k ∈ {0..10}.
+  - count = Σ_O free #{k ∈ {0..10} : Γ.Adj (rep_O) (σ^k rep_O)}.
+  - For k = 0: false (no loops).
+  - For k ∈ {1..10}: by σ-invariance, #{O : Γ.Adj rep (σ^k rep)} = T_k / 11 = n.
+  - count = Σ_{k=1..10} n = 10n.
+- Uses: `Tk_eq_eleven_mul_traceNumber : T_k = 11n` (sorry-free, 既存).
+
+依存: 主に既存 `Tk_eq_eleven_mul_traceNumber` + `Equiv.Perm.cycleOf`/`SameCycle` machinery
+for orbit bijection. ~60-100 lines.
 
 ## 戦略的位置付け (2026-05-17 web search + analysis)
 
@@ -1885,7 +1901,8 @@ identity を F_11 へ persist する形. `a_F11_7 = 159` (good reduction) が独
 であるため, 本 sorry を閉じても次の sorry が残る. しかし trace identity を
 完全に分離することで, Phase 4F11Spectral の各部品が明確化される.
 
-未実装. -/
+軌道側 trace identity の **約 90%** が今日 sorry-free 化された.
+残るは 1 つの集計 (count = 10n) のみ. -/
 theorem trace_adjMatrixF11_restrict_eq_orbital_side
     (h : Order22ActsOnMoore57 V Γ) :
     LinearMap.trace (ZMod 11) _ h.adjMatrixF11_restrict_ker_T =
