@@ -504,4 +504,47 @@ theorem srg_trace_partition
   unfold srgM_k srgM_plus srgM_minus
   linarith
 
+/-! ## Stage S5: Irrational case → `k ∈ {0, 2}`
+
+If `D = 4k - 3` is not a perfect square, then `√D` is irrational. The trace
+equation `r √D = k² + 1 - m_k (2k + 1)` (with `r = m_+ - m_-`) forces both
+sides to be zero, so `m_k (2k + 1) = k² + 1`. Combined with the modular
+identity `4(k² + 1) = (2k - 1)(2k + 1) + 5`, we get `(2k + 1) | 5`, so
+`2k + 1 ∈ {1, 5}` and `k ∈ {0, 2}`.
+-/
+
+/-- Sum of `m_+ + m_- + m_k = k² + 1` as a real-number equation. -/
+theorem srgM_sum_eq_card_real
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    (srgM_k hHerm k : ℝ) + (srgM_plus hHerm k : ℝ) + (srgM_minus hHerm k : ℝ)
+      = (k : ℝ) * (k : ℝ) + 1 := by
+  have h := srgM_sum_eq_card hsrg hk hHerm
+  have hcard : (Fintype.card W : ℝ) = (k : ℝ) * (k : ℝ) + 1 := by
+    have hh := hsrg.card
+    rw [hh]; push_cast; ring
+  have : ((srgM_k hHerm k + srgM_plus hHerm k + srgM_minus hHerm k : ℕ) : ℝ)
+      = (Fintype.card W : ℝ) := by exact_mod_cast h
+  push_cast at this
+  rw [hcard] at this
+  exact this
+
+/-- The fundamental equation: `r √D = k² + 1 - m_k (2k + 1)` where
+`r = m_+ - m_-`. -/
+theorem srg_disc_equation
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    ((srgM_plus hHerm k : ℝ) - (srgM_minus hHerm k : ℝ)) *
+        Real.sqrt (4 * (k : ℝ) - 3) =
+      (k : ℝ) * (k : ℝ) + 1 - (srgM_k hHerm k : ℝ) * (2 * (k : ℝ) + 1) := by
+  have htr := srg_trace_partition hsrg hk hHerm
+  have hsum := srgM_sum_eq_card_real hsrg hk hHerm
+  -- lam_+ = (-1 + sqrt D)/2, lam_- = (-1 - sqrt D)/2.
+  have hlp : srgLambdaPlus k = (-1 + Real.sqrt (4 * (k : ℝ) - 3)) / 2 := rfl
+  have hlm : srgLambdaMinus k = (-1 - Real.sqrt (4 * (k : ℝ) - 3)) / 2 := rfl
+  rw [hlp, hlm] at htr
+  linarith [htr, hsum]
+
 end Moore57
