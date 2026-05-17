@@ -1578,6 +1578,22 @@ theorem trace_adjMatrixF11_restrict_eq_trace_quot (h : Order22ActsOnMoore57 V Γ
   rw [← kerTF11_quotientEquiv_conj_adjMatrixF11_quot h]
   exact LinearMap.trace_conj' _ _
 
+/-- **Trace as sum of diagonals over orbits** (sorry-free):
+`trace(A_quot) = Σ_O (A_quot (Pi.basisFun O)) O` over `(Quotient s → F_11)`. -/
+theorem trace_adjMatrixF11_quot_eq_sum (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    [Fintype (Quotient (Equiv.Perm.SameCycle.setoid h.σ))] :
+    LinearMap.trace (ZMod 11) _ h.adjMatrixF11_quot =
+      ∑ O : Quotient (Equiv.Perm.SameCycle.setoid h.σ),
+        h.adjMatrixF11_quot (Pi.basisFun (ZMod 11) _ O) O := by
+  classical
+  rw [LinearMap.trace_eq_matrix_trace (ZMod 11)
+        (Pi.basisFun (ZMod 11) (Quotient (Equiv.Perm.SameCycle.setoid h.σ))) _]
+  rw [Matrix.trace]
+  apply Finset.sum_congr rfl
+  intro O _
+  rw [Matrix.diag_apply, LinearMap.toMatrix_apply, Pi.basisFun_repr]
+
 /-- **Orbital side of trace identity** (focused sorry):
 `trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
 
