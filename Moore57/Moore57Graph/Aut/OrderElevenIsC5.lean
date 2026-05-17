@@ -302,13 +302,550 @@ private theorem hw3_ne_w4 :
   exact (autFixedInducedGraph Γ σ).irrefl
     (h ▸ hw3_w4_adj hΓ σ smul_adj pow_eleven hne)
 
-/-! ### Future work: closing the cycle and constructing `C5FixedData`
+/-! ### Triangle-free / common-neighbour helpers on H -/
 
-The remaining steps (proving `v_3 ≠ v_0`, `v_4 ≠ v_0`, `v_4 - v_0` adjacent,
-and packaging into `C5FixedData`) require careful case analysis on the
-2-regular triangle-free structure of `H`. This is mathematically routine
-but Lean-tedious. Future work will complete this. -/
+/-- `H` is triangle-free: from `λ = 0` (SRG), any pair of adjacent vertices has
+no common neighbour. So a third vertex adjacent to both yields contradiction. -/
+private theorem hH_no_triangle
+    {x y z : fixedVertexSet σ}
+    (hxy : (autFixedInducedGraph Γ σ).Adj x y)
+    (hxz : (autFixedInducedGraph Γ σ).Adj x z)
+    (hyz : (autFixedInducedGraph Γ σ).Adj y z) : False := by
+  classical
+  have hcard0 :=
+    autFixedInducedGraph_commonNeighbors_card_of_adj hΓ σ hxy
+  have hz_mem : z ∈ (autFixedInducedGraph Γ σ).commonNeighbors x y :=
+    ⟨hxz, hyz⟩
+  have hpos :
+      0 < Fintype.card ((autFixedInducedGraph Γ σ).commonNeighbors x y) := by
+    rw [Fintype.card_pos_iff]
+    exact ⟨⟨z, hz_mem⟩⟩
+  omega
+
+/-- `H`'s `μ = 1` uniqueness: two common neighbours of a distinct non-adjacent
+pair must coincide. -/
+private theorem hH_common_nbr_unique
+    {a b u₁ u₂ : fixedVertexSet σ}
+    (h_ab_ne : a ≠ b)
+    (h_ab_nadj : ¬ (autFixedInducedGraph Γ σ).Adj a b)
+    (h_u1 :
+      (autFixedInducedGraph Γ σ).Adj a u₁ ∧ (autFixedInducedGraph Γ σ).Adj b u₁)
+    (h_u2 :
+      (autFixedInducedGraph Γ σ).Adj a u₂ ∧ (autFixedInducedGraph Γ σ).Adj b u₂) :
+    u₁ = u₂ := by
+  classical
+  have hcard1 :=
+    autFixedInducedGraph_commonNeighbors_card_of_not_adj hΓ σ smul_adj
+      h_ab_ne h_ab_nadj
+  have hu1_mem : u₁ ∈ (autFixedInducedGraph Γ σ).commonNeighbors a b := h_u1
+  have hu2_mem : u₂ ∈ (autFixedInducedGraph Γ σ).commonNeighbors a b := h_u2
+  rcases Fintype.card_eq_one_iff.mp hcard1 with ⟨z, hz⟩
+  have hu1eq :
+      (⟨u₁, hu1_mem⟩ : ↥((autFixedInducedGraph Γ σ).commonNeighbors a b)) = z :=
+    hz _
+  have hu2eq :
+      (⟨u₂, hu2_mem⟩ : ↥((autFixedInducedGraph Γ σ).commonNeighbors a b)) = z :=
+    hz _
+  exact congr_arg Subtype.val (hu1eq.trans hu2eq.symm)
+
+/-! ### Remaining distinctness `w_3 ≠ w_0`, `w_4 ≠ w_0`, `w_4 ≠ w_1` -/
+
+/-- `w_3 ≠ w_0`: otherwise `w_0, w_1, w_2` would form a triangle. -/
+private theorem hw3_ne_w0 :
+    (w3 hΓ σ smul_adj pow_eleven hne) ≠ (w0 hΓ σ smul_adj pow_eleven hne) := by
+  intro heq
+  have h_w2_w0 :
+      (autFixedInducedGraph Γ σ).Adj
+        (w2 hΓ σ smul_adj pow_eleven hne)
+        (w0 hΓ σ smul_adj pow_eleven hne) :=
+    heq ▸ hw2_w3_adj hΓ σ smul_adj pow_eleven hne
+  exact hH_no_triangle hΓ σ smul_adj pow_eleven hne
+    (hw0_w1_adj hΓ σ smul_adj pow_eleven hne)
+    h_w2_w0.symm
+    (hw1_w2_adj hΓ σ smul_adj pow_eleven hne)
+
+/-- `w_4 ≠ w_1`: otherwise `w_1, w_2, w_3` would form a triangle. -/
+private theorem hw4_ne_w1 :
+    (w4 hΓ σ smul_adj pow_eleven hne) ≠ (w1 hΓ σ smul_adj pow_eleven hne) := by
+  intro heq
+  have h_w3_w1 :
+      (autFixedInducedGraph Γ σ).Adj
+        (w3 hΓ σ smul_adj pow_eleven hne)
+        (w1 hΓ σ smul_adj pow_eleven hne) :=
+    heq ▸ hw3_w4_adj hΓ σ smul_adj pow_eleven hne
+  exact hH_no_triangle hΓ σ smul_adj pow_eleven hne
+    (hw1_w2_adj hΓ σ smul_adj pow_eleven hne)
+    h_w3_w1.symm
+    (hw2_w3_adj hΓ σ smul_adj pow_eleven hne)
+
+/-- `w_0 ≁ w_2`: otherwise `w_0, w_1, w_2` would form a triangle. -/
+private theorem hw0_not_adj_w2 :
+    ¬ (autFixedInducedGraph Γ σ).Adj
+        (w0 hΓ σ smul_adj pow_eleven hne)
+        (w2 hΓ σ smul_adj pow_eleven hne) := by
+  intro hadj
+  exact hH_no_triangle hΓ σ smul_adj pow_eleven hne
+    (hw0_w1_adj hΓ σ smul_adj pow_eleven hne) hadj
+    (hw1_w2_adj hΓ σ smul_adj pow_eleven hne)
+
+/-- `w_0 ≁ w_3`: otherwise `w_1` and `w_3` would both be common neighbours of
+the non-adjacent pair `(w_0, w_2)`, violating `μ = 1` (since `w_1 ≠ w_3`). -/
+private theorem hw0_not_adj_w3 :
+    ¬ (autFixedInducedGraph Γ σ).Adj
+        (w0 hΓ σ smul_adj pow_eleven hne)
+        (w3 hΓ σ smul_adj pow_eleven hne) := by
+  intro hadj
+  have hne_02 :
+      (w0 hΓ σ smul_adj pow_eleven hne) ≠ (w2 hΓ σ smul_adj pow_eleven hne) :=
+    (hw2_ne_w0 hΓ σ smul_adj pow_eleven hne).symm
+  have h13 :
+      (w1 hΓ σ smul_adj pow_eleven hne) = (w3 hΓ σ smul_adj pow_eleven hne) :=
+    hH_common_nbr_unique hΓ σ smul_adj pow_eleven hne hne_02
+      (hw0_not_adj_w2 hΓ σ smul_adj pow_eleven hne)
+      ⟨hw0_w1_adj hΓ σ smul_adj pow_eleven hne,
+        (hw1_w2_adj hΓ σ smul_adj pow_eleven hne).symm⟩
+      ⟨hadj, hw2_w3_adj hΓ σ smul_adj pow_eleven hne⟩
+  exact hw3_ne_w1 hΓ σ smul_adj pow_eleven hne h13.symm
+
+/-- `w_4 ≠ w_0`: otherwise `w_1` and `w_3` would both be common neighbours of
+the non-adjacent pair `(w_0, w_2)`, violating `μ = 1`. -/
+private theorem hw4_ne_w0 :
+    (w4 hΓ σ smul_adj pow_eleven hne) ≠ (w0 hΓ σ smul_adj pow_eleven hne) := by
+  intro heq
+  have h_w3_w0 :
+      (autFixedInducedGraph Γ σ).Adj
+        (w3 hΓ σ smul_adj pow_eleven hne)
+        (w0 hΓ σ smul_adj pow_eleven hne) :=
+    heq ▸ hw3_w4_adj hΓ σ smul_adj pow_eleven hne
+  exact hw0_not_adj_w3 hΓ σ smul_adj pow_eleven hne h_w3_w0.symm
+
+/-! ### All 5 vertices are distinct -/
+
+private theorem hw0_ne_w2 :
+    (w0 hΓ σ smul_adj pow_eleven hne) ≠ (w2 hΓ σ smul_adj pow_eleven hne) :=
+  (hw2_ne_w0 hΓ σ smul_adj pow_eleven hne).symm
+
+private theorem hw0_ne_w3 :
+    (w0 hΓ σ smul_adj pow_eleven hne) ≠ (w3 hΓ σ smul_adj pow_eleven hne) :=
+  (hw3_ne_w0 hΓ σ smul_adj pow_eleven hne).symm
+
+private theorem hw0_ne_w4 :
+    (w0 hΓ σ smul_adj pow_eleven hne) ≠ (w4 hΓ σ smul_adj pow_eleven hne) :=
+  (hw4_ne_w0 hΓ σ smul_adj pow_eleven hne).symm
+
+private theorem hw1_ne_w3 :
+    (w1 hΓ σ smul_adj pow_eleven hne) ≠ (w3 hΓ σ smul_adj pow_eleven hne) :=
+  (hw3_ne_w1 hΓ σ smul_adj pow_eleven hne).symm
+
+private theorem hw1_ne_w4 :
+    (w1 hΓ σ smul_adj pow_eleven hne) ≠ (w4 hΓ σ smul_adj pow_eleven hne) :=
+  (hw4_ne_w1 hΓ σ smul_adj pow_eleven hne).symm
+
+private theorem hw2_ne_w4 :
+    (w2 hΓ σ smul_adj pow_eleven hne) ≠ (w4 hΓ σ smul_adj pow_eleven hne) :=
+  (hw4_ne_w2 hΓ σ smul_adj pow_eleven hne).symm
+
+/-! ### The 5 vertices exhaust `fixedVertexSet σ` -/
+
+/-- `{w_0, w_1, w_2, w_3, w_4} = univ` as Finsets on `fixedVertexSet σ`,
+since both have cardinality 5. -/
+private theorem hWFin_eq_univ :
+    ({w0 hΓ σ smul_adj pow_eleven hne,
+       w1 hΓ σ smul_adj pow_eleven hne,
+       w2 hΓ σ smul_adj pow_eleven hne,
+       w3 hΓ σ smul_adj pow_eleven hne,
+       w4 hΓ σ smul_adj pow_eleven hne} : Finset (fixedVertexSet σ)) =
+      Finset.univ := by
+  classical
+  have hfin5 : Fintype.card (fixedVertexSet σ) = 5 := by
+    rw [← fixedVertexCount_eq_card_fixedVertexSet]
+    exact aut_order_eleven_fixedVertexCount_eq_five hΓ σ smul_adj pow_eleven hne
+  set S : Finset (fixedVertexSet σ) :=
+    ({w0 hΓ σ smul_adj pow_eleven hne,
+        w1 hΓ σ smul_adj pow_eleven hne,
+        w2 hΓ σ smul_adj pow_eleven hne,
+        w3 hΓ σ smul_adj pow_eleven hne,
+        w4 hΓ σ smul_adj pow_eleven hne} : Finset (fixedVertexSet σ))
+  have hS_card : S.card = 5 := by
+    have h01 := hw0_ne_w1 hΓ σ smul_adj pow_eleven hne
+    have h02 := hw0_ne_w2 hΓ σ smul_adj pow_eleven hne
+    have h03 := hw0_ne_w3 hΓ σ smul_adj pow_eleven hne
+    have h04 := hw0_ne_w4 hΓ σ smul_adj pow_eleven hne
+    have h12 := hw1_ne_w2 hΓ σ smul_adj pow_eleven hne
+    have h13 := hw1_ne_w3 hΓ σ smul_adj pow_eleven hne
+    have h14 := hw1_ne_w4 hΓ σ smul_adj pow_eleven hne
+    have h23 := hw2_ne_w3 hΓ σ smul_adj pow_eleven hne
+    have h24 := hw2_ne_w4 hΓ σ smul_adj pow_eleven hne
+    have h34 := hw3_ne_w4 hΓ σ smul_adj pow_eleven hne
+    simp [S, Finset.card_insert_of_notMem, Finset.mem_insert,
+      Finset.mem_singleton, h01, h02, h03, h04, h12, h13, h14, h23, h24, h34]
+  apply Finset.eq_of_subset_of_card_le (Finset.subset_univ _)
+  rw [Finset.card_univ, hfin5]
+  omega
+
+/-- Every vertex of `fixedVertexSet σ` is one of `w_0, …, w_4`. -/
+private theorem hW_span (z : fixedVertexSet σ) :
+    z = w0 hΓ σ smul_adj pow_eleven hne
+    ∨ z = w1 hΓ σ smul_adj pow_eleven hne
+    ∨ z = w2 hΓ σ smul_adj pow_eleven hne
+    ∨ z = w3 hΓ σ smul_adj pow_eleven hne
+    ∨ z = w4 hΓ σ smul_adj pow_eleven hne := by
+  classical
+  have hmem : z ∈ ({w0 hΓ σ smul_adj pow_eleven hne,
+                      w1 hΓ σ smul_adj pow_eleven hne,
+                      w2 hΓ σ smul_adj pow_eleven hne,
+                      w3 hΓ σ smul_adj pow_eleven hne,
+                      w4 hΓ σ smul_adj pow_eleven hne}
+                     : Finset (fixedVertexSet σ)) := by
+    rw [hWFin_eq_univ hΓ σ smul_adj pow_eleven hne]
+    exact Finset.mem_univ _
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
+  exact hmem
+
+/-! ### Cycle closure: `w_0 ∼ w_4` -/
+
+/-- The "other" H-neighbour of `w_0` (not `w_1`) must be `w_4`. -/
+private theorem hw0_w4_adj :
+    (autFixedInducedGraph Γ σ).Adj
+      (w0 hΓ σ smul_adj pow_eleven hne) (w4 hΓ σ smul_adj pow_eleven hne) := by
+  classical
+  -- z := the otherNeighbor of w_0 w.r.t. prev := w_1.
+  set z : fixedVertexSet σ :=
+    (autFixedInducedGraph Γ σ).otherNeighbor
+      (w0 hΓ σ smul_adj pow_eleven hne) (w1 hΓ σ smul_adj pow_eleven hne)
+      (hH_deg hΓ σ smul_adj pow_eleven hne _)
+      (hw0_w1_adj hΓ σ smul_adj pow_eleven hne) with hz_def
+  have hz_adj :
+      (autFixedInducedGraph Γ σ).Adj (w0 hΓ σ smul_adj pow_eleven hne) z := by
+    have := (autFixedInducedGraph Γ σ).otherNeighbor_adj
+      (w0 hΓ σ smul_adj pow_eleven hne) (w1 hΓ σ smul_adj pow_eleven hne)
+      (hH_deg hΓ σ smul_adj pow_eleven hne _)
+      (hw0_w1_adj hΓ σ smul_adj pow_eleven hne)
+    simpa [hz_def] using this
+  have hz_ne_w1 :
+      z ≠ w1 hΓ σ smul_adj pow_eleven hne := by
+    have := (autFixedInducedGraph Γ σ).otherNeighbor_ne_prev
+      (w0 hΓ σ smul_adj pow_eleven hne) (w1 hΓ σ smul_adj pow_eleven hne)
+      (hH_deg hΓ σ smul_adj pow_eleven hne _)
+      (hw0_w1_adj hΓ σ smul_adj pow_eleven hne)
+    simpa [hz_def] using this
+  -- z ≠ w_0 (irrefl), z ≠ w_2 (¬ adj w_0 w_2), z ≠ w_3 (¬ adj w_0 w_3).
+  have hz_ne_w0 :
+      z ≠ w0 hΓ σ smul_adj pow_eleven hne := by
+    intro heq
+    exact (autFixedInducedGraph Γ σ).irrefl (heq ▸ hz_adj)
+  have hz_ne_w2 :
+      z ≠ w2 hΓ σ smul_adj pow_eleven hne := by
+    intro heq
+    exact hw0_not_adj_w2 hΓ σ smul_adj pow_eleven hne (heq ▸ hz_adj)
+  have hz_ne_w3 :
+      z ≠ w3 hΓ σ smul_adj pow_eleven hne := by
+    intro heq
+    exact hw0_not_adj_w3 hΓ σ smul_adj pow_eleven hne (heq ▸ hz_adj)
+  -- z ∈ {w_0, ..., w_4}; eliminate all but w_4.
+  rcases hW_span hΓ σ smul_adj pow_eleven hne z with h0 | h1 | h2 | h3 | h4
+  · exact (hz_ne_w0 h0).elim
+  · exact (hz_ne_w1 h1).elim
+  · exact (hz_ne_w2 h2).elim
+  · exact (hz_ne_w3 h3).elim
+  · -- z = w_4 ⟹ w_0 adj w_4.
+    rw [h4] at hz_adj; exact hz_adj
+
+/-! ### Final non-adjacencies: `cycle_only` -/
+
+/-- `w_1 ≁ w_3`: otherwise `w_1, w_2, w_3` would form a triangle. -/
+private theorem hw1_not_adj_w3 :
+    ¬ (autFixedInducedGraph Γ σ).Adj
+        (w1 hΓ σ smul_adj pow_eleven hne)
+        (w3 hΓ σ smul_adj pow_eleven hne) := by
+  intro hadj
+  exact hH_no_triangle hΓ σ smul_adj pow_eleven hne
+    (hw1_w2_adj hΓ σ smul_adj pow_eleven hne) hadj
+    (hw2_w3_adj hΓ σ smul_adj pow_eleven hne)
+
+/-- `w_2 ≁ w_4`: otherwise `w_2, w_3, w_4` would form a triangle. -/
+private theorem hw2_not_adj_w4 :
+    ¬ (autFixedInducedGraph Γ σ).Adj
+        (w2 hΓ σ smul_adj pow_eleven hne)
+        (w4 hΓ σ smul_adj pow_eleven hne) := by
+  intro hadj
+  exact hH_no_triangle hΓ σ smul_adj pow_eleven hne
+    (hw2_w3_adj hΓ σ smul_adj pow_eleven hne)
+    hadj
+    (hw3_w4_adj hΓ σ smul_adj pow_eleven hne)
+
+/-- `w_1 ≁ w_4`: otherwise `w_2` and `w_4` would both be common neighbours of
+the non-adjacent pair `(w_1, w_3)`, violating `μ = 1`. -/
+private theorem hw1_not_adj_w4 :
+    ¬ (autFixedInducedGraph Γ σ).Adj
+        (w1 hΓ σ smul_adj pow_eleven hne)
+        (w4 hΓ σ smul_adj pow_eleven hne) := by
+  intro hadj
+  have hne_13 :
+      (w1 hΓ σ smul_adj pow_eleven hne) ≠ (w3 hΓ σ smul_adj pow_eleven hne) :=
+    hw1_ne_w3 hΓ σ smul_adj pow_eleven hne
+  have h24 :
+      (w2 hΓ σ smul_adj pow_eleven hne) = (w4 hΓ σ smul_adj pow_eleven hne) :=
+    hH_common_nbr_unique hΓ σ smul_adj pow_eleven hne hne_13
+      (hw1_not_adj_w3 hΓ σ smul_adj pow_eleven hne)
+      ⟨(hw1_w2_adj hΓ σ smul_adj pow_eleven hne),
+        (hw2_w3_adj hΓ σ smul_adj pow_eleven hne).symm⟩
+      ⟨hadj, (hw3_w4_adj hΓ σ smul_adj pow_eleven hne)⟩
+  exact hw2_ne_w4 hΓ σ smul_adj pow_eleven hne h24
 
 end CycleBuild
+
+/-! ## Final construction of `C5FixedData` -/
+
+section Construction
+
+variable (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_eleven : σ ^ 11 = 1) (hne : σ ≠ 1)
+
+include hΓ smul_adj pow_eleven hne
+
+/-- The 5 cycle vertices indexed by `Fin 5`, valued in `fixedVertexSet σ`. -/
+private noncomputable def cycleSubtype (i : Fin 5) : fixedVertexSet σ :=
+  match i with
+  | ⟨0, _⟩ => w0 hΓ σ smul_adj pow_eleven hne
+  | ⟨1, _⟩ => w1 hΓ σ smul_adj pow_eleven hne
+  | ⟨2, _⟩ => w2 hΓ σ smul_adj pow_eleven hne
+  | ⟨3, _⟩ => w3 hΓ σ smul_adj pow_eleven hne
+  | ⟨4, _⟩ => w4 hΓ σ smul_adj pow_eleven hne
+
+/-- Pointwise unfolding lemmas — make `cycleSubtype` step look up wᵢ. -/
+private theorem cycleSubtype_zero :
+    cycleSubtype hΓ σ smul_adj pow_eleven hne 0 =
+      w0 hΓ σ smul_adj pow_eleven hne := rfl
+
+private theorem cycleSubtype_one :
+    cycleSubtype hΓ σ smul_adj pow_eleven hne 1 =
+      w1 hΓ σ smul_adj pow_eleven hne := rfl
+
+private theorem cycleSubtype_two :
+    cycleSubtype hΓ σ smul_adj pow_eleven hne 2 =
+      w2 hΓ σ smul_adj pow_eleven hne := rfl
+
+private theorem cycleSubtype_three :
+    cycleSubtype hΓ σ smul_adj pow_eleven hne 3 =
+      w3 hΓ σ smul_adj pow_eleven hne := rfl
+
+private theorem cycleSubtype_four :
+    cycleSubtype hΓ σ smul_adj pow_eleven hne 4 =
+      w4 hΓ σ smul_adj pow_eleven hne := rfl
+
+/-- `cycleSubtype` is injective. Proof by pairwise distinctness on the 25 cases. -/
+private theorem cycleSubtype_injective :
+    Function.Injective (cycleSubtype hΓ σ smul_adj pow_eleven hne) := by
+  have h01 := hw0_ne_w1 hΓ σ smul_adj pow_eleven hne
+  have h02 := hw0_ne_w2 hΓ σ smul_adj pow_eleven hne
+  have h03 := hw0_ne_w3 hΓ σ smul_adj pow_eleven hne
+  have h04 := hw0_ne_w4 hΓ σ smul_adj pow_eleven hne
+  have h12 := hw1_ne_w2 hΓ σ smul_adj pow_eleven hne
+  have h13 := hw1_ne_w3 hΓ σ smul_adj pow_eleven hne
+  have h14 := hw1_ne_w4 hΓ σ smul_adj pow_eleven hne
+  have h23 := hw2_ne_w3 hΓ σ smul_adj pow_eleven hne
+  have h24 := hw2_ne_w4 hΓ σ smul_adj pow_eleven hne
+  have h34 := hw3_ne_w4 hΓ σ smul_adj pow_eleven hne
+  intro i j hij
+  fin_cases i
+  · fin_cases j
+    · rfl
+    · exact absurd hij h01
+    · exact absurd hij h02
+    · exact absurd hij h03
+    · exact absurd hij h04
+  · fin_cases j
+    · exact absurd hij h01.symm
+    · rfl
+    · exact absurd hij h12
+    · exact absurd hij h13
+    · exact absurd hij h14
+  · fin_cases j
+    · exact absurd hij h02.symm
+    · exact absurd hij h12.symm
+    · rfl
+    · exact absurd hij h23
+    · exact absurd hij h24
+  · fin_cases j
+    · exact absurd hij h03.symm
+    · exact absurd hij h13.symm
+    · exact absurd hij h23.symm
+    · rfl
+    · exact absurd hij h34
+  · fin_cases j
+    · exact absurd hij h04.symm
+    · exact absurd hij h14.symm
+    · exact absurd hij h24.symm
+    · exact absurd hij h34.symm
+    · rfl
+
+/-- The 5 cycle vertices as `V`. -/
+private noncomputable def cycleVertex (i : Fin 5) : V :=
+  (cycleSubtype hΓ σ smul_adj pow_eleven hne i : V)
+
+private theorem cycleVertex_zero :
+    cycleVertex hΓ σ smul_adj pow_eleven hne 0 =
+      (w0 hΓ σ smul_adj pow_eleven hne : V) := rfl
+
+private theorem cycleVertex_one :
+    cycleVertex hΓ σ smul_adj pow_eleven hne 1 =
+      (w1 hΓ σ smul_adj pow_eleven hne : V) := rfl
+
+private theorem cycleVertex_two :
+    cycleVertex hΓ σ smul_adj pow_eleven hne 2 =
+      (w2 hΓ σ smul_adj pow_eleven hne : V) := rfl
+
+private theorem cycleVertex_three :
+    cycleVertex hΓ σ smul_adj pow_eleven hne 3 =
+      (w3 hΓ σ smul_adj pow_eleven hne : V) := rfl
+
+private theorem cycleVertex_four :
+    cycleVertex hΓ σ smul_adj pow_eleven hne 4 =
+      (w4 hΓ σ smul_adj pow_eleven hne : V) := rfl
+
+/-- `cycleVertex` is injective: it is `Subtype.val ∘ cycleSubtype`. -/
+private theorem cycleVertex_injective :
+    Function.Injective (cycleVertex hΓ σ smul_adj pow_eleven hne) := by
+  intro i j hij
+  apply cycleSubtype_injective hΓ σ smul_adj pow_eleven hne
+  exact Subtype.ext hij
+
+/-! ### Helper lemmas for `cycle_only` -/
+
+/-- Convert an H-adjacency on `cycleSubtype i, cycleSubtype j` to V-adjacency. -/
+private theorem H_adj_of_cycleVertex_adj {i j : Fin 5}
+    (hadj : Γ.Adj
+      (cycleVertex hΓ σ smul_adj pow_eleven hne i)
+      (cycleVertex hΓ σ smul_adj pow_eleven hne j)) :
+    (autFixedInducedGraph Γ σ).Adj
+      (cycleSubtype hΓ σ smul_adj pow_eleven hne i)
+      (cycleSubtype hΓ σ smul_adj pow_eleven hne j) := hadj
+
+/-! ### Main definition -/
+
+/-- **Main result**: for `σ ^ 11 = 1` and `σ ≠ 1` automorphism of Moore57,
+construct `C5FixedData Γ σ` from raw action data. -/
+noncomputable def aut_order_eleven_C5FixedData : C5FixedData Γ σ where
+  v := cycleVertex hΓ σ smul_adj pow_eleven hne
+  v_injective := cycleVertex_injective hΓ σ smul_adj pow_eleven hne
+  v_fixed := by
+    intro i
+    fin_cases i
+    · exact (w0 hΓ σ smul_adj pow_eleven hne).property
+    · exact (w1 hΓ σ smul_adj pow_eleven hne).property
+    · exact (w2 hΓ σ smul_adj pow_eleven hne).property
+    · exact (w3 hΓ σ smul_adj pow_eleven hne).property
+    · exact (w4 hΓ σ smul_adj pow_eleven hne).property
+  span := by
+    intro x hx
+    have hxFix : x ∈ fixedVertexSet σ := hx
+    rcases hW_span hΓ σ smul_adj pow_eleven hne ⟨x, hxFix⟩ with
+      h0 | h1 | h2 | h3 | h4
+    · refine ⟨0, ?_⟩
+      change x = (w0 hΓ σ smul_adj pow_eleven hne : V)
+      exact congrArg Subtype.val h0
+    · refine ⟨1, ?_⟩
+      change x = (w1 hΓ σ smul_adj pow_eleven hne : V)
+      exact congrArg Subtype.val h1
+    · refine ⟨2, ?_⟩
+      change x = (w2 hΓ σ smul_adj pow_eleven hne : V)
+      exact congrArg Subtype.val h2
+    · refine ⟨3, ?_⟩
+      change x = (w3 hΓ σ smul_adj pow_eleven hne : V)
+      exact congrArg Subtype.val h3
+    · refine ⟨4, ?_⟩
+      change x = (w4 hΓ σ smul_adj pow_eleven hne : V)
+      exact congrArg Subtype.val h4
+  cycle_adj := by
+    intro i
+    fin_cases i
+    · -- (0, 1): w_0 ~ w_1
+      change Γ.Adj (w0 hΓ σ smul_adj pow_eleven hne : V)
+        (w1 hΓ σ smul_adj pow_eleven hne : V)
+      exact hw0_w1_adj hΓ σ smul_adj pow_eleven hne
+    · -- (1, 2): w_1 ~ w_2
+      change Γ.Adj (w1 hΓ σ smul_adj pow_eleven hne : V)
+        (w2 hΓ σ smul_adj pow_eleven hne : V)
+      exact hw1_w2_adj hΓ σ smul_adj pow_eleven hne
+    · -- (2, 3): w_2 ~ w_3
+      change Γ.Adj (w2 hΓ σ smul_adj pow_eleven hne : V)
+        (w3 hΓ σ smul_adj pow_eleven hne : V)
+      exact hw2_w3_adj hΓ σ smul_adj pow_eleven hne
+    · -- (3, 4): w_3 ~ w_4
+      change Γ.Adj (w3 hΓ σ smul_adj pow_eleven hne : V)
+        (w4 hΓ σ smul_adj pow_eleven hne : V)
+      exact hw3_w4_adj hΓ σ smul_adj pow_eleven hne
+    · -- (4, 0): w_4 ~ w_0
+      change Γ.Adj (w4 hΓ σ smul_adj pow_eleven hne : V)
+        (w0 hΓ σ smul_adj pow_eleven hne : V)
+      exact (hw0_w4_adj hΓ σ smul_adj pow_eleven hne).symm
+  cycle_only := by
+    intro i j hadj
+    -- Reflect to subtype-level H-adjacency.
+    have hH : (autFixedInducedGraph Γ σ).Adj
+        (cycleSubtype hΓ σ smul_adj pow_eleven hne i)
+        (cycleSubtype hΓ σ smul_adj pow_eleven hne j) :=
+      H_adj_of_cycleVertex_adj hΓ σ smul_adj pow_eleven hne hadj
+    -- Case on (i, j) using fin_cases.
+    fin_cases i
+    · fin_cases j
+      · -- (0, 0): loop, contradicts irrefl.
+        exact ((autFixedInducedGraph Γ σ).irrefl hH).elim
+      · -- (0, 1): forward cycle edge.
+        left; rfl
+      · -- (0, 2): non-edge.
+        exact absurd hH (hw0_not_adj_w2 hΓ σ smul_adj pow_eleven hne)
+      · -- (0, 3): non-edge.
+        exact absurd hH (hw0_not_adj_w3 hΓ σ smul_adj pow_eleven hne)
+      · -- (0, 4): backward cycle edge.
+        right; rfl
+    · fin_cases j
+      · -- (1, 0): backward.
+        right; rfl
+      · -- (1, 1): loop.
+        exact ((autFixedInducedGraph Γ σ).irrefl hH).elim
+      · -- (1, 2): forward.
+        left; rfl
+      · -- (1, 3): non-edge.
+        exact absurd hH (hw1_not_adj_w3 hΓ σ smul_adj pow_eleven hne)
+      · -- (1, 4): non-edge.
+        exact absurd hH (hw1_not_adj_w4 hΓ σ smul_adj pow_eleven hne)
+    · fin_cases j
+      · -- (2, 0): non-edge.
+        exact absurd hH.symm (hw0_not_adj_w2 hΓ σ smul_adj pow_eleven hne)
+      · -- (2, 1): backward.
+        right; rfl
+      · -- (2, 2): loop.
+        exact ((autFixedInducedGraph Γ σ).irrefl hH).elim
+      · -- (2, 3): forward.
+        left; rfl
+      · -- (2, 4): non-edge.
+        exact absurd hH (hw2_not_adj_w4 hΓ σ smul_adj pow_eleven hne)
+    · fin_cases j
+      · -- (3, 0): non-edge.
+        exact absurd hH.symm (hw0_not_adj_w3 hΓ σ smul_adj pow_eleven hne)
+      · -- (3, 1): non-edge.
+        exact absurd hH.symm (hw1_not_adj_w3 hΓ σ smul_adj pow_eleven hne)
+      · -- (3, 2): backward.
+        right; rfl
+      · -- (3, 3): loop.
+        exact ((autFixedInducedGraph Γ σ).irrefl hH).elim
+      · -- (3, 4): forward.
+        left; rfl
+    · fin_cases j
+      · -- (4, 0): forward (cycle edge: 0 = 4 + 1).
+        left; rfl
+      · -- (4, 1): non-edge.
+        exact absurd hH.symm (hw1_not_adj_w4 hΓ σ smul_adj pow_eleven hne)
+      · -- (4, 2): non-edge.
+        exact absurd hH.symm (hw2_not_adj_w4 hΓ σ smul_adj pow_eleven hne)
+      · -- (4, 3): backward.
+        right; rfl
+      · -- (4, 4): loop.
+        exact ((autFixedInducedGraph Γ σ).irrefl hH).elim
+
+end Construction
 
 end Moore57

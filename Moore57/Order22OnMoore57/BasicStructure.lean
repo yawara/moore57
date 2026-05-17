@@ -31,15 +31,15 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 /-! ## 5 fixed-cycle accessors -/
 
 /-- 自然言語証明の `u` (固定 5-cycle 上の基点). -/
-def u (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 0
+noncomputable def u (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 0
 /-- 自然言語証明の `a` (cycle 上 u の片隣). -/
-def a (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 1
+noncomputable def a (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 1
 /-- 自然言語証明の `b` (cycle 上 a の隣). -/
-def b (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 2
+noncomputable def b (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 2
 /-- 自然言語証明の `c` (cycle 上 b の隣). -/
-def c (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 3
+noncomputable def c (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 3
 /-- 自然言語証明の `d` (cycle 上 u の他方隣). -/
-def d (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 4
+noncomputable def d (h : Order22ActsOnMoore57 V Γ) : V := h.σ_fix.v 4
 
 variable (h : Order22ActsOnMoore57 V Γ)
 
