@@ -1927,6 +1927,51 @@ theorem trace_adjMatrixF11_restrict_eq_orbital_side
   rw [Finset.sum_boole]
   -- Goal: (#{w ∈ univ | Γ.Adj (rep w) w} : ZMod 11) = ((10 * n : ℕ) : ZMod 11)
   -- Step C: prove count = 10n in ℕ via orbit partition + Tk identity.
+  -- Sub-step C1: Σ_d=0..10 T_d = 110n (T_0 = 0, T_k = 11n for k ∈ 1..10).
+  have h_sum_Tk : ∑ d ∈ Finset.range 11, h.Tk d = 110 * h.traceNumber := by
+    have h_T0 : h.Tk 0 = 0 := by
+      unfold Tk
+      rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+      intro x _
+      simp only [pow_zero, Equiv.Perm.coe_one, id_eq]
+      exact SimpleGraph.irrefl Γ
+    -- Finset.range 11 = insert 0 (Finset.Ioo 0 11) or use Finset.sum_range_succ_comm
+    have h_split : Finset.range 11 = insert 0 (Finset.Ioc 0 10) := by
+      ext d
+      simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Ioc]
+      omega
+    rw [h_split, Finset.sum_insert (by simp), h_T0, zero_add]
+    -- Σ_{d ∈ Ioc 0 10} h.Tk d = 110n
+    have h_each : ∀ d ∈ Finset.Ioc 0 10, h.Tk d = 11 * h.traceNumber := by
+      intro d hd
+      rw [Finset.mem_Ioc] at hd
+      exact h.Tk_eq_eleven_mul_traceNumber hd.1 hd.2
+    rw [Finset.sum_congr rfl h_each]
+    rw [Finset.sum_const, Nat.card_Ioc, Nat.sub_zero, smul_eq_mul]
+    ring
+  -- Sub-step C2: Σ_v |allOrbitNeighbors v| = Σ_d T_d via Finset.sum_comm.
+  have h_v_sum_Tk : (∑ v : V, ((Finset.range 11).filter
+        (fun d => Γ.Adj v ((h.σ ^ d) v))).card) = ∑ d ∈ Finset.range 11, h.Tk d := by
+    classical
+    have heq_v : ∀ v : V,
+        ((Finset.range 11).filter (fun d => Γ.Adj v ((h.σ ^ d) v))).card =
+        ∑ d ∈ Finset.range 11, (if Γ.Adj v ((h.σ ^ d) v) then 1 else 0 : ℕ) := by
+      intro v
+      rw [Finset.card_filter]
+    simp_rw [heq_v]
+    rw [Finset.sum_comm]
+    apply Finset.sum_congr rfl
+    intros d _
+    rw [show ∑ v : V, (if Γ.Adj v ((h.σ ^ d) v) then 1 else 0 : ℕ) =
+      (Finset.univ.filter (fun v : V => Γ.Adj v ((h.σ ^ d) v))).card from
+      (Finset.card_filter _ _).symm]
+    rfl
+  -- Combine: Σ_v |allOrbitNeighbors v| = 110n.
+  have h_v_sum_eq_110n : (∑ v : V, ((Finset.range 11).filter
+        (fun d => Γ.Adj v ((h.σ ^ d) v))).card) = 110 * h.traceNumber := by
+    rw [h_v_sum_Tk, h_sum_Tk]
+  -- Sub-step C3: 11 * count = Σ_v |allOrbitNeighbors v| (via sigma-invariance + orbit partition).
+  -- This is the hardest step (~50-80 lines).
   sorry
 
 /-- **F_11 trace identity** (sorry-free given orbital side):
