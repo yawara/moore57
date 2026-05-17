@@ -923,6 +923,136 @@ private noncomputable def T_F11_V3 (h : Order22ActsOnMoore57 V Γ) :
     V3Submodule Γ →ₗ[ZMod 11] V3Submodule Γ :=
   (T_F11 h).restrict (V3_invariant_T_F11 h)
 
+/-- 制限 LinearMap.restrict の n 乗の subtype 対応 (Submodule 制限版).
+`(f.restrict h)^j x` の subtype-projection は `f^j` の x.val 適用と一致. -/
+private lemma T_F11_V7_pow_val (h : Order22ActsOnMoore57 V Γ) :
+    ∀ (j : ℕ) (x : V7Submodule Γ),
+    (((T_F11_V7 h)^j) x : V → ZMod 11) =
+      ((T_F11 h)^j) ((x : V → ZMod 11)) := by
+  intro j
+  induction j with
+  | zero => intro x; simp
+  | succ k ih =>
+    intro x
+    rw [pow_succ, pow_succ, Module.End.mul_apply, Module.End.mul_apply]
+    rw [ih (T_F11_V7 h x)]
+    rfl
+
+private lemma T_F11_V2_pow_val (h : Order22ActsOnMoore57 V Γ) :
+    ∀ (j : ℕ) (x : V2Submodule Γ),
+    (((T_F11_V2 h)^j) x : V → ZMod 11) =
+      ((T_F11 h)^j) ((x : V → ZMod 11)) := by
+  intro j
+  induction j with
+  | zero => intro x; simp
+  | succ k ih =>
+    intro x
+    rw [pow_succ, pow_succ, Module.End.mul_apply, Module.End.mul_apply]
+    rw [ih (T_F11_V2 h x)]
+    rfl
+
+private lemma T_F11_V3_pow_val (h : Order22ActsOnMoore57 V Γ) :
+    ∀ (j : ℕ) (x : V3Submodule Γ),
+    (((T_F11_V3 h)^j) x : V → ZMod 11) =
+      ((T_F11 h)^j) ((x : V → ZMod 11)) := by
+  intro j
+  induction j with
+  | zero => intro x; simp
+  | succ k ih =>
+    intro x
+    rw [pow_succ, pow_succ, Module.End.mul_apply, Module.End.mul_apply]
+    rw [ih (T_F11_V3 h x)]
+    rfl
+
+/-- ker (T_F11_V7)^j を subtype 経由で V_7 ⊓ ker T_F11^j に対応付け. -/
+private lemma map_subtype_ker_T_F11_V7_pow_eq (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    Submodule.map (V7Submodule Γ).subtype (LinearMap.ker ((T_F11_V7 h)^j)) =
+    V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) := by
+  ext v
+  simp only [Submodule.mem_map, LinearMap.mem_ker, Submodule.mem_inf,
+             Submodule.coe_subtype]
+  constructor
+  · rintro ⟨⟨x, hx_mem⟩, hx_ker, hx_eq⟩
+    refine ⟨?_, ?_⟩
+    · rw [← hx_eq]; exact hx_mem
+    · rw [← hx_eq]
+      have := T_F11_V7_pow_val h j ⟨x, hx_mem⟩
+      rw [hx_ker] at this
+      simp at this
+      exact this.symm
+  · rintro ⟨hv_in, hv_ker⟩
+    refine ⟨⟨v, hv_in⟩, ?_, rfl⟩
+    apply Subtype.ext
+    have := T_F11_V7_pow_val h j ⟨v, hv_in⟩
+    rw [this]
+    exact hv_ker
+
+private lemma map_subtype_ker_T_F11_V2_pow_eq (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    Submodule.map (V2Submodule Γ).subtype (LinearMap.ker ((T_F11_V2 h)^j)) =
+    V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) := by
+  ext v
+  simp only [Submodule.mem_map, LinearMap.mem_ker, Submodule.mem_inf,
+             Submodule.coe_subtype]
+  constructor
+  · rintro ⟨⟨x, hx_mem⟩, hx_ker, hx_eq⟩
+    refine ⟨?_, ?_⟩
+    · rw [← hx_eq]; exact hx_mem
+    · rw [← hx_eq]
+      have := T_F11_V2_pow_val h j ⟨x, hx_mem⟩
+      rw [hx_ker] at this
+      simp at this
+      exact this.symm
+  · rintro ⟨hv_in, hv_ker⟩
+    refine ⟨⟨v, hv_in⟩, ?_, rfl⟩
+    apply Subtype.ext
+    have := T_F11_V2_pow_val h j ⟨v, hv_in⟩
+    rw [this]
+    exact hv_ker
+
+private lemma map_subtype_ker_T_F11_V3_pow_eq (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    Submodule.map (V3Submodule Γ).subtype (LinearMap.ker ((T_F11_V3 h)^j)) =
+    V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) := by
+  ext v
+  simp only [Submodule.mem_map, LinearMap.mem_ker, Submodule.mem_inf,
+             Submodule.coe_subtype]
+  constructor
+  · rintro ⟨⟨x, hx_mem⟩, hx_ker, hx_eq⟩
+    refine ⟨?_, ?_⟩
+    · rw [← hx_eq]; exact hx_mem
+    · rw [← hx_eq]
+      have := T_F11_V3_pow_val h j ⟨x, hx_mem⟩
+      rw [hx_ker] at this
+      simp at this
+      exact this.symm
+  · rintro ⟨hv_in, hv_ker⟩
+    refine ⟨⟨v, hv_in⟩, ?_, rfl⟩
+    apply Subtype.ext
+    have := T_F11_V3_pow_val h j ⟨v, hv_in⟩
+    rw [this]
+    exact hv_ker
+
+/-- finrank の対応 (V_λ ⊓ ker T^j) と (ker T_F11_V_λ^j). -/
+private lemma finrank_ker_T_F11_V7_pow_eq (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    Module.finrank (ZMod 11) (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+        Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11) (LinearMap.ker ((T_F11_V7 h)^j)) := by
+  rw [← map_subtype_ker_T_F11_V7_pow_eq h j]
+  exact Submodule.finrank_map_subtype_eq _ _
+
+private lemma finrank_ker_T_F11_V2_pow_eq (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    Module.finrank (ZMod 11) (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+        Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11) (LinearMap.ker ((T_F11_V2 h)^j)) := by
+  rw [← map_subtype_ker_T_F11_V2_pow_eq h j]
+  exact Submodule.finrank_map_subtype_eq _ _
+
+private lemma finrank_ker_T_F11_V3_pow_eq (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    Module.finrank (ZMod 11) (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+        Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11) (LinearMap.ker ((T_F11_V3 h)^j)) := by
+  rw [← map_subtype_ker_T_F11_V3_pow_eq h j]
+  exact Submodule.finrank_map_subtype_eq _ _
+
 /-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
 
 dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
