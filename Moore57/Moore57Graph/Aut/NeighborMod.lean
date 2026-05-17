@@ -48,23 +48,30 @@ noncomputable def autNeighborPerm
         (smul_adj v w).1 hw
       simpa [hv] using hw'
 
-/-- For an automorphism `σ` of order dividing `19`, the number of σ-fixed
-neighbours of a σ-fixed vertex is congruent to the degree mod `19`. -/
-theorem aut_card_fixedNeighborFinset_modEq_degree
+/-- For an automorphism `σ` with `σ ^ p = 1` and `p` prime, the number of
+σ-fixed neighbours of a σ-fixed vertex is congruent to the degree mod `p`.
+
+Generic version covering both p=11 (Order22) and p=19 (D19). -/
+theorem aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
     (σ : Equiv.Perm V)
     (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
-    (pow_nineteen : σ ^ 19 = 1)
+    (p : ℕ) [Fact (Nat.Prime p)]
+    (pow_p : σ ^ p = 1)
     {v : V} (hv : σ v = v) :
-    (autFixedNeighborFinset Γ σ v).card ≡ Γ.degree v [MOD 19] := by
+    (autFixedNeighborFinset Γ σ v).card ≡ Γ.degree v [MOD p] := by
   classical
-  haveI : Fact (Nat.Prime 19) := ⟨by decide⟩
   let τ := autNeighborPerm σ smul_adj hv
-  have hpow : τ ^ 19 ^ 1 = 1 := by
-    ext w
-    change (σ ^ 19) (w : V) = w
-    simp [pow_nineteen]
+  have hpow : τ ^ p ^ 1 = 1 := by
+    show (autNeighborPerm σ smul_adj hv) ^ p ^ 1 = 1
+    unfold autNeighborPerm
+    rw [pow_one, Equiv.Perm.subtypePerm_pow]
+    apply Equiv.ext
+    intro w
+    apply Subtype.ext
+    show (σ ^ p) (w : V) = (w : V)
+    rw [pow_p]; rfl
   have hmod := Equiv.Perm.card_compl_support_modEq
-    (α := {w : V // Γ.Adj v w}) (p := 19) (n := 1) (σ := τ) hpow
+    (α := {w : V // Γ.Adj v w}) (p := p) (n := 1) (σ := τ) hpow
   have hsupport :
       τ.supportᶜ.card = (autFixedNeighborFinset Γ σ v).card := by
     have hsupportCard :
@@ -132,6 +139,16 @@ theorem aut_card_fixedNeighborFinset_modEq_degree
           rfl }
   simpa [hsupport, hdegree] using hmod
 
+/-- P=19 alias for backward compatibility. -/
+theorem aut_card_fixedNeighborFinset_modEq_degree
+    (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_nineteen : σ ^ 19 = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ Γ.degree v [MOD 19] := by
+  haveI : Fact (Nat.Prime 19) := ⟨by decide⟩
+  exact aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime σ smul_adj 19 pow_nineteen hv
+
 /-- For an automorphism `σ` of a Moore57 graph with `σ ^ 19 = 1`, the number of
 σ-fixed neighbours of a σ-fixed vertex is divisible by `19`. -/
 theorem aut_card_fixedNeighborFinset_modEq_zero
@@ -145,5 +162,25 @@ theorem aut_card_fixedNeighborFinset_modEq_zero
   have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
   rw [hdeg] at hmod
   exact hmod.trans (by norm_num [Nat.ModEq])
+
+/-! ### p=11 Moore57 specialisation -/
+
+/-- For an automorphism `σ` of a Moore57 graph with `σ ^ 11 = 1`, the number of
+σ-fixed neighbours of a σ-fixed vertex is ≡ 2 (mod 11).
+
+Since `|N(v)| = 57 = 11·5 + 2`. -/
+theorem aut_card_fixedNeighborFinset_modEq_two_of_pow_eleven
+    (hΓ : IsMoore57 Γ)
+    (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_eleven : σ ^ 11 = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ 2 [MOD 11] := by
+  haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
+  have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
+    σ smul_adj 11 pow_eleven hv
+  have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
+  rw [hdeg] at hmod
+  exact hmod.trans (by decide)
 
 end Moore57

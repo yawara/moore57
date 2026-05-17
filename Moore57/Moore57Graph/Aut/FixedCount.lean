@@ -32,6 +32,22 @@ open Finset
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+/-! ### Modular constraints from `σ ^ p = 1` (general prime p) -/
+
+/-- Generic version. For a permutation `σ : Equiv.Perm V` with `σ ^ p = 1`
+(p prime), `fixedVertexCount σ ≡ Fintype.card V [MOD p]`. -/
+theorem aut_fixedVertexCount_modEq_card_of_pow_prime
+    (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (pow_p : σ ^ p = 1) :
+    fixedVertexCount σ ≡ Fintype.card V [MOD p] := by
+  classical
+  have hpow : σ ^ p ^ 1 = 1 := by simpa using pow_p
+  have hmod := Equiv.Perm.card_compl_support_modEq
+    (α := V) (p := p) (n := 1) (σ := σ) hpow
+  have hcompl : σ.supportᶜ.card = fixedVertexCount σ := by
+    simp [fixedVertexCount, Equiv.Perm.support]
+  simpa [hcompl] using hmod
+
 /-! ### Modular constraints from `σ ^ 19 = 1` -/
 
 /-- For an automorphism `σ` of Moore57 with `σ ^ 19 = 1`, `fixedVertexCount σ ≡
@@ -40,18 +56,11 @@ theorem aut_fixedVertexCount_modEq_one_of_pow_nineteen
     (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
     (pow_nineteen : σ ^ 19 = 1) :
     fixedVertexCount σ ≡ 1 [MOD 19] := by
-  classical
   haveI : Fact (Nat.Prime 19) := ⟨by decide⟩
-  have hpow : σ ^ 19 ^ 1 = 1 := by simpa using pow_nineteen
-  have hmod := Equiv.Perm.card_compl_support_modEq
-    (α := V) (p := 19) (n := 1) (σ := σ) hpow
-  have hcompl : σ.supportᶜ.card = fixedVertexCount σ := by
-    simp [fixedVertexCount, Equiv.Perm.support]
-  have hcardV : Fintype.card V = 3250 := hΓ.card
-  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 19] := by
-    simpa [hcompl] using hmod
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 19] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime σ 19 pow_nineteen
   have hVmod : Fintype.card V ≡ 1 [MOD 19] := by
-    rw [hcardV]; decide
+    rw [hΓ.card]; decide
   exact hmod1.trans hVmod
 
 /-- Hence the fixed count is positive. -/
@@ -64,6 +73,42 @@ theorem aut_fixedVertexCount_pos_of_pow_nineteen
   have hmod := aut_fixedVertexCount_modEq_one_of_pow_nineteen hΓ σ pow_nineteen
   rw [hzero] at hmod
   exact absurd hmod (by decide)
+
+/-! ### Modular constraints from `σ ^ 11 = 1` (Moore57 specialisation) -/
+
+/-- For an automorphism `σ` of Moore57 with `σ ^ 11 = 1`, `fixedVertexCount σ ≡
+5 (mod 11)`. (3250 = 11·295 + 5.) -/
+theorem aut_fixedVertexCount_modEq_five_of_pow_eleven
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (pow_eleven : σ ^ 11 = 1) :
+    fixedVertexCount σ ≡ 5 [MOD 11] := by
+  haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 11] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime σ 11 pow_eleven
+  have hVmod : Fintype.card V ≡ 5 [MOD 11] := by
+    rw [hΓ.card]; decide
+  exact hmod1.trans hVmod
+
+/-- Hence the fixed count is at least 5 (in particular positive). -/
+theorem aut_fixedVertexCount_pos_of_pow_eleven
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (pow_eleven : σ ^ 11 = 1) :
+    0 < fixedVertexCount σ := by
+  by_contra hpos
+  have hzero : fixedVertexCount σ = 0 := Nat.eq_zero_of_not_pos hpos
+  have hmod := aut_fixedVertexCount_modEq_five_of_pow_eleven hΓ σ pow_eleven
+  rw [hzero] at hmod
+  exact absurd hmod (by decide)
+
+/-- Stronger: at least 5 fixed vertices. -/
+theorem aut_fixedVertexCount_ge_five_of_pow_eleven
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (pow_eleven : σ ^ 11 = 1) :
+    5 ≤ fixedVertexCount σ := by
+  have hmod := aut_fixedVertexCount_modEq_five_of_pow_eleven hΓ σ pow_eleven
+  by_contra hlt
+  have hlt' : fixedVertexCount σ < 5 := Nat.lt_of_not_le hlt
+  interval_cases (fixedVertexCount σ) <;> exact absurd hmod (by decide)
 
 /-- For a non-identity automorphism, the fixed count is strictly less than
 the total vertex count. -/
