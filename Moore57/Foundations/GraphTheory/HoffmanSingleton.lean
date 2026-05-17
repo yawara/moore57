@@ -293,18 +293,68 @@ theorem quadratic_root_classification (k : ℕ) (hk : 1 ≤ k) (μ : ℝ)
     (h : μ ^ 2 + μ - ((k : ℝ) - 1) = 0) :
     μ = srgLambdaPlus k ∨ μ = srgLambdaMinus k := by
   unfold srgLambdaPlus srgLambdaMinus
-  -- μ² + μ - (k - 1) = 0 ⟺ μ = (-1 ± √(4k - 3))/2.
-  -- Equivalent to (2μ + 1)² = 4k - 3.
+  -- μ² + μ - (k - 1) = 0 ⟺ (2μ + 1)² = 4k - 3.
   have hdisc : Real.sqrt (4 * (k : ℝ) - 3) ^ 2 = 4 * (k : ℝ) - 3 := sqrt_disc_sq k hk
   have hsq : (2 * μ + 1) ^ 2 = 4 * (k : ℝ) - 3 := by nlinarith [h]
   have habs : |2 * μ + 1| = Real.sqrt (4 * (k : ℝ) - 3) := by
     rw [← Real.sqrt_sq_eq_abs, hsq]
   rcases abs_eq (Real.sqrt_nonneg _) |>.mp habs with h | h
-  · -- 2μ + 1 = √(4k-3), so μ = (-1 + √D)/2.
-    left
-    linarith
-  · -- 2μ + 1 = -√(4k-3), so μ = (-1 - √D)/2.
-    right
-    linarith
+  · left; linarith
+  · right; linarith
+
+/-! ### S4c: Distinctness of {k, λ_+, λ_-} and partition of W -/
+
+/-- `k ≠ λ_+`. Proof: `λ_+ < k` strictly for `k ≥ 1`. -/
+theorem k_ne_srgLambdaPlus (k : ℕ) (hk : 1 ≤ k) :
+    (k : ℝ) ≠ srgLambdaPlus k := by
+  unfold srgLambdaPlus
+  intro h
+  -- k = (-1 + √(4k-3))/2 ⟹ 2k + 1 = √(4k-3) ⟹ 4k² + 4k + 1 = 4k - 3 ⟹ 4k² = -4.
+  have hsqr : (2 * (k : ℝ) + 1) = Real.sqrt (4 * (k : ℝ) - 3) := by linarith
+  have hsq : Real.sqrt (4 * (k : ℝ) - 3) ^ 2 = 4 * (k : ℝ) - 3 := sqrt_disc_sq k hk
+  have : (2 * (k : ℝ) + 1) ^ 2 = 4 * (k : ℝ) - 3 := by rw [hsqr]; exact hsq
+  nlinarith [sq_nonneg ((k : ℝ))]
+
+/-- `k ≠ λ_-`. -/
+theorem k_ne_srgLambdaMinus (k : ℕ) (hk : 1 ≤ k) :
+    (k : ℝ) ≠ srgLambdaMinus k := by
+  unfold srgLambdaMinus
+  intro h
+  -- k = (-1 - √(4k-3))/2 ⟹ 2k + 1 = -√(4k-3) ≤ 0. But 2k + 1 ≥ 3.
+  have hsqr : (2 * (k : ℝ) + 1) = -Real.sqrt (4 * (k : ℝ) - 3) := by linarith
+  have hk' : (1 : ℝ) ≤ k := by exact_mod_cast hk
+  have hnn : (0 : ℝ) ≤ Real.sqrt (4 * (k : ℝ) - 3) := Real.sqrt_nonneg _
+  linarith
+
+/-- `λ_+ ≠ λ_-` for `k ≥ 1`. -/
+theorem srgLambdaPlus_ne_srgLambdaMinus (k : ℕ) (hk : 1 ≤ k) :
+    srgLambdaPlus k ≠ srgLambdaMinus k := by
+  unfold srgLambdaPlus srgLambdaMinus
+  intro h
+  -- (-1 + √D)/2 = (-1 - √D)/2 ⟹ √D = 0 ⟹ D = 0. But D ≥ 1.
+  have hsqrt : Real.sqrt (4 * (k : ℝ) - 3) = 0 := by linarith
+  have hD : (4 * (k : ℝ) - 3) = 0 := by
+    have hsq : Real.sqrt (4 * (k : ℝ) - 3) ^ 2 = 4 * (k : ℝ) - 3 := sqrt_disc_sq k hk
+    rw [hsqrt] at hsq
+    linarith [hsq]
+  have : (1 : ℝ) ≤ k := by exact_mod_cast hk
+  linarith
+
+/-! ### S4d: Multiplicities and partition -/
+
+/-- Number of eigenvectors with eigenvalue `k`. -/
+noncomputable def srgM_k {G : SimpleGraph W} [DecidableRel G.Adj]
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) (k : ℕ) : ℕ :=
+  (Finset.univ.filter fun i : W => hHerm.eigenvalues i = (k : ℝ)).card
+
+/-- Number of eigenvectors with eigenvalue `λ_+`. -/
+noncomputable def srgM_plus {G : SimpleGraph W} [DecidableRel G.Adj]
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) (k : ℕ) : ℕ :=
+  (Finset.univ.filter fun i : W => hHerm.eigenvalues i = srgLambdaPlus k).card
+
+/-- Number of eigenvectors with eigenvalue `λ_-`. -/
+noncomputable def srgM_minus {G : SimpleGraph W} [DecidableRel G.Adj]
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) (k : ℕ) : ℕ :=
+  (Finset.univ.filter fun i : W => hHerm.eigenvalues i = srgLambdaMinus k).card
 
 end Moore57
