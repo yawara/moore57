@@ -1616,9 +1616,83 @@ theorem adjMatrixF11_restrict_ker_T_basisFun_val
         (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w)) :=
   rfl
 
--- Note: `adjMatrixF11_quot (Pi.basisFun O) O = sum` is NOT defeq because
--- `kerTF11_quotientEquiv.symm` doesn't reduce. Future work: prove via explicit
--- LinearEquiv.symm_apply navigation or rewrite at Quotient.mk representative.
+/-- σ-不変な orbit-neighbor count 関数 (helper for descending).
+For each `v : V`, the value is `Σ_w (adjMatrixF11 Γ) v w * (Pi.basisFun O) (Quotient.mk w)`.
+By σ-automorphism + Quotient.mk respect for σ, this is σ-invariant. -/
+private noncomputable def orbitNeighborSumF11
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) (v : V) : ZMod 11 :=
+  ∑ w : V, (adjMatrixF11 Γ) v w *
+    (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w))
+
+/-- **σ-invariance of orbitNeighborSumF11** (focused sub-sorry).
+For `a ~ b` (same σ-cycle), `orbitNeighborSumF11 a = orbitNeighborSumF11 b`.
+
+証明戦略: `b = σ^i a` から `(adjMatrixF11 Γ) b w = (adjMatrixF11 Γ) a (σ^{-i} w)`
+(σ-automorphism). 代入 `w' = σ^{-i} w` で sum 再写像. `Quotient.mk (σ^i w') = Quotient.mk w'`
+(同 cycle) で `Pi.basisFun O (Quotient.mk w)` も保存. -/
+private theorem orbitNeighborSumF11_sigma_invariant
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :
+    ∀ a b : V, (Equiv.Perm.SameCycle.setoid h.σ).r a b →
+      h.orbitNeighborSumF11 O a = h.orbitNeighborSumF11 O b := by
+  sorry
+
+/-- Descended orbit-neighbor count function on `Quotient`. -/
+private noncomputable def orbitNeighborSumQuot
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :
+    Quotient (Equiv.Perm.SameCycle.setoid h.σ) → ZMod 11 :=
+  Quotient.lift (h.orbitNeighborSumF11 O) (h.orbitNeighborSumF11_sigma_invariant O)
+
+/-- **e of orbitNeighborSumQuot = A_restrict (e (Pi.basisFun O))** (sorry-free):
+The candidate `orbitNeighborSumQuot` pulls back via `e` to `A_restrict (e (Pi.basisFun O))`. -/
+private theorem kerTF11_quotientEquiv_orbitNeighborSumQuot_eq
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :
+    h.kerTF11_quotientEquiv (h.orbitNeighborSumQuot O) =
+      h.adjMatrixF11_restrict_ker_T
+        (h.kerTF11_quotientEquiv (Pi.basisFun (ZMod 11) _ O)) := by
+  apply Subtype.ext
+  funext v
+  rw [kerTF11_quotientEquiv_apply, adjMatrixF11_restrict_ker_T_basisFun_val]
+  -- LHS: orbitNeighborSumQuot O (Quotient.mk _ v) = orbitNeighborSumF11 O v (by Quotient.lift_mk)
+  -- RHS: same sum
+  show h.orbitNeighborSumQuot O (Quotient.mk _ v) = _
+  unfold orbitNeighborSumQuot
+  rw [Quotient.lift_mk]
+  rfl
+
+/-- **A_quot diagonal entry (sorry-free given σ-invariance)**:
+`A_quot (Pi.basisFun O) (Quotient.mk v) = Σ_w (adjMatrixF11 Γ) v w * (Pi.basisFun O) (Quotient.mk w)`.
+
+Uses `kerTF11_quotientEquiv_orbitNeighborSumQuot_eq` + `LinearEquiv.symm_apply_eq`. -/
+theorem adjMatrixF11_quot_basisFun_apply_at_mk
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) (v : V) :
+    h.adjMatrixF11_quot (Pi.basisFun (ZMod 11) _ O) (Quotient.mk _ v) =
+      ∑ w : V, (adjMatrixF11 Γ) v w *
+        (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w)) := by
+  -- adjMatrixF11_quot = e.symm ∘ A_restrict ∘ e
+  -- Apply to (Quotient.mk v)
+  show (h.kerTF11_quotientEquiv.symm
+    (h.adjMatrixF11_restrict_ker_T
+      (h.kerTF11_quotientEquiv (Pi.basisFun (ZMod 11) _ O)))) (Quotient.mk _ v) = _
+  -- Use e.symm of (e f) = f, with f = orbitNeighborSumQuot O
+  rw [show h.adjMatrixF11_restrict_ker_T
+        (h.kerTF11_quotientEquiv (Pi.basisFun (ZMod 11) _ O)) =
+        h.kerTF11_quotientEquiv (h.orbitNeighborSumQuot O) from
+        (kerTF11_quotientEquiv_orbitNeighborSumQuot_eq h O).symm,
+      LinearEquiv.symm_apply_apply]
+  show h.orbitNeighborSumQuot O (Quotient.mk _ v) = _
+  unfold orbitNeighborSumQuot
+  rw [Quotient.lift_mk]
+  rfl
 
 /-- **Orbital side of trace identity** (focused sorry):
 `trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
