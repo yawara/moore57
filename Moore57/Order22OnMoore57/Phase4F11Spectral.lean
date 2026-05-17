@@ -4,6 +4,9 @@ import Moore57.Order22OnMoore57.TraceNumber
 import Mathlib.Algebra.Polynomial.Eval.Defs
 import Mathlib.LinearAlgebra.Trace
 import Mathlib.LinearAlgebra.Projection
+import Mathlib.LinearAlgebra.Semisimple
+import Mathlib.LinearAlgebra.Eigenspace.Semisimple
+import Mathlib.FieldTheory.Separable
 
 /-!
 # Phase 4 F_11 spectral decomposition
@@ -2228,6 +2231,82 @@ theorem V7Submodule_eq_ker_A_sub_seven (h : Order22ActsOnMoore57 V Γ) :
     rw [← add_smul]
     have h_eq : ((2 : ZMod 11) + 3 * 7) = 1 := by decide
     rw [h_eq, one_smul]
+
+/-! ### Phase D-A Step 2: A_F11.toLin' is IsSemisimple
+
+`adjMatrixF11_cubic_eq_zero` (sorry-free) + (X-2)(X-7)(X-3) squarefree
+⟹ A_F11.toLin' は semisimple. -/
+
+/-- F_11 上の cubic polynomial `(X - 2)(X - 7)(X - 3)` は squarefree (distinct roots). -/
+private lemma adjMatrixF11_cubic_polynomial_squarefree :
+    Squarefree ((Polynomial.X - Polynomial.C (2 : ZMod 11)) *
+                (Polynomial.X - Polynomial.C (7 : ZMod 11)) *
+                (Polynomial.X - Polynomial.C (3 : ZMod 11))) := by
+  have h27 : IsCoprime (Polynomial.X - Polynomial.C (2 : ZMod 11))
+                       (Polynomial.X - Polynomial.C (7 : ZMod 11)) :=
+    Polynomial.isCoprime_X_sub_C_of_isUnit_sub
+      (by decide : IsUnit ((2 : ZMod 11) - 7))
+  have h23 : IsCoprime (Polynomial.X - Polynomial.C (2 : ZMod 11))
+                       (Polynomial.X - Polynomial.C (3 : ZMod 11)) :=
+    Polynomial.isCoprime_X_sub_C_of_isUnit_sub
+      (by decide : IsUnit ((2 : ZMod 11) - 3))
+  have h73 : IsCoprime (Polynomial.X - Polynomial.C (7 : ZMod 11))
+                       (Polynomial.X - Polynomial.C (3 : ZMod 11)) :=
+    Polynomial.isCoprime_X_sub_C_of_isUnit_sub
+      (by decide : IsUnit ((7 : ZMod 11) - 3))
+  apply Polynomial.Separable.squarefree
+  refine Polynomial.Separable.mul ?_ Polynomial.separable_X_sub_C ?_
+  · exact Polynomial.Separable.mul Polynomial.separable_X_sub_C
+      Polynomial.separable_X_sub_C h27
+  · exact h23.mul_left h73
+
+/-- A_F11.toLin' は polynomial `(X-2)(X-7)(X-3)` で annihilate される.
+`adjMatrixF11_cubic_eq_zero` の LinearMap-aeval 版. -/
+private lemma adjMatrixF11_toLin'_aeval_cubic_eq_zero
+    (h : Order22ActsOnMoore57 V Γ) :
+    Polynomial.aeval
+        ((adjMatrixF11 Γ).toLin' : Module.End (ZMod 11) (V → ZMod 11))
+        ((Polynomial.X - Polynomial.C (2 : ZMod 11)) *
+         (Polynomial.X - Polynomial.C (7 : ZMod 11)) *
+         (Polynomial.X - Polynomial.C (3 : ZMod 11))) = 0 := by
+  classical
+  simp only [map_mul, map_sub, Polynomial.aeval_X, Polynomial.aeval_C,
+             Algebra.algebraMap_eq_smul_one]
+  -- 目標: ((A.toLin') - 2 • 1) * ((A.toLin') - 7 • 1) * ((A.toLin') - 3 • 1) = 0
+  -- これは matrix product (A-2)(A-7)(A-3) = 0 の toLin' 版.
+  have h_mat := adjMatrixF11_cubic_eq_zero h.isMoore
+  have h_step :
+      ((adjMatrixF11 Γ - (2 : ZMod 11) • 1) *
+        (adjMatrixF11 Γ - (7 : ZMod 11) • 1) *
+        (adjMatrixF11 Γ - (3 : ZMod 11) • 1)).toLin' = 0 := by
+    rw [h_mat]
+    exact map_zero _
+  rw [Matrix.toLin'_mul, Matrix.toLin'_mul] at h_step
+  have h_sub2 : (adjMatrixF11 Γ - (2 : ZMod 11) • 1).toLin' =
+                (adjMatrixF11 Γ).toLin' - (2 : ZMod 11) • 1 := by
+    rw [map_sub]
+    congr 1
+    rw [map_smul, Matrix.toLin'_one, ← Module.End.one_eq_id]
+  have h_sub7 : (adjMatrixF11 Γ - (7 : ZMod 11) • 1).toLin' =
+                (adjMatrixF11 Γ).toLin' - (7 : ZMod 11) • 1 := by
+    rw [map_sub]
+    congr 1
+    rw [map_smul, Matrix.toLin'_one, ← Module.End.one_eq_id]
+  have h_sub3 : (adjMatrixF11 Γ - (3 : ZMod 11) • 1).toLin' =
+                (adjMatrixF11 Γ).toLin' - (3 : ZMod 11) • 1 := by
+    rw [map_sub]
+    congr 1
+    rw [map_smul, Matrix.toLin'_one, ← Module.End.one_eq_id]
+  rw [h_sub2, h_sub7, h_sub3] at h_step
+  exact h_step
+
+/-- A_F11.toLin' は semisimple (squarefree minpoly via cubic). -/
+theorem adjMatrixF11_toLin'_isSemisimple (h : Order22ActsOnMoore57 V Γ) :
+    Module.End.IsSemisimple
+      ((adjMatrixF11 Γ).toLin' : Module.End (ZMod 11) (V → ZMod 11)) :=
+  Module.End.isSemisimple_of_squarefree_aeval_eq_zero
+    adjMatrixF11_cubic_polynomial_squarefree
+    (adjMatrixF11_toLin'_aeval_cubic_eq_zero h)
 
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
