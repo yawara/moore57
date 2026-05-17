@@ -1726,6 +1726,84 @@ theorem adjMatrixF11_quot_basisFun_apply_at_mk
   rw [Quotient.lift_mk]
   rfl
 
+/-- **A_quot on Pi.basisFun equals orbitNeighborSumQuot** (sorry-free):
+The function `Quotient → F_11` after applying `A_quot` to `Pi.basisFun O` is exactly
+the descended `orbitNeighborSumQuot O`. Uses `LinearEquiv.symm_apply_apply`. -/
+theorem adjMatrixF11_quot_basisFun_eq_orbitNeighborSumQuot
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :
+    h.adjMatrixF11_quot (Pi.basisFun (ZMod 11) _ O) = h.orbitNeighborSumQuot O := by
+  show h.kerTF11_quotientEquiv.symm
+    (h.adjMatrixF11_restrict_ker_T
+      (h.kerTF11_quotientEquiv (Pi.basisFun (ZMod 11) _ O))) = _
+  rw [← kerTF11_quotientEquiv_orbitNeighborSumQuot_eq h O]
+  exact h.kerTF11_quotientEquiv.symm_apply_apply _
+
+/-- **A_quot diagonal entry at general O** (sorry-free):
+`A_quot (Pi.basisFun O) O = orbitNeighborSumF11 O (Quotient.out O)`.
+
+Uses `adjMatrixF11_quot_basisFun_eq_orbitNeighborSumQuot` + `Quotient.out_eq`
++ σ-invariance. -/
+theorem adjMatrixF11_quot_diagonal_eq_orbitNeighborSumF11_out
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :
+    h.adjMatrixF11_quot (Pi.basisFun (ZMod 11) _ O) O =
+      h.orbitNeighborSumF11 O (Quotient.out O) := by
+  rw [adjMatrixF11_quot_basisFun_eq_orbitNeighborSumQuot h O]
+  -- Goal: orbitNeighborSumQuot O O = orbitNeighborSumF11 O (Quotient.out O)
+  -- Use Quotient.inductionOn to extract a representative.
+  induction O using Quotient.inductionOn with
+  | _ v =>
+    -- Goal: orbitNeighborSumQuot (Quotient.mk _ v) (Quotient.mk _ v) =
+    --        orbitNeighborSumF11 (Quotient.mk _ v) (Quotient.out (Quotient.mk _ v))
+    unfold orbitNeighborSumQuot
+    rw [Quotient.lift_mk]
+    -- Goal: orbitNeighborSumF11 (Quotient.mk _ v) v = orbitNeighborSumF11 (Quotient.mk _ v) (Quotient.out _)
+    have h_rel : (Equiv.Perm.SameCycle.setoid h.σ).r v
+        (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v)) :=
+      Quotient.exact (Quotient.out_eq _).symm
+    exact h.orbitNeighborSumF11_sigma_invariant _ v _ h_rel
+
+/-- **Trace = orbital count over vertices** (sorry-free).
+The trace of `A_restrict` equals `Σ_w (adjMatrixF11 Γ) (Quotient.out (Quotient.mk w)) w`
+in F_11, which counts vertex pairs `(rep, w)` with rep adjacent to w in same orbit. -/
+theorem trace_adjMatrixF11_restrict_eq_sum_over_vertices
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    [Fintype (Quotient (Equiv.Perm.SameCycle.setoid h.σ))] :
+    LinearMap.trace (ZMod 11) _ h.adjMatrixF11_restrict_ker_T =
+      ∑ w : V, (adjMatrixF11 Γ)
+        (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w)) w := by
+  classical
+  rw [trace_adjMatrixF11_restrict_eq_trace_quot, trace_adjMatrixF11_quot_eq_sum]
+  -- Step 1: Expand each diagonal entry via the lemma.
+  simp_rw [adjMatrixF11_quot_diagonal_eq_orbitNeighborSumF11_out h, orbitNeighborSumF11]
+  -- Goal: Σ_O Σ_w (adjMatrixF11 Γ) (Quotient.out O) w * (Pi.basisFun _ _ O) (Quotient.mk _ w)
+  --        = Σ_w (adjMatrixF11 Γ) (Quotient.out (Quotient.mk _ w)) w
+  -- Step 2: Swap sums + collapse via Pi.basisFun.
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro w _
+  -- For each w: Σ_O (adj Γ) (Quot.out O) w * (Pi.basisFun O) (Quot.mk w) = (adj Γ) (Quot.out (Quot.mk w)) w
+  -- Rewrite each term using Pi.basisFun = Pi.single, then collapse to single term.
+  rw [show (∑ O : Quotient (Equiv.Perm.SameCycle.setoid h.σ),
+            (adjMatrixF11 Γ) (Quotient.out O) w *
+              (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w))) =
+          ∑ O : Quotient (Equiv.Perm.SameCycle.setoid h.σ),
+            (if Quotient.mk _ w = O
+             then (adjMatrixF11 Γ) (Quotient.out O) w else 0) from by
+      apply Finset.sum_congr rfl
+      intro O _
+      rw [Pi.basisFun_apply, Pi.single_apply]
+      split_ifs with hO
+      · rw [mul_one]
+      · rw [mul_zero]]
+  rw [Finset.sum_ite_eq Finset.univ (Quotient.mk _ w)
+      (fun O => (adjMatrixF11 Γ) (Quotient.out O) w)]
+  simp
+
 /-- **Orbital side of trace identity** (focused sorry):
 `trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
 
