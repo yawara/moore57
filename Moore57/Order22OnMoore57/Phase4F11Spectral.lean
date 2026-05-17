@@ -2149,6 +2149,86 @@ theorem adjMatrixF11_mul_E3_eq_three_smul_E3 (hΓ : IsMoore57 Γ) :
       E2_mul_E3_eq_zero hΓ, E7_mul_E3_eq_zero hΓ, E3_idempotent hΓ,
       smul_zero, smul_zero, zero_add, zero_add]
 
+/-! ### Phase D-A Step 1: V_λ = ker(A_F11 - λ • 1) eigenspace characterization
+
+A_F11 が `(A-2)(A-7)(A-3) = 0` を満たす (sorry-free)。closed form
+`E_7 = 2 I + 3 A + 5 J` と `J · A = 2 J = A · J` (sorry-free) から:
+
+v ∈ ker(A - 7 • 1) ⟹ J·A·v = (J·A)v = 2 J v = J·(A v) = J·(7v) = 7 J v
+  ⟹ 5 J v = 0 ⟹ J v = 0.
+E_7 v = 2 v + 3 (A v) + 5 (J v) = 2 v + 21 v + 0 = 23 v = v (mod 11).
+⟹ v = E_7 v ∈ range E_7 = V_7. -/
+
+theorem V7Submodule_eq_ker_A_sub_seven (h : Order22ActsOnMoore57 V Γ) :
+    V7Submodule Γ =
+    LinearMap.ker
+      ((adjMatrixF11 Γ - (7 : ZMod 11) • (1 : Matrix V V (ZMod 11))).toLin') := by
+  classical
+  apply le_antisymm
+  · -- V_7 ⊆ ker(A - 7 • 1)
+    rintro v ⟨w, rfl⟩
+    rw [LinearMap.mem_ker]
+    have h_mat : (adjMatrixF11 Γ - (7 : ZMod 11) • (1 : Matrix V V (ZMod 11))) *
+                  E7MatrixF11 Γ = 0 := by
+      rw [sub_mul, smul_mul_assoc, one_mul,
+          adjMatrixF11_mul_E7_eq_seven_smul_E7 h.isMoore, sub_self]
+    show ((adjMatrixF11 Γ - (7 : ZMod 11) • 1 : Matrix V V (ZMod 11)).toLin')
+         ((E7MatrixF11 Γ).toLin' w) = 0
+    rw [show ((adjMatrixF11 Γ - (7 : ZMod 11) • 1 : Matrix V V (ZMod 11)).toLin')
+            ((E7MatrixF11 Γ).toLin' w) =
+            ((adjMatrixF11 Γ - (7 : ZMod 11) • 1) * E7MatrixF11 Γ).toLin' w from by
+          rw [Matrix.toLin'_mul]; rfl]
+    rw [h_mat]
+    simp
+  · -- ker(A - 7 • 1) ⊆ V_7
+    intro v hv_ker
+    rw [LinearMap.mem_ker] at hv_ker
+    -- Unfold: (A - 7 • 1).toLin' v = A.mulVec v - 7 • v
+    have hA : (adjMatrixF11 Γ).mulVec v = (7 : ZMod 11) • v := by
+      have h_unfold :
+          ((adjMatrixF11 Γ - (7 : ZMod 11) • (1 : Matrix V V (ZMod 11))).toLin') v =
+            (adjMatrixF11 Γ).mulVec v - (7 : ZMod 11) • v := by
+        show (adjMatrixF11 Γ - (7 : ZMod 11) • 1).mulVec v = _
+        rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec]
+      rw [h_unfold] at hv_ker
+      exact sub_eq_zero.mp hv_ker
+    -- J · v = 0 from J · A = 2 J + A v = 7 v.
+    have hJv : (allOnesMatrixF11 V).mulVec v = 0 := by
+      have h_J_A : (allOnesMatrixF11 V).mulVec ((adjMatrixF11 Γ).mulVec v) =
+                   (2 : ZMod 11) • (allOnesMatrixF11 V).mulVec v := by
+        rw [Matrix.mulVec_mulVec, allOnes_mul_adjMatrixF11 h.isMoore,
+            Matrix.smul_mulVec]
+      have h_J_7 : (allOnesMatrixF11 V).mulVec ((adjMatrixF11 Γ).mulVec v) =
+                   (7 : ZMod 11) • (allOnesMatrixF11 V).mulVec v := by
+        rw [hA, Matrix.mulVec_smul]
+      have h5 : (5 : ZMod 11) • (allOnesMatrixF11 V).mulVec v = 0 := by
+        have h_eq : (7 : ZMod 11) • (allOnesMatrixF11 V).mulVec v =
+                    (2 : ZMod 11) • (allOnesMatrixF11 V).mulVec v :=
+          h_J_7.symm.trans h_J_A
+        have : ((7 : ZMod 11) - 2) • (allOnesMatrixF11 V).mulVec v = 0 := by
+          rw [sub_smul]
+          exact sub_eq_zero.mpr h_eq
+        have h57 : ((7 : ZMod 11) - 2) = 5 := by decide
+        rw [h57] at this
+        exact this
+      have h5_ne : (5 : ZMod 11) ≠ 0 := by decide
+      rcases smul_eq_zero.mp h5 with h | h
+      · exact absurd h h5_ne
+      · exact h
+    -- Show v = E_7 v ∈ V_7.
+    refine ⟨v, ?_⟩
+    show (E7MatrixF11 Γ).toLin' v = v
+    show (E7MatrixF11 Γ).mulVec v = v
+    rw [E7_eq_closed h.isMoore]
+    -- E_7 v = (2 I + 3 A + 5 J) v = 2 v + 3 (A v) + 5 (J v) = 2 v + 21 v + 0 = 23 v = v
+    rw [Matrix.add_mulVec, Matrix.add_mulVec,
+        Matrix.smul_mulVec, Matrix.smul_mulVec, Matrix.smul_mulVec,
+        Matrix.one_mulVec, hA, hJv]
+    rw [smul_zero, add_zero, smul_smul]
+    rw [← add_smul]
+    have h_eq : ((2 : ZMod 11) + 3 * 7) = 1 := by decide
+    rw [h_eq, one_smul]
+
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
 各 V_λ は σ-不変な F_11 [C_11] 部分加群.
