@@ -253,4 +253,58 @@ theorem srg_kk_plus_one_eigenvalue_classification
     exact (WithLp.ofLp_eq_zero (p := 2)).mp h
   exact srg_kk_plus_one_eigenvalue_dichotomy hsrg hne hmv
 
+/-! ### S4b: Eigenvalue λ_± definitions and m_k = 1 -/
+
+/-- Plus eigenvalue: `λ_+ = (-1 + √(4k-3))/2`. -/
+noncomputable def srgLambdaPlus (k : ℕ) : ℝ := (-1 + Real.sqrt (4 * (k : ℝ) - 3)) / 2
+
+/-- Minus eigenvalue: `λ_- = (-1 - √(4k-3))/2`. -/
+noncomputable def srgLambdaMinus (k : ℕ) : ℝ := (-1 - Real.sqrt (4 * (k : ℝ) - 3)) / 2
+
+/-- For `k ≥ 1`, `4k - 3 ≥ 1 ≥ 0`, so `√(4k - 3)` is well-defined. -/
+private theorem sqrt_disc_sq (k : ℕ) (hk : 1 ≤ k) :
+    Real.sqrt (4 * (k : ℝ) - 3) ^ 2 = 4 * (k : ℝ) - 3 := by
+  apply Real.sq_sqrt
+  have : (1 : ℝ) ≤ k := by exact_mod_cast hk
+  linarith
+
+/-- `λ_+` is a root of `X² + X - (k - 1)`. -/
+theorem srgLambdaPlus_root (k : ℕ) (hk : 1 ≤ k) :
+    (srgLambdaPlus k) ^ 2 + srgLambdaPlus k - ((k : ℝ) - 1) = 0 := by
+  unfold srgLambdaPlus
+  have hsq := sqrt_disc_sq k hk
+  set s := Real.sqrt (4 * (k : ℝ) - 3) with hs_def
+  have hrw : ((-1 + s) / 2) ^ 2 + (-1 + s) / 2 - ((k : ℝ) - 1)
+      = (s ^ 2 - (4 * (k : ℝ) - 3)) / 4 := by ring
+  rw [hrw, hsq]; ring
+
+/-- `λ_-` is a root of `X² + X - (k - 1)`. -/
+theorem srgLambdaMinus_root (k : ℕ) (hk : 1 ≤ k) :
+    (srgLambdaMinus k) ^ 2 + srgLambdaMinus k - ((k : ℝ) - 1) = 0 := by
+  unfold srgLambdaMinus
+  have hsq := sqrt_disc_sq k hk
+  set s := Real.sqrt (4 * (k : ℝ) - 3) with hs_def
+  have hrw : ((-1 - s) / 2) ^ 2 + (-1 - s) / 2 - ((k : ℝ) - 1)
+      = (s ^ 2 - (4 * (k : ℝ) - 3)) / 4 := by ring
+  rw [hrw, hsq]; ring
+
+/-- The two roots of `X² + X - (k - 1)`. Used in case analysis. -/
+theorem quadratic_root_classification (k : ℕ) (hk : 1 ≤ k) (μ : ℝ)
+    (h : μ ^ 2 + μ - ((k : ℝ) - 1) = 0) :
+    μ = srgLambdaPlus k ∨ μ = srgLambdaMinus k := by
+  unfold srgLambdaPlus srgLambdaMinus
+  -- μ² + μ - (k - 1) = 0 ⟺ μ = (-1 ± √(4k - 3))/2.
+  -- Equivalent to (2μ + 1)² = 4k - 3.
+  have hdisc : Real.sqrt (4 * (k : ℝ) - 3) ^ 2 = 4 * (k : ℝ) - 3 := sqrt_disc_sq k hk
+  have hsq : (2 * μ + 1) ^ 2 = 4 * (k : ℝ) - 3 := by nlinarith [h]
+  have habs : |2 * μ + 1| = Real.sqrt (4 * (k : ℝ) - 3) := by
+    rw [← Real.sqrt_sq_eq_abs, hsq]
+  rcases abs_eq (Real.sqrt_nonneg _) |>.mp habs with h | h
+  · -- 2μ + 1 = √(4k-3), so μ = (-1 + √D)/2.
+    left
+    linarith
+  · -- 2μ + 1 = -√(4k-3), so μ = (-1 - √D)/2.
+    right
+    linarith
+
 end Moore57
