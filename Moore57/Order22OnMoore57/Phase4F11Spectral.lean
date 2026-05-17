@@ -1603,6 +1603,23 @@ theorem kerTF11_quotientEquiv_basisFun_apply (h : Order22ActsOnMoore57 V Γ)
       Pi.basisFun (ZMod 11) _ O (Quotient.mk _ v) :=
   kerTF11_quotientEquiv_apply h _ v
 
+/-- **A_restrict applied to orbit indicator** (sorry-free, via defeq):
+For `v : V` and σ-orbit `O`, the value of `A_restrict (e (Pi.basisFun _ _ O))` at `v`
+is the F_11 sum `Σ_w (Γ.adjMatrix v w) * (Pi.basisFun _ _ O) (Quotient.mk w)`. -/
+theorem adjMatrixF11_restrict_ker_T_basisFun_val
+    (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) (v : V) :
+    ((h.adjMatrixF11_restrict_ker_T (h.kerTF11_quotientEquiv
+        (Pi.basisFun (ZMod 11) _ O))) : V → ZMod 11) v =
+      ∑ w : V, (adjMatrixF11 Γ) v w *
+        (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w)) :=
+  rfl
+
+-- Note: `adjMatrixF11_quot (Pi.basisFun O) O = sum` is NOT defeq because
+-- `kerTF11_quotientEquiv.symm` doesn't reduce. Future work: prove via explicit
+-- LinearEquiv.symm_apply navigation or rewrite at Quotient.mk representative.
+
 /-- **Orbital side of trace identity** (focused sorry):
 `trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
 
