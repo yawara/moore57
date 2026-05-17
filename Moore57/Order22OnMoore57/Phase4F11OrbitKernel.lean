@@ -127,7 +127,7 @@ private theorem orderOf_σ_eq_11 (h : Order22ActsOnMoore57 V Γ) :
   exact orderOf_eq_prime h.σ_pow_eleven h.σ_ne_one
 
 /-- σ.cycleType の全 entry が 11. -/
-private theorem cycleType_σ_eq_replicate (h : Order22ActsOnMoore57 V Γ) :
+theorem cycleType_σ_eq_replicate (h : Order22ActsOnMoore57 V Γ) :
     h.σ.cycleType = Multiset.replicate h.σ.cycleType.card 11 := by
   haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
   have h_prime : (orderOf h.σ).Prime := by
@@ -314,9 +314,9 @@ theorem mem_ker_T_F11_iff (h : Order22ActsOnMoore57 V Γ) (f : V → ZMod 11) :
     rw [Equiv.apply_symm_apply] at this
     exact this.symm
 
-/-- σ-不変関数は σ^i (i : ℤ) でも不変. -/
-theorem sigma_invariant_zpow (h : Order22ActsOnMoore57 V Γ)
-    {f : V → ZMod 11} (hσ : ∀ v, f (h.σ v) = f v) :
+/-- σ-不変関数は σ^i (i : ℤ) でも不変. 任意の target type に対して成立. -/
+theorem sigma_invariant_zpow {α : Type*} (h : Order22ActsOnMoore57 V Γ)
+    {f : V → α} (hσ : ∀ v, f (h.σ v) = f v) :
     ∀ (i : ℤ) (v : V), f ((h.σ^i) v) = f v := by
   have hf_inv : ∀ v, f (h.σ⁻¹ v) = f v := fun v => by
     have h_app : h.σ (h.σ⁻¹ v) = v := by

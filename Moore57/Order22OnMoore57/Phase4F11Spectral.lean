@@ -1804,7 +1804,209 @@ theorem trace_adjMatrixF11_restrict_eq_sum_over_vertices
       (fun O => (adjMatrixF11 Γ) (Quotient.out O) w)]
   simp
 
-/-- **Orbital side of trace identity** (focused sorry):
+/-! ### C3 helpers: σ-orbit cardinality and orbitNeighborCount -/
+
+/-- σ-orbit neighbor count: |{d ∈ Fin 11 : σ^d v is adjacent to v}|. -/
+private noncomputable def orbitNeighborCountN (h : Order22ActsOnMoore57 V Γ) (v : V) : ℕ :=
+  ((Finset.range 11).filter (fun d => Γ.Adj v ((h.σ ^ d) v))).card
+
+/-- σ-step invariance of orbitNeighborCountN: `onc (σ v) = onc v`. -/
+private theorem orbitNeighborCountN_σ_step (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v : V, h.orbitNeighborCountN (h.σ v) = h.orbitNeighborCountN v := by
+  intro v
+  unfold orbitNeighborCountN
+  congr 1
+  apply Finset.filter_congr
+  intro d _
+  have h_comm : (h.σ ^ d) (h.σ v) = h.σ ((h.σ ^ d) v) := by
+    rw [← Equiv.Perm.mul_apply, ← Equiv.Perm.mul_apply]
+    congr 1
+    rw [← pow_succ, pow_succ']
+  rw [h_comm]
+  exact (h.σ_aut v ((h.σ ^ d) v)).symm
+
+/-- SameCycle invariance of orbitNeighborCountN. -/
+private theorem orbitNeighborCountN_sameCycle (h : Order22ActsOnMoore57 V Γ) :
+    ∀ a b : V, (Equiv.Perm.SameCycle.setoid h.σ).r a b →
+      h.orbitNeighborCountN a = h.orbitNeighborCountN b := by
+  intro a b ⟨i, hi⟩
+  rw [← hi]
+  exact (sigma_invariant_zpow (f := h.orbitNeighborCountN) h
+      (h.orbitNeighborCountN_σ_step) i a).symm
+
+/-- For σ-fixed v, σ^d v = v for any d ∈ ℕ. -/
+private theorem σ_pow_eq_self_of_fixed (h : Order22ActsOnMoore57 V Γ)
+    {v : V} (hv : h.σ v = v) (d : ℕ) : (h.σ ^ d) v = v := by
+  induction d with
+  | zero => simp
+  | succ k ih =>
+    rw [pow_succ]
+    simp only [Equiv.Perm.mul_apply]
+    rw [hv]; exact ih
+
+/-- For σ-fixed v, orbitNeighborCountN v = 0 (no loops, σ^d v = v). -/
+private theorem orbitNeighborCountN_eq_zero_of_fixed (h : Order22ActsOnMoore57 V Γ)
+    {v : V} (hv : h.σ v = v) : h.orbitNeighborCountN v = 0 := by
+  unfold orbitNeighborCountN
+  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  intro d _
+  rw [σ_pow_eq_self_of_fixed h hv]
+  exact SimpleGraph.irrefl Γ
+
+/-- For free rep (σ rep ≠ rep), σ^n rep = rep iff 11 ∣ n.
+Uses `IsCycle.pow_eq_one_iff'` + `cycleOf_pow_apply_self` + cycleType. -/
+private theorem σ_pow_apply_eq_self_iff_dvd_of_free (h : Order22ActsOnMoore57 V Γ)
+    {rep : V} (hrep : h.σ rep ≠ rep) (n : ℕ) :
+    (h.σ ^ n) rep = rep ↔ 11 ∣ n := by
+  have h_rep_in_supp : rep ∈ h.σ.support := Equiv.Perm.mem_support.mpr hrep
+  have h_cycleOf : Equiv.Perm.IsCycle (h.σ.cycleOf rep) :=
+    Equiv.Perm.isCycle_cycleOf h.σ hrep
+  have h_orderOf : orderOf (h.σ.cycleOf rep) = 11 := by
+    rw [h_cycleOf.orderOf]
+    have h_in_cf : h.σ.cycleOf rep ∈ h.σ.cycleFactorsFinset :=
+      Equiv.Perm.cycleOf_mem_cycleFactorsFinset_iff.mpr h_rep_in_supp
+    have h_in_ct : (h.σ.cycleOf rep).support.card ∈ h.σ.cycleType := by
+      rw [Equiv.Perm.cycleType_def]
+      exact Multiset.mem_map.mpr ⟨h.σ.cycleOf rep, h_in_cf, rfl⟩
+    rw [cycleType_σ_eq_replicate h] at h_in_ct
+    exact Multiset.eq_of_mem_replicate h_in_ct
+  have h_cycle_apply_ne : (h.σ.cycleOf rep) rep ≠ rep := by
+    rw [Equiv.Perm.cycleOf_apply_self]
+    exact hrep
+  -- (σ^n) rep = (cycleOf σ rep ^ n) rep, then iff via IsCycle.pow_eq_one_iff'.
+  constructor
+  · intro hpow
+    have h_cycle_pow_eq : ((h.σ.cycleOf rep) ^ n) rep = rep := by
+      rw [Equiv.Perm.cycleOf_pow_apply_self]; exact hpow
+    have h_cycle_pow_one : (h.σ.cycleOf rep) ^ n = 1 :=
+      (h_cycleOf.pow_eq_one_iff' h_cycle_apply_ne).mpr h_cycle_pow_eq
+    have h_dvd : orderOf (h.σ.cycleOf rep) ∣ n :=
+      orderOf_dvd_of_pow_eq_one h_cycle_pow_one
+    rw [h_orderOf] at h_dvd; exact h_dvd
+  · intro hdvd
+    have h_cycle_pow_one : (h.σ.cycleOf rep) ^ n = 1 := by
+      rw [← h_orderOf] at hdvd
+      exact orderOf_dvd_iff_pow_eq_one.mp hdvd
+    have h_cycle_pow_eq : ((h.σ.cycleOf rep) ^ n) rep = rep := by
+      rw [h_cycle_pow_one]; rfl
+    rw [← Equiv.Perm.cycleOf_pow_apply_self h.σ rep n]
+    exact h_cycle_pow_eq
+
+/-- For fixed rep, σ-fiber is {rep}. -/
+private theorem σ_fiber_eq_singleton_of_fixed (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ))
+    (hO : h.σ (Quotient.out O) = Quotient.out O) :
+    Finset.univ.filter (fun v : V =>
+        Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v = O) = {Quotient.out O} := by
+  ext v
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+  constructor
+  · intro hv
+    have h_sc : (Equiv.Perm.SameCycle.setoid h.σ).r v (Quotient.out O) := by
+      apply Quotient.exact
+      rw [hv]; exact (Quotient.out_eq _).symm
+    have h_fixed_v : h.σ v = v :=
+      (Equiv.Perm.SameCycle.apply_eq_self_iff h_sc).mpr hO
+    exact Equiv.Perm.SameCycle.eq_of_left h_sc h_fixed_v
+  · intro hv
+    rw [hv]; exact Quotient.out_eq _
+
+/-- (cycleOf σ rep).support.card = 11 for free rep, from cycleType. -/
+private theorem cycleOf_support_card_eq_eleven (h : Order22ActsOnMoore57 V Γ)
+    {rep : V} (hrep : h.σ rep ≠ rep) :
+    (h.σ.cycleOf rep).support.card = 11 := by
+  have h_rep_in_supp : rep ∈ h.σ.support := Equiv.Perm.mem_support.mpr hrep
+  have h_cycleOf_mem : h.σ.cycleOf rep ∈ h.σ.cycleFactorsFinset :=
+    Equiv.Perm.cycleOf_mem_cycleFactorsFinset_iff.mpr h_rep_in_supp
+  have h_in_ct : (h.σ.cycleOf rep).support.card ∈ h.σ.cycleType := by
+    rw [Equiv.Perm.cycleType_def]
+    exact Multiset.mem_map.mpr ⟨h.σ.cycleOf rep, h_cycleOf_mem, rfl⟩
+  rw [cycleType_σ_eq_replicate h] at h_in_ct
+  exact Multiset.eq_of_mem_replicate h_in_ct
+
+/-- For free rep, σ^· : Fin 11 → V is injective at rep (using primality of 11). -/
+private theorem σ_pow_apply_injective_of_free (h : Order22ActsOnMoore57 V Γ)
+    {rep : V} (hrep : h.σ rep ≠ rep)
+    {d₁ d₂ : ℕ} (h₁ : d₁ < 11) (h₂ : d₂ < 11)
+    (heq : (h.σ ^ d₁) rep = (h.σ ^ d₂) rep) : d₁ = d₂ := by
+  -- WLOG d₁ ≤ d₂. Then σ^(d₂ - d₁) rep = rep. By prime order, 11 ∣ (d₂ - d₁). Hence d₁ = d₂.
+  wlog hle : d₁ ≤ d₂ with H
+  · exact (H h hrep h₂ h₁ heq.symm (Nat.le_of_not_le hle)).symm
+  -- σ^d₁ * σ^(d₂-d₁) = σ^d₂. Combined with heq, get σ^(d₂-d₁) rep = rep.
+  have h_sub : (h.σ ^ (d₂ - d₁)) rep = rep := by
+    have h_split : (h.σ ^ d₁) ((h.σ ^ (d₂ - d₁)) rep) = (h.σ ^ d₂) rep := by
+      rw [← Equiv.Perm.mul_apply, ← pow_add, Nat.add_sub_cancel' hle]
+    have h_eq2 : (h.σ ^ d₁) ((h.σ ^ (d₂ - d₁)) rep) = (h.σ ^ d₁) rep := by
+      rw [h_split]; exact heq.symm
+    exact (h.σ ^ d₁).injective h_eq2
+  -- 11 ∣ (d₂ - d₁), and d₂ - d₁ < 11, so d₂ - d₁ = 0.
+  have h_dvd : 11 ∣ (d₂ - d₁) :=
+    (σ_pow_apply_eq_self_iff_dvd_of_free h hrep _).mp h_sub
+  have h_lt : d₂ - d₁ < 11 := by omega
+  have : d₂ - d₁ = 0 := Nat.eq_zero_of_dvd_of_lt h_dvd h_lt
+  omega
+
+/-- For free rep, σ-fiber cardinality equals 11 via direct bijection on Finset.range 11. -/
+private theorem σ_fiber_card_eq_eleven_of_free (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ))
+    (hO : h.σ (Quotient.out O) ≠ Quotient.out O) :
+    (Finset.univ.filter (fun v : V =>
+        Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v = O)).card = 11 := by
+  rw [show 11 = (Finset.range 11).card from (Finset.card_range 11).symm]
+  symm
+  apply Finset.card_bij (fun (d : ℕ) (_ : d ∈ Finset.range 11) => (h.σ ^ d) (Quotient.out O))
+  · -- hi: σ^d (out O) ∈ fiber O.
+    intro d _
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    have h_setoid_r : (Equiv.Perm.SameCycle.setoid h.σ).r
+        (Quotient.out O) ((h.σ ^ d) (Quotient.out O)) :=
+      ⟨(d : ℤ), by rw [zpow_natCast]⟩
+    have h_mk_step : Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ)
+                       ((h.σ ^ d) (Quotient.out O)) =
+                     Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) (Quotient.out O) :=
+      (Quotient.sound h_setoid_r).symm
+    rw [h_mk_step]
+    exact Quotient.out_eq O
+  · -- inj: σ^d₁ rep = σ^d₂ rep ⟹ d₁ = d₂.
+    intro d₁ hd₁ d₂ hd₂ heq
+    rw [Finset.mem_range] at hd₁ hd₂
+    exact σ_pow_apply_injective_of_free h hO hd₁ hd₂ heq
+  · -- surj: any v in fiber, ∃ d ∈ range 11, σ^d rep = v.
+    intro v hv
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hv
+    have h_sc : h.σ.SameCycle (Quotient.out O) v := by
+      have h_mk_eq : Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v =
+                     Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) (Quotient.out O) := by
+        rw [hv]; exact (Quotient.out_eq _).symm
+      exact (Quotient.exact h_mk_eq).symm
+    obtain ⟨i, hi⟩ := h_sc
+    -- σ^i (out O) = v with i ∈ ℤ. Use σ^11 = 1 to find d ∈ ℕ with d < 11.
+    have h_σ11 : (h.σ : Equiv.Perm V) ^ (11 : ℤ) = 1 := by
+      rw [show ((11 : ℤ)) = ((11 : ℕ) : ℤ) from rfl, zpow_natCast]; exact h.σ_pow_eleven
+    have h_emod_nonneg : 0 ≤ i % 11 := Int.emod_nonneg _ (by decide)
+    have h_emod_lt : i % 11 < 11 := Int.emod_lt_of_pos _ (by decide)
+    set d : ℕ := (i % 11).toNat with hd_def
+    have h_d_eq : (d : ℤ) = i % 11 := Int.toNat_of_nonneg h_emod_nonneg
+    have h_d_lt : d < 11 := by
+      have : (d : ℤ) < 11 := h_d_eq ▸ h_emod_lt
+      exact_mod_cast this
+    have h_z : ((h.σ : Equiv.Perm V) ^ (i % 11)) (Quotient.out O) = v := by
+      have h_eq_i : i = (i % 11) + 11 * (i / 11) := by
+        have := Int.emod_add_ediv i 11
+        linarith
+      have h_zpow_eq : h.σ ^ i = h.σ ^ (i % 11) := by
+        conv_lhs => rw [h_eq_i]
+        rw [zpow_add, zpow_mul, h_σ11, one_zpow, mul_one]
+      rw [← h_zpow_eq]; exact hi
+    refine ⟨d, Finset.mem_range.mpr h_d_lt, ?_⟩
+    have h_cast : (h.σ ^ d) (Quotient.out O) =
+                  ((h.σ : Equiv.Perm V) ^ (i % 11)) (Quotient.out O) := by
+      rw [← h_d_eq]; simp [zpow_natCast]
+    rw [h_cast, h_z]
+
+/-- **Orbital side of trace identity** (sorry-free!):
 `trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
 
 ## 数学的内容 (Macaj-Siran/Cameron Higman framework)
@@ -1971,13 +2173,182 @@ theorem trace_adjMatrixF11_restrict_eq_orbital_side
         (fun d => Γ.Adj v ((h.σ ^ d) v))).card) = 110 * h.traceNumber := by
     rw [h_v_sum_Tk, h_sum_Tk]
   -- Sub-step C3: 11 * count = Σ_v |allOrbitNeighbors v| (via sigma-invariance + orbit partition).
-  -- This is the hardest step (~50-80 lines).
-  sorry
+  -- Recognize that Σ_v |allOrbitNeighbors v| = Σ_v orbitNeighborCountN v.
+  have h_v_sum_eq_onc :
+      (∑ v : V, ((Finset.range 11).filter
+        (fun d => Γ.Adj v ((h.σ ^ d) v))).card) = ∑ v : V, h.orbitNeighborCountN v := rfl
+  -- C3a: Σ_v onc v = 11 * Σ_O onc(rep_O).
+  have h_v_sum_eq_11_sum_O :
+      (∑ v : V, h.orbitNeighborCountN v) =
+      11 * ∑ O : Quotient (Equiv.Perm.SameCycle.setoid h.σ),
+              h.orbitNeighborCountN (Quotient.out O) := by
+    have h_maps : ∀ v ∈ (Finset.univ : Finset V),
+        Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v ∈
+          (Finset.univ : Finset (Quotient (Equiv.Perm.SameCycle.setoid h.σ))) :=
+      fun _ _ => Finset.mem_univ _
+    rw [← Finset.sum_fiberwise_of_maps_to h_maps h.orbitNeighborCountN]
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro O _
+    -- Inner sum = 11 * onc rep_O.
+    by_cases hO : h.σ (Quotient.out O) = Quotient.out O
+    · -- Fixed: fiber = {rep}, onc rep = 0, sum = 0 = 11 * 0.
+      rw [show ({v ∈ Finset.univ | Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v = O} :
+            Finset V) =
+          Finset.univ.filter (fun v : V =>
+            Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v = O) from rfl,
+          σ_fiber_eq_singleton_of_fixed h O hO]
+      rw [Finset.sum_singleton, orbitNeighborCountN_eq_zero_of_fixed h hO, mul_zero]
+    · -- Free: all values equal onc rep, sum = 11 * onc rep.
+      have h_const : ∀ v ∈ Finset.univ.filter (fun v : V =>
+          Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v = O),
+          h.orbitNeighborCountN v = h.orbitNeighborCountN (Quotient.out O) := by
+        intro v hv
+        simp only [Finset.mem_filter] at hv
+        have h_mk : Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v =
+                    Quotient.mk _ (Quotient.out O) := by
+          rw [hv.2]; exact (Quotient.out_eq _).symm
+        have h_sc : (Equiv.Perm.SameCycle.setoid h.σ).r v (Quotient.out O) :=
+          Quotient.exact h_mk
+        exact h.orbitNeighborCountN_sameCycle v _ h_sc
+      rw [show ({v ∈ Finset.univ | Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v = O} :
+            Finset V) =
+          Finset.univ.filter (fun v : V =>
+            Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v = O) from rfl]
+      rw [Finset.sum_congr rfl h_const, Finset.sum_const, smul_eq_mul]
+      rw [σ_fiber_card_eq_eleven_of_free h O hO]
+  -- C3b: count = Σ_O onc(rep_O).
+  have h_count_eq_sum_O :
+      (Finset.univ.filter (fun w : V =>
+          Γ.Adj (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w)) w)).card =
+      ∑ O : Quotient (Equiv.Perm.SameCycle.setoid h.σ),
+        h.orbitNeighborCountN (Quotient.out O) := by
+    -- Partition the count by Quotient.mk.
+    rw [Finset.card_filter]
+    have h_maps : ∀ v ∈ (Finset.univ : Finset V),
+        Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v ∈
+          (Finset.univ : Finset (Quotient (Equiv.Perm.SameCycle.setoid h.σ))) :=
+      fun _ _ => Finset.mem_univ _
+    rw [← Finset.sum_fiberwise_of_maps_to h_maps
+        (fun w : V =>
+          (if Γ.Adj (Quotient.out (Quotient.mk
+            (Equiv.Perm.SameCycle.setoid h.σ) w)) w then 1 else 0 : ℕ))]
+    apply Finset.sum_congr rfl
+    intro O _
+    -- Inner: ∑ w ∈ filter (Q.mk · = O), [Adj (Quot.out (Quot.mk w)) w] = onc rep_O.
+    -- For each w in filter, Quot.mk w = O, so Quot.out (Quot.mk w) = Quot.out O = rep_O.
+    -- Inner = #{w ∈ fiber O : Adj rep_O w}.
+    by_cases hO : h.σ (Quotient.out O) = Quotient.out O
+    · -- Fixed: inner sum = 0 (fiber = {rep}, no loops). onc rep = 0.
+      rw [σ_fiber_eq_singleton_of_fixed h O hO]
+      rw [Finset.sum_singleton, orbitNeighborCountN_eq_zero_of_fixed h hO]
+      rw [Quotient.out_eq O]
+      rw [if_neg (SimpleGraph.irrefl Γ)]
+    · -- Free: bijection σ^· : range 11 ↔ fiber O.
+      -- Step 1: substitute Quot.out (Quot.mk _ w) with Quot.out O in the if-condition.
+      have h_substitute :
+          (∑ w ∈ Finset.univ.filter (fun w : V =>
+              Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w = O),
+              (if Γ.Adj (Quotient.out (Quotient.mk
+                (Equiv.Perm.SameCycle.setoid h.σ) w)) w then 1 else 0 : ℕ)) =
+          (∑ w ∈ Finset.univ.filter (fun w : V =>
+              Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w = O),
+              (if Γ.Adj (Quotient.out O) w then 1 else 0 : ℕ)) := by
+        apply Finset.sum_congr rfl
+        intro w hw
+        simp only [Finset.mem_filter] at hw
+        rw [show Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w) =
+              Quotient.out O from by rw [hw.2]]
+      rw [h_substitute]
+      -- Step 2: sum_boole + filter_filter to convert to card.
+      rw [Finset.sum_boole]
+      rw [Finset.filter_filter]
+      -- Goal: (univ.filter (Q.mk · = O ∧ Adj (Quot.out O) ·)).card = onc rep_O.
+      -- Step 3: bijection σ^· : range 11 (filtered) ↔ filter.
+      unfold orbitNeighborCountN
+      symm
+      apply Finset.card_bij
+        (fun (d : ℕ) (_ : d ∈ (Finset.range 11).filter
+          (fun d => Γ.Adj (Quotient.out O) ((h.σ ^ d) (Quotient.out O)))) =>
+            (h.σ ^ d) (Quotient.out O))
+      · -- hi
+        intro d hd
+        simp only [Finset.mem_filter, Finset.mem_range] at hd
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+        refine ⟨?_, hd.2⟩
+        have h_setoid_r : (Equiv.Perm.SameCycle.setoid h.σ).r
+            (Quotient.out O) ((h.σ ^ d) (Quotient.out O)) :=
+          ⟨(d : ℤ), by rw [zpow_natCast]⟩
+        have h_mk_step :
+            Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ)
+              ((h.σ ^ d) (Quotient.out O)) =
+            Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) (Quotient.out O) :=
+          (Quotient.sound h_setoid_r).symm
+        rw [h_mk_step]; exact Quotient.out_eq O
+      · -- inj
+        intro d₁ hd₁ d₂ hd₂ heq
+        rw [Finset.mem_filter, Finset.mem_range] at hd₁ hd₂
+        exact σ_pow_apply_injective_of_free h hO hd₁.1 hd₂.1 heq
+      · -- surj
+        intro v hv
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hv
+        obtain ⟨h_mk_v, h_adj_v⟩ := hv
+        have h_sc : h.σ.SameCycle (Quotient.out O) v := by
+          have h_eq : Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) v =
+                      Quotient.mk _ (Quotient.out O) := by
+            rw [h_mk_v]; exact (Quotient.out_eq _).symm
+          exact (Quotient.exact h_eq).symm
+        obtain ⟨i, hi⟩ := h_sc
+        have h_σ11 : (h.σ : Equiv.Perm V) ^ (11 : ℤ) = 1 := by
+          rw [show ((11 : ℤ)) = ((11 : ℕ) : ℤ) from rfl, zpow_natCast]
+          exact h.σ_pow_eleven
+        have h_emod_nonneg : 0 ≤ i % 11 := Int.emod_nonneg _ (by decide)
+        have h_emod_lt : i % 11 < 11 := Int.emod_lt_of_pos _ (by decide)
+        set d : ℕ := (i % 11).toNat with hd_def
+        have h_d_eq : (d : ℤ) = i % 11 := Int.toNat_of_nonneg h_emod_nonneg
+        have h_d_lt : d < 11 := by
+          have : (d : ℤ) < 11 := h_d_eq ▸ h_emod_lt
+          exact_mod_cast this
+        have h_zpow_eq : h.σ ^ i = h.σ ^ (i % 11) := by
+          have h_eq_i : i = (i % 11) + 11 * (i / 11) := by
+            have := Int.emod_add_ediv i 11
+            linarith
+          conv_lhs => rw [h_eq_i]
+          rw [zpow_add, zpow_mul, h_σ11, one_zpow, mul_one]
+        have h_apply : (h.σ ^ d) (Quotient.out O) = v := by
+          have h_cast : (h.σ ^ d) (Quotient.out O) =
+                        ((h.σ : Equiv.Perm V) ^ (i % 11)) (Quotient.out O) := by
+            rw [← h_d_eq]; simp [zpow_natCast]
+          rw [h_cast, ← h_zpow_eq, hi]
+        refine ⟨d, ?_, h_apply⟩
+        simp only [Finset.mem_filter, Finset.mem_range]
+        refine ⟨h_d_lt, ?_⟩
+        rw [h_apply]; exact h_adj_v
+  -- Combine: 11 * count = 11 * Σ_O onc rep_O = Σ_v onc v = 110n. Hence count = 10n.
+  have h_11count_eq_110n :
+      11 * (Finset.univ.filter (fun w : V =>
+          Γ.Adj (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w)) w)).card =
+      110 * h.traceNumber := by
+    rw [h_count_eq_sum_O, ← h_v_sum_eq_11_sum_O, ← h_v_sum_eq_onc, h_v_sum_eq_110n]
+  have h_count_eq_10n :
+      (Finset.univ.filter (fun w : V =>
+          Γ.Adj (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w)) w)).card =
+      10 * h.traceNumber := by
+    have : 11 * (Finset.univ.filter (fun w : V =>
+        Γ.Adj (Quotient.out (Quotient.mk (Equiv.Perm.SameCycle.setoid h.σ) w)) w)).card =
+        11 * (10 * h.traceNumber) := by
+      rw [h_11count_eq_110n]; ring
+    exact Nat.eq_of_mul_eq_mul_left (by omega) this
+  -- Cast count = 10n to ZMod 11.
+  push_cast
+  rw [h_count_eq_10n]
+  push_cast
+  rfl
 
-/-- **F_11 trace identity** (sorry-free given orbital side):
+/-- **F_11 trace identity** (sorry-free!):
 `10 * traceNumber ≡ 2 · a^{F_11}_2 + 7 · a^{F_11}_7 + 3 · a^{F_11}_3 (mod 11)`.
 
-Direct corollary of spectral side (proved) + orbital side (focused sorry).
+Direct corollary of spectral side + orbital side (both sorry-free).
 Both sides equal `LinearMap.trace _ _ adjMatrixF11_restrict_ker_T`. -/
 theorem trace_identity_via_F11_spectral (h : Order22ActsOnMoore57 V Γ) :
     (10 * h.traceNumber : ZMod 11) =
