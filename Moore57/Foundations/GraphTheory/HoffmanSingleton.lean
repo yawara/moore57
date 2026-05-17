@@ -357,4 +357,74 @@ noncomputable def srgM_minus {G : SimpleGraph W} [DecidableRel G.Adj]
     (hHerm : (G.adjMatrix ℝ).IsHermitian) (k : ℕ) : ℕ :=
   (Finset.univ.filter fun i : W => hHerm.eigenvalues i = srgLambdaMinus k).card
 
+/-! ### S4e: Sum partition by eigenvalue class -/
+
+/-- For `k ≥ 1`, the three filter sets partition `univ`. -/
+theorem srgM_sum_eq_card
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    srgM_k hHerm k + srgM_plus hHerm k + srgM_minus hHerm k = Fintype.card W := by
+  classical
+  have hcover : ∀ i : W, hHerm.eigenvalues i = (k : ℝ) ∨
+      hHerm.eigenvalues i = srgLambdaPlus k ∨ hHerm.eigenvalues i = srgLambdaMinus k := by
+    intro i
+    rcases srg_kk_plus_one_eigenvalue_classification hsrg hHerm i with h | h
+    · exact Or.inl h
+    · rcases quadratic_root_classification k hk _ h with h | h
+      · exact Or.inr (Or.inl h)
+      · exact Or.inr (Or.inr h)
+  have hne_k_p := k_ne_srgLambdaPlus k hk
+  have hne_k_m := k_ne_srgLambdaMinus k hk
+  have hne_p_m := srgLambdaPlus_ne_srgLambdaMinus k hk
+  -- Build a 3-way partition.
+  set Sk := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = (k : ℝ))
+  set Sp := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = srgLambdaPlus k)
+  set Sm := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = srgLambdaMinus k)
+  have hSpm_disj : Disjoint Sp Sm := by
+    rw [Finset.disjoint_filter]; intros i _ heqp heqm
+    exact hne_p_m (heqp.symm.trans heqm)
+  have hSk_disj : Disjoint Sk (Sp ∪ Sm) := by
+    rw [Finset.disjoint_union_right]
+    refine ⟨?_, ?_⟩
+    · rw [Finset.disjoint_filter]; intros i _ heqk heqp
+      exact hne_k_p (heqk.symm.trans heqp)
+    · rw [Finset.disjoint_filter]; intros i _ heqk heqm
+      exact hne_k_m (heqk.symm.trans heqm)
+  have hUnion : Sk ∪ Sp ∪ Sm = Finset.univ := by
+    ext i
+    constructor
+    · intro _; exact Finset.mem_univ _
+    · intro _
+      rcases hcover i with h | h | h
+      · exact Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inl
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))))
+      · exact Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inr
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))))
+      · exact Finset.mem_union.mpr (Or.inr
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))
+  have hSk_Sp_disj : Disjoint Sk Sp := by
+    rw [Finset.disjoint_filter]; intros i _ heqk heqp
+    exact hne_k_p (heqk.symm.trans heqp)
+  have hSk_Sp_Sm_disj : Disjoint (Sk ∪ Sp) Sm := by
+    rw [Finset.disjoint_union_left]
+    refine ⟨?_, hSpm_disj⟩
+    rw [Finset.disjoint_filter]; intros i _ heqk heqm
+    exact hne_k_m (heqk.symm.trans heqm)
+  have hcard : (Sk ∪ Sp ∪ Sm).card = Sk.card + Sp.card + Sm.card := by
+    rw [Finset.card_union_of_disjoint hSk_Sp_Sm_disj,
+        Finset.card_union_of_disjoint hSk_Sp_disj]
+  rw [show Fintype.card W = (Finset.univ : Finset W).card from rfl, ← hUnion, hcard]
+  rfl
+
+/-- Sum of eigenvalues equals trace of A, which is 0. -/
+theorem srg_eigenvalues_sum_eq_zero
+    {G : SimpleGraph W} [DecidableRel G.Adj]
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    ∑ i : W, hHerm.eigenvalues i = 0 := by
+  have htr := hHerm.trace_eq_sum_eigenvalues (𝕜 := ℝ)
+  rw [SimpleGraph.trace_adjMatrix ℝ G] at htr
+  -- htr : 0 = ∑ i, ((eigenvalues i : ℝ) : ℝ)
+  exact_mod_cast htr.symm
+
 end Moore57
