@@ -2563,6 +2563,14 @@ Step 3 (ℚ-charpoly factorization) が中核. 詳細:
 ## Estimated total: ~350 行 sorry-free + 1 sorry remaining (or 0 if all closed). -/
 theorem finrank_V7Submodule_eq_1729 (h : Order22ActsOnMoore57 V Γ) :
     Module.finrank (ZMod 11) (V7Submodule Γ) = 1729 := by
+  -- Phase D-A Steps 1-4 経由で:
+  -- dim V_7 = A_F11.toLin'.charpoly.rootMultiplicity 7 = adjMatrixF11.charpoly.rootMultiplicity 7.
+  rw [finrank_V7Submodule_eq_rootMultiplicity h, Matrix.charpoly_toLin']
+  -- 残作業: (adjMatrixF11 Γ).charpoly.rootMultiplicity (7 : ZMod 11) = 1729.
+  -- 戦略: adjMatrixF11.charpoly = (Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom (ZMod 11))
+  --       (Γ.adjMatrix ℚ).charpoly = (X - 57)(X - 7)^1729 (X + 8)^1520 over ℚ[X]
+  --       reduce mod 11: (X - 2)(X - 7)^1729 (X - 3)^1520 over F_11[X]
+  --       rootMultiplicity (7) = 1729 (distinct roots).
   sorry
 
 /-- `dim V_3 over F_11 = 1520` (derived from dim V_2 + dim V_7 + Σ = 3250). -/
