@@ -12,15 +12,34 @@ import Mathlib.Tactic
 Classical theorem (Hoffman-Singleton 1960): a strongly regular graph with
 parameters `(k² + 1, k, 0, 1)` exists only when `k ∈ {0, 1, 2, 3, 7, 57}`.
 
-This file proves that classification.
+## Status
+
+* **S1 SRG matrix identity** `A² + A − (k − 1)·I = J`: ✅ sorry-free.
+* **S2 Regular adj-matrix lemmas** `A · J = J · A = k·J`: ✅ sorry-free.
+* **S3 Cubic annihilator** `(A − k·I)(A² + A − (k − 1)·I) = 0`: ✅ sorry-free.
+* **S3 Eigenvalue dichotomy**: ✅ sorry-free.
+* **S4 Hermitian setup + λ_± definitions + distinctness**: ✅ sorry-free.
+* **S4 3-way Finset partition** + multiplicity definitions: ✅ sorry-free.
+* **S4 Trace identity** `m_k k + m_+ λ_+ + m_- λ_- = 0`: ✅ sorry-free.
+* **S4 Discriminant equation** `(m_+ − m_-)√D = k² + 1 − m_k(2k+1)`: ✅ sorry-free.
+* **S5 Case A** (irrational discriminant): ✅ sorry-free → `k = 2`.
+* **S4f Perron multiplicity** `m_k = 1`: ⚠️ sorry (requires spectral
+  theorem + inner-product orthogonality argument).
+* **S6 Case B** (square discriminant): ⚠️ sorry (divisibility analysis,
+  modular arithmetic over ℤ, depends on `m_k = 1`).
+* **S7 Main theorem**: ⚠️ sorry (just Case B + assembly).
 
 ## Proof outline
 
 `A² + A − (k − 1)·I = J`. Eigenvalues `{k, λ_±}` with `λ_± := (−1 ± √D)/2`,
-`D := 4k − 3`. Constraints `m_+ + m_- = k²`, `m_+ λ_+ + m_- λ_- = -k`.
+`D := 4k − 3`. Constraints `m_k + m_+ + m_- = k² + 1`,
+`m_k k + m_+ λ_+ + m_- λ_- = 0`.
 
-* Case A (`D` non-square): `√D` irrational ⟹ `k ∈ {0, 2}`.
-* Case B (`D = (2u+1)²`): `(2u+1) | 30` ⟹ `k ∈ {1, 3, 7, 57}`.
+* Case A (`D` non-square): `√D` irrational ⟹ `m_+ = m_-` and
+  `m_k(2k + 1) = k² + 1` ⟹ `(2k + 1) | 5` ⟹ `k ∈ {0, 2}`.
+* Case B (`D = (2u+1)²`): assuming `m_k = 1`,
+  `(m_+ − m_-)(2u + 1) = (u² + u − 1)k` ⟹ `(2u + 1) | 15`
+  ⟹ `u ∈ {0, 1, 2, 7}` ⟹ `k ∈ {1, 3, 7, 57}`.
 -/
 
 namespace Moore57
@@ -676,17 +695,30 @@ theorem srg_case_A
   have : (k : ℤ) = 2 := by linarith
   exact_mod_cast this
 
-/-! ## Stage S6 / S7: Case B + main theorem (work in progress) -/
+/-! ## Stage S6: Case B — square discriminant
+
+The argument (informal): with `m_k = 1` and `D = v²` (an integer square),
+the discriminant equation reduces to `(m_+ − m_-) · |v| = k(k − 2)` over `ℤ`,
+so `|v| | k(k − 2)`. Combined with `v² = 4k − 3`, the equation
+`16 k(k − 2) = |v|⁴ − 2 |v|² − 15` yields `|v| | 15`.
+Hence `|v| ∈ {1, 3, 5, 15}` and `k = (v² + 3)/4 ∈ {1, 3, 7, 57}`.
+
+Formalizing this requires careful integer arithmetic; deferred. -/
+theorem srg_case_B
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hsq : IsSquare (4 * (k : ℤ) - 3)) :
+    k = 1 ∨ k = 3 ∨ k = 7 ∨ k = 57 := by
+  sorry
+
+/-! ## Stage S7: Main theorem -/
 
 /-- **Hoffman-Singleton classification** (local form for SRG(k²+1, k, 0, 1)).
 
-Currently:
-* Case A (irrational discriminant ⟹ k = 2) is **complete**.
-* Case B (square discriminant ⟹ k ∈ {1, 3, 7, 57}) requires the modular
-  arithmetic divisibility analysis on `2u + 1`, which depends on
-  `srgM_k_eq_one` (the Perron multiplicity uniqueness sorry).
-
-For now we factor out the remaining work as a sorry on the main statement. -/
+Currently uses sorries for:
+* `srgM_k_eq_one` (Perron multiplicity uniqueness — spectral theorem
+  orthogonality).
+* `srg_case_B` (modular arithmetic for the square-discriminant case). -/
 theorem srg_k_sq_plus_one_degree_classification'
     {W : Type*} [Fintype W]
     (G : SimpleGraph W) [DecidableRel G.Adj]
@@ -698,8 +730,12 @@ theorem srg_k_sq_plus_one_degree_classification'
   · exact Or.inl hk0
   have hk : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk0
   by_cases hsq : IsSquare (4 * (k : ℤ) - 3)
-  · -- Square discriminant: Case B (remaining work).
-    sorry
+  · -- Square discriminant: Case B.
+    rcases srg_case_B hsrg hk hsq with h | h | h | h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))
   · -- Not a square: Case A.
     have hk2 := srg_case_A hsrg hk hsq
     exact Or.inr (Or.inr (Or.inl hk2))
