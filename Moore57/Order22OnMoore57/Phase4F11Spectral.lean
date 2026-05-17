@@ -1212,6 +1212,52 @@ private theorem V2kt_sup_V7kt_inter_V3kt_pow_eq_bot
   rw [Submodule.mem_bot]
   exact h_E3v_eq_v.symm.trans h_E3v_eq_zero
 
+/-- finrank(V_λ ⊓ ker T^j) は j について concave (finrank_ker_pow_concave 経由). -/
+private theorem finrank_V7_inter_ker_T_F11_pow_concave
+    (h : Order22ActsOnMoore57 V Γ) {j : ℕ} (hj : 1 ≤ j) :
+    Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) ≤
+    2 * Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  rw [finrank_ker_T_F11_V7_pow_eq, finrank_ker_T_F11_V7_pow_eq h j,
+      finrank_ker_T_F11_V7_pow_eq h (j-1)]
+  exact Moore57.LinearAlgebra.finrank_ker_pow_concave (T_F11_V7 h) hj
+
+private theorem finrank_V2_inter_ker_T_F11_pow_concave
+    (h : Order22ActsOnMoore57 V Γ) {j : ℕ} (hj : 1 ≤ j) :
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) ≤
+    2 * Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  rw [finrank_ker_T_F11_V2_pow_eq, finrank_ker_T_F11_V2_pow_eq h j,
+      finrank_ker_T_F11_V2_pow_eq h (j-1)]
+  exact Moore57.LinearAlgebra.finrank_ker_pow_concave (T_F11_V2 h) hj
+
+private theorem finrank_V3_inter_ker_T_F11_pow_concave
+    (h : Order22ActsOnMoore57 V Γ) {j : ℕ} (hj : 1 ≤ j) :
+    Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j+1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^(j-1)) :
+          Submodule (ZMod 11) (V → ZMod 11)) ≤
+    2 * Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) := by
+  rw [finrank_ker_T_F11_V3_pow_eq, finrank_ker_T_F11_V3_pow_eq h j,
+      finrank_ker_T_F11_V3_pow_eq h (j-1)]
+  exact Moore57.LinearAlgebra.finrank_ker_pow_concave (T_F11_V3 h) hj
+
 /-- Σ_λ finrank(V_λ ⊓ ker T^j) = finrank ker T^j. -/
 private theorem finrank_sum_V_lambda_inter_ker_T_F11_pow
     (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
