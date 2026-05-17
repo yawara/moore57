@@ -2378,6 +2378,129 @@ theorem adjMatrix_ℚ_charpoly_eq_intCast_map :
   rw [h_eq]
   exact Matrix.charpoly_map _ _
 
+/-! ### Phase D-A Step 6: ℚ-side rootMultiplicity ≥ finrank V_λ_ℚ
+
+各 λ ∈ {57, 7, -8} について:
+* A_ℚ · E_λ = λ • E_λ から V_λ_ℚ ⊆ eigenspace λ.
+* `finrank_eigenspace_le`: dim eigenspace ≤ rootMultiplicity.
+* dim V_λ_ℚ ≤ dim eigenspace λ ≤ rootMultiplicity λ in A_ℚ.charpoly. -/
+
+/-- ℚ 上 `A · E_57 = 57 • E_57`. -/
+private theorem adjMatrix_ℚ_mul_E57 (hΓ : IsMoore57 Γ) :
+    (Γ.adjMatrix ℚ) * (Moore57.E57Matrix V) = (57 : ℚ) • Moore57.E57Matrix V := by
+  rw [Moore57.adjMatrix_eq_spectral_decomp hΓ,
+      sub_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      Moore57.E57Matrix_mul_E57Matrix_eq_E57Matrix hΓ,
+      Moore57.E7Matrix_mul_E57Matrix_eq_zero hΓ,
+      Moore57.EMinus8Matrix_mul_E57Matrix_eq_zero hΓ,
+      smul_zero, smul_zero, add_zero, sub_zero]
+
+/-- ℚ 上 `A · E_7 = 7 • E_7`. -/
+private theorem adjMatrix_ℚ_mul_E7 (hΓ : IsMoore57 Γ) :
+    (Γ.adjMatrix ℚ) * E7Matrix Γ = (7 : ℚ) • E7Matrix Γ := by
+  rw [Moore57.adjMatrix_eq_spectral_decomp hΓ,
+      sub_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      Moore57.E57Matrix_mul_E7Matrix_eq_zero hΓ,
+      Moore57.E7Matrix_mul_E7Matrix_eq_E7Matrix hΓ,
+      Moore57.EMinus8Matrix_mul_E7Matrix_eq_zero hΓ,
+      smul_zero, smul_zero, zero_add, sub_zero]
+
+/-- ℚ 上 `A · E_-8 = -8 • E_-8`. -/
+private theorem adjMatrix_ℚ_mul_EMinus8 (hΓ : IsMoore57 Γ) :
+    (Γ.adjMatrix ℚ) * Moore57.EMinus8Matrix Γ = (-8 : ℚ) • Moore57.EMinus8Matrix Γ := by
+  rw [Moore57.adjMatrix_eq_spectral_decomp hΓ,
+      sub_mul, add_mul, smul_mul_assoc, smul_mul_assoc, smul_mul_assoc,
+      Moore57.E57Matrix_mul_EMinus8Matrix_eq_zero hΓ,
+      Moore57.E7Matrix_mul_EMinus8Matrix_eq_zero hΓ,
+      Moore57.EMinus8Matrix_mul_EMinus8Matrix_eq_EMinus8Matrix hΓ,
+      smul_zero, smul_zero, zero_add, zero_sub, neg_smul]
+
+/-- Helper: matrix → LinearMap eigenspace inclusion via A · E = λ • E. -/
+private lemma range_E_le_eigenspace (E : Matrix V V ℚ) (μ : ℚ)
+    (hAE : (Γ.adjMatrix ℚ) * E = μ • E) :
+    LinearMap.range (E.toLin') ≤
+    Module.End.eigenspace ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) μ := by
+  rintro v ⟨w, rfl⟩
+  rw [Module.End.eigenspace_def, LinearMap.mem_ker]
+  show ((Γ.adjMatrix ℚ).toLin' - (μ : ℚ) • 1) (E.toLin' w) = 0
+  simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply]
+  have hAE_apply : (Γ.adjMatrix ℚ).toLin' (E.toLin' w) = μ • (E.toLin' w) := by
+    show (Γ.adjMatrix ℚ).mulVec (E.mulVec w) = μ • E.mulVec w
+    rw [Matrix.mulVec_mulVec, hAE, Matrix.smul_mulVec]
+  rw [hAE_apply, sub_self]
+
+/-- `dim V_57_ℚ = 1` (trace E_57 = 1). -/
+private theorem finrank_range_E57Matrix_eq_one (hΓ : IsMoore57 Γ) :
+    Module.finrank ℚ (LinearMap.range ((Moore57.E57Matrix V).toLin') :
+      Submodule ℚ (V → ℚ)) = 1 := by
+  have hE57_idem : IsIdempotentElem
+      ((Moore57.E57Matrix V).toLin' : (V → ℚ) →ₗ[ℚ] (V → ℚ)) := by
+    rw [IsIdempotentElem, Module.End.mul_eq_comp, ← Moore57.matrix_toLin'_mul,
+        Moore57.E57Matrix_mul_E57Matrix_eq_E57Matrix hΓ]
+  have hQ := Moore57.finrank_range_eq_matrix_trace (Moore57.E57Matrix V) hE57_idem
+  have htrE57 : Matrix.trace (Moore57.E57Matrix V : Matrix V V ℚ) = 1 := by
+    have h := Moore57.trace_E57Matrix_mul_permMatrix (Γ := Γ) hΓ (1 : Equiv.Perm V)
+    have h_perm_one : (permMatrix (1 : Equiv.Perm V) : Matrix V V ℚ) = 1 := by
+      change Equiv.Perm.permMatrix ℚ ((1 : Equiv.Perm V)⁻¹) = 1
+      simp
+    rw [h_perm_one, Matrix.mul_one] at h
+    exact h
+  rw [htrE57] at hQ
+  exact_mod_cast hQ
+
+/-- ℚ-side: `rootMultiplicity 57 in A_ℚ.charpoly ≥ 1`. -/
+private theorem rootMultiplicity_57_ge_one (hΓ : IsMoore57 Γ) :
+    1 ≤ (Γ.adjMatrix ℚ).charpoly.rootMultiplicity (57 : ℚ) := by
+  have h_sub := range_E_le_eigenspace (Γ := Γ) (Moore57.E57Matrix V) 57
+                  (adjMatrix_ℚ_mul_E57 hΓ)
+  have h_finrank_le :
+      Module.finrank ℚ (LinearMap.range ((Moore57.E57Matrix V).toLin') :
+        Submodule ℚ (V → ℚ)) ≤
+      Module.finrank ℚ
+        (Module.End.eigenspace
+          ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) 57) :=
+    Submodule.finrank_mono h_sub
+  have h_eig_le := LinearMap.finrank_eigenspace_le
+        ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) (57 : ℚ)
+  rw [Matrix.charpoly_toLin'] at h_eig_le
+  rw [← finrank_range_E57Matrix_eq_one hΓ]
+  exact h_finrank_le.trans h_eig_le
+
+/-- ℚ-side: `rootMultiplicity 7 in A_ℚ.charpoly ≥ 1729`. -/
+private theorem rootMultiplicity_7_ge_1729 (hΓ : IsMoore57 Γ) :
+    1729 ≤ (Γ.adjMatrix ℚ).charpoly.rootMultiplicity (7 : ℚ) := by
+  have h_sub := range_E_le_eigenspace (Γ := Γ) (E7Matrix Γ) 7 (adjMatrix_ℚ_mul_E7 hΓ)
+  have h_finrank_le :
+      Module.finrank ℚ (LinearMap.range ((E7Matrix Γ).toLin') :
+        Submodule ℚ (V → ℚ)) ≤
+      Module.finrank ℚ
+        (Module.End.eigenspace
+          ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) 7) :=
+    Submodule.finrank_mono h_sub
+  have h_eig_le := LinearMap.finrank_eigenspace_le
+        ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) (7 : ℚ)
+  rw [Matrix.charpoly_toLin'] at h_eig_le
+  rw [← Moore57.finrank_range_E7Matrix_eq_1729 Γ hΓ]
+  exact h_finrank_le.trans h_eig_le
+
+/-- ℚ-side: `rootMultiplicity -8 in A_ℚ.charpoly ≥ 1520`. -/
+private theorem rootMultiplicity_minusEight_ge_1520 (hΓ : IsMoore57 Γ) :
+    1520 ≤ (Γ.adjMatrix ℚ).charpoly.rootMultiplicity (-8 : ℚ) := by
+  have h_sub := range_E_le_eigenspace (Γ := Γ) (Moore57.EMinus8Matrix Γ) (-8)
+                  (adjMatrix_ℚ_mul_EMinus8 hΓ)
+  have h_finrank_le :
+      Module.finrank ℚ (LinearMap.range ((Moore57.EMinus8Matrix Γ).toLin') :
+        Submodule ℚ (V → ℚ)) ≤
+      Module.finrank ℚ
+        (Module.End.eigenspace
+          ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) (-8)) :=
+    Submodule.finrank_mono h_sub
+  have h_eig_le := LinearMap.finrank_eigenspace_le
+        ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) (-8 : ℚ)
+  rw [Matrix.charpoly_toLin'] at h_eig_le
+  rw [← Moore57.finrank_range_EMinus8Matrix_eq_1520 Γ hΓ]
+  exact h_finrank_le.trans h_eig_le
+
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
 各 V_λ は σ-不変な F_11 [C_11] 部分加群.
