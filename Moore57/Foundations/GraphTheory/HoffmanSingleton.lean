@@ -547,4 +547,110 @@ theorem srg_disc_equation
   rw [hlp, hlm] at htr
   linarith [htr, hsum]
 
+/-- If `4k - 3` is not a perfect square (in ℤ), then `√(4k - 3)` is irrational. -/
+theorem sqrt_disc_irrational (k : ℕ) (hk : 1 ≤ k)
+    (hsq : ¬ IsSquare (4 * (k : ℤ) - 3)) :
+    Irrational (Real.sqrt (4 * (k : ℝ) - 3)) := by
+  have hnn : (0 : ℤ) ≤ 4 * (k : ℤ) - 3 := by
+    have : (1 : ℤ) ≤ k := by exact_mod_cast hk
+    linarith
+  have heq : Real.sqrt (4 * (k : ℝ) - 3) = Real.sqrt ((4 * (k : ℤ) - 3 : ℤ) : ℝ) := by
+    congr 1; push_cast; ring
+  rw [heq]
+  exact (irrational_sqrt_intCast_iff_of_nonneg hnn).mpr hsq
+
+/-! ## Stage S5: Case A — irrational discriminant -/
+
+/-- If `4k - 3` is not a perfect square, then `m_+ = m_-` and
+`m_k (2k + 1) = k² + 1`. -/
+theorem srg_case_A_equations
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hsq : ¬ IsSquare (4 * (k : ℤ) - 3))
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    srgM_plus hHerm k = srgM_minus hHerm k ∧
+      (srgM_k hHerm k : ℤ) * (2 * (k : ℤ) + 1) = (k : ℤ) * (k : ℤ) + 1 := by
+  have hd := srg_disc_equation hsrg hk hHerm
+  have hirr := sqrt_disc_irrational k hk hsq
+  -- LHS = r * √D, RHS = integer cast.
+  -- If r ≠ 0, LHS irrational; but RHS rational. So r = 0.
+  set r := (srgM_plus hHerm k : ℝ) - (srgM_minus hHerm k : ℝ) with hr_def
+  have hr_int : ∃ rZ : ℤ, (rZ : ℝ) = r := ⟨(srgM_plus hHerm k : ℤ) - (srgM_minus hHerm k : ℤ),
+    by push_cast; rfl⟩
+  set rhs := (k : ℝ) * (k : ℝ) + 1 - (srgM_k hHerm k : ℝ) * (2 * (k : ℝ) + 1) with hrhs_def
+  have hrhs_int : ∃ rhsZ : ℤ, (rhsZ : ℝ) = rhs :=
+    ⟨((k : ℤ) * (k : ℤ) + 1 - (srgM_k hHerm k : ℤ) * (2 * (k : ℤ) + 1)),
+      by push_cast; ring⟩
+  -- Case 1: r = 0.
+  by_cases hr : r = 0
+  · refine ⟨?_, ?_⟩
+    · have : (srgM_plus hHerm k : ℝ) = (srgM_minus hHerm k : ℝ) := by linarith
+      exact_mod_cast this
+    · -- 0 = rhs, so k² + 1 - m_k (2k + 1) = 0 over ℝ.
+      have hrhs_zero : (k : ℝ) * (k : ℝ) + 1 - (srgM_k hHerm k : ℝ) * (2 * (k : ℝ) + 1) = 0 := by
+        have := hd
+        rw [hr, zero_mul] at this
+        linarith
+      -- Cast to ℤ.
+      have : (((k : ℤ) * (k : ℤ) + 1 - (srgM_k hHerm k : ℤ) * (2 * (k : ℤ) + 1)) : ℝ) = 0 := by
+        push_cast; linarith
+      have hZ : (k : ℤ) * (k : ℤ) + 1 - (srgM_k hHerm k : ℤ) * (2 * (k : ℤ) + 1) = 0 := by
+        exact_mod_cast this
+      linarith
+  · -- r ≠ 0: LHS = r * √D irrational (since r is integer-valued nonzero × irrational).
+    exfalso
+    obtain ⟨rZ, hrZ⟩ := hr_int
+    have hrZ_ne : rZ ≠ 0 := by
+      intro h
+      apply hr
+      rw [← hrZ]; exact_mod_cast h
+    have hLHS_irr : Irrational (r * Real.sqrt (4 * (k : ℝ) - 3)) := by
+      rw [← hrZ]
+      exact irrational_intCast_mul_iff.mpr ⟨hrZ_ne, hirr⟩
+    obtain ⟨rhsZ, hrhsZ⟩ := hrhs_int
+    have hRHS_rat : ¬ Irrational rhs := by
+      rw [← hrhsZ]; exact Int.not_irrational rhsZ
+    rw [hd] at hLHS_irr
+    exact hRHS_rat hLHS_irr
+
+/-- Case A main: if `4k - 3` is not a perfect square, `k ∈ {0, 2}`. -/
+theorem srg_case_A
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hsq : ¬ IsSquare (4 * (k : ℤ) - 3)) :
+    k = 2 := by
+  -- Apply case A equations.
+  have hHerm : (G.adjMatrix ℝ).IsHermitian := adjMatrix_real_isHermitian
+  obtain ⟨_, hmk_eq⟩ := srg_case_A_equations hsrg hk hsq hHerm
+  -- hmk_eq : m_k * (2k + 1) = k² + 1.
+  -- ⟹ (2k + 1) | (k² + 1).
+  -- 4 (k² + 1) - (2k - 1)(2k + 1) = 5 ⟹ (2k + 1) | 5.
+  -- 2k + 1 ∈ divisors of 5 ∩ ℕ⁺ odd = {1, 5}. k ∈ {0, 2}.
+  -- Combined with k ≥ 1: k = 2.
+  have hdvd : (2 * (k : ℤ) + 1) ∣ 5 := by
+    have hdvd_kk1 : (2 * (k : ℤ) + 1) ∣ ((k : ℤ) * (k : ℤ) + 1) :=
+      ⟨srgM_k hHerm k, by linarith⟩
+    have hdvd_4 : (2 * (k : ℤ) + 1) ∣ (4 * ((k : ℤ) * (k : ℤ) + 1)) := hdvd_kk1.mul_left 4
+    have hdvd_prod : (2 * (k : ℤ) + 1) ∣ ((2 * (k : ℤ) - 1) * (2 * (k : ℤ) + 1)) :=
+      ⟨(2 * (k : ℤ) - 1), by ring⟩
+    have hdvd_sub : (2 * (k : ℤ) + 1) ∣ (4 * ((k : ℤ) * (k : ℤ) + 1) -
+        (2 * (k : ℤ) - 1) * (2 * (k : ℤ) + 1)) := hdvd_4.sub hdvd_prod
+    have h_eq : 4 * ((k : ℤ) * (k : ℤ) + 1) -
+        (2 * (k : ℤ) - 1) * (2 * (k : ℤ) + 1) = 5 := by ring
+    rwa [h_eq] at hdvd_sub
+  -- 2k + 1 ≥ 3 (k ≥ 1) and divides 5: only 5.
+  have hge : (3 : ℤ) ≤ 2 * (k : ℤ) + 1 := by
+    have : (1 : ℤ) ≤ k := by exact_mod_cast hk
+    linarith
+  have hpos : (0 : ℤ) < 2 * (k : ℤ) + 1 := by linarith
+  have hle : (2 * (k : ℤ) + 1) ≤ 5 := Int.le_of_dvd (by norm_num) hdvd
+  -- 2k + 1 ∈ {3, 4, 5}, must be 5 to divide 5.
+  have h5 : 2 * (k : ℤ) + 1 = 5 := by
+    interval_cases h : 2 * (k : ℤ) + 1
+    · exact absurd hdvd (by decide)
+    · exact absurd hdvd (by decide)
+    · rfl
+  have : (k : ℤ) = 2 := by linarith
+  exact_mod_cast this
+
 end Moore57
