@@ -62,28 +62,28 @@ theorem srg_kk_plus_one_card_pos {G : SimpleGraph W} [DecidableRel G.Adj]
 /-! ## Stage S1: SRG matrix identity -/
 
 /-- The all-ones matrix over `α`. -/
-def allOnesMatrix (W : Type*) [Fintype W] (α : Type*) [Zero α] [One α] :
+def srgAllOnesMatrix (W : Type*) [Fintype W] (α : Type*) [Zero α] [One α] :
     Matrix W W α := Matrix.of fun _ _ => 1
 
-@[simp] theorem allOnesMatrix_apply {α : Type*} [Zero α] [One α]
-    (v w : W) : (allOnesMatrix W α : Matrix W W α) v w = 1 := rfl
+@[simp] theorem srgAllOnesMatrix_apply {α : Type*} [Zero α] [One α]
+    (v w : W) : (srgAllOnesMatrix W α : Matrix W W α) v w = 1 := rfl
 
-theorem allOnesMatrix_isSymm {α : Type*} [Zero α] [One α] :
-    (allOnesMatrix W α : Matrix W W α).IsSymm := by
+theorem srgAllOnesMatrix_isSymm {α : Type*} [Zero α] [One α] :
+    (srgAllOnesMatrix W α : Matrix W W α).IsSymm := by
   ext i j; rfl
 
 /-- Complement adjacency matrix equals `J - 1 - A`. -/
 theorem compl_adjMatrix_eq_allOnes_sub
     {α : Type*} [DecidableEq α] [AddGroup α] [One α]
     {G : SimpleGraph W} [DecidableRel G.Adj] :
-    (Gᶜ).adjMatrix α = allOnesMatrix W α - 1 - G.adjMatrix α := by
+    (Gᶜ).adjMatrix α = srgAllOnesMatrix W α - 1 - G.adjMatrix α := by
   ext v w
   classical
   by_cases hvw : v = w
   · subst hvw
-    simp [SimpleGraph.adjMatrix_apply, allOnesMatrix, Matrix.one_apply,
+    simp [SimpleGraph.adjMatrix_apply, srgAllOnesMatrix, Matrix.one_apply,
       SimpleGraph.compl_adj]
-  · simp only [SimpleGraph.adjMatrix_apply, allOnesMatrix_apply,
+  · simp only [SimpleGraph.adjMatrix_apply, srgAllOnesMatrix_apply,
       Matrix.sub_apply, Matrix.one_apply_ne hvw, SimpleGraph.compl_adj]
     by_cases hAdj : G.Adj v w
     · simp [hAdj, hvw, hAdj.ne]
@@ -95,7 +95,7 @@ theorem srg_kk_plus_one_matrix_identity
     {α : Type*} [DecidableEq α] [CommRing α]
     {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
     (hsrg : G.IsSRGWith (k * k + 1) k 0 1) :
-    (G.adjMatrix α) ^ 2 + G.adjMatrix α - ((k : α) - 1) • 1 = allOnesMatrix W α := by
+    (G.adjMatrix α) ^ 2 + G.adjMatrix α - ((k : α) - 1) • 1 = srgAllOnesMatrix W α := by
   have hmat := hsrg.matrix_eq (α := α)
   rw [compl_adjMatrix_eq_allOnes_sub] at hmat
   -- hmat : A^2 = k • 1 + 0 • A + 1 • (J - 1 - A)  (k • 1 is ℕ-smul)
@@ -109,28 +109,28 @@ theorem srg_kk_plus_one_matrix_identity
 
 /-! ## Stage S2: Regular-graph identities -/
 
-theorem adjMatrix_mul_allOnesMatrix_of_regular
+theorem adjMatrix_mul_srgAllOnesMatrix_of_regular
     {α : Type*} [DecidableEq α] [CommSemiring α]
     {G : SimpleGraph W} [DecidableRel G.Adj]
     {k : ℕ} (hreg : ∀ v, G.degree v = k) :
-    G.adjMatrix α * allOnesMatrix W α = (k : α) • allOnesMatrix W α := by
+    G.adjMatrix α * srgAllOnesMatrix W α = (k : α) • srgAllOnesMatrix W α := by
   ext v w
-  simp [allOnesMatrix, hreg v]
+  simp [srgAllOnesMatrix, hreg v]
 
-theorem allOnesMatrix_mul_adjMatrix_of_regular
+theorem srgAllOnesMatrix_mul_adjMatrix_of_regular
     {α : Type*} [DecidableEq α] [CommSemiring α]
     {G : SimpleGraph W} [DecidableRel G.Adj]
     {k : ℕ} (hreg : ∀ v, G.degree v = k) :
-    allOnesMatrix W α * G.adjMatrix α = (k : α) • allOnesMatrix W α := by
+    srgAllOnesMatrix W α * G.adjMatrix α = (k : α) • srgAllOnesMatrix W α := by
   ext v w
-  simp [allOnesMatrix, hreg w]
+  simp [srgAllOnesMatrix, hreg w]
 
-theorem allOnesMatrix_mul_allOnesMatrix
+theorem srgAllOnesMatrix_mul_srgAllOnesMatrix
     {α : Type*} [CommSemiring α] :
-    (allOnesMatrix W α) * (allOnesMatrix W α) =
-      (Fintype.card W : α) • allOnesMatrix W α := by
+    (srgAllOnesMatrix W α) * (srgAllOnesMatrix W α) =
+      (Fintype.card W : α) • srgAllOnesMatrix W α := by
   ext v w
-  simp [allOnesMatrix, Matrix.mul_apply, Finset.sum_const]
+  simp [srgAllOnesMatrix, Matrix.mul_apply, Finset.sum_const]
 
 /-! ## Stage S3: Eigenvalue characterization
 
@@ -150,7 +150,7 @@ theorem srg_kk_plus_one_cubic_eq_zero
   rw [srg_kk_plus_one_matrix_identity hsrg]
   -- Goal: (A - k • 1) * J = 0
   rw [sub_mul, smul_mul_assoc, one_mul,
-    adjMatrix_mul_allOnesMatrix_of_regular hsrg.regular]
+    adjMatrix_mul_srgAllOnesMatrix_of_regular hsrg.regular]
   -- Goal: k • J - k • J = 0
   simp
 
@@ -215,7 +215,7 @@ theorem srg_kk_plus_one_perron_collinear
   -- Apply SRG identity to v: (A² + A - (k - 1) • I) v = J v.
   have hid := srg_kk_plus_one_matrix_identity (α := ℝ) hsrg
   have happ : (G.adjMatrix ℝ ^ 2 + G.adjMatrix ℝ - ((k : ℝ) - 1) • 1) *ᵥ v =
-      allOnesMatrix W ℝ *ᵥ v := by
+      srgAllOnesMatrix W ℝ *ᵥ v := by
     rw [hid]
   -- LHS = (k² + k - (k - 1)) • v = (k² + 1) • v
   have hA2v : (G.adjMatrix ℝ ^ 2) *ᵥ v = (k : ℝ) ^ 2 • v := by
@@ -230,10 +230,10 @@ theorem srg_kk_plus_one_perron_collinear
     -- goal: k² • v + k • v - (k - 1) • v = (k² + 1) • v
     have hk1_eq : (k : ℝ) ^ 2 + 1 = (k : ℝ) ^ 2 + (k : ℝ) - ((k : ℝ) - 1) := by ring
     rw [hk1_eq, hLHS_expand]
-  -- RHS = allOnesMatrix v = (sum v) • 𝟙
-  have hRHS : allOnesMatrix W ℝ *ᵥ v = fun _ => ∑ w, v w := by
+  -- RHS = srgAllOnesMatrix v = (sum v) • 𝟙
+  have hRHS : srgAllOnesMatrix W ℝ *ᵥ v = fun _ => ∑ w, v w := by
     ext i
-    simp [allOnesMatrix, Matrix.mulVec, dotProduct]
+    simp [srgAllOnesMatrix, Matrix.mulVec, dotProduct]
   rw [hLHS, hRHS] at happ
   -- ((k² + 1) • v) = const (sum v)
   -- ⟹ v = const (sum v / (k² + 1))
@@ -477,9 +477,9 @@ private theorem trace_sq_eq_sum_eigenvalues_sq
   simp [Function.comp_apply, pow_two]
 
 /-- Trace of the all-ones matrix over ℝ equals the cardinality. -/
-private theorem trace_allOnesMatrix_real :
-    (allOnesMatrix W ℝ).trace = (Fintype.card W : ℝ) := by
-  unfold Matrix.trace allOnesMatrix
+private theorem trace_srgAllOnesMatrix_real :
+    (srgAllOnesMatrix W ℝ).trace = (Fintype.card W : ℝ) := by
+  unfold Matrix.trace srgAllOnesMatrix
   simp [Finset.card_univ]
 
 /-- For an SRG`(k²+1, k, 0, 1)`, `trace(A²) = (k² + 1) · k` via the SRG
@@ -490,16 +490,16 @@ private theorem srg_trace_A_sq_eq_nk
     ((G.adjMatrix ℝ) * (G.adjMatrix ℝ)).trace =
       ((k : ℝ) * (k : ℝ) + 1) * (k : ℝ) := by
   have hid := srg_kk_plus_one_matrix_identity (α := ℝ) hsrg
-  -- hid : (G.adjMatrix ℝ)^2 + G.adjMatrix ℝ - (k - 1) • 1 = allOnesMatrix W ℝ
+  -- hid : (G.adjMatrix ℝ)^2 + G.adjMatrix ℝ - (k - 1) • 1 = srgAllOnesMatrix W ℝ
   have hid' : (G.adjMatrix ℝ) * (G.adjMatrix ℝ) + (G.adjMatrix ℝ) -
-              ((k : ℝ) - 1) • (1 : Matrix W W ℝ) = allOnesMatrix W ℝ := by
+              ((k : ℝ) - 1) • (1 : Matrix W W ℝ) = srgAllOnesMatrix W ℝ := by
     have h := hid; rw [sq] at h; exact h
   -- A * A = J - A + (k - 1) • 1
   have hA_sq : (G.adjMatrix ℝ) * (G.adjMatrix ℝ) =
-                allOnesMatrix W ℝ - G.adjMatrix ℝ + ((k : ℝ) - 1) • (1 : Matrix W W ℝ) := by
+                srgAllOnesMatrix W ℝ - G.adjMatrix ℝ + ((k : ℝ) - 1) • (1 : Matrix W W ℝ) := by
     rw [← hid']; abel
   rw [hA_sq]
-  rw [Matrix.trace_add, Matrix.trace_sub, trace_allOnesMatrix_real,
+  rw [Matrix.trace_add, Matrix.trace_sub, trace_srgAllOnesMatrix_real,
       SimpleGraph.trace_adjMatrix ℝ G, Matrix.trace_smul, Matrix.trace_one]
   -- After: card W - 0 + (k - 1) • card W = (k² + 1) * k
   have hcard : (Fintype.card W : ℝ) = (k : ℝ) * (k : ℝ) + 1 := by

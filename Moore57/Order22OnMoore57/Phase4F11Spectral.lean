@@ -3431,7 +3431,7 @@ private theorem orbitNeighborSumF11_sigma_invariant
           Quotient.mk _ w := by
         apply Quotient.sound
         refine ⟨(-1 : ℤ), ?_⟩
-        simp [zpow_neg, zpow_one]
+        simp [_root_.zpow_neg, zpow_one]
       rw [h_mk]
   -- Step 2: lift to σ^i invariance via sigma_invariant_zpow.
   intro a b hab
@@ -3765,7 +3765,7 @@ private theorem σ_fiber_card_eq_eleven_of_free (h : Order22ActsOnMoore57 V Γ)
         linarith
       have h_zpow_eq : h.σ ^ i = h.σ ^ (i % 11) := by
         conv_lhs => rw [h_eq_i]
-        rw [zpow_add, zpow_mul, h_σ11, one_zpow, mul_one]
+        rw [_root_.zpow_add, _root_.zpow_mul, h_σ11, _root_.one_zpow, mul_one]
       rw [← h_zpow_eq]; exact hi
     refine ⟨d, Finset.mem_range.mpr h_d_lt, ?_⟩
     have h_cast : (h.σ ^ d) (Quotient.out O) =
@@ -4081,7 +4081,7 @@ theorem trace_adjMatrixF11_restrict_eq_orbital_side
             have := Int.emod_add_ediv i 11
             linarith
           conv_lhs => rw [h_eq_i]
-          rw [zpow_add, zpow_mul, h_σ11, one_zpow, mul_one]
+          rw [_root_.zpow_add, _root_.zpow_mul, h_σ11, _root_.one_zpow, mul_one]
         have h_apply : (h.σ ^ d) (Quotient.out O) = v := by
           have h_cast : (h.σ ^ d) (Quotient.out O) =
                         ((h.σ : Equiv.Perm V) ^ (i % 11)) (Quotient.out O) := by
