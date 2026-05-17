@@ -2501,6 +2501,90 @@ private theorem rootMultiplicity_minusEight_ge_1520 (hΓ : IsMoore57 Γ) :
   rw [← Moore57.finrank_range_EMinus8Matrix_eq_1520 Γ hΓ]
   exact h_finrank_le.trans h_eig_le
 
+/-! ### Phase D-A Step 7a: ℤ → F_11 rootMultiplicity bridge
+
+* ℤ → ℚ injection で `rootMultiplicity λ (A_ℤ.charpoly) = rootMultiplicity λ (A_ℚ.charpoly)`.
+* ℤ → F_11 `le_rootMultiplicity_map` で `rootMultiplicity (cast λ) (A_F11.charpoly) ≥ ...`. -/
+
+/-- ℤ-charpoly の rootMultiplicity (ℚ-charpoly のと一致 via injection). -/
+private theorem rootMultiplicity_intCast_eq_ℚ (a : ℤ) :
+    (Γ.adjMatrix ℤ).charpoly.rootMultiplicity a =
+    (Γ.adjMatrix ℚ).charpoly.rootMultiplicity ((a : ℚ)) := by
+  rw [adjMatrix_ℚ_charpoly_eq_intCast_map]
+  exact Polynomial.eq_rootMultiplicity_map (Int.cast_injective) _
+
+/-- ℤ-side `rootMultiplicity 57 ≥ 1`. -/
+private theorem rootMultiplicity_intCast_57_ge_one (hΓ : IsMoore57 Γ) :
+    1 ≤ (Γ.adjMatrix ℤ).charpoly.rootMultiplicity (57 : ℤ) := by
+  rw [rootMultiplicity_intCast_eq_ℚ]
+  have h_cast : ((57 : ℤ) : ℚ) = (57 : ℚ) := by norm_num
+  rw [h_cast]
+  exact rootMultiplicity_57_ge_one hΓ
+
+/-- ℤ-side `rootMultiplicity 7 ≥ 1729`. -/
+private theorem rootMultiplicity_intCast_7_ge_1729 (hΓ : IsMoore57 Γ) :
+    1729 ≤ (Γ.adjMatrix ℤ).charpoly.rootMultiplicity (7 : ℤ) := by
+  rw [rootMultiplicity_intCast_eq_ℚ]
+  have h_cast : ((7 : ℤ) : ℚ) = (7 : ℚ) := by norm_num
+  rw [h_cast]
+  exact rootMultiplicity_7_ge_1729 hΓ
+
+/-- ℤ-side `rootMultiplicity -8 ≥ 1520`. -/
+private theorem rootMultiplicity_intCast_minusEight_ge_1520 (hΓ : IsMoore57 Γ) :
+    1520 ≤ (Γ.adjMatrix ℤ).charpoly.rootMultiplicity (-8 : ℤ) := by
+  rw [rootMultiplicity_intCast_eq_ℚ]
+  have h_cast : ((-8 : ℤ) : ℚ) = (-8 : ℚ) := by norm_num
+  rw [h_cast]
+  exact rootMultiplicity_minusEight_ge_1520 hΓ
+
+/-- F_11-side `rootMultiplicity 2 ≥ 1` (via 57 ↦ 2 mod 11). -/
+private theorem rootMultiplicity_F11_2_ge_one (hΓ : IsMoore57 Γ) :
+    1 ≤ (adjMatrixF11 Γ).charpoly.rootMultiplicity (2 : ZMod 11) := by
+  classical
+  have h_ne : (Γ.adjMatrix ℤ).charpoly ≠ 0 :=
+    (Γ.adjMatrix ℤ).charpoly_monic.ne_zero
+  have h_map_ne : ((Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom (ZMod 11))) ≠ 0 := by
+    rw [← adjMatrixF11_charpoly_eq_intCast_map]
+    exact (adjMatrixF11 Γ).charpoly_monic.ne_zero
+  have h_le := Polynomial.le_rootMultiplicity_map (f := Int.castRingHom (ZMod 11))
+                  h_map_ne (57 : ℤ)
+  have h_cast : (Int.castRingHom (ZMod 11)) 57 = (2 : ZMod 11) := by decide
+  rw [h_cast] at h_le
+  rw [← adjMatrixF11_charpoly_eq_intCast_map] at h_le
+  exact (rootMultiplicity_intCast_57_ge_one hΓ).trans h_le
+
+/-- F_11-side `rootMultiplicity 7 ≥ 1729` (via 7 ↦ 7 mod 11). -/
+private theorem rootMultiplicity_F11_7_ge_1729 (hΓ : IsMoore57 Γ) :
+    1729 ≤ (adjMatrixF11 Γ).charpoly.rootMultiplicity (7 : ZMod 11) := by
+  classical
+  have h_ne : (Γ.adjMatrix ℤ).charpoly ≠ 0 :=
+    (Γ.adjMatrix ℤ).charpoly_monic.ne_zero
+  have h_map_ne : ((Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom (ZMod 11))) ≠ 0 := by
+    rw [← adjMatrixF11_charpoly_eq_intCast_map]
+    exact (adjMatrixF11 Γ).charpoly_monic.ne_zero
+  have h_le := Polynomial.le_rootMultiplicity_map (f := Int.castRingHom (ZMod 11))
+                  h_map_ne (7 : ℤ)
+  have h_cast : (Int.castRingHom (ZMod 11)) 7 = (7 : ZMod 11) := by decide
+  rw [h_cast] at h_le
+  rw [← adjMatrixF11_charpoly_eq_intCast_map] at h_le
+  exact (rootMultiplicity_intCast_7_ge_1729 hΓ).trans h_le
+
+/-- F_11-side `rootMultiplicity 3 ≥ 1520` (via -8 ↦ 3 mod 11). -/
+private theorem rootMultiplicity_F11_3_ge_1520 (hΓ : IsMoore57 Γ) :
+    1520 ≤ (adjMatrixF11 Γ).charpoly.rootMultiplicity (3 : ZMod 11) := by
+  classical
+  have h_ne : (Γ.adjMatrix ℤ).charpoly ≠ 0 :=
+    (Γ.adjMatrix ℤ).charpoly_monic.ne_zero
+  have h_map_ne : ((Γ.adjMatrix ℤ).charpoly.map (Int.castRingHom (ZMod 11))) ≠ 0 := by
+    rw [← adjMatrixF11_charpoly_eq_intCast_map]
+    exact (adjMatrixF11 Γ).charpoly_monic.ne_zero
+  have h_le := Polynomial.le_rootMultiplicity_map (f := Int.castRingHom (ZMod 11))
+                  h_map_ne (-8 : ℤ)
+  have h_cast : (Int.castRingHom (ZMod 11)) (-8) = (3 : ZMod 11) := by decide
+  rw [h_cast] at h_le
+  rw [← adjMatrixF11_charpoly_eq_intCast_map] at h_le
+  exact (rootMultiplicity_intCast_minusEight_ge_1520 hΓ).trans h_le
+
 /-! ### Modular rep theory: F_11[C_11] による a^{F_11}_λ 値 (focused sorries)
 
 各 V_λ は σ-不変な F_11 [C_11] 部分加群.
