@@ -1,6 +1,7 @@
 import Moore57.Order22OnMoore57.BasicStructure
 import Moore57.Order22OnMoore57.TraceNumber
 import Moore57.Order22OnMoore57.TraceConstancy
+import Moore57.Order22OnMoore57.Dihedral.DihedralParity
 
 /-!
 # 自然言語証明 §5: involution による parity 強制
@@ -236,7 +237,7 @@ theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
     rw [h.τ_pow_two]; rfl
   have hmod := Equiv.Perm.card_compl_support_modEq
     (α := Subtype p) (p := 2) (n := 1) (σ := τS) hτS_pow
-  -- |Fix(τ|S)| は偶数 (外部入力 `fix_τ_adj_σ_card_even`).
+  -- |Fix(τ|S)| は偶数 (`dihedral_fix_τ_adj_σ_card_even` から).
   -- 自然言語証明 §5.2: B_0 の F_0 における fixed-star geometry から丁度 2.
   have hfix_even : τS.supportᶜ.card % 2 = 0 := by
     classical
@@ -275,7 +276,7 @@ theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
         rw [hsupp_compl_iff]
         exact hx.1
     rw [hcard_eq]
-    rcases h.fix_τ_adj_σ_card_even with ⟨k, hk⟩
+    rcases h.dihedral_fix_τ_adj_σ_card_even hdihe with ⟨k, hk⟩
     omega
   -- |Subtype p| = Tk 1
   have hcard : Fintype.card (Subtype p) = h.Tk 1 := by

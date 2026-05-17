@@ -27,6 +27,12 @@ import Mathlib.GroupTheory.Perm.Cycle.Type
 構造体フィールドではなく `Order22ActsOnMoore57.τ_fix` (noncomputable def)
 として提供される (Cameron Theorem 3.13 を経由).
 
+§5.2 の parity 条件 `Fix(τ) ∩ S` の濃度偶数性は, dihedral case では
+`Dihedral/DihedralParity.lean` の `dihedral_fix_τ_adj_σ_card_even`
+(K_{1,55} + 5-cycle + F_x ファイバー幾何 + 4-cycle 排除) から得られ,
+cyclic case では `cyclic_no_τ_fixed_adj_σ` から空集合として 0 (偶数) で得られる.
+従って構造体フィールドとしては不要 (旧 `fix_τ_adj_σ_card_even` は削除済み).
+
 これらの入力が満たされる前提で, `Order22OnMoore57.NoGo` で
 非存在 `¬ Nonempty (Order22ActsOnMoore57 V Γ)` を主張する (conditional theorem).
 σ_fix 側の入力を自前で構成する Tier-2 補題は別途整備する (現状は未形式化).
@@ -74,20 +80,6 @@ structure Order22ActsOnMoore57
   στ_relation : σ * τ = τ * σ ∨ τ * σ * τ = σ⁻¹
   /-- 外部入力 1: Fix(σ) は 5-cycle. -/
   σ_fix : C5FixedData Γ σ
-  /-- 外部入力 2 (Phase 5.2 geometric content):
-  dihedral case (`τστ = σ⁻¹`) では `Fix(τ) ∩ S = {x : τx = x ∧ x ~ σx}` の濃度が偶数.
-
-  自然言語証明 §5.2 で示されている: F_{x_0} = {p, q} ⊔ L (|L| = 54) という
-  K_{1,55} 中心の隣接構造と, slope d の matching `π_d` の `ρ_d = θ · π_d`
-  不動点が常に L に 2 個あることから, この濃度は丁度 2 (偶数).
-
-  cyclic case (`στ = τσ`) では `cyclic_no_τ_fixed_adj_σ` により濃度は 0 (偶数).
-  従って常に偶数性を仮定する形でフィールド化する.
-
-  本フィールドは将来的に F_x ファイバー構造 (`branchFiberMatchingEquiv` 等)
-  からの構成的証明で置き換える予定. -/
-  fix_τ_adj_σ_card_even : 2 ∣ (Finset.univ.filter
-    (fun x : V => τ x = x ∧ Γ.Adj x (σ x))).card
 
 namespace Order22ActsOnMoore57
 
