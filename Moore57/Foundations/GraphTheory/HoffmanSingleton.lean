@@ -613,6 +613,29 @@ theorem srg_case_A_equations
     rw [hd] at hLHS_irr
     exact hRHS_rat hLHS_irr
 
+/-! ### S4f: Perron multiplicity m_k = 1
+
+This requires the spectral theorem with orthogonality. For now we state it
+as a focused lemma and use it; the full proof will be filled in. -/
+
+/-- **Perron uniqueness**: `m_k = 1` for `k ≥ 1`.
+
+Proof sketch: at least one basis vector has eigenvalue `k` (since `𝟙` is a
+nonzero `k`-eigenvector and decomposes in the eigenbasis). At most one such
+vector exists because all `k`-eigenvectors are proportional to `𝟙` (by
+`perron_collinear`) and an orthonormal basis cannot contain two
+proportional vectors.
+
+This is the only remaining sorry-bound result for the Hoffman-Singleton
+formalization; it requires careful spectral theorem manipulation in the
+inner product space `EuclideanSpace ℝ W`. -/
+theorem srgM_k_eq_one
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    srgM_k hHerm k = 1 := by
+  sorry
+
 /-- Case A main: if `4k - 3` is not a perfect square, `k ∈ {0, 2}`. -/
 theorem srg_case_A
     {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
@@ -652,5 +675,33 @@ theorem srg_case_A
     · rfl
   have : (k : ℤ) = 2 := by linarith
   exact_mod_cast this
+
+/-! ## Stage S6 / S7: Case B + main theorem (work in progress) -/
+
+/-- **Hoffman-Singleton classification** (local form for SRG(k²+1, k, 0, 1)).
+
+Currently:
+* Case A (irrational discriminant ⟹ k = 2) is **complete**.
+* Case B (square discriminant ⟹ k ∈ {1, 3, 7, 57}) requires the modular
+  arithmetic divisibility analysis on `2u + 1`, which depends on
+  `srgM_k_eq_one` (the Perron multiplicity uniqueness sorry).
+
+For now we factor out the remaining work as a sorry on the main statement. -/
+theorem srg_k_sq_plus_one_degree_classification'
+    {W : Type*} [Fintype W]
+    (G : SimpleGraph W) [DecidableRel G.Adj]
+    (k : ℕ)
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) :
+    k = 0 ∨ k = 1 ∨ k = 2 ∨ k = 3 ∨ k = 7 ∨ k = 57 := by
+  classical
+  by_cases hk0 : k = 0
+  · exact Or.inl hk0
+  have hk : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk0
+  by_cases hsq : IsSquare (4 * (k : ℤ) - 3)
+  · -- Square discriminant: Case B (remaining work).
+    sorry
+  · -- Not a square: Case A.
+    have hk2 := srg_case_A hsrg hk hsq
+    exact Or.inr (Or.inr (Or.inl hk2))
 
 end Moore57
