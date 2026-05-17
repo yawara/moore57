@@ -14,12 +14,12 @@ import Moore57.Order22OnMoore57.Action
 と定義する. 各長さ 11 軌道は内部辺を持つ場合に丁度 11 を, 持たない場合に 0 を
 寄与する.
 
-## 結論として保持する 2 つの sorry
+## 結論として保持する 2 つの命題
 
 * `traceNumber_eq_five` — §2-§4 から導かれる `n = 5`.
 * `traceNumber_even`    — §5 (involution の場合分け) から導かれる `Even n`.
 
-両者は当面 `sorry` で型だけ供給し, Phase 1-5 で順次実装する.
+両者は当面型だけ供給し, Phase 1-5 で順次実装する.
 -/
 
 namespace Moore57

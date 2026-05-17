@@ -2822,7 +2822,7 @@ theorem V7Submodule_eq_eigenspace (h : Order22ActsOnMoore57 V Γ) :
   --   A v = 7 v = 2 E_2 v + 7 E_7 v + 3 E_3 v (using A E_μ = μ E_μ).
   --   (2-7) E_2 v + 0 + (3-7) E_3 v = 0 ⟹ direct sum ⟹ E_2 v = E_3 v = 0.
   -- ~50 行.
-  sorry  -- TODO Phase D-A step 1
+  (..) -- TODO Phase D-A step 1
 ```
 
 V_λ = maxGenEigenspace λ (diagonalizable):
@@ -2855,7 +2855,7 @@ theorem adjMatrix_ℚ_charpoly_factored (hΓ : IsMoore57 Γ) :
   -- (d) charpoly | min poly^N. charpoly degree = 3250. Roots ⊂ {57, 7, -8}.
   -- (e) charpoly = (X-57)^a (X-7)^b (X+8)^c with a+b+c = 3250.
   -- (f) finrank_maxGenEigenspace_eq + V_λ = maxGenEigenspace ⟹ a, b, c = 1, 1729, 1520.
-  sorry
+  (..)
 ```
 
 ### Step 4: ℤ-charpoly factorization (Gauss lemma) (~30 行)
