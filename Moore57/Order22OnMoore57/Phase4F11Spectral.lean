@@ -1594,6 +1594,15 @@ theorem trace_adjMatrixF11_quot_eq_sum (h : Order22ActsOnMoore57 V Γ)
   intro O _
   rw [Matrix.diag_apply, LinearMap.toMatrix_apply, Pi.basisFun_repr]
 
+/-- **iso on basisFun = orbit indicator** (sorry-free):
+`(kerTF11_quotientEquiv (Pi.basisFun O)).val v = (Pi.basisFun O) (Quotient.mk v)`. -/
+theorem kerTF11_quotientEquiv_basisFun_apply (h : Order22ActsOnMoore57 V Γ)
+    [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
+    (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) (v : V) :
+    ((h.kerTF11_quotientEquiv (Pi.basisFun (ZMod 11) _ O)) : V → ZMod 11) v =
+      Pi.basisFun (ZMod 11) _ O (Quotient.mk _ v) :=
+  kerTF11_quotientEquiv_apply h _ v
+
 /-- **Orbital side of trace identity** (focused sorry):
 `trace(A_restrict over ker T_F11) = (10 * traceNumber : ZMod 11)`.
 
