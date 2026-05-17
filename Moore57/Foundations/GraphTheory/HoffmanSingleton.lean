@@ -883,19 +883,106 @@ theorem srg_case_A
 
 /-! ## Stage S6: Case B — square discriminant
 
-The argument (informal): with `m_k = 1` and `D = v²` (an integer square),
-the discriminant equation reduces to `(m_+ − m_-) · |v| = k(k − 2)` over `ℤ`,
-so `|v| | k(k − 2)`. Combined with `v² = 4k − 3`, the equation
-`16 k(k − 2) = |v|⁴ − 2 |v|² − 15` yields `|v| | 15`.
-Hence `|v| ∈ {1, 3, 5, 15}` and `k = (v² + 3)/4 ∈ {1, 3, 7, 57}`.
-
-Formalizing this requires careful integer arithmetic; deferred. -/
+With `m_k = 1` and `D = u²` (integer square, `u ≥ 0`), the discriminant
+equation reduces to `(m_+ − m_-) · u = k(k − 2)` over `ℤ`, so
+`u | k(k − 2)`. The identity `16 k(k − 2) = u⁴ − 2u² − 15` then yields
+`u | 15`, so `u ∈ {1, 3, 5, 15}` and `k = (u² + 3)/4 ∈ {1, 3, 7, 57}`. -/
 theorem srg_case_B
     {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
     (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
     (hsq : IsSquare (4 * (k : ℤ) - 3)) :
     k = 1 ∨ k = 3 ∨ k = 7 ∨ k = 57 := by
-  sorry
+  -- Extract integer square root u ≥ 0 with u² = 4k - 3.
+  obtain ⟨u₀, hu₀⟩ := hsq
+  -- hu₀ : 4 * (k : ℤ) - 3 = u₀ * u₀
+  set u : ℤ := |u₀| with hu_def
+  have hu_nn : (0 : ℤ) ≤ u := abs_nonneg _
+  have hu_sq : u * u = 4 * (k : ℤ) - 3 := by
+    show |u₀| * |u₀| = 4 * (k : ℤ) - 3
+    rw [abs_mul_abs_self]; exact hu₀.symm
+  -- 4k - 3 ≥ 1 for k ≥ 1, so u ≥ 1.
+  have h_4k_3_pos : (1 : ℤ) ≤ 4 * (k : ℤ) - 3 := by
+    have : (1 : ℤ) ≤ (k : ℤ) := by exact_mod_cast hk
+    linarith
+  have hu_pos : (1 : ℤ) ≤ u := by
+    have h_uu_pos : (1 : ℤ) ≤ u * u := by linarith [hu_sq]
+    rcases lt_or_eq_of_le hu_nn with hgt | heq
+    · linarith [hgt]
+    · exfalso; rw [← heq] at h_uu_pos; norm_num at h_uu_pos
+  -- √(4k - 3 : ℝ) = u.
+  have hsqrt : Real.sqrt (4 * (k : ℝ) - 3) = (u : ℝ) := by
+    have hD_sq : 4 * (k : ℝ) - 3 = ((u : ℝ))^2 := by
+      have : ((u * u : ℤ) : ℝ) = ((4 * (k : ℤ) - 3 : ℤ) : ℝ) := by exact_mod_cast hu_sq
+      push_cast at this; linarith [this]
+    rw [hD_sq, Real.sqrt_sq (by exact_mod_cast hu_nn)]
+  -- Use disc equation + m_k = 1.
+  have hHerm : (G.adjMatrix ℝ).IsHermitian := adjMatrix_real_isHermitian
+  have hd := srg_disc_equation hsrg hk hHerm
+  have hmk : srgM_k hHerm k = 1 := srgM_k_eq_one hsrg hk hHerm
+  rw [hsqrt] at hd
+  have hmk_real : (srgM_k hHerm k : ℝ) = 1 := by exact_mod_cast hmk
+  rw [hmk_real] at hd
+  -- hd : (m_+ - m_-) · u = k² + 1 - (2k + 1) = k(k - 2) over ℝ.
+  -- Cast to ℤ: r * u = k(k - 2) where r := m_+ - m_- ∈ ℤ.
+  have hd_int : ((srgM_plus hHerm k : ℤ) - (srgM_minus hHerm k : ℤ)) * u =
+                (k : ℤ) * ((k : ℤ) - 2) := by
+    have hd_int_real : ((((srgM_plus hHerm k : ℤ) - (srgM_minus hHerm k : ℤ)) * u : ℤ) : ℝ) =
+                       (((k : ℤ) * ((k : ℤ) - 2) : ℤ) : ℝ) := by
+      push_cast
+      linear_combination hd
+    exact_mod_cast hd_int_real
+  set r : ℤ := (srgM_plus hHerm k : ℤ) - (srgM_minus hHerm k : ℤ) with hr_def
+  -- u | k(k - 2).
+  have hu_dvd_kk2 : u ∣ ((k : ℤ) * ((k : ℤ) - 2)) := ⟨r, by linarith [hd_int]⟩
+  -- u | 16 k(k - 2).
+  have hu_dvd_16kk2 : u ∣ (16 * ((k : ℤ) * ((k : ℤ) - 2))) := hu_dvd_kk2.mul_left 16
+  -- 16 k(k - 2) = u⁴ - 2u² - 15 via u² = 4k - 3.
+  have h16 : 16 * ((k : ℤ) * ((k : ℤ) - 2)) = u * u * (u * u) - 2 * (u * u) - 15 := by
+    have h := hu_sq
+    linear_combination -(u * u + 4 * (k : ℤ) - 5) * h
+  -- u | u⁴ and u | 2u², so u | (u⁴ - 2u²).
+  have hu_dvd_u4_sub : u ∣ (u * u * (u * u) - 2 * (u * u)) := by
+    have h_u4 : u ∣ (u * u * (u * u)) := ⟨u * (u * u), by ring⟩
+    have h_2u2 : u ∣ (2 * (u * u)) := ⟨2 * u, by ring⟩
+    exact h_u4.sub h_2u2
+  -- u | 15: from u | (u⁴ - 2u²) - 16 k(k - 2) = 15.
+  have hu_dvd_15 : u ∣ (15 : ℤ) := by
+    have hkey : (u * u * (u * u) - 2 * (u * u)) - 16 * ((k : ℤ) * ((k : ℤ) - 2)) = 15 := by
+      linarith [h16]
+    have : u ∣ ((u * u * (u * u) - 2 * (u * u)) - 16 * ((k : ℤ) * ((k : ℤ) - 2))) :=
+      hu_dvd_u4_sub.sub hu_dvd_16kk2
+    rwa [hkey] at this
+  -- u ≤ 15.
+  have hu_le_15 : u ≤ 15 := Int.le_of_dvd (by norm_num) hu_dvd_15
+  -- Case analysis on u ∈ {1, 2, ..., 15}; only divisors of 15 are possible.
+  interval_cases u
+  · -- u = 1: 4k - 3 = 1, k = 1.
+    have hk1 : (4 : ℤ) * (k : ℤ) - 3 = 1 := by linarith [hu_sq]
+    have : (k : ℤ) = 1 := by linarith
+    exact Or.inl (by exact_mod_cast this)
+  · exact absurd hu_dvd_15 (by decide) -- u = 2
+  · -- u = 3: 4k - 3 = 9, k = 3.
+    have hk3 : (4 : ℤ) * (k : ℤ) - 3 = 9 := by linarith [hu_sq]
+    have : (k : ℤ) = 3 := by linarith
+    exact Or.inr (Or.inl (by exact_mod_cast this))
+  · exact absurd hu_dvd_15 (by decide) -- u = 4
+  · -- u = 5: 4k - 3 = 25, k = 7.
+    have hk7 : (4 : ℤ) * (k : ℤ) - 3 = 25 := by linarith [hu_sq]
+    have : (k : ℤ) = 7 := by linarith
+    exact Or.inr (Or.inr (Or.inl (by exact_mod_cast this)))
+  · exact absurd hu_dvd_15 (by decide) -- u = 6
+  · exact absurd hu_dvd_15 (by decide) -- u = 7
+  · exact absurd hu_dvd_15 (by decide) -- u = 8
+  · exact absurd hu_dvd_15 (by decide) -- u = 9
+  · exact absurd hu_dvd_15 (by decide) -- u = 10
+  · exact absurd hu_dvd_15 (by decide) -- u = 11
+  · exact absurd hu_dvd_15 (by decide) -- u = 12
+  · exact absurd hu_dvd_15 (by decide) -- u = 13
+  · exact absurd hu_dvd_15 (by decide) -- u = 14
+  · -- u = 15: 4k - 3 = 225, k = 57.
+    have hk57 : (4 : ℤ) * (k : ℤ) - 3 = 225 := by linarith [hu_sq]
+    have : (k : ℤ) = 57 := by linarith
+    exact Or.inr (Or.inr (Or.inr (by exact_mod_cast this)))
 
 /-! ## Stage S7: Main theorem -/
 
