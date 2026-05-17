@@ -445,6 +445,69 @@ theorem srg_eigenvalues_sum_eq_zero
   rw [SimpleGraph.trace_adjMatrix ℝ G] at htr
   exact_mod_cast htr.symm
 
+/-! ### S4f': Sum of squared eigenvalues via spectral theorem
+
+`trace(A · A) = ∑ (eigenvalues i)²` for any Hermitian `A`. We derive this
+from `IsHermitian.spectral_theorem` by computing
+`A * A = U · D² · U⁻¹` and taking trace via cyclic permutation.
+-/
+
+/-- For a Hermitian real matrix, `trace(A²) = ∑ (eigenvalues i)²`. -/
+private theorem trace_sq_eq_sum_eigenvalues_sq
+    {A : Matrix W W ℝ} (hHerm : A.IsHermitian) :
+    (A * A).trace = ∑ i, (hHerm.eigenvalues i)^2 := by
+  have hsp : A = Unitary.conjStarAlgAut ℝ (Matrix W W ℝ) hHerm.eigenvectorUnitary
+              (diagonal ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues)) :=
+    hHerm.spectral_theorem
+  have hAA : A * A = Unitary.conjStarAlgAut ℝ (Matrix W W ℝ) hHerm.eigenvectorUnitary
+              ((diagonal ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues)) *
+               (diagonal ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues))) := by
+    conv_lhs => rw [hsp]
+    exact (_root_.map_mul _ _ _).symm
+  rw [hAA, Unitary.conjStarAlgAut_apply, Matrix.trace_mul_cycle]
+  have hsUU : (star (hHerm.eigenvectorUnitary : Matrix W W ℝ) : Matrix W W ℝ) *
+                (hHerm.eigenvectorUnitary : Matrix W W ℝ) = 1 :=
+    Unitary.coe_star_mul_self _
+  rw [hsUU, Matrix.one_mul, Matrix.diagonal_mul_diagonal, Matrix.trace_diagonal]
+  apply Finset.sum_congr rfl
+  intros i _
+  show ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues) i *
+       ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues) i =
+       (hHerm.eigenvalues i)^2
+  simp [Function.comp_apply, pow_two]
+
+/-- Trace of the all-ones matrix over ℝ equals the cardinality. -/
+private theorem trace_allOnesMatrix_real :
+    (allOnesMatrix W ℝ).trace = (Fintype.card W : ℝ) := by
+  unfold Matrix.trace allOnesMatrix
+  simp [Finset.card_univ]
+
+/-- For an SRG`(k²+1, k, 0, 1)`, `trace(A²) = (k² + 1) · k` via the SRG
+matrix identity `A² + A − (k − 1)·I = J`. -/
+private theorem srg_trace_A_sq_eq_nk
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) :
+    ((G.adjMatrix ℝ) * (G.adjMatrix ℝ)).trace =
+      ((k : ℝ) * (k : ℝ) + 1) * (k : ℝ) := by
+  have hid := srg_kk_plus_one_matrix_identity (α := ℝ) hsrg
+  -- hid : (G.adjMatrix ℝ)^2 + G.adjMatrix ℝ - (k - 1) • 1 = allOnesMatrix W ℝ
+  have hid' : (G.adjMatrix ℝ) * (G.adjMatrix ℝ) + (G.adjMatrix ℝ) -
+              ((k : ℝ) - 1) • (1 : Matrix W W ℝ) = allOnesMatrix W ℝ := by
+    have h := hid; rw [sq] at h; exact h
+  -- A * A = J - A + (k - 1) • 1
+  have hA_sq : (G.adjMatrix ℝ) * (G.adjMatrix ℝ) =
+                allOnesMatrix W ℝ - G.adjMatrix ℝ + ((k : ℝ) - 1) • (1 : Matrix W W ℝ) := by
+    rw [← hid']; abel
+  rw [hA_sq]
+  rw [Matrix.trace_add, Matrix.trace_sub, trace_allOnesMatrix_real,
+      SimpleGraph.trace_adjMatrix ℝ G, Matrix.trace_smul, Matrix.trace_one]
+  -- After: card W - 0 + (k - 1) • card W = (k² + 1) * k
+  have hcard : (Fintype.card W : ℝ) = (k : ℝ) * (k : ℝ) + 1 := by
+    have hh := hsrg.card; rw [hh]; push_cast; ring
+  rw [hcard]
+  simp [smul_eq_mul]
+  ring
+
 /-! ### S4f: Trace partition via eigenvalue classes -/
 
 /-- The trace partition: `m_k · k + m_+ · λ_+ + m_- · λ_- = 0`. -/
@@ -520,6 +583,107 @@ theorem srg_trace_partition
   rw [hsum] at hsum_split
   -- hsum_split : 0 = m_k * k + m_+ * λ_+ + m_- * λ_-
   -- m_k = Sk.card by definition; similarly for m_+, m_-.
+  unfold srgM_k srgM_plus srgM_minus
+  linarith
+
+/-! ### S4g: Trace-square partition
+
+Sum of squared eigenvalues, partitioned over the three eigenvalue classes,
+yields `m_k k² + m_+ λ_+² + m_- λ_-² = (k² + 1) · k`.
+-/
+
+/-- Sum of squared eigenvalues equals `(k² + 1) · k` for SRG`(k²+1, k, 0, 1)`. -/
+theorem srg_eigenvalues_sum_sq_eq_nk
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    ∑ i : W, (hHerm.eigenvalues i)^2 = ((k : ℝ) * (k : ℝ) + 1) * (k : ℝ) := by
+  rw [← trace_sq_eq_sum_eigenvalues_sq hHerm]
+  exact srg_trace_A_sq_eq_nk hsrg
+
+/-- Sum-of-squared eigenvalues partition:
+`m_k · k² + m_+ · λ_+² + m_- · λ_-² = (k² + 1) · k`. -/
+theorem srg_trace_sq_partition
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    (srgM_k hHerm k : ℝ) * ((k : ℝ) * (k : ℝ))
+      + (srgM_plus hHerm k : ℝ) * ((srgLambdaPlus k) * (srgLambdaPlus k))
+      + (srgM_minus hHerm k : ℝ) * ((srgLambdaMinus k) * (srgLambdaMinus k))
+      = ((k : ℝ) * (k : ℝ) + 1) * (k : ℝ) := by
+  classical
+  have hsum_sq := srg_eigenvalues_sum_sq_eq_nk hsrg hHerm
+  have hcover : ∀ i : W, hHerm.eigenvalues i = (k : ℝ) ∨
+      hHerm.eigenvalues i = srgLambdaPlus k ∨ hHerm.eigenvalues i = srgLambdaMinus k := by
+    intro i
+    rcases srg_kk_plus_one_eigenvalue_classification hsrg hHerm i with h | h
+    · exact Or.inl h
+    · rcases quadratic_root_classification k hk _ h with h | h
+      · exact Or.inr (Or.inl h)
+      · exact Or.inr (Or.inr h)
+  have hne_k_p := k_ne_srgLambdaPlus k hk
+  have hne_k_m := k_ne_srgLambdaMinus k hk
+  have hne_p_m := srgLambdaPlus_ne_srgLambdaMinus k hk
+  set Sk := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = (k : ℝ))
+  set Sp := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = srgLambdaPlus k)
+  set Sm := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = srgLambdaMinus k)
+  have hSpm_disj : Disjoint Sp Sm := by
+    rw [Finset.disjoint_filter]; intros i _ heqp heqm
+    exact hne_p_m (heqp.symm.trans heqm)
+  have hSk_Sp_disj : Disjoint Sk Sp := by
+    rw [Finset.disjoint_filter]; intros i _ heqk heqp
+    exact hne_k_p (heqk.symm.trans heqp)
+  have hSk_Sp_Sm_disj : Disjoint (Sk ∪ Sp) Sm := by
+    rw [Finset.disjoint_union_left]
+    refine ⟨?_, hSpm_disj⟩
+    rw [Finset.disjoint_filter]; intros i _ heqk heqm
+    exact hne_k_m (heqk.symm.trans heqm)
+  have hUnion : Sk ∪ Sp ∪ Sm = Finset.univ := by
+    ext i
+    constructor
+    · intro _; exact Finset.mem_univ _
+    · intro _
+      rcases hcover i with h | h | h
+      · exact Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inl
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))))
+      · exact Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inr
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))))
+      · exact Finset.mem_union.mpr (Or.inr
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))
+  have hsum_split :
+      ∑ i, (hHerm.eigenvalues i)^2 = ∑ i ∈ Sk, (hHerm.eigenvalues i)^2 +
+        ∑ i ∈ Sp, (hHerm.eigenvalues i)^2 + ∑ i ∈ Sm, (hHerm.eigenvalues i)^2 := by
+    rw [show ∑ i, (hHerm.eigenvalues i)^2 =
+        ∑ i ∈ Finset.univ, (hHerm.eigenvalues i)^2 from rfl]
+    rw [← hUnion]
+    rw [Finset.sum_union hSk_Sp_Sm_disj,
+        Finset.sum_union hSk_Sp_disj]
+  have hSum_k : ∑ i ∈ Sk, (hHerm.eigenvalues i)^2 = (Sk.card : ℝ) * ((k : ℝ) * (k : ℝ)) := by
+    rw [Finset.sum_congr rfl
+      (g := fun _ => (k : ℝ) * (k : ℝ))
+      (by intros i hi
+          have := (Finset.mem_filter.mp hi).2
+          rw [this]; ring)]
+    simp [mul_comm]
+  have hSum_p : ∑ i ∈ Sp, (hHerm.eigenvalues i)^2 =
+                  (Sp.card : ℝ) * (srgLambdaPlus k * srgLambdaPlus k) := by
+    rw [Finset.sum_congr rfl
+      (g := fun _ => srgLambdaPlus k * srgLambdaPlus k)
+      (by intros i hi
+          have := (Finset.mem_filter.mp hi).2
+          rw [this]; ring)]
+    simp [mul_comm]
+  have hSum_m : ∑ i ∈ Sm, (hHerm.eigenvalues i)^2 =
+                  (Sm.card : ℝ) * (srgLambdaMinus k * srgLambdaMinus k) := by
+    rw [Finset.sum_congr rfl
+      (g := fun _ => srgLambdaMinus k * srgLambdaMinus k)
+      (by intros i hi
+          have := (Finset.mem_filter.mp hi).2
+          rw [this]; ring)]
+    simp [mul_comm]
+  rw [hSum_k, hSum_p, hSum_m] at hsum_split
+  rw [hsum_sq] at hsum_split
+  -- hsum_split : (k² + 1) * k = m_k * k² + m_+ * λ_+² + m_- * λ_-²
   unfold srgM_k srgM_plus srgM_minus
   linarith
 
@@ -634,26 +798,48 @@ theorem srg_case_A_equations
 
 /-! ### S4f: Perron multiplicity m_k = 1
 
-This requires the spectral theorem with orthogonality. For now we state it
-as a focused lemma and use it; the full proof will be filled in. -/
+Combining the three identities (sum, trace, trace-square) with the
+quadratic equation for `λ_±` yields `m_k · (k² + 1) = k² + 1`, hence
+`m_k = 1`. -/
 
 /-- **Perron uniqueness**: `m_k = 1` for `k ≥ 1`.
 
-Proof sketch: at least one basis vector has eigenvalue `k` (since `𝟙` is a
-nonzero `k`-eigenvector and decomposes in the eigenbasis). At most one such
-vector exists because all `k`-eigenvectors are proportional to `𝟙` (by
-`perron_collinear`) and an orthonormal basis cannot contain two
-proportional vectors.
+Derivation: from
+* sum identity `m_k + m_+ + m_- = k² + 1` (counting),
+* trace identity `m_k · k + m_+ · λ_+ + m_- · λ_- = 0` (trace zero),
+* trace-square identity `m_k · k² + m_+ · λ_+² + m_- · λ_-² = (k² + 1) · k`
+  (from `trace(A²) = nk`),
+* quadratic roots `λ_±² + λ_± − (k − 1) = 0`,
 
-This is the only remaining sorry-bound result for the Hoffman-Singleton
-formalization; it requires careful spectral theorem manipulation in the
-inner product space `EuclideanSpace ℝ W`. -/
+eliminate `m_+ λ_+²`, `m_- λ_-²` (via the quadratic), then `m_+ λ_+ + m_- λ_-`
+(via trace), then `m_+ + m_-` (via sum) to obtain `m_k (k² + 1) = k² + 1`.
+Dividing by `k² + 1 > 0` gives `m_k = 1`. -/
 theorem srgM_k_eq_one
     {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
     (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
     (hHerm : (G.adjMatrix ℝ).IsHermitian) :
     srgM_k hHerm k = 1 := by
-  sorry
+  have hpart := srg_trace_sq_partition hsrg hk hHerm
+  have htrA := srg_trace_partition hsrg hk hHerm
+  have hsum := srgM_sum_eq_card_real hsrg hk hHerm
+  have hlp := srgLambdaPlus_root k hk
+  have hlm := srgLambdaMinus_root k hk
+  -- Derive m_k (k² + 1) = k² + 1 via linear combination.
+  have hkey : (srgM_k hHerm k : ℝ) * ((k : ℝ) * (k : ℝ) + 1) =
+              (k : ℝ) * (k : ℝ) + 1 := by
+    linear_combination
+      hpart +
+        (-((srgM_plus hHerm k : ℝ))) * hlp +
+        (-((srgM_minus hHerm k : ℝ))) * hlm +
+        htrA +
+        (-((k : ℝ) - 1)) * hsum
+  -- Divide by k² + 1 > 0.
+  have hpos : (0 : ℝ) < (k : ℝ) * (k : ℝ) + 1 := by positivity
+  have hmk_real : (srgM_k hHerm k : ℝ) = 1 := by
+    have h1 : (srgM_k hHerm k : ℝ) * ((k : ℝ) * (k : ℝ) + 1) =
+              1 * ((k : ℝ) * (k : ℝ) + 1) := by linarith
+    exact mul_right_cancel₀ (ne_of_gt hpos) h1
+  exact_mod_cast hmk_real
 
 /-- Case A main: if `4k - 3` is not a perfect square, `k ∈ {0, 2}`. -/
 theorem srg_case_A
