@@ -1103,6 +1103,149 @@ private theorem E3_preserves_ker_T_F11_pow (h : Order22ActsOnMoore57 V Γ) (j : 
   _commute_preserves_ker_T_F11_pow h (E3MatrixF11 Γ)
     (E3_commute_permMatrixF11 h.isMoore h.σ h.σ_aut) j
 
+/-- `ker T_F11^j = (V_2 ⊓ ker T^j) ⊔ (V_7 ⊓ ker T^j) ⊔ (V_3 ⊓ ker T^j)` (各 j). -/
+private theorem ker_T_F11_pow_eq_sup_three (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) ⊔
+      (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) ⊔
+      (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) =
+    LinearMap.ker ((T_F11 h)^j) := by
+  classical
+  apply le_antisymm
+  · refine sup_le (sup_le inf_le_right inf_le_right) inf_le_right
+  · intro v hv
+    rw [Submodule.mem_sup]
+    refine ⟨(E2MatrixF11 Γ).toLin' v + (E7MatrixF11 Γ).toLin' v, ?_,
+            (E3MatrixF11 Γ).toLin' v, ?_, ELambda_sum_apply v⟩
+    · rw [Submodule.mem_sup]
+      refine ⟨(E2MatrixF11 Γ).toLin' v, ?_, (E7MatrixF11 Γ).toLin' v, ?_, rfl⟩
+      · exact Submodule.mem_inf.mpr
+          ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩, E2_preserves_ker_T_F11_pow h j v hv⟩
+      · exact Submodule.mem_inf.mpr
+          ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩, E7_preserves_ker_T_F11_pow h j v hv⟩
+    · exact Submodule.mem_inf.mpr
+        ⟨LinearMap.mem_range.mpr ⟨v, rfl⟩, E3_preserves_ker_T_F11_pow h j v hv⟩
+
+/-- (V_2 ⊓ ker T^j) ⊓ (V_7 ⊓ ker T^j) = ⊥. -/
+private theorem V2kt_inter_V7kt_pow_eq_bot (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) ⊓
+      (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_2, hv_7⟩ := hv
+  rw [Submodule.mem_inf] at hv_2 hv_7
+  have h_in : v ∈ V2Submodule Γ ⊓ V7Submodule Γ :=
+    Submodule.mem_inf.mpr ⟨hv_2.1, hv_7.1⟩
+  rw [V2_inter_V7_eq_bot h.isMoore] at h_in
+  exact h_in
+
+private theorem V2kt_inter_V3kt_pow_eq_bot (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) ⊓
+      (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_2, hv_3⟩ := hv
+  rw [Submodule.mem_inf] at hv_2 hv_3
+  have h_in : v ∈ V2Submodule Γ ⊓ V3Submodule Γ :=
+    Submodule.mem_inf.mpr ⟨hv_2.1, hv_3.1⟩
+  rw [V2_inter_V3_eq_bot h.isMoore] at h_in
+  exact h_in
+
+private theorem V7kt_inter_V3kt_pow_eq_bot (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) ⊓
+      (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨hv_7, hv_3⟩ := hv
+  rw [Submodule.mem_inf] at hv_7 hv_3
+  have h_in : v ∈ V7Submodule Γ ⊓ V3Submodule Γ :=
+    Submodule.mem_inf.mpr ⟨hv_7.1, hv_3.1⟩
+  rw [V7_inter_V3_eq_bot h.isMoore] at h_in
+  exact h_in
+
+private theorem V2kt_sup_V7kt_inter_V3kt_pow_eq_bot
+    (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    ((V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) ⊔
+       (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j))) ⊓
+      (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j)) =
+    (⊥ : Submodule (ZMod 11) (V → ZMod 11)) := by
+  classical
+  apply le_antisymm _ bot_le
+  intro v hv
+  rw [Submodule.mem_inf] at hv
+  obtain ⟨h_sup, hv_3⟩ := hv
+  rw [Submodule.mem_sup] at h_sup
+  obtain ⟨w_2, hw_2, w_7, hw_7, h_sum⟩ := h_sup
+  rw [Submodule.mem_inf] at hw_2 hw_7 hv_3
+  obtain ⟨u_3, hu_3⟩ := LinearMap.mem_range.mp hv_3.1
+  obtain ⟨u_2, hu_2⟩ := LinearMap.mem_range.mp hw_2.1
+  obtain ⟨u_7, hu_7⟩ := LinearMap.mem_range.mp hw_7.1
+  have h_E3v_eq_v : (E3MatrixF11 Γ).toLin' v = v := by
+    rw [← hu_3]
+    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
+    rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) =
+            (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u_3 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        E3_idempotent h.isMoore]
+  have h_E3v_eq_zero : (E3MatrixF11 Γ).toLin' v = 0 := by
+    rw [← h_sum, map_add, ← hu_2, ← hu_7]
+    show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
+         (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) = 0
+    rw [show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) =
+            (E3MatrixF11 Γ * E2MatrixF11 Γ).toLin' u_2 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        show (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) =
+            (E3MatrixF11 Γ * E7MatrixF11 Γ).toLin' u_7 from by
+          rw [Matrix.toLin'_mul]; rfl,
+        E3_mul_E2_eq_zero h.isMoore, E3_mul_E7_eq_zero h.isMoore]
+    show (0 : Matrix V V (ZMod 11)).toLin' u_2 +
+         (0 : Matrix V V (ZMod 11)).toLin' u_7 = 0
+    simp
+  rw [Submodule.mem_bot]
+  exact h_E3v_eq_v.symm.trans h_E3v_eq_zero
+
+/-- Σ_λ finrank(V_λ ⊓ ker T^j) = finrank ker T^j. -/
+private theorem finrank_sum_V_lambda_inter_ker_T_F11_pow
+    (h : Order22ActsOnMoore57 V Γ) (j : ℕ) :
+    Module.finrank (ZMod 11)
+        (V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) +
+      Module.finrank (ZMod 11)
+        (V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) :
+          Submodule (ZMod 11) (V → ZMod 11)) =
+    Module.finrank (ZMod 11) (LinearMap.ker ((T_F11 h)^j)) := by
+  classical
+  haveI : FiniteDimensional (ZMod 11) (V → ZMod 11) := by infer_instance
+  set S_2 := V2Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) with hS2_def
+  set S_7 := V7Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) with hS7_def
+  set S_3 := V3Submodule Γ ⊓ LinearMap.ker ((T_F11 h)^j) with hS3_def
+  have h_sup_eq : (S_2 ⊔ S_7) ⊔ S_3 = LinearMap.ker ((T_F11 h)^j) :=
+    ker_T_F11_pow_eq_sup_three h j
+  have h_27_3_disj : (S_2 ⊔ S_7) ⊓ S_3 = ⊥ := V2kt_sup_V7kt_inter_V3kt_pow_eq_bot h j
+  have h_27_disj : S_2 ⊓ S_7 = ⊥ := V2kt_inter_V7kt_pow_eq_bot h j
+  have h_27_3_finrank : Module.finrank (ZMod 11) ↥((S_2 ⊔ S_7) ⊔ S_3) =
+      Module.finrank (ZMod 11) ↥(S_2 ⊔ S_7) + Module.finrank (ZMod 11) ↥S_3 := by
+    have h_eq := Submodule.finrank_sup_add_finrank_inf_eq (S_2 ⊔ S_7) S_3
+    rw [h_27_3_disj, finrank_bot] at h_eq
+    omega
+  have h_27_finrank : Module.finrank (ZMod 11) ↥(S_2 ⊔ S_7) =
+      Module.finrank (ZMod 11) ↥S_2 + Module.finrank (ZMod 11) ↥S_7 := by
+    have h_eq := Submodule.finrank_sup_add_finrank_inf_eq S_2 S_7
+    rw [h_27_disj, finrank_bot] at h_eq
+    omega
+  rw [← h_sup_eq, h_27_3_finrank, h_27_finrank]
+
 /-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
 
 dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
