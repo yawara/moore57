@@ -853,6 +853,61 @@ theorem V2_sup_V7_sup_V3_eq_top :
   · -- E_3 v ∈ V_3
     exact LinearMap.mem_range.mpr ⟨v, rfl⟩
 
+/-! ### Phase D-B: V_λ は T_F11-invariant (Jordan structure 前準備) -/
+
+/-- T_F11 = P_σ - 1 は V_2 を保つ (P_σ は V_2 invariant). -/
+theorem V2_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ V2Submodule Γ, (T_F11 h) v ∈ V2Submodule Γ := by
+  intros v hv
+  rw [T_F11_def]
+  have h_eq : (((permMatrixF11 h.σ) - 1).toLin') v =
+              (permMatrixF11 h.σ).toLin' v - v := by
+    show ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec]
+  rw [h_eq]
+  -- V_2 = span 1 で σ-invariant ⟹ P_σ v ∈ V_2.
+  refine Submodule.sub_mem _ ?_ hv
+  -- (permMatrixF11 h.σ).toLin' v = P_σ · v ∈ V_2 (V_2 is P_σ-invariant).
+  rw [V2Submodule, LinearMap.mem_range] at hv ⊢
+  obtain ⟨g, hg⟩ := hv
+  refine ⟨(permMatrixF11 h.σ).toLin' g, ?_⟩
+  rw [← hg]
+  show ((E2MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+       ((permMatrixF11 h.σ).toLin') ((E2MatrixF11 Γ).toLin' g)
+  rw [show ((E2MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+        (E2MatrixF11 Γ * permMatrixF11 h.σ).toLin' g from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [show ((permMatrixF11 h.σ).toLin') ((E2MatrixF11 Γ).toLin' g) =
+        (permMatrixF11 h.σ * E2MatrixF11 Γ).toLin' g from by
+        rw [Matrix.toLin'_mul]; rfl]
+  rw [E2_commute_permMatrixF11 h.isMoore]
+
+/-- T_F11 は V_7 を保つ. -/
+theorem V7_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ V7Submodule Γ, (T_F11 h) v ∈ V7Submodule Γ := by
+  intros v hv
+  rw [T_F11_def]
+  have h_eq : (((permMatrixF11 h.σ) - 1).toLin') v =
+              (permMatrixF11 h.σ).toLin' v - v := by
+    show ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec]
+  rw [h_eq]
+  refine Submodule.sub_mem _ ?_ hv
+  exact h.V7Submodule_invariant_permMatrixF11 v hv
+
+/-- T_F11 は V_3 を保つ. -/
+theorem V3_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
+    ∀ v ∈ V3Submodule Γ, (T_F11 h) v ∈ V3Submodule Γ := by
+  intros v hv
+  rw [T_F11_def]
+  have h_eq : (((permMatrixF11 h.σ) - 1).toLin') v =
+              (permMatrixF11 h.σ).toLin' v - v := by
+    show ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec]
+  rw [h_eq]
+  refine Submodule.sub_mem _ ?_ hv
+  exact h.V3Submodule_invariant_permMatrixF11 v hv
+
 /-! ### ker T_F11 = ⊕_λ (V_λ ⊓ ker T_F11): direct sum decomposition
 
 dim V_λ ∩ ker T_F11 を a^{F_11}_λ と表記.
