@@ -424,7 +424,84 @@ theorem srg_eigenvalues_sum_eq_zero
     ∑ i : W, hHerm.eigenvalues i = 0 := by
   have htr := hHerm.trace_eq_sum_eigenvalues (𝕜 := ℝ)
   rw [SimpleGraph.trace_adjMatrix ℝ G] at htr
-  -- htr : 0 = ∑ i, ((eigenvalues i : ℝ) : ℝ)
   exact_mod_cast htr.symm
+
+/-! ### S4f: Trace partition via eigenvalue classes -/
+
+/-- The trace partition: `m_k · k + m_+ · λ_+ + m_- · λ_- = 0`. -/
+theorem srg_trace_partition
+    {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
+    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)
+    (hHerm : (G.adjMatrix ℝ).IsHermitian) :
+    (srgM_k hHerm k : ℝ) * (k : ℝ)
+      + (srgM_plus hHerm k : ℝ) * srgLambdaPlus k
+      + (srgM_minus hHerm k : ℝ) * srgLambdaMinus k = 0 := by
+  classical
+  have hsum := srg_eigenvalues_sum_eq_zero hHerm
+  have hcover : ∀ i : W, hHerm.eigenvalues i = (k : ℝ) ∨
+      hHerm.eigenvalues i = srgLambdaPlus k ∨ hHerm.eigenvalues i = srgLambdaMinus k := by
+    intro i
+    rcases srg_kk_plus_one_eigenvalue_classification hsrg hHerm i with h | h
+    · exact Or.inl h
+    · rcases quadratic_root_classification k hk _ h with h | h
+      · exact Or.inr (Or.inl h)
+      · exact Or.inr (Or.inr h)
+  have hne_k_p := k_ne_srgLambdaPlus k hk
+  have hne_k_m := k_ne_srgLambdaMinus k hk
+  have hne_p_m := srgLambdaPlus_ne_srgLambdaMinus k hk
+  set Sk := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = (k : ℝ))
+  set Sp := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = srgLambdaPlus k)
+  set Sm := (Finset.univ : Finset W).filter (fun i => hHerm.eigenvalues i = srgLambdaMinus k)
+  have hSpm_disj : Disjoint Sp Sm := by
+    rw [Finset.disjoint_filter]; intros i _ heqp heqm
+    exact hne_p_m (heqp.symm.trans heqm)
+  have hSk_Sp_disj : Disjoint Sk Sp := by
+    rw [Finset.disjoint_filter]; intros i _ heqk heqp
+    exact hne_k_p (heqk.symm.trans heqp)
+  have hSk_Sp_Sm_disj : Disjoint (Sk ∪ Sp) Sm := by
+    rw [Finset.disjoint_union_left]
+    refine ⟨?_, hSpm_disj⟩
+    rw [Finset.disjoint_filter]; intros i _ heqk heqm
+    exact hne_k_m (heqk.symm.trans heqm)
+  have hUnion : Sk ∪ Sp ∪ Sm = Finset.univ := by
+    ext i
+    constructor
+    · intro _; exact Finset.mem_univ _
+    · intro _
+      rcases hcover i with h | h | h
+      · exact Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inl
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))))
+      · exact Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inr
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))))
+      · exact Finset.mem_union.mpr (Or.inr
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))
+  -- Decompose the sum over the partition.
+  have hsum_split :
+      ∑ i, hHerm.eigenvalues i = ∑ i ∈ Sk, hHerm.eigenvalues i +
+        ∑ i ∈ Sp, hHerm.eigenvalues i + ∑ i ∈ Sm, hHerm.eigenvalues i := by
+    rw [show ∑ i, hHerm.eigenvalues i =
+        ∑ i ∈ Finset.univ, hHerm.eigenvalues i from rfl]
+    rw [← hUnion]
+    rw [Finset.sum_union hSk_Sp_Sm_disj,
+        Finset.sum_union hSk_Sp_disj]
+  -- Compute each subsum.
+  have hSum_k : ∑ i ∈ Sk, hHerm.eigenvalues i = (Sk.card : ℝ) * (k : ℝ) := by
+    rw [Finset.sum_congr rfl
+      (g := fun _ => (k : ℝ)) (by intros i hi; exact (Finset.mem_filter.mp hi).2)]
+    simp [mul_comm]
+  have hSum_p : ∑ i ∈ Sp, hHerm.eigenvalues i = (Sp.card : ℝ) * srgLambdaPlus k := by
+    rw [Finset.sum_congr rfl
+      (g := fun _ => srgLambdaPlus k) (by intros i hi; exact (Finset.mem_filter.mp hi).2)]
+    simp [mul_comm]
+  have hSum_m : ∑ i ∈ Sm, hHerm.eigenvalues i = (Sm.card : ℝ) * srgLambdaMinus k := by
+    rw [Finset.sum_congr rfl
+      (g := fun _ => srgLambdaMinus k) (by intros i hi; exact (Finset.mem_filter.mp hi).2)]
+    simp [mul_comm]
+  rw [hSum_k, hSum_p, hSum_m] at hsum_split
+  rw [hsum] at hsum_split
+  -- hsum_split : 0 = m_k * k + m_+ * λ_+ + m_- * λ_-
+  -- m_k = Sk.card by definition; similarly for m_+, m_-.
+  unfold srgM_k srgM_plus srgM_minus
+  linarith
 
 end Moore57
