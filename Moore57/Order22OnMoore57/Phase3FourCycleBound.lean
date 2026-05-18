@@ -164,17 +164,17 @@ theorem slopesAdj_card_le_one_of_not_fixed {x : V} (hx : h.σ x ≠ x) :
   have h_v₀_v₁ : v₀ ≠ v₁ := by
     have := h.σ_pow_inj_of_not_fix hx (a := 0) (b := d₁)
       (by norm_num) hd₁_lt_11 (by omega)
-    simp at this
+    simp only [ne_eq] at this
     exact this
   have h_v₀_v₂ : v₀ ≠ v₂ := by
     have := h.σ_pow_inj_of_not_fix hx (a := 0) (b := d₁ + d₂)
       (by norm_num) hd₁₂_sum_lt_11 (by omega)
-    simp at this
+    simp only [ne_eq] at this
     exact this
   have h_v₀_v₃ : v₀ ≠ v₃ := by
     have := h.σ_pow_inj_of_not_fix hx (a := 0) (b := d₂)
       (by norm_num) hd₂_lt_11 (by omega)
-    simp at this
+    simp only [ne_eq] at this
     exact this
   have h_v₁_v₂ : v₁ ≠ v₂ :=
     h.σ_pow_inj_of_not_fix hx hd₁_lt_11 hd₁₂_sum_lt_11 (by omega)

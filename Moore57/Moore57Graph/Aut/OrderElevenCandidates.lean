@@ -123,7 +123,7 @@ theorem aut_fixedVertexCount_eq_sq_add_one_of_regular_of_pow_eleven
       rw [fixedVertexCount_eq_card_fixedVertexSet] at hpos; exact hpos)) with ⟨v⟩
     rcases Nat.eq_zero_or_pos k with hk0 | hk_pos
     · subst hk0
-      simp
+      simp only [zero_add]
       exact hpos
     have hneighbors_card :
         ((autFixedInducedGraph Γ σ).neighborFinset v).card = k := by

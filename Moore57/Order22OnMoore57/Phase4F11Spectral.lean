@@ -102,7 +102,7 @@ theorem adjMatrixF11_sq_eq (hΓ : IsMoore57 Γ) :
     Matrix.of_apply]
   by_cases hvw : v = w
   · subst w
-    simp
+    simp only [↓reduceIte, nsmul_eq_mul, Nat.cast_ofNat, mul_one, SimpleGraph.irrefl, nsmul_zero, add_zero, ne_eq, not_true_eq_false, not_false_eq_true, and_true, sub_zero]
     decide
   · by_cases hadj : Γ.Adj v w
     · simp [hvw, hadj]

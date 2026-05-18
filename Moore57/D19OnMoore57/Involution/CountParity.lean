@@ -52,7 +52,7 @@ theorem two_dvd_adjacentMovedCount_of_involutive
     exact hσ x
   have hsupport : τ.support = (Finset.univ : Finset S) := by
     ext x
-    simp [Equiv.Perm.mem_support]
+    simp only [Equiv.Perm.mem_support, ne_eq, Finset.mem_univ, iff_true]
     intro hfix
     have hval : σ x = x := congrArg Subtype.val hfix
     have hloop : Γ.Adj (x : V) (x : V) := by
