@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contribute — Moore (57, 2) tracker</title>
+<meta name="description" content="How to contribute to the Moore (57, 2) automorphism-group tracker — Lean 4 / Mathlib formalization of impossibility proofs.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Contribute</h1>
+    <p class="sub">
+      Join the open formalization of automorphism-group restrictions for
+      the hypothetical Moore (57, 2) graph.
+    </p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="index.html">← Top</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Why participate?</h2>
+  <p>
+    Whether a Moore graph of degree 57 and diameter 2 exists is a
+    long-standing open problem in algebraic combinatorics. Each entry on
+    the <a href="index.html">tracker</a> is a concrete piece of that
+    puzzle: a candidate group / order that, if ruled out, narrows the
+    structure of any hypothetical Aut(Γ) — or eventually shows Aut(Γ)
+    must be trivial.
+  </p>
+  <p>
+    The natural-language proofs already exist (Aschbacher 1971, Makhnev–
+    Paduchikh 2001, Macaj–Siran 2010). The challenge — and the
+    opportunity — is to turn them into machine-checked Lean 4 / Mathlib
+    theorems. Three orders (<strong>22, 38, 110</strong>) are already
+    unconditionally formalized; <strong>49 finite groups across 10
+    candidate orders remain open</strong>.
+  </p>
+</section>
+
+<section>
+  <h2>Ways to help</h2>
+  <table>
+    <thead>
+      <tr><th>Skill</th><th>What to do</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Lean 4 / Mathlib</strong></td>
+        <td>
+          Pick an open order (see below) and Lean-ify the corresponding
+          Macaj–Siran row. Most surviving cases follow the structure of
+          our existing <code>Order22OnMoore57/</code> and
+          <code>C38OnMoore57/</code> modules.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Finite-group theory</strong></td>
+        <td>
+          Help refine the SmallGroup tables on the per-order pages
+          (GAP IDs, conjugacy of semidirect products, action lattice
+          on Sylow subgroups). Especially needed for orders
+          <a href="orders/54.html">54</a>, <a href="orders/135.html">135</a>,
+          <a href="orders/147.html">147</a>,
+          <a href="orders/375.html">375</a>.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Paper-side review</strong></td>
+        <td>
+          Walk through Macaj–Siran Lemma 12 / 13 / 15 and identify gaps,
+          alternative routes, or computational checks worth formalising.
+          Lemma 15 in particular has several "starred" cases that the
+          paper notes are impossible but does not fully derive.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>GAP / SageMath</strong></td>
+        <td>
+          Build supporting computations (orbit structures, character
+          tables of candidate subgroups, equitable partitions) that
+          inform or replace ad-hoc case analysis in Lean.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Math review</strong></td>
+        <td>
+          Cross-check the Lean proofs in
+          <a href="https://github.com/yawara/moore57/tree/main/Moore57"><code>Moore57/</code></a>
+          against the natural-language sources. Spot-check Phase 1–7 of
+          the D₁₉ proof, or the Hoffman–Singleton classification in
+          <code>HoffmanSingleton.lean</code>.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Writing / outreach</strong></td>
+        <td>
+          Blog notes (see
+          <a href="https://github.com/yawara/moore57/tree/main/blogs"><code>blogs/</code></a>),
+          arxiv preprints, or talks. We are particularly interested in
+          producing a self-contained writeup of the D₁₉ proof for
+          arXiv submission.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Pick a target</h2>
+  <p>
+    All 10 open orders are listed on the
+    <a href="index.html#at-a-glance">top page</a>. A rough
+    "approachability" ranking based on the existing infrastructure:
+  </p>
+  <div class="orders-grid">
+    <a class="order-card" href="orders/14.html">
+      <span class="order">14</span>
+      <span class="factor">2 · 7</span>
+      <span class="badge open">0 / 2 open</span>
+      <span class="muted" style="font-size:0.78rem;margin-top:0.4rem">closest analogue of order 22</span>
+    </a>
+    <a class="order-card" href="orders/50.html">
+      <span class="order">50</span>
+      <span class="factor">2 · 5²</span>
+      <span class="badge open">0 / 5 open</span>
+      <span class="muted" style="font-size:0.78rem;margin-top:0.4rem">order-25 Sylow + involution</span>
+    </a>
+    <a class="order-card" href="orders/35.html">
+      <span class="order">35</span>
+      <span class="factor">5 · 7</span>
+      <span class="badge open">0 / 1 open</span>
+      <span class="muted" style="font-size:0.78rem;margin-top:0.4rem">single group, Lemma 15 starred row</span>
+    </a>
+    <a class="order-card" href="orders/39.html">
+      <span class="order">39</span>
+      <span class="factor">3 · 13</span>
+      <span class="badge open">0 / 2 open</span>
+      <span class="muted" style="font-size:0.78rem;margin-top:0.4rem">Lemma 12 row for p = 13</span>
+    </a>
+    <a class="order-card" href="orders/54.html">
+      <span class="order">54</span>
+      <span class="factor">2 · 3³</span>
+      <span class="badge open">0 / 15 open</span>
+      <span class="muted" style="font-size:0.78rem;margin-top:0.4rem">15 groups but Theorem 4 bound helps</span>
+    </a>
+    <a class="order-card" href="orders/375.html">
+      <span class="order">375</span>
+      <span class="factor">3 · 5³</span>
+      <span class="badge open">0 / 4 open</span>
+      <span class="muted" style="font-size:0.78rem;margin-top:0.4rem">hardest; GAP-aided in the paper</span>
+    </a>
+  </div>
+  <p class="muted">
+    "Open" here means no Lean proof of <code>no_OrderN_acts_on_Moore57</code>
+    exists yet. The remaining four open orders (135, 147, 171, 275) are
+    also fair game.
+  </p>
+</section>
+
+<section>
+  <h2>Getting started (Lean)</h2>
+  <p>
+    Prerequisites: a working Lean 4 / Mathlib setup (Lean 4.x + elan).
+    Then:
+  </p>
+  <pre><code>git clone https://github.com/yawara/moore57.git
+cd moore57
+lake build</code></pre>
+  <p>
+    Build is large (≈ 4000 jobs) and takes 30–60 minutes from scratch.
+    Subsequent rebuilds are incremental. Key entry points:
+  </p>
+  <ul>
+    <li>
+      <code>Moore57/Phases/FinalAssembly.lean</code> — the main
+      <code>no_D19_acts_on_Moore57_unconditional</code> theorem.
+    </li>
+    <li>
+      <code>Moore57/Order22OnMoore57/NoGo.lean</code> — template for an
+      "exclude an order N" proof.
+    </li>
+    <li>
+      <code>Moore57/AxiomsCheck.lean</code> — the axiom allowlist; any
+      new theorem you formalize should pass this check.
+    </li>
+  </ul>
+  <p>
+    CI will reject any <code>sorry</code> or <code>admit</code> in proof
+    position. The axiom allowlist is enforced at build time.
+  </p>
+</section>
+
+<section>
+  <h2>Communication</h2>
+  <ul>
+    <li>
+      <strong>GitHub Issues</strong> —
+      <a href="https://github.com/yawara/moore57/issues">github.com/yawara/moore57/issues</a>.
+      Open an issue to coordinate on a target before starting work.
+    </li>
+    <li>
+      <strong>Pull Requests</strong> — small, focused PRs are easier to
+      review than long ones. The CI runs <code>lake build</code> +
+      the axiom check.
+    </li>
+    <li>
+      <strong>Blog notes</strong> —
+      <a href="https://github.com/yawara/moore57/tree/main/blogs"><code>blogs/YYYYMMDD.md</code></a>
+      records ongoing thinking. Contributors are encouraged to add
+      entries describing the route they took.
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h2>Recognition</h2>
+  <p>
+    Contributions are credited via <code>Co-Authored-By</code> on
+    commits, mention in the corresponding blog entry, and (where
+    appropriate) authorship on any arxiv writeup that emerges from this
+    work. The project is MIT-licensed; you retain the credit for any
+    proof you contribute.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>
