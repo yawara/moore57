@@ -51,7 +51,8 @@ elab "#assert_only_allowed_axioms " name:ident : command => do
   if bad.isEmpty then
     logInfo m!"axioms check OK: `{constName}` depends on {axs.size} axiom(s), all in allowlist"
   else
-    throwError m!"axioms check FAILED: `{constName}` depends on {bad.size} disallowed axiom(s):{indentD m!"{bad.toList}"}"
+    throwError m!"axioms check FAILED: `{constName}` depends on {bad.size} \
+disallowed axiom(s):{indentD m!"{bad.toList}"}"
 
 #assert_only_allowed_axioms Moore57.no_D19_acts_on_Moore57_unconditional
 #assert_only_allowed_axioms Moore57.no_C38_acts_on_Moore57_unconditional

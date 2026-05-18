@@ -21,6 +21,12 @@ weak.linter.unusedFintypeInType = false
 # TODO: replace `simp [...]` with `simp only [...]` per occurrence by running
 # `simp?` and pasting the suggested lemma set. 49 occurrences; not mechanical.
 weak.linter.flexible = false
+# TODO: mathlib's 100-char standard is enabled by `mathlibStandardSet` but the
+# project uses very long descriptive identifier names (e.g.,
+# `no_remainingNonRepresentationFrontierAfterDefaultBaseInvolutionK155_…`)
+# which alone exceed 100 chars on a single line. ~786 such code-line warnings
+# remain. Cleanup requires identifier renames (project-wide style decision).
+weak.linter.style.longLine = false
 
 [[lean_lib]]
 name = "Moore57"
