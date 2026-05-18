@@ -26,8 +26,31 @@
 </header>
 
 <section>
-  <h2>Source</h2>
-  <p>Macaj–Siran 2010, Theorem 6 (odd case).</p>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    Theorem 6 lists 135 as a surviving odd-order maximum. Theorem 4
+    bounds <code>|3-part of G| ≤ 27</code>; Theorem 5 restricts the
+    Sylow-5 piece (a single <code>ℤ₅</code> here).
+  </p>
+  <p>
+    <strong>The paper does not exclude group order 135.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: the 3-part is one of the 5 groups of order 27 (Corollary 2
+    pins it further if the smallest orbit is small), the 5-part is
+    <code>ℤ₅</code>; remains to close all five extensions. See
+    <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
 </section>
 
 <section>
@@ -52,18 +75,6 @@
   </figure>
   <p class="muted">
     Exact GAP indices may differ; the family names are the invariant data.
-  </p>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. By Theorem 4, the Sylow-3 subgroup has order at
-    most 27, so the only 3-group involved is one of the 5 groups of order
-    27 (Corollary 2 pins it down further if the smallest orbit is small
-    enough). The Sylow-5 piece is a single <code>ℤ₅</code> and Theorem 5
-    restricts its behaviour. The remaining work is to close all five
-    extensions.
   </p>
 </section>
 

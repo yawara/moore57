@@ -26,12 +26,35 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 6 (odd case). Proposition 8 (<code>p = 5,
-    q = 11</code>) constrains the Sylow structure: <code>P₁₁</code> is
-    normal and <code>|P₅|</code> divides 25.
+    Theorem 6 lists 275 as a surviving odd-order maximum.
+    Proposition 8 (<code>p = 5, q = 11</code>) constrains the Sylow
+    structure: <code>P₁₁</code> is normal and <code>|P₅|</code> divides
+    25. Lemma 12 row <code>p = 11, a₀ = 5</code>:
+    <code>a₁(σ) ∈ {55, 220, 385}</code>.
   </p>
+  <p>
+    <strong>The paper does not exclude group order 275.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: a Sylow-11 generator <code>σ</code> satisfies
+    <code>|Fix(σ)| = 5</code> (pentagon), matching exactly the setup
+    behind <code>no_Order22_acts_on_Moore57</code>. The order-25 Sylow
+    part then has to permute the orbits of <code>σ</code> compatibly
+    with Theorem 5. Four SmallGroup cases. See
+    <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
 </section>
 
 <section>
@@ -54,17 +77,6 @@
   </table>
   </figure>
   <p class="muted">Exact GAP indices may differ; family names are the invariant data.</p>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. A Sylow-11 generator <code>σ</code> satisfies
-    <code>|Fix(σ)| = 5</code> (pentagon), matching exactly the setup behind
-    <code>no_Order22_acts_on_Moore57</code>. The order-25 Sylow part then
-    has to permute the orbits of <code>σ</code> compatibly with Theorem 5;
-    bounding this should close all four cases.
-  </p>
 </section>
 
 <footer class="site">

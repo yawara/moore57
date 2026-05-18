@@ -26,11 +26,34 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 6 (odd case). The only candidate involving
-    the prime 19 in the odd case.
+    Theorem 6 lists 171 as a surviving odd-order maximum — the only
+    odd-order candidate involving the prime 19. Lemma 12 row
+    <code>p = 19, a₀ = 1</code>: <code>a₁(σ) ∈ {57, 342, ...}</code>.
   </p>
+  <p>
+    <strong>The paper does not exclude group order 171.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: the <code>p = 19</code> Sylow part is exactly the setting
+    of the <code>no_D19_acts_on_Moore57</code> theorem when paired with
+    an involution; in the odd case here there is no involution, so the
+    obstruction must come from the structure on the fixed points of the
+    order-19 element (a single vertex by Lemma 12) — its star of 56
+    vertices then has to admit the <code>ℤ₉</code>- or
+    <code>ℤ₃²</code>-factor. See <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
 </section>
 
 <section>
@@ -51,24 +74,6 @@
   </table>
   </figure>
   <p class="muted">Exact GAP indices may differ; family names are the invariant data.</p>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. The <code>p = 19</code> Sylow part is exactly the
-    setting of the unconditional <code>no_D19_acts_on_Moore57</code>
-    theorem when paired with an involution; in the odd case here there is
-    no involution, so the obstruction must come from the structure on the
-    fixed points of the order-19 element instead.
-  </p>
-  <p>
-    Concretely: by Lemma 12 (<code>p = 19</code>, <code>a₀(x) = 1</code>),
-    an order-19 automorphism fixes a single vertex, so the <code>ℤ₉</code>-
-    or <code>ℤ₃²</code>-factor acts on the star of size 56 around that
-    fixed point. Bounding the automorphism group of that star yields the
-    obstruction.
-  </p>
 </section>
 
 <footer class="site">

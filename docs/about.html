@@ -66,6 +66,52 @@
   </p>
 </section>
 
+<section id="methodology">
+  <h2>Methodology — three layers</h2>
+  <p>
+    This project sits between the published paper and machine
+    verification. Each closed candidate involves three distinct kinds
+    of work:
+  </p>
+  <ol>
+    <li>
+      <strong>Paper layer (Macaj–Siran 2010 et al.):</strong> establishes
+      the candidate list (13 maxima) and partial constraints — Lemma 12
+      tables of <code>(a₀, a₁, χ₁)</code> for prime-order elements,
+      Lemma 13 for <code>p²</code>, Lemma 15 starred rows for products
+      <code>pq</code>, the Higman trace identity, and Theorems 4–7 on
+      <code>p</code>-group bounds and the odd / even split.
+    </li>
+    <li>
+      <strong>Natural-language proof layer (this project):</strong>
+      extends the paper's framework to <em>fully exclude</em> specific
+      group orders. For 22 and 38 the paper only lists them as
+      candidates; for 110 it only excludes <em>elements</em> of that
+      order. The new proofs combine the paper's tools with extra
+      ingredients (<code>F₁₁</code> permutation module, character
+      restrictions, Sylow + Cauchy subgroup extraction) into complete
+      arguments. The writeups live in
+      <a href="https://github.com/yawara/moore57/tree/main/proofs"><code>proofs/</code></a>.
+    </li>
+    <li>
+      <strong>Lean 4 / Mathlib formalization layer (this project):</strong>
+      a machine-checked encoding of the layer-2 proofs. Each main
+      theorem is asserted to depend only on
+      <code>propext</code> + <code>Classical.choice</code> +
+      <code>Quot.sound</code> (and a few compiler-generated
+      <code>native_decide</code> axioms) by the
+      <a href="https://github.com/yawara/moore57/blob/main/Moore57/AxiomsCheck.lean"><code>AxiomsCheck.lean</code></a>
+      gate, which is enforced at build time.
+    </li>
+  </ol>
+  <p>
+    Closing a new candidate therefore needs <em>both</em> layers 2 and
+    3 (the paper layer is shared infrastructure). Either layer alone is
+    a meaningful contribution — see
+    <a href="contribute.html">Contribute</a> for entry points.
+  </p>
+</section>
+
 <section>
   <h2>Lean formalization status</h2>
   <p>

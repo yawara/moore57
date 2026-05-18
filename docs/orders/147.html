@@ -26,8 +26,31 @@
 </header>
 
 <section>
-  <h2>Source</h2>
-  <p>Macaj–Siran 2010, Theorem 6 (odd case).</p>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    Theorem 6 lists 147 as a surviving odd-order maximum. The
+    <code>p &gt; 5</code> bounds (Lemma 19 / Theorem 5) apply to the
+    Sylow-7 of order 49; Lemma 12 row <code>p = 7</code> gives several
+    <code>(a₀, a₁, χ₁)</code> shapes.
+  </p>
+  <p>
+    <strong>The paper does not exclude group order 147.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: combine the order-7 / order-49 element constraints
+    (Lemma 12 / 13) with the orbit structure. Six SmallGroup cases.
+    See <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
 </section>
 
 <section>
@@ -49,16 +72,6 @@
   </table>
   </figure>
   <p class="muted">Exact GAP indices may differ; family names are the invariant data.</p>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. The Sylow-7 part has order 49; Theorem 5's analogue
-    for <code>p = 7</code> (Lemma 19 / Theorem 5 with <code>p &gt; 5</code>)
-    bounds it. Together with Lemma 12 row <code>p = 7</code> this should
-    yield strong restrictions on the orbit structure.
-  </p>
 </section>
 
 <footer class="site">

@@ -26,10 +26,79 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 7 (even case). One of the
-    <code>2p, p ∈ {7, 11, 19}</code> candidates.
+    Theorem 7 lists <code>38 = 2 · 19</code> as a surviving even
+    candidate. Available partial constraints:
+  </p>
+  <ul>
+    <li>Lemma 2 (Higman / Cameron): an involution fixes a 56-vertex
+        star, so <code>a₀(τ) = 56</code> and <code>a₁(τ) = 112</code>.</li>
+    <li>Lemma 12 row <code>p = 19, a₀ = 1</code>:
+        <code>a₁(σ) ∈ {57, 342, ...}</code>.</li>
+    <li>Lemma 15 has no entry for <code>pq = 38</code>.</li>
+  </ul>
+  <p>
+    <strong>The paper does not exclude group order 38</strong>
+    (or either of its two groups <code>D₁₉</code> / <code>C₃₈</code>).
+    The complete exclusion is original to this project.
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p>
+    The two group types are handled separately:
+  </p>
+  <ul>
+    <li><strong>D₁₉ case</strong> (dihedral): Lean-aware writeup at
+        <a href="https://github.com/yawara/moore57/blob/main/proofs/moore57_d19_lean_aware_proof.md"><code>proofs/moore57_d19_lean_aware_proof.md</code></a>
+        (Japanese), with companion notes
+        <a href="https://github.com/yawara/moore57/blob/main/proofs/moore57_d19_contradiction.md"><code>proofs/moore57_d19_contradiction.md</code></a>.
+        Strategy: Higman trace + <code>E₇</code> idempotent +
+        <code>D₁₉</code> character decomposition + rotation character
+        constancy versus the compact adjacent-moved residual.</li>
+    <li><strong>C₃₈ case</strong> (cyclic): a generator <code>g</code>
+        of order 38 gives <code>ρ = g²</code> (order 19) and
+        <code>τ = g¹⁹</code> (involution) that commute. The Tier-2
+        lemma
+        <code>aut_involution_fixedVertexCount_candidates</code>
+        gives
+        <code>|Fix(τ)| ∈ {0, 2, 6, 10, 16, 26, 36, 46, 50, 56}</code>;
+        combined with
+        <code>order19_aut_fixedVertexCount_eq_one</code> for
+        <code>ρ</code> the parity / mod-19 obstruction closes the case.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <pre><code>theorem no_D19_acts_on_Moore57_unconditional
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    ¬ Nonempty (D19ActsOnMoore57 V Γ)
+
+theorem no_C38_acts_on_Moore57_unconditional
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    ¬ Nonempty (C38ActsOnMoore57 V Γ)
+
+theorem Moore57_no_order38_structure
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    (¬ Nonempty (D19ActsOnMoore57 V Γ))
+    ∧ (¬ Nonempty (C38ActsOnMoore57 V Γ))</code></pre>
+  <p>
+    Files:
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Phases/FinalAssembly.lean"><code>Moore57/Phases/FinalAssembly.lean</code></a>
+    (D₁₉ + assembly),
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/C38OnMoore57/NoGo.lean"><code>Moore57/C38OnMoore57/NoGo.lean</code></a>
+    (C₃₈).
+  </p>
+  <p>
+    By the classification of order-38 groups, the conjunction
+    <code>Moore57_no_order38_structure</code> excludes every group of
+    order 38 acting as a subgroup of <code>Aut(Γ)</code>.
   </p>
 </section>
 
@@ -66,37 +135,12 @@
 </section>
 
 <section>
-  <h2>Lean theorems</h2>
-  <pre><code>theorem no_D19_acts_on_Moore57_unconditional
-    {V} [Fintype V] [DecidableEq V]
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
-    ¬ Nonempty (D19ActsOnMoore57 V Γ)
-
-theorem no_C38_acts_on_Moore57_unconditional
-    {V} [Fintype V] [DecidableEq V]
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
-    ¬ Nonempty (C38ActsOnMoore57 V Γ)
-
-theorem Moore57_no_order38_structure
-    {V} [Fintype V] [DecidableEq V]
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
-    (¬ Nonempty (D19ActsOnMoore57 V Γ))
-    ∧ (¬ Nonempty (C38ActsOnMoore57 V Γ))</code></pre>
+  <h2>Lean proof structure (D₁₉ phases)</h2>
   <p>
-    File:
-    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Phases/FinalAssembly.lean"><code>Moore57/Phases/FinalAssembly.lean</code></a>.
-    The <code>C₃₈</code> branch lives in
-    <a href="https://github.com/yawara/moore57/blob/main/Moore57/C38OnMoore57/NoGo.lean"><code>Moore57/C38OnMoore57/NoGo.lean</code></a>.
+    The Lean formalisation of the D₁₉ branch is split into 7 phases
+    (<code>Moore57/Phases/Phase{1..7}.lean</code>) plus the
+    <code>Moore57/D19OnMoore57/</code> directory:
   </p>
-  <p>
-    By the classification of order-38 groups, the conjunction
-    <code>Moore57_no_order38_structure</code> excludes every group of
-    order 38 acting as a subgroup of <code>Aut(Γ)</code>.
-  </p>
-</section>
-
-<section>
-  <h2>Proof sketch (D₁₉ branch)</h2>
   <ol>
     <li>Phase 1: rotation <code>a₀ ≤ 19</code>, reflection
         <code>a₀ = 56</code> / <code>a₁ = 112</code> from raw action.</li>
@@ -105,26 +149,9 @@ theorem Moore57_no_order38_structure
     <li>Phase 3: reflection character <code>χ₇(t) = 33</code>.</li>
     <li>Phase 4: <code>D₁₉</code> characters <code>1, ε, ρ</code>; linear
         character formulas; <code>π_V = 114·1 + 58·ε + 171·ρ</code>.</li>
-    <li>Phase 5–7: rotation character constancy versus the compact
+    <li>Phases 5–7: rotation character constancy versus the compact
         adjacent-moved residual gives the contradiction.</li>
   </ol>
-  <p>
-    Locations: see <code>Moore57/Phases/Phase{1..7}.lean</code> and
-    <code>Moore57/D19OnMoore57/</code>.
-  </p>
-</section>
-
-<section>
-  <h2>Proof sketch (C₃₈ branch)</h2>
-  <p>
-    A generator <code>g</code> of order 38 gives <code>ρ = g²</code>
-    (order 19) and <code>τ = g¹⁹</code> (involution) that commute. The
-    abstract Tier-2 result
-    <code>aut_involution_fixedVertexCount_candidates</code> shows
-    <code>|Fix(τ)| ∈ {0, 2, 6, 10, 16, 26, 36, 46, 50, 56}</code>; combined
-    with <code>order19_aut_fixedVertexCount_eq_one</code> for
-    <code>ρ</code> we get a parity / mod-19 contradiction.
-  </p>
 </section>
 
 <footer class="site">

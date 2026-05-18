@@ -26,11 +26,36 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 7 (even case). One of the surviving
-    even-order maxima with <code>p = 5</code>.
+    Theorem 7 lists 50 as a surviving even-order maximum
+    (<code>p = 5</code>). Lemma 13 (<code>p² = 25</code>) gives detailed
+    constraints on order-25 elements; Lemma 2 fixes involution
+    parameters. Theorem 5 limits the Sylow-5 subgroup to two abelian
+    types.
   </p>
+  <p>
+    <strong>The paper does not exclude group order 50.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: a Sylow-5 subgroup of <code>G</code> of order 25 is one of
+    two abelian types (<code>ℤ₂₅</code> or <code>ℤ₅ × ℤ₅</code>), each
+    with a fixed-point set isomorphic to a sub-structure of the
+    Hoffman–Singleton graph; the involution then has
+    <code>a₀ = 56</code> and <code>a₁ = 112</code> (Lemma 2). Combining
+    these should close all five SmallGroup cases. See
+    <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
 </section>
 
 <section>
@@ -49,18 +74,6 @@
     </tbody>
   </table>
   </figure>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. By Macaj–Siran Theorem 5, a Sylow-5 subgroup of
-    <code>G</code> of order 25 is one of two abelian types
-    (<code>ℤ₂₅</code> or <code>ℤ₅ × ℤ₅</code>), each with a fixed point
-    set isomorphic to a sub-structure of the Hoffman–Singleton graph; the
-    involution then has <code>a₀ = 56</code> and <code>a₁ = 112</code>
-    (Lemma 2). Combining these would close all five cases.
-  </p>
 </section>
 
 <footer class="site">

@@ -40,12 +40,43 @@
     must be trivial.
   </p>
   <p>
-    The natural-language proofs already exist (Aschbacher 1971, Makhnev–
-    Paduchikh 2001, Macaj–Siran 2010). The challenge — and the
-    opportunity — is to turn them into machine-checked Lean 4 / Mathlib
-    theorems. Three orders (<strong>22, 38, 110</strong>) are already
-    unconditionally formalized; <strong>49 finite groups across 10
+    <strong>This project is doing original mathematics, not just
+    formalization.</strong> The Macaj–Siran 2010 paper provides the
+    candidate list and partial constraints, but the full exclusion of a
+    group order (as opposed to an element order) is in most cases
+    <em>not</em> in any published paper. Three orders
+    (<strong>22, 38, 110</strong>) have already been closed both
+    mathematically and formally; <strong>49 finite groups across 10
     candidate orders remain open</strong>.
+  </p>
+</section>
+
+<section>
+  <h2>Two layers, both contributions</h2>
+  <p>
+    Closing a new candidate involves two distinct kinds of work, and
+    each is independently a contribution (see the
+    <a href="about.html#methodology">methodology</a>):
+  </p>
+  <ol>
+    <li>
+      <strong>Layer 2 — Natural-language proof.</strong> A careful
+      mathematical writeup that closes the group-order case, built on
+      top of the Macaj–Siran framework. Existing examples:
+      <a href="https://github.com/yawara/moore57/blob/main/proofs/no_aut_order_22_moore57.md"><code>proofs/no_aut_order_22_moore57.md</code></a>,
+      <a href="https://github.com/yawara/moore57/blob/main/proofs/moore57_d19_lean_aware_proof.md"><code>proofs/moore57_d19_lean_aware_proof.md</code></a>.
+    </li>
+    <li>
+      <strong>Layer 3 — Lean formalization.</strong> A
+      machine-checked Lean 4 / Mathlib proof that elaborates against
+      the axiom allowlist in
+      <a href="https://github.com/yawara/moore57/blob/main/Moore57/AxiomsCheck.lean"><code>AxiomsCheck.lean</code></a>.
+    </li>
+  </ol>
+  <p>
+    You do not have to do both. A clean Layer-2 writeup unlocks Layer-3
+    work for someone else, and a Layer-3 attempt often shakes loose
+    Layer-2 ambiguities. Either is valuable.
   </p>
 </section>
 
@@ -53,22 +84,50 @@
   <h2>Ways to help</h2>
   <table>
     <thead>
-      <tr><th>Skill</th><th>What to do</th></tr>
+      <tr><th>Skill</th><th>Layer</th><th>What to do</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Lean 4 / Mathlib</strong></td>
+        <td><strong>Original natural-language proof</strong></td>
+        <td><span class="badge derived">Layer 2</span></td>
         <td>
-          Pick an open order (see below) and Lean-ify the corresponding
-          Macaj–Siran row. Most surviving cases follow the structure of
-          our existing <code>Order22OnMoore57/</code> and
-          <code>C38OnMoore57/</code> modules.
+          Pick an open order and write a complete proof in
+          <code>proofs/no_aut_order_N_moore57.md</code> style. The
+          paper's Lemma 12 / 13 / 14 / 15 tables provide partial
+          constraints; your contribution combines them into a full
+          group-order exclusion. This is the highest-leverage
+          mathematical contribution — most open candidates are
+          waiting for this.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Lean 4 / Mathlib</strong></td>
+        <td><span class="badge derived">Layer 3</span></td>
+        <td>
+          Take an existing natural-language proof (Layer 2) and
+          formalise it in Lean. Templates: the
+          <code>Moore57/Order22OnMoore57/</code> and
+          <code>Moore57/C38OnMoore57/</code> modules. Must pass
+          <a href="https://github.com/yawara/moore57/blob/main/Moore57/AxiomsCheck.lean"><code>AxiomsCheck.lean</code></a>.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Math review</strong></td>
+        <td><span class="badge derived">Layer 2 / 3</span></td>
+        <td>
+          Cross-check the Layer-2 writeups in
+          <a href="https://github.com/yawara/moore57/tree/main/proofs"><code>proofs/</code></a>
+          against the original Macaj–Siran arguments, and the Lean
+          formalisations in
+          <a href="https://github.com/yawara/moore57/tree/main/Moore57"><code>Moore57/</code></a>
+          against the Layer-2 writeups.
         </td>
       </tr>
       <tr>
         <td><strong>Finite-group theory</strong></td>
+        <td><span class="badge derived">Layer 2</span></td>
         <td>
-          Help refine the SmallGroup tables on the per-order pages
+          Refine the SmallGroup tables on the per-order pages
           (GAP IDs, conjugacy of semidirect products, action lattice
           on Sylow subgroups). Especially needed for orders
           <a href="orders/54.html">54</a>, <a href="orders/135.html">135</a>,
@@ -77,34 +136,18 @@
         </td>
       </tr>
       <tr>
-        <td><strong>Paper-side review</strong></td>
-        <td>
-          Walk through Macaj–Siran Lemma 12 / 13 / 15 and identify gaps,
-          alternative routes, or computational checks worth formalising.
-          Lemma 15 in particular has several "starred" cases that the
-          paper notes are impossible but does not fully derive.
-        </td>
-      </tr>
-      <tr>
         <td><strong>GAP / SageMath</strong></td>
+        <td><span class="badge derived">Layer 2</span></td>
         <td>
           Build supporting computations (orbit structures, character
           tables of candidate subgroups, equitable partitions) that
-          inform or replace ad-hoc case analysis in Lean.
-        </td>
-      </tr>
-      <tr>
-        <td><strong>Math review</strong></td>
-        <td>
-          Cross-check the Lean proofs in
-          <a href="https://github.com/yawara/moore57/tree/main/Moore57"><code>Moore57/</code></a>
-          against the natural-language sources. Spot-check Phase 1–7 of
-          the D₁₉ proof, or the Hoffman–Singleton classification in
-          <code>HoffmanSingleton.lean</code>.
+          inform or replace ad-hoc case analysis in the natural-language
+          and Lean proofs.
         </td>
       </tr>
       <tr>
         <td><strong>Writing / outreach</strong></td>
+        <td><span class="badge derived">Meta</span></td>
         <td>
           Blog notes (see
           <a href="https://github.com/yawara/moore57/tree/main/blogs"><code>blogs/</code></a>),

@@ -149,6 +149,16 @@
   color: var(--st-done-fg);
 }
 
+/* Layered intro list (3-layer model) ----------------------------------- */
+
+.layer-list {
+  padding-left: 1.3rem;
+  margin: 0.5rem 0 1rem;
+}
+.layer-list li {
+  margin: 0.35rem 0;
+}
+
 /* Call-for-participation callout -------------------------------------- */
 
 .join {

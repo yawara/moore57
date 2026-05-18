@@ -26,10 +26,41 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 7 (even case). One of the
-    <code>2p, p ∈ {7, 11, 19}</code> candidates.
+    Theorem 7 lists 14 as a surviving even candidate (one of
+    <code>2p, p ∈ {7, 11, 19}</code>). Available partial constraints:
+  </p>
+  <ul>
+    <li>Lemma 12 row <code>p = 7</code> gives several shapes
+        <code>(a₀, a₁, χ₁)</code>.</li>
+    <li>Lemma 2: an involution fixes a 56-vertex star.</li>
+    <li>Lemma 15 has no entry for <code>pq = 14</code>.</li>
+  </ul>
+  <p>
+    <strong>The paper does not exclude group order 14.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy outline (mirrors the <a href="22.html">Order 22</a> route):
+    <code>σ</code> of order 7, <code>τ</code> involution; use the
+    <code>F₇</code> permutation module + <code>T<sub>k</sub> = 7n</code>
+    Higman trace + <code>aut_involution_fixedVertexCount_candidates</code>.
+    The main bottleneck is the missing <code>F₇</code> good-reduction
+    analogue of <code>aF11_lambda_seven_eq_159</code>.
+    See <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p>
+    <span class="badge open">open</span> — depends on the natural-language
+    proof above.
   </p>
 </section>
 
@@ -46,24 +77,6 @@
     </tbody>
   </table>
   </figure>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. The paper does not give a direct Lemma-15-style
-    obstruction for order 14, in contrast with order 22 (the
-    <code>p = q = 11</code> star case of Lemma 15) or the
-    <code>pq = 65</code> star case.
-  </p>
-  <p>
-    A natural attack mirrors the <code>Order22</code> route:
-    <code>σ</code> of order 7, <code>τ</code> involution; use the
-    <code>F₇</code> permutation module + <code>Tk = 7n</code> Higman trace
-    + <code>aut_involution_fixedVertexCount_candidates</code>. The
-    bottleneck is the missing <code>F₇</code> good-reduction analogue of
-    <code>aF11_lambda_seven_eq_159</code>.
-  </p>
 </section>
 
 <footer class="site">

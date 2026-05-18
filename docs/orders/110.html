@@ -26,12 +26,63 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 7 (even case). The unique candidate of the
-    form <code>11 · 5 · 2</code>. It is also the largest possible value of
-    <code>|G|</code> in the even case
-    (<em>Corollary 3:</em> <code>|G| ≤ 110</code>).
+    Theorem 7 lists <code>110 = 2 · 5 · 11</code> as a surviving even
+    candidate; Corollary 3 records it as the maximum even
+    <code>|G|</code>. Lemma 15 row <code>pq = 22</code> with
+    <code>a₀ = 1, a₀(x_5) = 5, a₀(x_{11}) = 56</code> gives
+    <code>a₁ = 222</code> etc. and the remark
+  </p>
+  <blockquote>
+    <p>
+      "<em>from Lemma 15 it follows that there is no automorphism of
+      order 110.</em>"
+    </p>
+  </blockquote>
+  <p>
+    But this excludes an <strong>element</strong> of order 110 — not a
+    <strong>group</strong> of order 110 (which can well exist without
+    any element of order 110, e.g. <code>D₅₅</code>).
+    <strong>The paper does not exclude group order 110</strong>; the
+    full exclusion is original to this project, as a corollary of the
+    order-22 result via Sylow + Cauchy.
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p>
+    Short subgroup-reduction argument:
+  </p>
+  <ol>
+    <li>Sylow's third theorem: <code>n₁₁ ∣ 10</code> and
+        <code>n₁₁ ≡ 1 (mod 11)</code>, so <code>n₁₁ = 1</code>; the
+        unique Sylow-11 subgroup <code>P₁₁ ≅ ℤ₁₁</code> is normal.</li>
+    <li>Cauchy's theorem applied to <code>|G| = 110</code>: there exists
+        an involution <code>τ ∈ G</code>.</li>
+    <li><code>H := ⟨P₁₁, τ⟩</code> has order <code>22</code> and is a
+        subgroup of <code>G ≤ Aut(Γ)</code>.</li>
+    <li>The Order-22 result (see
+        <a href="22.html">order 22 page</a> + writeup
+        <a href="https://github.com/yawara/moore57/blob/main/proofs/no_aut_order_22_moore57.md"><code>proofs/no_aut_order_22_moore57.md</code></a>)
+        excludes such <code>H</code>. Contradiction.</li>
+  </ol>
+  <p>
+    The novel content is the order-22 step; everything else is classical
+    Sylow theory.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <pre><code>theorem no_Order110_group_acts_on_Moore57 :
+    ¬ Nonempty (OrderN_GroupActsOnMoore57 110 V Γ)</code></pre>
+  <p>
+    File:
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Order22OnMoore57/GroupAction.lean"><code>Moore57/Order22OnMoore57/GroupAction.lean</code></a>.
+    The proof body is the Sylow-reduction chain above, applying
+    <code>no_Order22_group_acts_on_Moore57</code> at the end.
   </p>
 </section>
 
@@ -54,39 +105,6 @@
     GAP's SmallGroup library lists six entries for order 110; the four
     above are the canonical metabelian shapes that survive the standard
     Sylow analysis (<code>n₁₁ = 1</code>, <code>n₅ ∈ {1, 11}</code>).
-  </p>
-</section>
-
-<section>
-  <h2>Lean theorem</h2>
-  <pre><code>theorem no_Order110_group_acts_on_Moore57 :
-    ¬ Nonempty (OrderN_GroupActsOnMoore57 110 V Γ)</code></pre>
-  <p>
-    File:
-    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Order22OnMoore57/GroupAction.lean"><code>Moore57/Order22OnMoore57/GroupAction.lean</code></a>.
-  </p>
-</section>
-
-<section>
-  <h2>Proof: reduction to order 22</h2>
-  <p>
-    For <code>|G| = 110 = 2 · 5 · 11</code>:
-  </p>
-  <ol>
-    <li>Sylow's third theorem: <code>n₁₁ ∣ 10</code> and
-        <code>n₁₁ ≡ 1 (mod 11)</code>, so <code>n₁₁ = 1</code>; the unique
-        Sylow-11 subgroup <code>P₁₁ ≅ ℤ₁₁</code> is normal.</li>
-    <li>Cauchy's theorem applied to <code>|G| = 110</code>: there exists an
-        involution <code>τ ∈ G</code>.</li>
-    <li><code>H := ⟨P₁₁, τ⟩</code> has order <code>22</code> and is a
-        subgroup of <code>G ≤ Aut(Γ)</code>.</li>
-    <li>By <code>no_Order22_group_acts_on_Moore57</code>, no such
-        <code>H</code> exists. Contradiction.</li>
-  </ol>
-  <p>
-    The Macaj–Siran paper itself already excluded order 110 by Lemma 15
-    (no automorphism of order 110); the Lean proof uses the cleaner
-    "subgroup reduction" route via the unconditional order-22 theorem.
   </p>
 </section>
 

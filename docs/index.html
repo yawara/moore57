@@ -16,8 +16,9 @@
     <h1>Moore (57, 2) — automorphism group tracker</h1>
     <p class="sub">
       Candidate orders of <code>Aut(Γ)</code> for the hypothetical Moore
-      graph <code>Γ = SRG(3250, 57, 0, 1)</code>, with the status of Lean
-      impossibility proofs.
+      graph <code>Γ = SRG(3250, 57, 0, 1)</code> — extending the
+      Macaj–Siran (2010) bounds with new natural-language proofs and
+      Lean formalizations.
     </p>
   </hgroup>
   <nav>
@@ -32,12 +33,38 @@
 
 <section>
   <p>
-    Whether a Moore graph <code>Γ</code> of degree 57 and diameter 2 exists
-    is a long-standing open question. If it does, its automorphism group
-    <code>G = Aut(Γ)</code> has a finite order, which by results of
-    Aschbacher, Higman, Makhnev–Paduchikh, and Macaj–Siran satisfies very
-    strong restrictions. This page tracks which of the surviving candidate
-    orders have been ruled out (in Lean 4 / Mathlib) and which remain open.
+    Whether a Moore graph <code>Γ</code> of degree 57 and diameter 2
+    exists is a long-standing open question. If it does, its automorphism
+    group <code>G = Aut(Γ)</code> has a finite order, which by results of
+    Aschbacher, Higman, Makhnev–Paduchikh, and Macaj–Siran (2010) divides
+    one of 13 specific maxima.
+  </p>
+  <p>
+    Three of these candidates (<strong>22, 38, 110</strong>) have now been
+    completely ruled out — and <strong>that exclusion is original to this
+    project</strong>. The published Macaj–Siran 2010 paper lists 22 and 38
+    only as surviving candidates with partial constraints (Lemma 12, 13,
+    15), and only rules out <em>elements</em> of order 110 (not the group
+    itself). This site tracks two distinct layers of work:
+  </p>
+  <ol class="layer-list">
+    <li>
+      <strong>Natural-language proofs</strong> that close each
+      group-order case mathematically
+      (<a href="https://github.com/yawara/moore57/blob/main/proofs/no_aut_order_22_moore57.md"><code>proofs/no_aut_order_22_moore57.md</code></a>,
+      <a href="https://github.com/yawara/moore57/blob/main/proofs/moore57_d19_lean_aware_proof.md"><code>proofs/moore57_d19_lean_aware_proof.md</code></a>),
+      extending the Macaj–Siran framework.
+    </li>
+    <li>
+      <strong>Lean 4 / Mathlib formalization</strong> of those proofs,
+      verified against an explicit axiom allowlist
+      (<a href="https://github.com/yawara/moore57/blob/main/Moore57/AxiomsCheck.lean"><code>AxiomsCheck.lean</code></a>).
+    </li>
+  </ol>
+  <p>
+    Closing further candidates needs <em>both</em> layers: a human proof
+    and its mechanical certificate. See
+    <a href="contribute.html">Contribute</a> for entry points.
   </p>
 
   <div class="summary">

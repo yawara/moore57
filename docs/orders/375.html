@@ -26,11 +26,37 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 6 (odd case). The largest possible
-    <code>|G|</code> overall (Corollary 3: <code>|G| ≤ 375</code>).
+    Theorem 6 lists 375 as a surviving odd-order maximum — the largest
+    overall (Corollary 3: <code>|G| ≤ 375</code>). Theorem 5 restricts
+    the Sylow-5 of order 125 to two abelian types
+    (<code>ℤ₁₂₅</code> or <code>ℤ₂₅ × ℤ₅</code>) once
+    <code>SmallGroup(625, 12)</code> is ruled out (Proposition 4). The
+    paper notes that even after Lemma 5's equitable-partition check,
+    <em>hundreds</em> of candidate adjacency matrices for groups of
+    order 375 with 10 orbits survive.
   </p>
+  <p>
+    <strong>The paper does not exclude group order 375.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: mirror the GAP-aided Proposition 4 / 5 arguments. Likely
+    requires substantial computational support (matrix elimination /
+    SAT-style). The four SmallGroup cases at <code>n = 375</code> are
+    different from the harder <code>625</code> analysis but inherit some
+    obstructions. See <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
 </section>
 
 <section>
@@ -58,18 +84,6 @@
   <p class="muted">
     SmallGroup IDs <code>SmallGroup(375, k)</code> enumerate the precise
     extensions; we list them by family here.
-  </p>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. This is the most computationally involved
-    candidate: the paper notes that even after Lemma 5's
-    equitable-partition check, <em>hundreds</em> of candidate adjacency
-    matrices for groups of order 375 with 10 orbits survive. The Lean
-    route would mirror the GAP-aided Proposition 4 / 5 arguments and is
-    correspondingly large.
   </p>
 </section>
 

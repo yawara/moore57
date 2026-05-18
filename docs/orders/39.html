@@ -26,11 +26,33 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 6 (odd case). The only candidate involving
-    the prime 13.
+    Theorem 6 lists 39 as a surviving odd-order maximum — the only
+    candidate involving the prime 13. Lemma 12 row <code>p = 13</code>
+    gives <code>a₀(x) = 0</code> and
+    <code>a₁(x) ∈ {65, 260, 455}</code>. Lemma 15 has no entry for
+    <code>pq = 39</code>.
   </p>
+  <p>
+    <strong>The paper does not exclude group order 39.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: combine the order-13 row of Lemma 12 with order-3
+    constraints; both groups (<code>ℤ₃₉</code> and
+    <code>ℤ₁₃ ⋊ ℤ₃</code>) need separate analyses. See
+    <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
 </section>
 
 <section>
@@ -59,17 +81,6 @@
     </tbody>
   </table>
   </figure>
-</section>
-
-<section>
-  <h2>Status &amp; outlook</h2>
-  <p>
-    Not yet formalized. Lemma 12 of Macaj–Siran already restricts the
-    possibilities for an element of order 13: <code>a₀(x) = 0</code> and
-    <code>a₁(x) ∈ {65, 260, 455}</code>. Pairing this with the order-3
-    constraints would yield the Lemma-15 row for <code>pq = 39</code>,
-    which is currently not tabulated in the printed paper.
-  </p>
 </section>
 
 <footer class="site">

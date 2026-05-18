@@ -26,11 +26,68 @@
 </header>
 
 <section>
-  <h2>Source</h2>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Macaj–Siran 2010, Theorem 7 (even case). A subgroup of order
-    <code>2p</code> with <code>p ∈ {7, 11, 19}</code> is among the
-    surviving even candidates.
+    Theorem 7 lists <code>2p</code> with <code>p ∈ {7, 11, 19}</code> as
+    a surviving even candidate. The paper provides:
+  </p>
+  <ul>
+    <li>Lemma 12 row <code>p = 11, a₀ = 5</code>:
+        <code>a₁(σ) ∈ {55, 220, 385}</code>.</li>
+    <li>Lemma 15 row <code>pq = 22, a₀ = 1, a₀(x_p) = 5, a₀(x_q) = 56</code>:
+        a partial entry with <code>a₁(x) = 222</code> etc. — but
+        <strong>not a contradiction</strong>.</li>
+  </ul>
+  <p>
+    <strong>The paper does not exclude group order 22.</strong>
+    The full exclusion is original to this project.
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p>
+    Writeup:
+    <a href="https://github.com/yawara/moore57/blob/main/proofs/no_aut_order_22_moore57.md"><code>proofs/no_aut_order_22_moore57.md</code></a>.
+  </p>
+  <p>
+    From a generator <code>σ</code> of order 11 and an involution
+    <code>τ</code> with <code>τστ = σ<sup>−1</sup></code>:
+  </p>
+  <ol>
+    <li>Hoffman–Singleton local bound + <code>k = 5</code> regular case forces
+        <code>Fix(σ) ≅ C₅</code>;</li>
+    <li>Higman trace identity <code>T<sub>k</sub> = 11 n</code> (k = 1..10);</li>
+    <li><code>F₁₁</code> permutation module / orbit kernel:
+        <code>10 n ≡ 6 (mod 11)</code>;</li>
+    <li>Phase 3 four-cycle bound: <code>n ∈ {5, 20, 35, 50}</code>;</li>
+    <li>Combined: <code>n = 5</code>;</li>
+    <li>Even-trace parity (dihedral case) contradicts <code>n = 5</code>.</li>
+  </ol>
+  <p>
+    The Hoffman–Singleton SRG classification
+    (<code>k ∈ {1, 3, 7, 57}</code>) used in step 1 is also new in this
+    project (formalised from Hoffman–Singleton 1960 + Bannai–Ito 1973).
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <pre><code>theorem no_Order22_group_acts_on_Moore57 :
+    ¬ Nonempty (OrderN_GroupActsOnMoore57 22 V Γ)</code></pre>
+  <p>
+    File:
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Order22OnMoore57/GroupAction.lean"><code>Moore57/Order22OnMoore57/GroupAction.lean</code></a>.
+    The raw-action form
+    <code>Moore57.no_Order22_acts_on_Moore57</code> lives in
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Order22OnMoore57/NoGo.lean"><code>Moore57/Order22OnMoore57/NoGo.lean</code></a>.
+  </p>
+  <p>
+    Axiom dependencies (checked by
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/AxiomsCheck.lean"><code>AxiomsCheck.lean</code></a>):
+    <code>propext</code>, <code>Classical.choice</code>,
+    <code>Quot.sound</code>, plus one <code>native_decide</code> axiom (a
+    <code>Fin 5</code> dihedral enumeration).
   </p>
 </section>
 
@@ -64,51 +121,6 @@
     <code>τστ = σ<sup>±1</sup></code> is determined by the conjugation
     action. Both possibilities are handled inside
     <code>Order22ActsOnMoore57</code>.
-  </p>
-</section>
-
-<section>
-  <h2>Lean theorem</h2>
-  <pre><code>theorem no_Order22_group_acts_on_Moore57 :
-    ¬ Nonempty (OrderN_GroupActsOnMoore57 22 V Γ)</code></pre>
-  <p>
-    File:
-    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Order22OnMoore57/GroupAction.lean"><code>Moore57/Order22OnMoore57/GroupAction.lean</code></a>.
-    The raw-action form
-    <code>Moore57.no_Order22_acts_on_Moore57</code> lives in
-    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Order22OnMoore57/NoGo.lean"><code>Moore57/Order22OnMoore57/NoGo.lean</code></a>.
-  </p>
-  <p>
-    Axiom dependencies (checked by
-    <a href="https://github.com/yawara/moore57/blob/main/Moore57/AxiomsCheck.lean"><code>AxiomsCheck.lean</code></a>):
-    <code>propext</code>, <code>Classical.choice</code>,
-    <code>Quot.sound</code>, plus one <code>native_decide</code> axiom (a
-    <code>Fin 5</code> dihedral enumeration).
-  </p>
-</section>
-
-<section>
-  <h2>Proof sketch</h2>
-  <p>
-    From a generator <code>σ</code> of order 11 and an involution
-    <code>τ</code> with <code>τστ = σ<sup>−1</sup></code>, the
-    Macaj–Siran path goes:
-  </p>
-  <ol>
-    <li>Hoffman–Singleton local bound + <code>k = 5</code> regular case forces
-        <code>Fix(σ) ≅ C₅</code>;</li>
-    <li>Higman trace identity <code>T<sub>k</sub> = 11 n</code> (k = 1..10);</li>
-    <li><code>F₁₁</code> permutation module / orbit kernel:
-        <code>10 n ≡ 6 (mod 11)</code>;</li>
-    <li>Phase 3 four-cycle bound: <code>n ∈ {5, 20, 35, 50}</code>;</li>
-    <li>Combined: <code>n = 5</code>;</li>
-    <li>Even-trace parity (dihedral case) contradicts <code>n = 5</code>.</li>
-  </ol>
-  <p>
-    The Hoffman–Singleton SRG classification
-    (<code>k ∈ {1, 3, 7, 57}</code>) is also fully Lean-formalized as
-    <code>srg_k_sq_plus_one_degree_classification</code> with only
-    <code>propext / Classical.choice / Quot.sound</code> as axioms.
   </p>
 </section>
 
