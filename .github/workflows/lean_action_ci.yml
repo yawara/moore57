@@ -2,6 +2,7 @@ name: Lean Action CI
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -20,7 +21,75 @@ jobs:
             exit 1
           fi
 
+      - name: Text-style checks (tab / CRLF / trailing whitespace / final newline)
+        run: |
+          fail=0
+
+          # Run tab / CRLF / trailing-whitespace checks in a single awk pass.
+          find Moore57 -name '*.lean' -print0 \
+            | xargs -0 awk '
+                /\t/   { print FILENAME ":" FNR ": tab character"; bad=1 }
+                /\r$/  { print FILENAME ":" FNR ": CRLF line ending"; bad=1 }
+                / +$/  { print FILENAME ":" FNR ": trailing whitespace"; bad=1 }
+                END    { exit bad ? 1 : 0 }
+              ' || fail=1
+
+          # Final newline missing
+          missing=0
+          while IFS= read -r -d '' f; do
+            if [ -n "$(tail -c1 "$f")" ]; then
+              echo "$f: missing final newline"
+              missing=1
+            fi
+          done < <(find Moore57 -name '*.lean' -print0)
+          if [ "$missing" = 1 ]; then
+            fail=1
+          fi
+
+          if [ "$fail" = 1 ]; then
+            echo "::error::Text-style violations found in Lean sources"
+          fi
+          exit $fail
+
       - uses: leanprover/lean-action@v1
+
+      - name: Fail on deprecated-name warnings
+        run: |
+          # `pipefail` propagates `lake build`'s exit code through the
+          # tee pipeline; otherwise a transient build failure would be
+          # masked by `tee`'s success and produce false-green CI.
+          set -o pipefail
+          # Re-run lake build to capture warnings (cached, so fast).
+          lake build 2>&1 | tee build.log
+          if grep -E "has been deprecated" build.log; then
+            echo "::error::Deprecated names used; replace per Lean/Mathlib instructions"
+            exit 1
+          fi
+
+      - name: Fail on unused-hypothesis warnings (section-var / decidable / fintype)
+        run: |
+          # Reuse build.log from the previous step.
+          if grep -E 'linter\.(unusedSectionVars|unusedDecidableInType|unusedFintypeInType)' build.log; then
+            echo "::error::Unused-hypothesis warnings detected; fix with 'omit [TypeClass] in' or 'set_option linter.<name> false in' before the declaration"
+            exit 1
+          fi
+
+      - name: Fail on flexible-simp warnings
+        run: |
+          # Reuse build.log. New `simp [...]` calls should either use
+          # `simp only [...]` with the simp? suggestion, or be marked
+          # intentional with `set_option linter.flexible false in <decl>`.
+          if grep -E 'linter\.flexible' build.log; then
+            echo "::error::Flexible simp call detected; use simp only [...] (from simp? suggestion) or set_option linter.flexible false in <decl>"
+            exit 1
+          fi
+
+      - name: Text-based lint (mathlib TextBased linters)
+        run: lake exe lintText
+
+      - name: Shake (unused imports, advisory)
+        continue-on-error: true
+        run: lake exe shake --cfg bin/noshake.json Moore57
 
       # The main-theorem axioms check runs as part of `lake build`
       # via `Moore57/AxiomsCheck.lean` — if axioms regress, the build above fails.

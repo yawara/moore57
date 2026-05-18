@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 50 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 50 = 2 · 5²</h1>
+    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    Theorem 7 lists 50 as a surviving even-order maximum
+    (<code>p = 5</code>). Lemma 13 (<code>p² = 25</code>) gives detailed
+    constraints on order-25 elements; Lemma 2 fixes involution
+    parameters. Theorem 5 limits the Sylow-5 subgroup to two abelian
+    types.
+  </p>
+  <p>
+    <strong>The paper does not exclude group order 50.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: a Sylow-5 subgroup of <code>G</code> of order 25 is one of
+    two abelian types (<code>ℤ₂₅</code> or <code>ℤ₅ × ℤ₅</code>), each
+    with a fixed-point set isomorphic to a sub-structure of the
+    Hoffman–Singleton graph; the involution then has
+    <code>a₀ = 56</code> and <code>a₁ = 112</code> (Lemma 2). Combining
+    these should close all five SmallGroup cases. See
+    <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
+</section>
+
+<section>
+  <h2>Group classification (SmallGroup(50, k))</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(50, 1)</code></td><td><code>D₂₅</code></td>             <td>Dihedral of order 50.</td>                              <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 2)</code></td><td><code>ℤ₅₀</code></td>             <td>Cyclic.</td>                                            <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 3)</code></td><td><code>(ℤ₅ × ℤ₅) ⋊ ℤ₂</code></td> <td>Non-trivial involution on <code>ℤ₅²</code>.</td>        <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 4)</code></td><td><code>ℤ₅ × D₅</code></td>        <td>Direct product.</td>                                    <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 5)</code></td><td><code>ℤ₅ × ℤ₁₀</code></td>       <td>Abelian, non-cyclic.</td>                                <td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

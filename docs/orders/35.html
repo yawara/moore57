@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 35 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 35 = 5 · 7</h1>
+    <p class="sub status"><span class="badge open">0 / 1 group excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    Theorem 6 lists 35 as a surviving odd-order maximum. Lemma 15 row
+    <code>pq = 35, a₀(x) = 1, a₀(x_5) = 51</code> is one of two starred
+    (impossible) rows — so the strongest <em>orbit-shape</em> for an
+    order-35 element is already excluded by the paper, but the
+    <strong>group-order exclusion is still open</strong>.
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: combine Lemma 12 / 14 / 15 (the latter with its single
+    surviving row for <code>pq = 35</code>) into a complete statement.
+    See <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>(35, 1)</code></td>
+        <td><code>ℤ₃₅</code></td>
+        <td>
+          Unique up to isomorphism: <code>5 ∤ 7 − 1 = 6</code>, so by the
+          <code>p &lt; q</code> Sylow analysis only the cyclic group
+          exists.
+        </td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </figure>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

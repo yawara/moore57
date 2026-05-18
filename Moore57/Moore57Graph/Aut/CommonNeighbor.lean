@@ -19,6 +19,7 @@ namespace Moore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+omit [DecidableEq V] in
 /-- If two non-adjacent vertices are fixed by an automorphism `σ` of a Moore57
 graph, then their unique common neighbour is also fixed by `σ`. -/
 theorem aut_fixed_commonNeighbor_of_not_adj
@@ -50,6 +51,7 @@ theorem aut_fixed_commonNeighbor_of_not_adj
     (congrArg Subtype.val (hw_unique ⟨σ z, hgz_mem⟩)).symm
   exact hw_gz.symm.trans hw_z
 
+omit [DecidableEq V] in
 /-- If an automorphism `σ` of a Moore57 graph swaps two non-adjacent vertices,
 then their unique common neighbour is fixed by `σ`. -/
 theorem aut_fixed_commonNeighbor_of_swap_not_adj
@@ -81,6 +83,7 @@ theorem aut_fixed_commonNeighbor_of_swap_not_adj
     (congrArg Subtype.val (hw_unique ⟨σ z, hgz_mem⟩)).symm
   exact hw_gz.symm.trans hw_z
 
+omit [DecidableEq V] in
 /-- Existence form: the unique common neighbour of two non-adjacent vertices
 fixed by `σ` is itself fixed by `σ`. -/
 theorem aut_exists_fixed_commonNeighbor_of_not_adj
@@ -100,6 +103,7 @@ theorem aut_exists_fixed_commonNeighbor_of_not_adj
   exact ⟨z, aut_fixed_commonNeighbor_of_not_adj hΓ σ smul_adj hx hy hxy hnadj hz_adj,
     hz_adj⟩
 
+omit [DecidableEq V] in
 /-- Existence form: if `σ` swaps two non-adjacent vertices, their unique common
 neighbour is fixed by `σ`. -/
 theorem aut_exists_fixed_commonNeighbor_of_swap_not_adj

@@ -46,6 +46,8 @@ lemma toMatrix_permutationRepresentation (g : G) :
     simp [LinearMap.toMatrix_apply, permutationRepresentation, finsuppBasis,
       Equiv.Perm.permMatrix, hinv, hx]
 
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- The trace of the linear map induced by `g` is the number of fixed points of `g`. -/
 lemma trace_permutationRepresentation (g : G) :
     LinearMap.trace ℚ (X →₀ ℚ) (permutationRepresentation (G := G) (X := X) g) =
@@ -63,12 +65,16 @@ lemma trace_permutationRepresentation (g : G) :
     toMatrix_permutationRepresentation (G := G) (X := X) g,
     Matrix.trace_permutation, hfixed]
 
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- Character form of `trace_permutationRepresentation`. -/
 lemma character_permutationRepresentation (g : G) :
     (permutationRepresentation (G := G) (X := X)).character g =
       (Function.fixedPoints (MulAction.toPermHom G X g)).ncard :=
   trace_permutationRepresentation (G := G) (X := X) g
 
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- Fixed points can also be read directly from the action formula. -/
 lemma character_permutationRepresentation_eq_ncard_setOf (g : G) :
     (permutationRepresentation (G := G) (X := X)).character g =

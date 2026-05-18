@@ -1,5 +1,8 @@
 import Moore57.Foundations.ZMod19.Lemmas
 
+-- `native_decide` is intentional here (see `Moore57/AxiomsCheck.lean`).
+set_option linter.style.nativeDecide false
+
 /-!
 # Small avoidance witnesses in `ZMod 19`
 

@@ -27,6 +27,7 @@ abbrev autFixedInducedGraph (Γ : SimpleGraph V) (σ : Equiv.Perm V) :
     SimpleGraph (fixedVertexSet σ) :=
   Γ.induce (fixedVertexSet σ)
 
+omit [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj] in
 @[simp] theorem autFixedInducedGraph_adj
     (σ : Equiv.Perm V) {x y : fixedVertexSet σ} :
     (autFixedInducedGraph Γ σ).Adj x y ↔ Γ.Adj (x : V) (y : V) := by

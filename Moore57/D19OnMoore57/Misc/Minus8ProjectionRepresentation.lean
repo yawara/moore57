@@ -1,4 +1,5 @@
 import Moore57.D19OnMoore57.E7Projection.ProjectionCharacterBridge
+import Moore57.Moore57Graph.E7Matrix.SpectralDecomposition
 
 /-!
 # The complementary `(-8)` projection representation
@@ -17,62 +18,16 @@ section HigmanTrace
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- The rank-one projection onto the constant vectors. -/
-noncomputable def E57Matrix (V : Type*) [Fintype V] : Matrix V V ℚ :=
-  (1 / 3250 : ℚ) • allOnesMatrix V
-
 /-- The complementary `(-8)` projection matrix `I - E57 - E7`. -/
 noncomputable def minus8Matrix
     (Γ : SimpleGraph V) [DecidableRel Γ.Adj] : Matrix V V ℚ :=
   1 - E57Matrix V - E7Matrix Γ
 
 omit [DecidableEq V] in
-theorem E57Matrix_mul_E57Matrix_eq_E57Matrix
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] (hΓ : IsMoore57 Γ) :
-    E57Matrix V * E57Matrix V = E57Matrix V := by
-  rw [E57Matrix, Matrix.smul_mul, Matrix.mul_smul,
-    allOnesMatrix_mul_allOnesMatrix_of_moore hΓ]
-  ext v w
-  simp [allOnesMatrix]
-
-omit [DecidableEq V] in
 theorem E57Matrix_isIdempotentElem
     {Γ : SimpleGraph V} [DecidableRel Γ.Adj] (hΓ : IsMoore57 Γ) :
     IsIdempotentElem (E57Matrix V) := by
   exact E57Matrix_mul_E57Matrix_eq_E57Matrix hΓ
-
-/-- The rank-one all-ones projection commutes with every permutation matrix. -/
-theorem E57Matrix_mul_permMatrix_eq_permMatrix_mul_E57Matrix
-    (σ : Equiv.Perm V) :
-    E57Matrix V * permMatrix σ = permMatrix σ * E57Matrix V := by
-  rw [E57Matrix, Matrix.smul_mul, Matrix.mul_smul,
-    allOnesMatrix_mul_permMatrix_eq_permMatrix_mul_allOnesMatrix σ]
-
-/-- The `E57` and `E7` projections are orthogonal in this order. -/
-theorem E57Matrix_mul_E7Matrix_eq_zero
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] (hΓ : IsMoore57 Γ) :
-    E57Matrix V * E7Matrix Γ = 0 := by
-  classical
-  rw [E57Matrix, E7Matrix]
-  simp only [Matrix.smul_mul, Matrix.mul_sub, Matrix.mul_add, Matrix.mul_smul,
-    Matrix.mul_one]
-  rw [allOnesMatrix_mul_adjMatrix hΓ, allOnesMatrix_mul_allOnesMatrix_of_moore hΓ]
-  ext v w
-  simp [allOnesMatrix]
-  ring
-
-/-- The `E57` and `E7` projections are orthogonal in the opposite order. -/
-theorem E7Matrix_mul_E57Matrix_eq_zero
-    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] (hΓ : IsMoore57 Γ) :
-    E7Matrix Γ * E57Matrix V = 0 := by
-  classical
-  rw [E57Matrix, E7Matrix]
-  simp only [Matrix.mul_smul, Matrix.sub_mul, Matrix.add_mul, Matrix.smul_mul,
-    Matrix.one_mul]
-  rw [adjMatrix_mul_allOnesMatrix hΓ, allOnesMatrix_mul_allOnesMatrix_of_moore hΓ]
-  ext v w
-  simp [allOnesMatrix]
-  ring
 
 /-- The complementary `(-8)` matrix is idempotent. -/
 theorem minus8Matrix_mul_minus8Matrix_eq_minus8Matrix

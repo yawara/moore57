@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moore (57, 2) graph — automorphism group tracker</title>
+<meta name="description" content="Hypothetical Moore graph of degree 57 and diameter 2: candidate orders of Aut(Γ) and the status of Lean formalizations of impossibility.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Moore (57, 2) — automorphism group tracker</h1>
+    <p class="sub">
+      Candidate orders of <code>Aut(Γ)</code> for the hypothetical Moore
+      graph <code>Γ = SRG(3250, 57, 0, 1)</code> — extending the
+      Macaj–Siran (2010) bounds with new natural-language proofs and
+      Lean formalizations.
+    </p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="index.html">Top</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <p>
+    Whether a Moore graph <code>Γ</code> of degree 57 and diameter 2
+    exists is a long-standing open question. If it does, its automorphism
+    group <code>G = Aut(Γ)</code> has a finite order, which by results of
+    Aschbacher, Higman, Makhnev–Paduchikh, and Macaj–Siran (2010) divides
+    one of 13 specific maxima.
+  </p>
+  <p>
+    Three of these candidates (<strong>22, 38, 110</strong>) have now been
+    completely ruled out — and <strong>that exclusion is original to this
+    project</strong>. The published Macaj–Siran 2010 paper lists 22 and 38
+    only as surviving candidates with partial constraints (Lemma 12, 13,
+    15), and only rules out <em>elements</em> of order 110 (not the group
+    itself). This site tracks two distinct layers of work:
+  </p>
+  <ol class="layer-list">
+    <li>
+      <strong>Natural-language proofs</strong> that close each
+      group-order case mathematically
+      (<a href="https://github.com/yawara/moore57/blob/main/proofs/no_aut_order_22_moore57.md"><code>proofs/no_aut_order_22_moore57.md</code></a>,
+      <a href="https://github.com/yawara/moore57/blob/main/proofs/moore57_d19_lean_aware_proof.md"><code>proofs/moore57_d19_lean_aware_proof.md</code></a>),
+      extending the Macaj–Siran framework.
+    </li>
+    <li>
+      <strong>Lean 4 / Mathlib formalization</strong> of those proofs,
+      verified against an explicit axiom allowlist
+      (<a href="https://github.com/yawara/moore57/blob/main/Moore57/AxiomsCheck.lean"><code>AxiomsCheck.lean</code></a>).
+    </li>
+  </ol>
+  <p>
+    Closing further candidates needs <em>both</em> layers: a human proof
+    and its mechanical certificate. See
+    <a href="contribute.html">Contribute</a> for entry points.
+  </p>
+
+  <div class="summary">
+    <div class="stat">
+      <span class="num">3 / 13</span>
+      <span class="lbl">orders excluded</span>
+      <span class="delta progress-done">≈ 23%</span>
+    </div>
+    <div class="stat">
+      <span class="num">10 / 59</span>
+      <span class="lbl">finite groups excluded</span>
+      <span class="delta progress-done">≈ 17%</span>
+    </div>
+    <div class="stat">
+      <span class="num">≤ 375</span>
+      <span class="lbl">max <span class="muted">(odd)</span></span>
+      <span class="delta muted">unchanged from paper</span>
+    </div>
+    <div class="stat">
+      <span class="num">≤ 54</span>
+      <span class="lbl">max <span class="muted">(even)</span></span>
+      <span class="delta"><s class="muted">was ≤ 110</s> <span class="badge done">−56</span></span>
+    </div>
+  </div>
+  <p class="muted" style="font-size:0.85rem;margin-top:-0.5rem">
+    Denominators: <strong>13</strong> = max candidate orders from
+    Macaj–Siran Theorem 6 + 7. <strong>59</strong> = total finite groups
+    across those 13 orders (OEIS <a href="https://oeis.org/A000001">A000001</a>).
+  </p>
+</section>
+
+<aside class="join" aria-label="Call for participation">
+  <div class="join-text">
+    <h3>Want to help close one of these?</h3>
+    <p>
+      This is an open formalization project. <strong>49 finite groups</strong>
+      across 10 candidate orders are still open. Each one is a concrete
+      target with a published proof outline in Macaj–Siran (2010), Lemma 12–15.
+      Lean 4 / Mathlib contributors, finite-group specialists, paper-side
+      reviewers, and GAP-aided computations are all welcome.
+    </p>
+  </div>
+  <div class="join-actions">
+    <a href="contribute.html" class="cta-primary" role="button">How to contribute →</a>
+    <a href="https://github.com/yawara/moore57/issues">GitHub issues</a>
+  </div>
+</aside>
+
+<section>
+  <h2>At a glance</h2>
+  <p class="muted">
+    Each tile is a maximum candidate order from Macaj–Siran (2010);
+    every actual <code>|G|</code> divides one of these. Click for the group
+    classification.
+  </p>
+  <div class="orders-grid">
+    <a class="order-card" href="orders/14.html"><span class="order">14</span><span class="factor">2 · 7</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/22.html"><span class="order">22</span><span class="factor">2 · 11</span><span class="badge done">excluded</span></a>
+    <a class="order-card" href="orders/35.html"><span class="order">35</span><span class="factor">5 · 7</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/38.html"><span class="order">38</span><span class="factor">2 · 19</span><span class="badge done">excluded</span></a>
+    <a class="order-card" href="orders/39.html"><span class="order">39</span><span class="factor">3 · 13</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/50.html"><span class="order">50</span><span class="factor">2 · 5²</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/54.html"><span class="order">54</span><span class="factor">2 · 3³</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/110.html"><span class="order">110</span><span class="factor">2 · 5 · 11</span><span class="badge done">excluded</span></a>
+    <a class="order-card" href="orders/135.html"><span class="order">135</span><span class="factor">3³ · 5</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/147.html"><span class="order">147</span><span class="factor">3 · 7²</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/171.html"><span class="order">171</span><span class="factor">3² · 19</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/275.html"><span class="order">275</span><span class="factor">5² · 11</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/375.html"><span class="order">375</span><span class="factor">3 · 5³</span><span class="badge open">open</span></a>
+  </div>
+</section>
+
+<section>
+  <h2>Theorem 6 (odd case)</h2>
+  <p>
+    <em>Macaj–Siran, 2010, Theorem 6.</em>
+    Let <code>Γ</code> be a Moore graph of degree 57 on 3250 vertices and
+    <code>G = Aut(Γ)</code>. If <code>|G|</code> is odd then <code>|G|</code>
+    divides one of the following.
+  </p>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>Max <code>|G|</code></th><th>Factorization</th><th>Groups of this order</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><a href="orders/35.html">35</a></td>  <td><code>5 · 7</code></td>   <td>1 group: <code>ℤ₃₅</code></td>                                            <td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/39.html">39</a></td>  <td><code>3 · 13</code></td>  <td>2 groups: <code>ℤ₃₉</code>, <code>ℤ₁₃⋊ℤ₃</code></td>                       <td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/135.html">135</a></td><td><code>3³ · 5</code></td>  <td>5 groups <span class="muted">(SmallGroup(135, k))</span></td>             <td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/147.html">147</a></td><td><code>3 · 7²</code></td>  <td>6 groups <span class="muted">(SmallGroup(147, k))</span></td>             <td><span class="badge open">0 / 6 open</span></td></tr>
+      <tr><td><a href="orders/171.html">171</a></td><td><code>3² · 19</code></td> <td>5 groups <span class="muted">(SmallGroup(171, k))</span></td>             <td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/275.html">275</a></td><td><code>5² · 11</code></td> <td>4 groups <span class="muted">(SmallGroup(275, k))</span></td>             <td><span class="badge open">0 / 4 open</span></td></tr>
+      <tr><td><a href="orders/375.html">375</a></td><td><code>3 · 5³</code></td>  <td>4 groups <span class="muted">(SmallGroup(375, k))</span></td>             <td><span class="badge open">0 / 4 open</span></td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <th>—</th>
+        <th><strong>27 groups</strong></th>
+        <th><span class="badge open">0 / 27 excluded</span></th>
+      </tr>
+    </tfoot>
+  </table>
+  </figure>
+</section>
+
+<section>
+  <h2>Theorem 7 (even case)</h2>
+  <p>
+    <em>Macaj–Siran, 2010, Theorem 7.</em>
+    If <code>|G|</code> is even then <code>|G|</code> divides one of the
+    following. Note <code>4 ∤ |G|</code> (Lemma 2; Higman / Cameron).
+  </p>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>Max <code>|G|</code></th><th>Factorization</th><th>Groups of this order</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><a href="orders/14.html">14</a></td>  <td><code>2 · 7</code></td>     <td>2 groups: <code>ℤ₁₄</code>, <code>D₇</code></td>           <td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/22.html">22</a></td>  <td><code>2 · 11</code></td>    <td>2 groups: <code>ℤ₂₂</code>, <code>D₁₁</code></td>          <td><span class="badge done">2 / 2 excluded</span></td></tr>
+      <tr><td><a href="orders/38.html">38</a></td>  <td><code>2 · 19</code></td>    <td>2 groups: <code>ℤ₃₈</code>, <code>D₁₉</code></td>          <td><span class="badge done">2 / 2 excluded</span></td></tr>
+      <tr><td><a href="orders/50.html">50</a></td>  <td><code>2 · 5²</code></td>    <td>5 groups <span class="muted">(SmallGroup(50, k))</span></td>  <td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/54.html">54</a></td>  <td><code>2 · 3³</code></td>    <td>15 groups <span class="muted">(SmallGroup(54, k))</span></td> <td><span class="badge open">0 / 15 open</span></td></tr>
+      <tr><td><a href="orders/110.html">110</a></td><td><code>2 · 5 · 11</code></td><td>6 groups <span class="muted">(SmallGroup(110, k))</span></td> <td><span class="badge done">6 / 6 excluded <span class="muted">(via 22)</span></span></td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <th>—</th>
+        <th><strong>32 groups</strong></th>
+        <th><span class="badge done">10 / 32 excluded</span></th>
+      </tr>
+    </tfoot>
+  </table>
+  </figure>
+</section>
+
+<section>
+  <h2>What "candidate order" means</h2>
+  <p>
+    Every actual <code>|G|</code> divides one of the 13 maxima above. So all
+    candidate orders are precisely the union of divisors of these 13
+    numbers (roughly 35 distinct values once <code>1</code> is included).
+    The per-order pages enumerate them along with their group
+    classifications.
+  </p>
+</section>
+
+<section>
+  <h2>Reference</h2>
+  <p>
+    M. Macaj and J. Siran,
+    <em>Search for properties of the missing Moore graph</em>,
+    Linear Algebra Appl. 432 (2010), 2381–2398.
+    DOI: <a href="https://doi.org/10.1016/j.laa.2009.07.018">10.1016/j.laa.2009.07.018</a>.
+  </p>
+  <p>
+    See also <a href="about.html">About</a> for the full reference list and
+    notes on the Lean formalization.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+  Maintained by Yawara Ishida.
+</footer>
+
+</main>
+</body>
+</html>

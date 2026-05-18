@@ -19,6 +19,7 @@ open DirectSum
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 variable [FiniteDimensional K V]
 
+set_option linter.flexible false in
 /-- If an idempotent projection `p` commutes with `f`, then the trace of `f`
 on the range of `p` is the trace of `p ∘ f` on the ambient space. -/
 theorem trace_restrict_range_eq_trace_comp_of_isIdempotentElem

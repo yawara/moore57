@@ -22,6 +22,7 @@ namespace D19ActsOnMoore57
 
 variable {h : D19ActsOnMoore57 V Γ}
 
+set_option linter.flexible false in
 /-- Raw strongly-regular parameter arithmetic for a regular fixed-induced
 graph.  No representation or character input is used here. -/
 theorem fixedInducedGraph_regular_fixedVertexCount_eq_degree_sq_add_one

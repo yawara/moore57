@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 38 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 38 = 2 · 19</h1>
+    <p class="sub status"><span class="badge done">2 / 2 groups excluded</span> <span class="muted">unconditional Lean proof</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    Theorem 7 lists <code>38 = 2 · 19</code> as a surviving even
+    candidate. Available partial constraints:
+  </p>
+  <ul>
+    <li>Lemma 2 (Higman / Cameron): an involution fixes a 56-vertex
+        star, so <code>a₀(τ) = 56</code> and <code>a₁(τ) = 112</code>.</li>
+    <li>Lemma 12 row <code>p = 19, a₀ = 1</code>:
+        <code>a₁(σ) ∈ {57, 342, ...}</code>.</li>
+    <li>Lemma 15 has no entry for <code>pq = 38</code>.</li>
+  </ul>
+  <p>
+    <strong>The paper does not exclude group order 38</strong>
+    (or either of its two groups <code>D₁₉</code> / <code>C₃₈</code>).
+    The complete exclusion is original to this project.
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p>
+    The two group types are handled separately:
+  </p>
+  <ul>
+    <li><strong>D₁₉ case</strong> (dihedral): Lean-aware writeup at
+        <a href="https://github.com/yawara/moore57/blob/main/proofs/moore57_d19_lean_aware_proof.md"><code>proofs/moore57_d19_lean_aware_proof.md</code></a>
+        (Japanese), with companion notes
+        <a href="https://github.com/yawara/moore57/blob/main/proofs/moore57_d19_contradiction.md"><code>proofs/moore57_d19_contradiction.md</code></a>.
+        Strategy: Higman trace + <code>E₇</code> idempotent +
+        <code>D₁₉</code> character decomposition + rotation character
+        constancy versus the compact adjacent-moved residual.</li>
+    <li><strong>C₃₈ case</strong> (cyclic): a generator <code>g</code>
+        of order 38 gives <code>ρ = g²</code> (order 19) and
+        <code>τ = g¹⁹</code> (involution) that commute. The Tier-2
+        lemma
+        <code>aut_involution_fixedVertexCount_candidates</code>
+        gives
+        <code>|Fix(τ)| ∈ {0, 2, 6, 10, 16, 26, 36, 46, 50, 56}</code>;
+        combined with
+        <code>order19_aut_fixedVertexCount_eq_one</code> for
+        <code>ρ</code> the parity / mod-19 obstruction closes the case.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <pre><code>theorem no_D19_acts_on_Moore57_unconditional
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    ¬ Nonempty (D19ActsOnMoore57 V Γ)
+
+theorem no_C38_acts_on_Moore57_unconditional
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    ¬ Nonempty (C38ActsOnMoore57 V Γ)
+
+theorem Moore57_no_order38_structure
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    (¬ Nonempty (D19ActsOnMoore57 V Γ))
+    ∧ (¬ Nonempty (C38ActsOnMoore57 V Γ))</code></pre>
+  <p>
+    Files:
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Phases/FinalAssembly.lean"><code>Moore57/Phases/FinalAssembly.lean</code></a>
+    (D₁₉ + assembly),
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/C38OnMoore57/NoGo.lean"><code>Moore57/C38OnMoore57/NoGo.lean</code></a>
+    (C₃₈).
+  </p>
+  <p>
+    By the classification of order-38 groups, the conjunction
+    <code>Moore57_no_order38_structure</code> excludes every group of
+    order 38 acting as a subgroup of <code>Aut(Γ)</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>(38, 1)</code></td>
+        <td><code>D₁₉</code></td>
+        <td>Dihedral group of order 38.</td>
+        <td><span class="badge done">excluded</span></td>
+      </tr>
+      <tr>
+        <td><code>(38, 2)</code></td>
+        <td><code>ℤ₃₈ = C₃₈</code></td>
+        <td>Cyclic group of order 38.</td>
+        <td><span class="badge done">excluded</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </figure>
+  <p>
+    The two cases are handled by separate Lean theorems:
+    <code>D₁₉</code> is the central case of the project (the original
+    target), and <code>C₃₈</code> reduces to commutativity of
+    <code>ρ = g²</code> and <code>τ = g¹⁹</code> with
+    <code>aut_involution_fixedVertexCount_candidates</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean proof structure (D₁₉ phases)</h2>
+  <p>
+    The Lean formalisation of the D₁₉ branch is split into 7 phases
+    (<code>Moore57/Phases/Phase{1..7}.lean</code>) plus the
+    <code>Moore57/D19OnMoore57/</code> directory:
+  </p>
+  <ol>
+    <li>Phase 1: rotation <code>a₀ ≤ 19</code>, reflection
+        <code>a₀ = 56</code> / <code>a₁ = 112</code> from raw action.</li>
+    <li>Phase 2: SRG identity, <code>E₇</code> idempotent, Higman trace,
+        <code>Tr(E₇) = 1729</code>.</li>
+    <li>Phase 3: reflection character <code>χ₇(t) = 33</code>.</li>
+    <li>Phase 4: <code>D₁₉</code> characters <code>1, ε, ρ</code>; linear
+        character formulas; <code>π_V = 114·1 + 58·ε + 171·ρ</code>.</li>
+    <li>Phases 5–7: rotation character constancy versus the compact
+        adjacent-moved residual gives the contradiction.</li>
+  </ol>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

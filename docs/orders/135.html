@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 135 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 135 = 3³ · 5</h1>
+    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    Theorem 6 lists 135 as a surviving odd-order maximum. Theorem 4
+    bounds <code>|3-part of G| ≤ 27</code>; Theorem 5 restricts the
+    Sylow-5 piece (a single <code>ℤ₅</code> here).
+  </p>
+  <p>
+    <strong>The paper does not exclude group order 135.</strong>
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">not yet written</span></p>
+  <p>
+    Strategy: the 3-part is one of the 5 groups of order 27 (Corollary 2
+    pins it further if the smallest orbit is small), the 5-part is
+    <code>ℤ₅</code>; remains to close all five extensions. See
+    <a href="../contribute.html">Contribute</a>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <p><span class="badge open">open</span></p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <p>
+    There are <strong>5 groups of order 135</strong>
+    (<code>SmallGroup(135, 1) … SmallGroup(135, 5)</code>).
+  </p>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(135, 1)</code></td><td><code>ℤ₅ ⋊ ℤ₂₇</code></td>          <td>Non-trivial semidirect (<code>5 ∣ 27·… </code>; in fact only trivial action since <code>gcd(27, 4) = 1</code>, so this entry is actually <code>ℤ₁₃₅</code>; see GAP for the exact ordering).</td>             <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 2)</code></td><td><code>ℤ₂₇ × ℤ₅</code></td>          <td>Cyclic (<code>ℤ₁₃₅</code>).</td>            <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 3)</code></td><td><code>ℤ₉ × ℤ₁₅</code></td>          <td>Abelian, non-cyclic.</td>                    <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 4)</code></td><td><code>ℤ₃ × (ℤ₉ ⋊ ℤ₅)</code></td>    <td>Non-abelian extension.</td>                  <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 5)</code></td><td><code>ℤ₃³ × ℤ₅</code></td>          <td>Elementary 3-group times ℤ₅.</td>            <td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+  <p class="muted">
+    Exact GAP indices may differ; the family names are the invariant data.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

@@ -54,6 +54,13 @@ lake build Moore57.AxiomsCheck
 
 This prints an `axioms check OK: …` info message if successful.
 
+## AI-assisted development
+
+The formalization was developed with substantial assistance from ChatGPT,
+Codex, and Claude Code. Correctness is guaranteed by the Lean kernel and
+the axiom allowlist check above, not by any AI tool. ChatGPT/Codex
+transcripts are archived under `logs/chatgpt/`.
+
 ## Citing this repository
 
 This repository contains research artifacts. If you refer to them in an

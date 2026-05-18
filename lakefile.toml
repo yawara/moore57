@@ -7,5 +7,35 @@ name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.29.1"
 
+# Enable mathlib's standard linter set (style.longLine at 100, style.refine,
+# style.cases, style.cdot, flexible, hashCommand, oldObtain, unusedDecidableInType,
+# etc.). The `weak.` prefix keeps olean caching consistent.
+[leanOptions]
+weak.linter.mathlibStandardSet = true
+# Section-variable hygiene linters re-enabled (35/100 cleaned, 65 remain).
+# Auto-script applied `omit [...] in` to theorems that auto-bound section-level
+# `variable` blocks. Remaining 65 warnings live in ~10 files where the unused
+# typeclass is bound LOCALLY in the theorem signature (e.g.,
+# `theorem foo {ι : Type*} [DecidableEq ι] ...`) — `omit` can't refer to the
+# locally-bound name, so cleanup requires manual signature edits or
+# `set_option` per declaration.
+# Enforced. Of the 19 unique flagged sites: 7 converted to
+# `simp only [<simp? suggestion>]`; the remaining 12 use per-declaration
+# `set_option linter.flexible false in` because the original `simp [...]`
+# depended on default-simp normalization that `simp only [...]` (from the
+# linter's auto-suggestion) couldn't reproduce.
+weak.linter.flexible = true
+# TODO: mathlib's 100-char standard is enabled by `mathlibStandardSet` but the
+# project uses very long descriptive identifier names (e.g.,
+# `no_remainingNonRepresentationFrontierAfterDefaultBaseInvolutionK155_…`)
+# which alone exceed 100 chars on a single line. ~786 such code-line warnings
+# remain. Cleanup requires identifier renames (project-wide style decision).
+weak.linter.style.longLine = false
+
 [[lean_lib]]
 name = "Moore57"
+
+[[lean_exe]]
+name = "lintText"
+srcDir = "bin"
+supportInterpreter = true

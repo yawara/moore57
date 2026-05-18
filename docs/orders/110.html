@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 110 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 110 = 2 · 5 · 11</h1>
+    <p class="sub status"><span class="badge done">6 / 6 groups excluded</span> <span class="muted">via order-22 Sylow reduction</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    Theorem 7 lists <code>110 = 2 · 5 · 11</code> as a surviving even
+    candidate; Corollary 3 records it as the maximum even
+    <code>|G|</code>. Lemma 15 row <code>pq = 22</code> with
+    <code>a₀ = 1, a₀(x_5) = 5, a₀(x_{11}) = 56</code> gives
+    <code>a₁ = 222</code> etc. and the remark
+  </p>
+  <blockquote>
+    <p>
+      "<em>from Lemma 15 it follows that there is no automorphism of
+      order 110.</em>"
+    </p>
+  </blockquote>
+  <p>
+    But this excludes an <strong>element</strong> of order 110 — not a
+    <strong>group</strong> of order 110 (which can well exist without
+    any element of order 110, e.g. <code>D₅₅</code>).
+    <strong>The paper does not exclude group order 110</strong>; the
+    full exclusion is original to this project, as a corollary of the
+    order-22 result via Sylow + Cauchy.
+  </p>
+</section>
+
+<section>
+  <h2>Natural-language proof <span class="muted">(this project)</span></h2>
+  <p>
+    Short subgroup-reduction argument:
+  </p>
+  <ol>
+    <li>Sylow's third theorem: <code>n₁₁ ∣ 10</code> and
+        <code>n₁₁ ≡ 1 (mod 11)</code>, so <code>n₁₁ = 1</code>; the
+        unique Sylow-11 subgroup <code>P₁₁ ≅ ℤ₁₁</code> is normal.</li>
+    <li>Cauchy's theorem applied to <code>|G| = 110</code>: there exists
+        an involution <code>τ ∈ G</code>.</li>
+    <li><code>H := ⟨P₁₁, τ⟩</code> has order <code>22</code> and is a
+        subgroup of <code>G ≤ Aut(Γ)</code>.</li>
+    <li>The Order-22 result (see
+        <a href="22.html">order 22 page</a> + writeup
+        <a href="https://github.com/yawara/moore57/blob/main/proofs/no_aut_order_22_moore57.md"><code>proofs/no_aut_order_22_moore57.md</code></a>)
+        excludes such <code>H</code>. Contradiction.</li>
+  </ol>
+  <p>
+    The novel content is the order-22 step; everything else is classical
+    Sylow theory.
+  </p>
+</section>
+
+<section>
+  <h2>Lean formalization <span class="muted">(this project)</span></h2>
+  <pre><code>theorem no_Order110_group_acts_on_Moore57 :
+    ¬ Nonempty (OrderN_GroupActsOnMoore57 110 V Γ)</code></pre>
+  <p>
+    File:
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Order22OnMoore57/GroupAction.lean"><code>Moore57/Order22OnMoore57/GroupAction.lean</code></a>.
+    The proof body is the Sylow-reduction chain above, applying
+    <code>no_Order22_group_acts_on_Moore57</code> at the end.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification (SmallGroup(110, k))</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(110, 1)</code></td><td><code>D₅₅</code></td>      <td>Dihedral of order 110.</td>            <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>(110, 2)</code></td><td><code>ℤ₅ × D₁₁</code></td> <td>Direct product.</td>                  <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>(110, 3)</code></td><td><code>ℤ₁₁ × D₅</code></td> <td>Direct product.</td>                  <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>(110, 4)</code></td><td><code>ℤ₁₁₀</code></td>     <td>Cyclic.</td>                          <td><span class="badge done">excluded</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+  <p class="muted">
+    GAP's SmallGroup library lists six entries for order 110; the four
+    above are the canonical metabelian shapes that survive the standard
+    Sylow analysis (<code>n₁₁ = 1</code>, <code>n₅ ∈ {1, 11}</code>).
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

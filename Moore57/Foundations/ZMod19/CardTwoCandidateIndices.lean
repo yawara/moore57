@@ -1,5 +1,8 @@
 import Moore57.Foundations.ZMod19.AvoidanceBoundary
 
+-- `native_decide` is intentional here (see `Moore57/AxiomsCheck.lean`).
+set_option linter.style.nativeDecide false
+
 /-!
 # Index candidates for card-two common-neighbor constructions
 

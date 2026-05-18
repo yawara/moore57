@@ -1,0 +1,274 @@
+/* Project-specific accents on top of Pico CSS v2.
+   Pico handles typography, colors, dark mode, tables, links, code, etc.
+   We only override a few variables and add components Pico does not
+   provide (status badges and the order tile grid). */
+
+:root {
+  /* Local palette — Pico v2's default bundle does not expose
+     --pico-color-jade-500 etc., so we use literal values. */
+  --st-done-fg: #047857;
+  --st-done-bg: rgba(16, 185, 129, 0.12);
+  --st-done-border: rgba(16, 185, 129, 0.45);
+  --st-open-fg: #b45309;
+  --st-open-bg: rgba(245, 158, 11, 0.14);
+  --st-open-border: rgba(245, 158, 11, 0.5);
+  --st-derived-fg: #1d4ed8;
+  --st-derived-bg: rgba(59, 130, 246, 0.13);
+  --st-derived-border: rgba(59, 130, 246, 0.45);
+
+  /* Card surface that has visible contrast in BOTH themes. */
+  --st-card-bg: #ffffff;
+  --st-card-border: #e5e7eb;
+  --st-card-hover-border: #6366f1;
+  --st-card-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --st-done-fg: #34d399;
+    --st-done-bg: rgba(16, 185, 129, 0.16);
+    --st-done-border: rgba(52, 211, 153, 0.55);
+    --st-open-fg: #fbbf24;
+    --st-open-bg: rgba(245, 158, 11, 0.18);
+    --st-open-border: rgba(251, 191, 36, 0.55);
+    --st-derived-fg: #93c5fd;
+    --st-derived-bg: rgba(59, 130, 246, 0.18);
+    --st-derived-border: rgba(147, 197, 253, 0.5);
+
+    --st-card-bg: #1f2533;
+    --st-card-border: rgba(255, 255, 255, 0.12);
+    --st-card-hover-border: #a5b4fc;
+    --st-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Status badges --------------------------------------------------------- */
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+.badge.done    { background: var(--st-done-bg);    color: var(--st-done-fg);    border-color: var(--st-done-border); }
+.badge.open    { background: var(--st-open-bg);    color: var(--st-open-fg);    border-color: var(--st-open-border); }
+.badge.derived { background: var(--st-derived-bg); color: var(--st-derived-fg); border-color: var(--st-derived-border); }
+
+/* Order tiles ---------------------------------------------------------- */
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.65rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.order-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  margin: 0;
+  background: var(--st-card-bg);
+  border: 1px solid var(--st-card-border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--st-card-shadow);
+  transition: border-color 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+}
+.order-card:hover,
+.order-card:focus-visible {
+  border-color: var(--st-card-hover-border);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px -10px var(--st-card-hover-border);
+  text-decoration: none;
+  color: inherit;
+}
+.order-card .order {
+  font-size: 1.55rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.order-card .factor {
+  font-size: 0.8rem;
+  color: var(--pico-muted-color);
+  font-family: var(--pico-font-family-monospace);
+}
+.order-card .badge { margin-top: 0.4rem; align-self: flex-start; }
+
+/* Summary stat row ----------------------------------------------------- */
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.65rem;
+  margin: 1rem 0 1.75rem;
+}
+.summary .stat {
+  background: var(--st-card-bg);
+  border: 1px solid var(--st-card-border);
+  border-radius: 10px;
+  padding: 0.75rem 0.95rem;
+  box-shadow: var(--st-card-shadow);
+}
+.summary .stat .num {
+  display: block;
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.summary .stat .lbl {
+  display: block;
+  color: var(--pico-muted-color);
+  font-size: 0.82rem;
+  margin-top: 0.1rem;
+}
+.summary .stat .delta {
+  display: block;
+  font-size: 0.72rem;
+  margin-top: 0.35rem;
+  letter-spacing: 0.01em;
+}
+.summary .stat .delta .badge {
+  font-size: 0.68rem;
+  padding: 0.05rem 0.45rem;
+  margin-left: 0.25rem;
+  vertical-align: 1px;
+}
+.summary .stat .delta.progress-done {
+  font-weight: 600;
+  color: var(--st-done-fg);
+}
+
+/* Layered intro list (3-layer model) ----------------------------------- */
+
+.layer-list {
+  padding-left: 1.3rem;
+  margin: 0.5rem 0 1rem;
+}
+.layer-list li {
+  margin: 0.35rem 0;
+}
+
+/* Call-for-participation callout -------------------------------------- */
+
+.join {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem 1.25rem;
+  align-items: center;
+  margin: 1.5rem 0 2rem;
+  padding: 1.1rem 1.25rem;
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, #6366f1 6%, var(--st-card-bg)),
+      var(--st-card-bg) 70%);
+  border: 1px solid var(--st-card-border);
+  border-left: 3px solid #6366f1;
+  border-radius: 12px;
+  box-shadow: var(--st-card-shadow);
+}
+.join > .join-text > h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
+  letter-spacing: -0.005em;
+}
+.join > .join-text > p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--pico-color);
+}
+.join > .join-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+@media (min-width: 700px) {
+  .join {
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem 1.5rem;
+  }
+  .join > .join-actions {
+    justify-content: flex-end;
+  }
+}
+.cta-primary {
+  display: inline-block;
+  padding: 0.55rem 1.05rem;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  border: 1px solid #6366f1;
+  transition: background 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+}
+.cta-primary:hover,
+.cta-primary:focus-visible {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -10px #6366f1;
+}
+
+/* Header polish -------------------------------------------------------- */
+
+header.site {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+  margin-bottom: 2rem;
+}
+header.site h1 { margin-bottom: 0.15rem; }
+header.site .sub {
+  margin: 0;
+  color: var(--pico-muted-color);
+  font-size: 0.95rem;
+}
+header.site nav ul {
+  padding: 0;
+  margin: 0.6rem 0 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.1rem;
+}
+header.site nav li { margin: 0; }
+header.site .status { margin-top: 0.5rem; }
+
+/* Compact tables and code. */
+table { font-size: 0.95rem; }
+table code { font-size: 0.88em; }
+pre {
+  padding: 0.9rem 1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+/* Footer ---------------------------------------------------------------- */
+
+footer.site {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--pico-muted-border-color);
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+}
+footer.site a { color: var(--pico-muted-color); }
+
+/* Inline helpers ------------------------------------------------------- */
+
+.muted { color: var(--pico-muted-color); }

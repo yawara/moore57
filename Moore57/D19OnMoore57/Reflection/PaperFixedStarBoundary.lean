@@ -23,6 +23,7 @@ namespace D19ActsOnMoore57
 
 variable (h : D19ActsOnMoore57 V Γ)
 
+set_option linter.flexible false in
 /-- In a paper-shaped fixed star, the fixed neighbors of the center are exactly
 the fixed vertices other than the center. -/
 theorem reflectionFixedNeighborFinset_eq_fixedFinset_erase_of_fixedSetStarWithCenter

@@ -23,6 +23,7 @@ theorem neighborFinset_rotationFixedCenter_card
     (Γ.neighborFinset h.rotationFixedCenter).card = 57 := by
   rw [SimpleGraph.card_neighborFinset_eq_degree, h.isMoore.regular.degree_eq]
 
+set_option linter.flexible false in
 /-- The `57` neighbors of `h.rotationFixedCenter` are covered by three
 pairwise-disjoint rotation orbits of size `19`. -/
 theorem exists_three_rotationOrbitFinset_neighbors_rotationFixedCenter

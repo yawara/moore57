@@ -68,6 +68,7 @@ theorem reflectionZeroOnRotationInvariants_maps_rotation_invariants
     (x : W) (hx : x ∈ d19RotationInvariantSubmodule ρ) :
     ρ (DihedralGroup.sr (0 : ZMod 19)) x ∈ d19RotationInvariantSubmodule ρ := by
   exact (reflectionZeroOnRotationInvariants ρ ⟨x, hx⟩).property
+set_option linter.flexible false in
 
 theorem representationCharacter_reflection_eq_reflection_zero_from_rotation
     [FiniteDimensional ℚ W]
@@ -105,6 +106,7 @@ theorem average_rotation_reflection_character_eq_reflection_character
   rw [Finset.sum_congr rfl (fun d _ =>
     representationCharacter_rotation_mul_reflection_zero ρ d)]
   simp
+set_option linter.flexible false in
 
 theorem d19RotationAverageMap_commute_reflectionZero
     (ρ : Representation ℚ (DihedralGroup 19) W) :
@@ -130,6 +132,7 @@ theorem d19RotationAverageMap_commute_reflectionZero
   rw [← Equiv.sum_comp (Equiv.neg (ZMod 19))
     (fun i : ZMod 19 => ρ (DihedralGroup.sr i) x)]
   simp
+set_option linter.flexible false in
 
 theorem d19RotationAverageMap_commute_rotation
     (ρ : Representation ℚ (DihedralGroup 19) W) (d : ZMod 19) :
@@ -214,6 +217,7 @@ theorem d19RotationMovingRepresentation_invariants_eq_bot
     rw [← d19RotationMovingSubmodule_no_rotation_invariants ρ]
     exact hboth
   simpa using hzero
+set_option linter.flexible false in
 
 theorem trace_averageMap_mul_reflectionZero_eq_average_rotation_reflection_character
     [FiniteDimensional ℚ W]

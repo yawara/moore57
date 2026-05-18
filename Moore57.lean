@@ -31,6 +31,10 @@ import Moore57.Foundations.GroupAction.InvolutionParity
 import Moore57.Foundations.GroupAction.FixedPointConjugacy
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
 import Moore57.Foundations.LinearAlgebra.InvolutionTrace
+import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
+import Moore57.Order22OnMoore57.Phase4F11Module
+import Moore57.Order22OnMoore57.Phase4F11OrbitKernel
+import Moore57.Order22OnMoore57.Phase4F11Assembly
 import Moore57.D19OnMoore57.Involution.CountParity
 import Moore57.D19OnMoore57.Involution.FixedDegreeParity
 import Moore57.D19OnMoore57.HigmanTrace.Congruence
@@ -347,3 +351,12 @@ import Moore57.D19OnMoore57.D19Core.CanonicalBranchAllFibersBoundary
 import Moore57.D19OnMoore57.D19Core.CanonicalBranchCompactSplitBoundary
 import Moore57.D19OnMoore57.D19Core.ReflectionLabeledBranchCompactSplitBoundary
 import Moore57.D19OnMoore57.Final.CriterionPublic
+import Moore57.Moore57Graph.Aut.FixedSubgraphData
+import Moore57.Order22OnMoore57.Action
+import Moore57.Order22OnMoore57.BasicStructure
+import Moore57.Order22OnMoore57.TraceNumber
+import Moore57.Order22OnMoore57.TraceConstancy
+import Moore57.Order22OnMoore57.ModularF11
+import Moore57.Order22OnMoore57.ComplexRestriction
+import Moore57.Order22OnMoore57.Parity
+import Moore57.Order22OnMoore57.NoGo

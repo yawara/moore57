@@ -1,6 +1,7 @@
 import Moore57.D19OnMoore57.E7Projection.Minus8CharacterBoundariesFromRotationSplit
 import Moore57.D19OnMoore57.LinearCharacter.Nonempty
 import Moore57.D19OnMoore57.Reflection.AdjacentMovedPositive
+import Moore57.D19OnMoore57.Reflection.AdjacentSwapFixedCount
 
 /-!
 # Rotation-split no-go from the trace-refined reflection lower bound

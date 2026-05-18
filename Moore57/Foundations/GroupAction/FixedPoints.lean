@@ -62,7 +62,7 @@ theorem fixedVertexCount_eq_card_supportCompl
     [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) :
     fixedVertexCount σ = σ.supportᶜ.card := by
   classical
-  show ((Finset.univ : Finset V).filter fun v => σ v = v).card = σ.supportᶜ.card
+  change ((Finset.univ : Finset V).filter fun v => σ v = v).card = σ.supportᶜ.card
   congr 1
   ext v
   simp [Equiv.Perm.mem_support]

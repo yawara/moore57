@@ -180,6 +180,7 @@ theorem exists_reflection_fixed_point_mem_rotationOrbitFinset_of_mem
       _ = h.rotation t x := by
               rw [hneg_add]
 
+set_option linter.flexible false in
 /-- Among three indices, if `b` and `c` are distinct there is a remaining
 index distinct from both. -/
 theorem exists_fin3_ne_ne {b c : Fin 3} (hbc : b ≠ c) :
@@ -471,6 +472,7 @@ noncomputable def ofHasLabeledReflectionPair
     Classical.choose_spec hdata
   exact ofReflectionOrbit data (k := k) hrefOrbit
 
+set_option linter.flexible false in
 /-- A reflection-compatible relabeling of an explicit three-orbit
 center-neighbor decomposition.
 

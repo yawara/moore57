@@ -48,21 +48,6 @@ local instance instD19RemainingRawActionFrontierDecidableEq
     (α : Type*) : DecidableEq α :=
   Classical.decEq α
 
-/-! ## Raw-action/concrete-data surface -/
-
-/-- The original counting theorem still stops at nonexistence of the concrete
-orbit data package; constructing this package from a raw action is a remaining
-connector. -/
-abbrev RemainingConcreteOrbitDataConnector
-    (_h : D19ActsOnMoore57 V Γ) : Prop :=
-  Nonempty (D19ConcreteHypotheses Γ)
-
-/-- Public alias for the current raw-action-to-concrete-data no-go surface. -/
-theorem no_remainingConcreteOrbitDataConnector
-    (h : D19ActsOnMoore57 V Γ) :
-    ¬ RemainingConcreteOrbitDataConnector h :=
-  no_D19_acts_on_Moore57 h
-
 /-! ## Final-boundary package surfaces -/
 
 /-- Public final-boundary records that are neither raw actions nor mathlib
@@ -234,7 +219,6 @@ theorem no_remainingLabeledReflectionMatchingEquationConnector_of_mathlibCharact
 raw action itself. -/
 abbrev RemainingPublicRawActionFrontier
     (h : D19ActsOnMoore57 V Γ) : Prop :=
-  RemainingConcreteOrbitDataConnector h ∨
   RemainingPublicFinalBoundaryConnector.{u, uP} h ∨
   RemainingAllOffsetClosedConnector h ∨
   RemainingBranchReflectionConnector h
@@ -245,8 +229,7 @@ theorem no_remainingPublicRawActionFrontier
     (h : D19ActsOnMoore57 V Γ) :
     ¬ RemainingPublicRawActionFrontier.{u, uP} h := by
   intro hfrontier
-  rcases hfrontier with hConcrete | hFinal | hAllOffset | hBranch
-  · exact no_remainingConcreteOrbitDataConnector h hConcrete
+  rcases hfrontier with hFinal | hAllOffset | hBranch
   · exact no_remainingPublicFinalBoundaryConnector h hFinal
   · exact no_remainingAllOffsetClosedConnector h hAllOffset
   · exact no_remainingBranchReflectionConnector h hBranch

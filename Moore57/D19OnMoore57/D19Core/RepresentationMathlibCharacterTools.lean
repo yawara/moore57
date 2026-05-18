@@ -99,6 +99,7 @@ theorem character_eq_d19Linear_of_values
   | sr k =>
       simpa [d19LinearCharacter_reflection] using reflection_value k
 
+set_option linter.flexible false in
 /-- Every reflection in `D19` is conjugate to `sr 0`. -/
 theorem dihedral19_reflection_conj_zero (k : ZMod 19) :
     ∃ a : ZMod 19,

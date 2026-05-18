@@ -59,6 +59,7 @@ theorem no_two_commonNeighbors_of_not_adj
     (hΓ.eq_of_commonNeighbor_of_commonNeighbor_of_not_adj
       hxy hnadj hzx hyz hwx hyw)
 
+set_option linter.unusedDecidableInType false in
 /-- If two vertices have a common neighbor in a Moore graph, then they are
 not adjacent.  This is the `λ = 0` endpoint core used by the common-neighbor
 argument. -/
@@ -69,6 +70,7 @@ theorem not_adj_of_commonNeighbor
   intro hxy
   exact hΓ.no_triangle hxy hyz hzx.symm
 
+set_option linter.unusedDecidableInType false in
 /-- Two common neighbors of the same distinct endpoint pair coincide.  The
 non-adjacency of the endpoint pair is derived from `λ = 0`; uniqueness then
 uses `μ = 1`. -/
@@ -81,6 +83,7 @@ theorem eq_of_commonNeighbor_of_commonNeighbor
   hΓ.eq_of_commonNeighbor_of_commonNeighbor_of_not_adj hxy
     (hΓ.not_adj_of_commonNeighbor hzx hyz) hzx hyz hwx hyw
 
+set_option linter.unusedDecidableInType false in
 /-- Contradiction form for two distinct common neighbors of a distinct
 endpoint pair, with endpoint non-adjacency inferred from the first common
 neighbor. -/
@@ -91,6 +94,7 @@ theorem no_two_commonNeighbors
     (hwx : Γ.Adj x w) (hyw : Γ.Adj y w) : False :=
   hzw (hΓ.eq_of_commonNeighbor_of_commonNeighbor hxy hzx hyz hwx hyw)
 
+set_option linter.unusedDecidableInType false in
 /-- Two common neighbors of the same distinct endpoint pair cannot be adjacent:
 they are equal by `μ = 1`, so an edge between them would be a loop. -/
 theorem not_adj_between_commonNeighbors
