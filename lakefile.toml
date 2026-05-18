@@ -9,3 +9,8 @@ rev = "v4.29.1"
 
 [[lean_lib]]
 name = "Moore57"
+
+[[lean_exe]]
+name = "lintText"
+srcDir = "scripts"
+supportInterpreter = true

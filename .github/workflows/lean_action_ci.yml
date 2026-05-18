@@ -52,5 +52,8 @@ jobs:
 
       - uses: leanprover/lean-action@v1
 
+      - name: Text-based lint (mathlib TextBased linters)
+        run: lake exe lintText
+
       # The main-theorem axioms check runs as part of `lake build`
       # via `Moore57/AxiomsCheck.lean` — if axioms regress, the build above fails.

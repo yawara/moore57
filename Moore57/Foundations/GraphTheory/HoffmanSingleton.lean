@@ -14,20 +14,20 @@ parameters `(k² + 1, k, 0, 1)` exists only when `k ∈ {0, 1, 2, 3, 7, 57}`.
 
 ## Status
 
-* **S1 SRG matrix identity** `A² + A − (k − 1)·I = J`: ✅ sorry-free.
-* **S2 Regular adj-matrix lemmas** `A · J = J · A = k·J`: ✅ sorry-free.
-* **S3 Cubic annihilator** `(A − k·I)(A² + A − (k − 1)·I) = 0`: ✅ sorry-free.
-* **S3 Eigenvalue dichotomy**: ✅ sorry-free.
-* **S4 Hermitian setup + λ_± definitions + distinctness**: ✅ sorry-free.
-* **S4 3-way Finset partition** + multiplicity definitions: ✅ sorry-free.
-* **S4 Trace identity** `m_k k + m_+ λ_+ + m_- λ_- = 0`: ✅ sorry-free.
-* **S4 Discriminant equation** `(m_+ − m_-)√D = k² + 1 − m_k(2k+1)`: ✅ sorry-free.
-* **S5 Case A** (irrational discriminant): ✅ sorry-free → `k = 2`.
-* **S4f Perron multiplicity** `m_k = 1`: ⚠️ sorry (requires spectral
+* **S1 SRG matrix identity** `A² + A − (k − 1)·I = J`: ✅️ sorry-free.
+* **S2 Regular adj-matrix lemmas** `A · J = J · A = k·J`: ✅️ sorry-free.
+* **S3 Cubic annihilator** `(A − k·I)(A² + A − (k − 1)·I) = 0`: ✅️ sorry-free.
+* **S3 Eigenvalue dichotomy**: ✅️ sorry-free.
+* **S4 Hermitian setup + λ_± definitions + distinctness**: ✅️ sorry-free.
+* **S4 3-way Finset partition** + multiplicity definitions: ✅️ sorry-free.
+* **S4 Trace identity** `m_k k + m_+ λ_+ + m_- λ_- = 0`: ✅️ sorry-free.
+* **S4 Discriminant equation** `(m_+ − m_-)√D = k² + 1 − m_k(2k+1)`: ✅️ sorry-free.
+* **S5 Case A** (irrational discriminant): ✅️ sorry-free → `k = 2`.
+* **S4f Perron multiplicity** `m_k = 1`: ⚠ sorry (requires spectral
   theorem + inner-product orthogonality argument).
-* **S6 Case B** (square discriminant): ⚠️ sorry (divisibility analysis,
+* **S6 Case B** (square discriminant): ⚠ sorry (divisibility analysis,
   modular arithmetic over ℤ, depends on `m_k = 1`).
-* **S7 Main theorem**: ⚠️ sorry (just Case B + assembly).
+* **S7 Main theorem**: ⚠ sorry (just Case B + assembly).
 
 ## Proof outline
 
