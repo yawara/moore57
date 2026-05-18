@@ -80,6 +80,7 @@ theorem orbitFamilyUnion_card_eq_1064_of_fin56
   simpa using
     (h.orbitFamilyUnion_card_eq_nineteen_mul_card base hdisj hcard)
 
+set_option linter.unusedFintypeInType false in
 /-- If every base vertex is moved by rotation by `1`, each indexed orbit map is
 injective and each corresponding orbit finset has cardinality `19`.
 

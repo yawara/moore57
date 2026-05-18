@@ -185,6 +185,7 @@ private theorem commute_sub_one_pow (σ : W →ₗ[ℚ] W) (n : ℕ) :
   have h1 : Commute σ (σ ^ n) := (Commute.refl σ).pow_right n
   exact h1.sub_left (Commute.one_left _)
 
+omit [FiniteDimensional ℚ W] in
 /-- σ^n は ker(σ - 1) を保つ. -/
 private theorem mapsTo_pow_ker_sub_one (σ : W →ₗ[ℚ] W) (n : ℕ) :
     Set.MapsTo (σ ^ n) (LinearMap.ker (σ - 1)) (LinearMap.ker (σ - 1)) := by
@@ -205,6 +206,7 @@ private theorem commute_aeval_pow (σ : W →ₗ[ℚ] W) (f : ℚ[X]) (n : ℕ) 
     rw [Polynomial.aeval_X_pow]
   rw [h_sigma_n, Commute, SemiconjBy, ← map_mul, ← map_mul, mul_comm]
 
+omit [FiniteDimensional ℚ W] in
 /-- σ^n は ker (aeval σ f) を保つ (f 任意). -/
 private theorem mapsTo_pow_ker_aeval
     (σ : W →ₗ[ℚ] W) (f : ℚ[X]) (n : ℕ) :

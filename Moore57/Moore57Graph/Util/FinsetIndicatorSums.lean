@@ -14,7 +14,7 @@ open Finset
 
 /-- A constant-valued indicator sum over a finset is the constant times the
 cardinality of the filtered finset. -/
-theorem Finset.sum_ite_const_nat_eq_mul_card_filter {ι : Type*} [DecidableEq ι]
+theorem Finset.sum_ite_const_nat_eq_mul_card_filter {ι : Type*}
     (s : Finset ι) (p : ι → Prop) [DecidablePred p] (c : ℕ) :
     (∑ i ∈ s, if p i then c else 0) = c * (s.filter p).card := by
   classical
@@ -36,7 +36,7 @@ theorem Fintype.sum_ite_const_nat_eq_mul_card_filter {ι : Type*} [Fintype ι]
     (Finset.sum_ite_const_nat_eq_mul_card_filter (s := (Finset.univ : Finset ι)) p c)
 
 /-- The constant `38` specialization over an arbitrary finset. -/
-theorem Finset.sum_ite_thirtyEight_eq_mul_card_filter {ι : Type*} [DecidableEq ι]
+theorem Finset.sum_ite_thirtyEight_eq_mul_card_filter {ι : Type*}
     (s : Finset ι) (p : ι → Prop) [DecidablePred p] :
     (∑ i ∈ s, if p i then 38 else 0) = 38 * (s.filter p).card := by
   simpa using Finset.sum_ite_const_nat_eq_mul_card_filter (s := s) p 38

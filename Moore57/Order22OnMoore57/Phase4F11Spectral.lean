@@ -108,6 +108,7 @@ theorem adjMatrixF11_sq_eq (hΓ : IsMoore57 Γ) :
     · simp [hvw, hadj]
     · simp [hvw, hadj]
 
+omit [DecidableEq V] in
 /-- F_11 上 `A · J = 2 J` (regularity 57 ≡ 2 mod 11). -/
 theorem adjMatrixF11_mul_allOnes (hΓ : IsMoore57 Γ) :
     adjMatrixF11 Γ * allOnesMatrixF11 V = (2 : ZMod 11) • allOnesMatrixF11 V := by
@@ -120,6 +121,7 @@ theorem adjMatrixF11_mul_allOnes (hΓ : IsMoore57 Γ) :
       SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular v]
   decide
 
+omit [DecidableEq V] in
 /-- F_11 上 `J · A = 2 J` (regularity の双対形). -/
 theorem allOnes_mul_adjMatrixF11 (hΓ : IsMoore57 Γ) :
     allOnesMatrixF11 V * adjMatrixF11 Γ = (2 : ZMod 11) • allOnesMatrixF11 V := by
@@ -132,6 +134,7 @@ theorem allOnes_mul_adjMatrixF11 (hΓ : IsMoore57 Γ) :
       SimpleGraph.card_neighborFinset_eq_degree, hΓ.regular w]
   decide
 
+omit [DecidableEq V] in
 /-- F_11 上 `J · J = 5 J` (|V| = 3250 ≡ 5 mod 11). -/
 theorem allOnes_mul_allOnes (hΓ : IsMoore57 Γ) :
     allOnesMatrixF11 V * allOnesMatrixF11 V = (5 : ZMod 11) • allOnesMatrixF11 V := by
@@ -2343,6 +2346,7 @@ theorem finrank_V7Submodule_eq_rootMultiplicity (h : Order22ActsOnMoore57 V Γ) 
 `(adjMatrixF11 Γ) = (Γ.adjMatrix ℤ).map (Int.castRingHom)`.
 `Matrix.charpoly_map` で charpoly も同様に reduce する. -/
 
+omit [Fintype V] [DecidableEq V] in
 /-- F_11 adjacency は ℤ-adjacency の Int.cast による reduction. -/
 private lemma adjMatrixF11_eq_intCast_map :
     (adjMatrixF11 Γ) = (Γ.adjMatrix ℤ).map (Int.castRingHom (ZMod 11)) := by
@@ -2385,6 +2389,7 @@ theorem adjMatrix_ℚ_charpoly_eq_intCast_map :
 * `finrank_eigenspace_le`: dim eigenspace ≤ rootMultiplicity.
 * dim V_λ_ℚ ≤ dim eigenspace λ ≤ rootMultiplicity λ in A_ℚ.charpoly. -/
 
+set_option linter.unusedDecidableInType false in
 /-- ℚ 上 `A · E_57 = 57 • E_57`. -/
 private theorem adjMatrix_ℚ_mul_E57 (hΓ : IsMoore57 Γ) :
     (Γ.adjMatrix ℚ) * (Moore57.E57Matrix V) = (57 : ℚ) • Moore57.E57Matrix V := by
@@ -3345,6 +3350,7 @@ theorem trace_adjMatrixF11_restrict_eq_trace_quot (h : Order22ActsOnMoore57 V Γ
   rw [← kerTF11_quotientEquiv_conj_adjMatrixF11_quot h]
   exact LinearMap.trace_conj' _ _
 
+set_option linter.unusedDecidableInType false in
 /-- **Trace as sum of diagonals over orbits** (sorry-free):
 `trace(A_quot) = Σ_O (A_quot (Pi.basisFun O)) O` over `(Quotient s → F_11)`. -/
 theorem trace_adjMatrixF11_quot_eq_sum (h : Order22ActsOnMoore57 V Γ)
@@ -3361,6 +3367,7 @@ theorem trace_adjMatrixF11_quot_eq_sum (h : Order22ActsOnMoore57 V Γ)
   intro O _
   rw [Matrix.diag_apply, LinearMap.toMatrix_apply, Pi.basisFun_repr]
 
+set_option linter.unusedDecidableInType false in
 /-- **iso on basisFun = orbit indicator** (sorry-free):
 `(kerTF11_quotientEquiv (Pi.basisFun O)).val v = (Pi.basisFun O) (Quotient.mk v)`. -/
 theorem kerTF11_quotientEquiv_basisFun_apply (h : Order22ActsOnMoore57 V Γ)
@@ -3370,6 +3377,7 @@ theorem kerTF11_quotientEquiv_basisFun_apply (h : Order22ActsOnMoore57 V Γ)
       Pi.basisFun (ZMod 11) _ O (Quotient.mk _ v) :=
   kerTF11_quotientEquiv_apply h _ v
 
+set_option linter.unusedDecidableInType false in
 /-- **A_restrict applied to orbit indicator** (sorry-free, via defeq):
 For `v : V` and σ-orbit `O`, the value of `A_restrict (e (Pi.basisFun _ _ O))` at `v`
 is the F_11 sum `Σ_w (Γ.adjMatrix v w) * (Pi.basisFun _ _ O) (Quotient.mk w)`. -/
@@ -3466,6 +3474,7 @@ private theorem kerTF11_quotientEquiv_orbitNeighborSumQuot_eq
   rw [Quotient.lift_mk]
   rfl
 
+set_option linter.unusedDecidableInType false in
 /-- **A_quot diagonal entry (sorry-free given σ-invariance)**:
 `A_quot (Pi.basisFun O) (Quotient.mk v) = Σ_w (adjMatrixF11 Γ) v w * (Pi.basisFun O) (Quotient.mk w)`.
 
@@ -3533,6 +3542,8 @@ theorem adjMatrixF11_quot_diagonal_eq_orbitNeighborSumF11_out
       Quotient.exact (Quotient.out_eq _).symm
     exact h.orbitNeighborSumF11_sigma_invariant _ v _ h_rel
 
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
 /-- **Trace = orbital count over vertices** (sorry-free).
 The trace of `A_restrict` equals `Σ_w (adjMatrixF11 Γ) (Quotient.out (Quotient.mk w)) w`
 in F_11, which counts vertex pairs `(rep, w)` with rep adjacent to w in same orbit. -/

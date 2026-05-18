@@ -386,6 +386,7 @@ theorem toInvolutionFixedStar55
   fixed_card := hK.fixedFinset_card_eq_56
   bipartite_edges := hK.bipartite_edges_eq_3082 hΓ
 
+set_option linter.unusedDecidableInType false in
 /-- An explicit `K_{1,55}` star directly gives `a₁(σ) = 112`. -/
 theorem adjacentMovedCount_eq_112
     (hΓ : IsMoore57 Γ) (hK : InvolutionK155 Γ σ) :

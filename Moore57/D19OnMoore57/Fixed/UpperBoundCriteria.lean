@@ -39,6 +39,7 @@ theorem fixedVertexCount_rotation_one_le_nineteen_of_injective
   rw [fixedVertexCount_eq_card_fixedVertexSet]
   exact Fintype.card_le_of_injective f hf
 
+set_option linter.unusedFintypeInType false in
 /-- An equivalence from rotation-one fixed vertices to any subtype of `Fin 19`
 gives the desired upper bound. -/
 theorem fixedVertexCount_rotation_one_le_nineteen_of_equiv_subtype_fin
@@ -49,6 +50,7 @@ theorem fixedVertexCount_rotation_one_le_nineteen_of_equiv_subtype_fin
   rw [fixedVertexCount_eq_card_fixedVertexSet]
   exact (Fintype.card_congr e).le.trans (fintype_card_subtype_fin_le p)
 
+set_option linter.unusedFintypeInType false in
 /-- An equivalence from rotation-one fixed vertices to a finite set-indexed
 subtype of `Fin 19` gives the desired upper bound. -/
 theorem fixedVertexCount_rotation_one_le_nineteen_of_equiv_set_fin

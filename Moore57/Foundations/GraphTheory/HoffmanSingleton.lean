@@ -53,6 +53,7 @@ variable {W : Type*} [Fintype W] [DecidableEq W]
 /-- Discriminant of the SRG`(k²+1, k, 0, 1)` eigenvalue equation. -/
 def srgDiscriminant (k : ℕ) : ℤ := 4 * (k : ℤ) - 3
 
+omit [DecidableEq W] in
 /-- For SRG`(k²+1, k, 0, 1)`, `|W| ≥ 1`. -/
 theorem srg_kk_plus_one_card_pos {G : SimpleGraph W} [DecidableRel G.Adj]
     (hsrg : G.IsSRGWith (k * k + 1) k 0 1) :
@@ -65,13 +66,16 @@ theorem srg_kk_plus_one_card_pos {G : SimpleGraph W} [DecidableRel G.Adj]
 def srgAllOnesMatrix (W : Type*) [Fintype W] (α : Type*) [Zero α] [One α] :
     Matrix W W α := Matrix.of fun _ _ => 1
 
+omit [DecidableEq W] in
 @[simp] theorem srgAllOnesMatrix_apply {α : Type*} [Zero α] [One α]
     (v w : W) : (srgAllOnesMatrix W α : Matrix W W α) v w = 1 := rfl
 
+omit [DecidableEq W] in
 theorem srgAllOnesMatrix_isSymm {α : Type*} [Zero α] [One α] :
     (srgAllOnesMatrix W α : Matrix W W α).IsSymm := by
   ext i j; rfl
 
+set_option linter.unusedDecidableInType false in
 /-- Complement adjacency matrix equals `J - 1 - A`. -/
 theorem compl_adjMatrix_eq_allOnes_sub
     {α : Type*} [DecidableEq α] [AddGroup α] [One α]
@@ -89,6 +93,7 @@ theorem compl_adjMatrix_eq_allOnes_sub
     · simp [hAdj, hvw]
     · simp [hAdj, hvw]
 
+set_option linter.unusedDecidableInType false in
 /-- **Stage S1**: SRG`(k²+1, k, 0, 1)` matrix identity:
 `A² + A − (k − 1)·I = J`. -/
 theorem srg_kk_plus_one_matrix_identity
@@ -109,6 +114,8 @@ theorem srg_kk_plus_one_matrix_identity
 
 /-! ## Stage S2: Regular-graph identities -/
 
+omit [DecidableEq W] in
+set_option linter.unusedDecidableInType false in
 theorem adjMatrix_mul_srgAllOnesMatrix_of_regular
     {α : Type*} [DecidableEq α] [CommSemiring α]
     {G : SimpleGraph W} [DecidableRel G.Adj]
@@ -117,6 +124,8 @@ theorem adjMatrix_mul_srgAllOnesMatrix_of_regular
   ext v w
   simp [srgAllOnesMatrix, hreg v]
 
+omit [DecidableEq W] in
+set_option linter.unusedDecidableInType false in
 theorem srgAllOnesMatrix_mul_adjMatrix_of_regular
     {α : Type*} [DecidableEq α] [CommSemiring α]
     {G : SimpleGraph W} [DecidableRel G.Adj]
@@ -125,6 +134,7 @@ theorem srgAllOnesMatrix_mul_adjMatrix_of_regular
   ext v w
   simp [srgAllOnesMatrix, hreg w]
 
+omit [DecidableEq W] in
 theorem srgAllOnesMatrix_mul_srgAllOnesMatrix
     {α : Type*} [CommSemiring α] :
     (srgAllOnesMatrix W α) * (srgAllOnesMatrix W α) =
@@ -139,6 +149,7 @@ so every (real) eigenvalue of `A` lies in `{k, λ_+, λ_-}` where
 `λ_± := (-1 ± √(4k-3))/2`.
 -/
 
+set_option linter.unusedDecidableInType false in
 /-- **Stage S3.1 — cubic annihilator**: For SRG`(k²+1, k, 0, 1)`,
 the matrix `(A - k·I)(A² + A - (k-1)·I) = 0`. -/
 theorem srg_kk_plus_one_cubic_eq_zero
@@ -154,6 +165,7 @@ theorem srg_kk_plus_one_cubic_eq_zero
   -- Goal: k • J - k • J = 0
   simp
 
+set_option linter.unusedDecidableInType false in
 /-- **Stage S3.2 — eigenvalue dichotomy**:
 For SRG`(k²+1, k, 0, 1)`, any real eigenvalue `μ` of `A *ᵥ -` satisfies
 `μ = k ∨ μ² + μ - (k - 1) = 0`. -/
@@ -205,6 +217,7 @@ For Hermitian `A`, eigenvalues come from `IsHermitian.eigenvalues : W → ℝ`.
 Each eigenvalue is in `{k, λ_+, λ_-}`. Define multiplicities by counting.
 -/
 
+set_option linter.unusedDecidableInType false in
 /-- The Perron eigenvalue's eigenspace is 1-dimensional. Concretely:
 if `A v = k v` then `v = c · 𝟙` for some `c : ℝ` (where `𝟙 = const 1`). -/
 theorem srg_kk_plus_one_perron_collinear
@@ -250,6 +263,7 @@ private theorem k_sq_plus_one_ne_zero (k : ℕ) : ((k : ℝ) ^ 2 + 1) ≠ 0 := b
 
 /-! ### S4 Hermitian setup -/
 
+omit [Fintype W] [DecidableEq W] in
 /-- The adjacency matrix of a simple graph over `ℝ` is Hermitian. -/
 theorem adjMatrix_real_isHermitian {G : SimpleGraph W} [DecidableRel G.Adj] :
     (G.adjMatrix ℝ).IsHermitian :=
@@ -476,12 +490,14 @@ private theorem trace_sq_eq_sum_eigenvalues_sq
        (hHerm.eigenvalues i)^2
   simp [Function.comp_apply, pow_two]
 
+omit [DecidableEq W] in
 /-- Trace of the all-ones matrix over ℝ equals the cardinality. -/
 private theorem trace_srgAllOnesMatrix_real :
     (srgAllOnesMatrix W ℝ).trace = (Fintype.card W : ℝ) := by
   unfold Matrix.trace srgAllOnesMatrix
   simp [Finset.card_univ]
 
+set_option linter.unusedDecidableInType false in
 /-- For an SRG`(k²+1, k, 0, 1)`, `trace(A²) = (k² + 1) · k` via the SRG
 matrix identity `A² + A − (k − 1)·I = J`. -/
 private theorem srg_trace_A_sq_eq_nk
@@ -841,6 +857,7 @@ theorem srgM_k_eq_one
     exact mul_right_cancel₀ (ne_of_gt hpos) h1
   exact_mod_cast hmk_real
 
+set_option linter.unusedDecidableInType false in
 /-- Case A main: if `4k - 3` is not a perfect square, `k ∈ {0, 2}`. -/
 theorem srg_case_A
     {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
@@ -887,6 +904,8 @@ With `m_k = 1` and `D = u²` (integer square, `u ≥ 0`), the discriminant
 equation reduces to `(m_+ − m_-) · u = k(k − 2)` over `ℤ`, so
 `u | k(k − 2)`. The identity `16 k(k − 2) = u⁴ − 2u² − 15` then yields
 `u | 15`, so `u ∈ {1, 3, 5, 15}` and `k = (u² + 3)/4 ∈ {1, 3, 7, 57}`. -/
+
+set_option linter.unusedDecidableInType false in
 theorem srg_case_B
     {G : SimpleGraph W} [DecidableRel G.Adj] {k : ℕ}
     (hsrg : G.IsSRGWith (k * k + 1) k 0 1) (hk : 1 ≤ k)

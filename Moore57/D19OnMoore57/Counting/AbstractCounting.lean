@@ -521,6 +521,7 @@ theorem Dq_card_le_two_of_no_four_cycle
   · have hEmpty : D = ∅ := Finset.not_nonempty_iff_eq_empty.mp hD
     simp [hEmpty]
 
+set_option linter.unusedDecidableInType false in
 /-- Moore graph 上の軌道データに対する補題 5.2.
 
 `IsMoore57.no_four_cycle` と `Dq_card_le_two_of_no_four_cycle` を組み合わせた形.

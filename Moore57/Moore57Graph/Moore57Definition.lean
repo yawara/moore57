@@ -34,6 +34,7 @@ abbrev IsMoore57 {V : Type*} [Fintype V] (Γ : SimpleGraph V) [DecidableRel Γ.A
 
 namespace IsMoore57
 
+set_option linter.unusedDecidableInType false in
 /-- Moore graph パラメータ $(3250,57,0,1)$ から三角形禁止を取り出す. -/
 theorem no_triangle {V : Type*} [Fintype V] [DecidableEq V]
     {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
@@ -48,6 +49,7 @@ theorem no_triangle {V : Type*} [Fintype V] [DecidableEq V]
     exact ⟨⟨z, hmem⟩⟩
   omega
 
+set_option linter.unusedDecidableInType false in
 /-- Moore graph パラメータ $(3250,57,0,1)$ から 4-cycle 禁止を取り出す.
 
 ここでの 4-cycle は `x0 ~ x1 ~ x2 ~ x3 ~ x0` かつ 4 頂点が相異なるもの.
@@ -117,6 +119,7 @@ theorem not_adj_center_of_mem_branchFiber {V : Type*} [Fintype V] [DecidableEq V
   intro hux
   exact hΓ.no_triangle hub (mem_branchFiber.mp hx).2 hux.symm
 
+set_option linter.unusedDecidableInType false in
 /-- 中心 `u` の相異なる二つの枝は互いに隣接しない. -/
 theorem not_adj_of_center_neighbors {V : Type*} [Fintype V] [DecidableEq V]
     {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
