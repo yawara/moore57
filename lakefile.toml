@@ -7,6 +7,12 @@ name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.29.1"
 
+# Enable mathlib's standard linter set (style.longLine at 100, style.refine,
+# style.cases, style.cdot, flexible, hashCommand, oldObtain, unusedDecidableInType,
+# etc.). The `weak.` prefix keeps olean caching consistent.
+[leanOptions]
+weak.linter.mathlibStandardSet = true
+
 [[lean_lib]]
 name = "Moore57"
 
