@@ -4,7 +4,7 @@ import Mathlib.Logic.Equiv.Defs
 /-!
 # 固定部分グラフのデータ構造 (Tier 2)
 
-自然言語証明 `no_aut_order_22_moore57.md` が外部入力として使う 2 つの事実
+自然言語証明 `proofs/no_aut_order_22_moore57.md` が外部入力として使う 2 つの事実
 (Fix(σ) ≅ C_5, Fix(τ) ≅ K_{1,55}) を「データ束」として保持する構造体を定義する.
 
 これらの構造体は単にデータの形を規定するもので, それ自身として実在するかは

@@ -15,7 +15,7 @@ This file combines:
 to derive the natural-language chain step `S_m ∩ E ⊆ S_{2m} ∩ E` of Lemma 6.3,
 packaged as `MidpointExceptionDoublingGeometryBoundary`.
 
-The natural-language argument (`moore57_d19_lean_aware_proof.md`, §6.3):
+The natural-language argument (`proofs/moore57_d19_lean_aware_proof.md`, §6.3):
 `p ∈ S_m ∩ E` ⟹ `A_m(p) ∈ E` and `p ∈ E`.  By Lemma 6.1's forward direction
 applied at index `m`, `A_{2m}(p) = θ p`.  Since `θ` permutes `E` and `p ∈ E`,
 `θ p ∈ E`, hence `A_{2m}(p) ∈ E`, which is `p ∈ S_{2m}`.

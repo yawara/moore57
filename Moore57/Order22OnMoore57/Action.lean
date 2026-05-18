@@ -8,7 +8,7 @@ import Mathlib.GroupTheory.Perm.Cycle.Type
 /-!
 # 位数 22 の自己同型群が Moore57 に作用するデータ (Tier 3)
 
-自然言語証明 `no_aut_order_22_moore57.md` を符号化する出発点.
+自然言語証明 `proofs/no_aut_order_22_moore57.md` を符号化する出発点.
 
 `Order22ActsOnMoore57` 構造体は次の状況を保持する:
 

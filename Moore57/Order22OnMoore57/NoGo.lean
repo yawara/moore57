@@ -6,7 +6,7 @@ import Moore57.Order22OnMoore57.Parity
 /-!
 # 位数 22 の自己同型群は Moore57 に作用しない (conditional)
 
-自然言語証明 `no_aut_order_22_moore57.md` §6 の最終組み立て.
+自然言語証明 `proofs/no_aut_order_22_moore57.md` §6 の最終組み立て.
 
 `Order22ActsOnMoore57` から `traceNumber h = 5` (Phase 2-4) と
 `Even (traceNumber h)` (Phase 5) を組み合わせれば即矛盾.
