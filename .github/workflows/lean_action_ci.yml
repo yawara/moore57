@@ -64,5 +64,9 @@ jobs:
       - name: Text-based lint (mathlib TextBased linters)
         run: lake exe lintText
 
+      - name: Shake (unused imports, advisory)
+        continue-on-error: true
+        run: lake exe shake --cfg bin/noshake.json Moore57
+
       # The main-theorem axioms check runs as part of `lake build`
       # via `Moore57/AxiomsCheck.lean` — if axioms regress, the build above fails.

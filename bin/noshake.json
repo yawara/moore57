@@ -1,0 +1,23 @@
+{
+  "ignoreAll": [
+    "Moore57.D19OnMoore57.AdjacentMoved.OnOrbit",
+    "Moore57.D19OnMoore57.AdjacentMoved.PartitionContribution",
+    "Moore57.D19OnMoore57.AdjacentMoved.ReflectionAFiber",
+    "Moore57.D19OnMoore57.BranchOrbit.ABCCardTwoGapSummaryBoundary",
+    "Moore57.D19OnMoore57.D19Core.GeometricInputs",
+    "Moore57.D19OnMoore57.E7Projection.ProjectionRepresentationSkeleton",
+    "Moore57.D19OnMoore57.Trace.DataSplit",
+    "Moore57.Foundations.GraphTheory.HoffmanSingleton",
+    "Moore57.Foundations.GraphTheory.StrongZeroOne",
+    "Moore57.Foundations.GroupTheory.CyclotomicPrimeTrace",
+    "Moore57.Foundations.GroupTheory.D19RotationInvariantTrace",
+    "Moore57.Foundations.LinearAlgebra.InvolutionTrace",
+    "Moore57.Foundations.LinearAlgebra.JordanMonotonicity",
+    "Moore57.Foundations.ZMod19.Lemmas",
+    "Moore57.Moore57Graph.Aut.CommonNeighbor",
+    "Moore57.Moore57Graph.E7Matrix.SpectralDecomposition",
+    "Moore57.Order22OnMoore57.ComplexRestriction",
+    "Moore57.Order22OnMoore57.ModularF11",
+    "Moore57.Order22OnMoore57.Phase4F11Module"
+  ]
+}
