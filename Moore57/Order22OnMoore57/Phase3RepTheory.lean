@@ -30,6 +30,7 @@ section Idempotent
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+omit [Fintype V] in
 /-- `permMatrix (1 : Equiv.Perm V) = 1` (Moore57 convention). -/
 private theorem _root_.Moore57.permMatrix_one_eq_one_helper :
     (permMatrix (1 : Equiv.Perm V) : Matrix V V ℚ) = 1 := by

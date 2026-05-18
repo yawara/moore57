@@ -37,6 +37,7 @@ theorem neighborFinset_center_eq_univ_erase
   · intro hv
     exact (hstar c v).mpr (Or.inl ⟨rfl, hv⟩)
 
+omit [DecidableEq V] in
 theorem degree_center_eq_card_sub_one
     (hstar : IsStarWithCenter G c) :
     G.degree c = Fintype.card V - 1 := by
@@ -70,6 +71,7 @@ theorem degree_noncenter_eq_one
     hstar.neighborFinset_noncenter_eq_singleton hv]
   simp
 
+omit [DecidableEq V] in
 /-- A finite star on `n` vertices has exactly `n - 1` edges. -/
 theorem card_edgeFinset_eq_card_sub_one
     (hstar : IsStarWithCenter G c) :

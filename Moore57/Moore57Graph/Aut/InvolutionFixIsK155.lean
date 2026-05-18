@@ -47,6 +47,7 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
 /-! ### Phase 1: Some adjacent moved pair exists -/
 
+omit [DecidableEq V] in
 /-- If `σ` has no adjacent moved pair, then `adjacentMovedCount Γ σ = 0`. -/
 private theorem adjacentMovedCount_eq_zero_of_no_adjacent_moved
     (σ : Equiv.Perm V)
@@ -58,6 +59,7 @@ private theorem adjacentMovedCount_eq_zero_of_no_adjacent_moved
   ext v
   simp [hno v]
 
+omit [DecidableEq V] in
 /-- **Cameron Step 1 (refuted Case B)**: an involutive automorphism `σ ≠ 1` of
 a Moore57 graph must interchange some adjacent pair. -/
 theorem aut_involution_exists_adjacent_moved
@@ -109,6 +111,7 @@ private noncomputable def commonFixOfSwapPair
     hΓ.of_not_adj hne hnadj
   exact (Fintype.card_eq_one_iff.mp hcard).choose.val
 
+omit [DecidableEq V] in
 private theorem commonFixOfSwapPair_spec
     (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
     (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
@@ -130,6 +133,7 @@ private theorem commonFixOfSwapPair_spec
     · exact hz_mem
   exact ⟨hσz, hz_mem⟩
 
+omit [DecidableEq V] in
 private theorem commonFixOfSwapPair_unique
     (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
     (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
@@ -307,6 +311,7 @@ the σ-fixed induced graph is non-regular (the regular case would force
 `|Fix| = k² + 1`, but `55` is not a perfect square) and hence a star with
 some center `c`. -/
 
+omit [DecidableEq V] in
 /-- For an involutive automorphism `σ ≠ 1` of a Moore57 graph, the σ-fixed
 induced subgraph is a star, i.e., has a center vertex adjacent to all 55
 other fixed vertices, with no other edges. -/
@@ -339,6 +344,7 @@ theorem aut_involution_fixedInducedGraph_isStarWithCenter
 
 /-! ### Phase 4: Assembled `K155FixedData` -/
 
+omit [DecidableEq V] in
 /-- **Main theorem**: For an involutive automorphism `σ ≠ 1` of a Moore57
 graph, the σ-fixed subgraph is the star `K_{1,55}` — a center adjacent to
 55 leaves, with no other edges.

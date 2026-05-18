@@ -23,6 +23,7 @@ noncomputable def minus8Matrix
     (Γ : SimpleGraph V) [DecidableRel Γ.Adj] : Matrix V V ℚ :=
   1 - E57Matrix V - E7Matrix Γ
 
+omit [DecidableEq V] in
 theorem E57Matrix_isIdempotentElem
     {Γ : SimpleGraph V} [DecidableRel Γ.Adj] (hΓ : IsMoore57 Γ) :
     IsIdempotentElem (E57Matrix V) := by

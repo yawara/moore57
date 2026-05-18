@@ -29,6 +29,7 @@ open Polynomial
 
 variable {W : Type*} [AddCommGroup W] [Module ℚ W] [FiniteDimensional ℚ W]
 
+omit [FiniteDimensional ℚ W] in
 /-- σ^p = 1 のとき Φ_p(σ) を作用させた endomorphism の像は ker(σ - 1) に含まれる.
 これは Bezout: (X-1) ⋅ Φ_p = X^p - 1 から従う. -/
 private theorem range_aeval_cyclotomic_le_ker_sub_one
@@ -86,6 +87,7 @@ theorem isCoprime_X_sub_one_cyclotomic
   rw [hC1] at ha
   linear_combination -ha
 
+omit [FiniteDimensional ℚ W] in
 /-- σ^p = 1 のとき, W = ker(σ - 1) ⊕ ker Φ_p(σ) (Bezout による直和分解).
 
 (X - 1) と Φ_p(X) は ℚ[X] で互いに素 (Bezout で 1 = a(X-1) + bΦ_p),
@@ -176,6 +178,7 @@ private theorem aeval_cyclotomic_pow_eq_self_of_pow_eq_one
   conv_rhs => rw [← h_image]
   rw [Finset.sum_image (fun i hi j hj => hf_inj hi hj)]
 
+omit [FiniteDimensional ℚ W] in
 /-- σ^n は (σ - 1) と可換. -/
 private theorem commute_sub_one_pow (σ : W →ₗ[ℚ] W) (n : ℕ) :
     Commute (σ - 1) (σ ^ n) := by
@@ -194,6 +197,7 @@ private theorem mapsTo_pow_ker_sub_one (σ : W →ₗ[ℚ] W) (n : ℕ) :
   simp only [Module.End.mul_apply] at heq
   rw [heq, hv', map_zero]
 
+omit [FiniteDimensional ℚ W] in
 /-- σ^n は (aeval σ f) と可換 (f : ℚ[X]). -/
 private theorem commute_aeval_pow (σ : W →ₗ[ℚ] W) (f : ℚ[X]) (n : ℕ) :
     Commute (Polynomial.aeval σ f) (σ ^ n) := by

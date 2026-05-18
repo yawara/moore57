@@ -12,12 +12,13 @@ rev = "v4.29.1"
 # etc.). The `weak.` prefix keeps olean caching consistent.
 [leanOptions]
 weak.linter.mathlibStandardSet = true
-# TODO: cleanup section-variable hygiene per theorem (`omit [Fintype V] in ...`),
-# then re-enable. Currently ~100 warnings across the project use a shared
-# `variable` block where some theorems don't need every typeclass.
-weak.linter.unusedSectionVars = false
-weak.linter.unusedDecidableInType = false
-weak.linter.unusedFintypeInType = false
+# Section-variable hygiene linters re-enabled (35/100 cleaned, 65 remain).
+# Auto-script applied `omit [...] in` to theorems that auto-bound section-level
+# `variable` blocks. Remaining 65 warnings live in ~10 files where the unused
+# typeclass is bound LOCALLY in the theorem signature (e.g.,
+# `theorem foo {ι : Type*} [DecidableEq ι] ...`) — `omit` can't refer to the
+# locally-bound name, so cleanup requires manual signature edits or
+# `set_option` per declaration.
 # TODO: replace `simp [...]` with `simp only [...]` per occurrence by running
 # `simp?` and pasting the suggested lemma set. 49 occurrences; not mechanical.
 weak.linter.flexible = false

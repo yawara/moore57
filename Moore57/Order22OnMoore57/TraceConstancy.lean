@@ -117,6 +117,7 @@ namespace Moore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+omit [Fintype V] in
 /-- Moore57 convention: permMatrix 1 = 1. -/
 private theorem moore57_permMatrix_one_local :
     (permMatrix (1 : Equiv.Perm V) : Matrix V V ℚ) = 1 := by

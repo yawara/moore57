@@ -42,6 +42,7 @@ noncomputable def EMinus8Matrix (Γ : SimpleGraph V) [DecidableRel Γ.Adj] :
 
 /-! ### Idempotency and orthogonality of E_57 -/
 
+omit [DecidableEq V] in
 /-- `E_57² = E_57`. -/
 theorem E57Matrix_mul_E57Matrix_eq_E57Matrix (hΓ : IsMoore57 Γ) :
     E57Matrix V * E57Matrix V = E57Matrix V := by

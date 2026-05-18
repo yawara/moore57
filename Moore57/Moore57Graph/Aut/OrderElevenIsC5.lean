@@ -304,6 +304,7 @@ private theorem hw3_ne_w4 :
 
 /-! ### Triangle-free / common-neighbour helpers on H -/
 
+omit [DecidableEq V] in
 /-- `H` is triangle-free: from `λ = 0` (SRG), any pair of adjacent vertices has
 no common neighbour. So a third vertex adjacent to both yields contradiction. -/
 private theorem hH_no_triangle
@@ -322,6 +323,7 @@ private theorem hH_no_triangle
     exact ⟨⟨z, hz_mem⟩⟩
   omega
 
+omit [DecidableEq V] in
 /-- `H`'s `μ = 1` uniqueness: two common neighbours of a distinct non-adjacent
 pair must coincide. -/
 private theorem hH_common_nbr_unique

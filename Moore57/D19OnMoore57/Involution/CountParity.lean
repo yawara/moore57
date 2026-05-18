@@ -21,6 +21,7 @@ variable {V : Type u} [Fintype V] [DecidableEq V]
 
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+omit [DecidableEq V] in
 /-- The vertices sent to adjacent vertices by an involution come in swapped
 pairs. -/
 theorem two_dvd_adjacentMovedCount_of_involutive

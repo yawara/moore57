@@ -31,6 +31,7 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
 /-! ### Star case exclusion -/
 
+omit [DecidableEq V] in
 /-- If the σ-fixed induced graph of a `σ^11 = 1` automorphism is a star,
 the star has a non-center vertex (i.e., leaf), since `|Fix(σ)| ≥ 5 > 1`. -/
 theorem aut_exists_noncenter_of_star_of_pow_eleven
@@ -50,6 +51,7 @@ theorem aut_exists_noncenter_of_star_of_pow_eleven
   · exact ⟨y, fun hyc => hxy (hxc.trans hyc.symm)⟩
   · exact ⟨x, hxc⟩
 
+omit [DecidableEq V] in
 /-- **Star case exclusion**: For an automorphism σ of Moore57 with `σ^11 = 1`
 and `σ ≠ 1`, the σ-fixed induced subgraph is not a star.
 

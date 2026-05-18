@@ -48,6 +48,7 @@ variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 noncomputable def permMatrixF11 (σ : Equiv.Perm V) : Matrix V V (ZMod 11) :=
   σ.symm.toPEquiv.toMatrix
 
+omit [Fintype V] in
 /-- `permMatrixF11 (1 : Equiv.Perm V) = 1`. -/
 theorem permMatrixF11_one :
     (permMatrixF11 (1 : Equiv.Perm V)) = 1 := by
