@@ -12,5 +12,5 @@ name = "Moore57"
 
 [[lean_exe]]
 name = "lintText"
-srcDir = "scripts"
+srcDir = "bin"
 supportInterpreter = true
