@@ -71,7 +71,7 @@ theorem E57Matrix_mul_E7Matrix_eq_zero (hΓ : IsMoore57 Γ) :
   · subst w
     simp [allOnesMatrix]
     ring
-  · simp [allOnesMatrix, hvw]
+  · simp [allOnesMatrix]
     ring
 
 /-- `E_7 · E_57 = 0`. 対称形. -/
@@ -113,7 +113,7 @@ theorem EMinus8Matrix_mul_EMinus8Matrix_eq_EMinus8Matrix (hΓ : IsMoore57 Γ) :
   have hE57E7 := E57Matrix_mul_E7Matrix_eq_zero (V := V) hΓ
   have hE7E57 := E7Matrix_mul_E57Matrix_eq_zero (V := V) hΓ
   simp only [EMinus8Matrix, sub_mul, mul_sub, mul_one, one_mul,
-    hE7sq, hE57sq, hE57E7, hE7E57, sub_zero, zero_sub]
+    hE7sq, hE57sq, hE57E7, hE7E57, sub_zero]
   abel
 
 /-- `E_57 · E_{-8} = 0`. -/
@@ -151,7 +151,7 @@ theorem EMinus8Matrix_mul_E7Matrix_eq_zero (hΓ : IsMoore57 Γ) :
 /-! ### Spectral decomposition of A -/
 
 /-- 隣接行列の固有値分解: `A = 57 E_57 + 7 E_7 - 8 E_{-8}`. -/
-theorem adjMatrix_eq_spectral_decomp (hΓ : IsMoore57 Γ) :
+theorem adjMatrix_eq_spectral_decomp (_hΓ : IsMoore57 Γ) :
     Γ.adjMatrix ℚ =
       (57 : ℚ) • E57Matrix V + (7 : ℚ) • E7Matrix Γ - (8 : ℚ) • EMinus8Matrix Γ := by
   classical
@@ -164,10 +164,10 @@ theorem adjMatrix_eq_spectral_decomp (hΓ : IsMoore57 Γ) :
   simp only [EMinus8Matrix, E57Matrix, E7Matrix]
   ext v w
   simp only [Matrix.add_apply, Matrix.sub_apply, Matrix.smul_apply,
-    Matrix.one_apply, allOnesMatrix, smul_eq_mul, mul_one]
+    Matrix.one_apply, allOnesMatrix, smul_eq_mul]
   by_cases hvw : v = w
-  · subst w; simp [Matrix.one_apply]; ring
-  · simp [Matrix.one_apply, hvw]
+  · subst w; simp []; ring
+  · simp [hvw]
     by_cases hadj : Γ.Adj v w
     · simp [hadj]; ring
     · simp [hadj]; ring
@@ -177,7 +177,7 @@ theorem adjMatrix_eq_spectral_decomp (hΓ : IsMoore57 Γ) :
 /-- `E_57` は graph automorphism と交換する. -/
 theorem E57Matrix_mul_permMatrix_eq_permMatrix_mul_E57Matrix (σ : Equiv.Perm V) :
     E57Matrix V * permMatrix σ = permMatrix σ * E57Matrix V := by
-  simp [E57Matrix, Matrix.smul_mul, Matrix.mul_smul,
+  simp [E57Matrix,
     allOnesMatrix_mul_permMatrix_eq_permMatrix_mul_allOnesMatrix σ]
 
 /-- `E_{-8}` は graph automorphism と交換する. -/

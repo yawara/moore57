@@ -81,12 +81,12 @@ theorem compl_adjMatrix_eq_allOnes_sub
   classical
   by_cases hvw : v = w
   · subst hvw
-    simp [SimpleGraph.adjMatrix_apply, srgAllOnesMatrix, Matrix.one_apply,
-      SimpleGraph.compl_adj]
+    simp [SimpleGraph.adjMatrix_apply, srgAllOnesMatrix,
+      ]
   · simp only [SimpleGraph.adjMatrix_apply, srgAllOnesMatrix_apply,
       Matrix.sub_apply, Matrix.one_apply_ne hvw, SimpleGraph.compl_adj]
     by_cases hAdj : G.Adj v w
-    · simp [hAdj, hvw, hAdj.ne]
+    · simp [hAdj, hvw]
     · simp [hAdj, hvw]
 
 /-- **Stage S1**: SRG`(k²+1, k, 0, 1)` matrix identity:

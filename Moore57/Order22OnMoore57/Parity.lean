@@ -169,7 +169,7 @@ theorem traceNumber_even_of_cyclic (hcomm : h.σ * h.τ = h.τ * h.σ) :
 theorem adj_σ_iff_adj_σ_inv (x : V) :
     Γ.Adj x (h.σ x) ↔ Γ.Adj x (h.σ⁻¹ x) := by
   have hperm : h.σ (h.σ⁻¹ x) = x := by
-    have := h.σ.apply_symm_apply x; simpa [Equiv.Perm.inv_def] using this
+    simp [Equiv.Perm.inv_def]
   constructor
   · intro hx
     -- σ_aut (σ⁻¹ x) x: Adj (σ⁻¹ x) x ↔ Adj (σ (σ⁻¹ x)) (σ x) = Adj x (σ x)

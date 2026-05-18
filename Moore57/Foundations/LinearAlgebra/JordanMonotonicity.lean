@@ -194,7 +194,7 @@ theorem concave_linearity_forcing
     (f : ℕ → ℕ) {N α β γ : ℕ}
     (hN : 1 ≤ N)
     (hf_concave : ∀ k, 1 ≤ k → f (k + 1) + f (k - 1) ≤ 2 * f k)
-    (hf_mono : ∀ k, f k ≤ f (k + 1))
+    (_hf_mono : ∀ k, f k ≤ f (k + 1))
     (hf_0 : f 0 = 0)
     (hf_1 : f 1 = α)
     (hf_Nm1 : f (N - 1) = β)
@@ -278,7 +278,6 @@ theorem concave_linearity_forcing
         ∑ k ∈ Finset.Ico 1 N, ((f (k+1) : ℤ) - f k - ((γ : ℤ) - β)) = 0 := by
       rw [Finset.sum_sub_distrib, Finset.sum_const, h_card_Ico, h_sum_Ico,
           nsmul_eq_mul]
-      push_cast
       linarith [h_consistency_int]
     have h_each_zero := (Finset.sum_eq_zero_iff_of_nonneg h_each_nn).mp h_sum_diff
     intro k hk
@@ -299,7 +298,7 @@ theorem concave_linearity_forcing
         rw [Finset.mem_Ico] at hk ⊢; omega
       exact h_m_eq k hk'
     rw [Finset.sum_congr rfl h_each, Finset.sum_const, Nat.card_Ico]
-    push_cast; ring
+    ring
   rw [h_sum_j] at h_tel_j
   have h_d_j_int : (f j : ℤ) = α + ((j - 1 : ℕ) : ℤ) * ((γ : ℤ) - β) := by
     linarith
@@ -308,7 +307,6 @@ theorem concave_linearity_forcing
     have := Nat.cast_sub (R := ℤ) hβγ; simpa using this
   zify [show (j - 1 : ℕ) * (γ - β) = ((j - 1) * (γ - β) : ℕ) from rfl]
   rw [h_cast_γβ]
-  push_cast
   linarith
 
 end Moore57.LinearAlgebra

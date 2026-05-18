@@ -60,7 +60,7 @@ private theorem σ_pow_fix {x : V} (hx : h.σ x = x) (n : ℕ) :
 位数 11 の置換 τ. τ の不動点は σ 不動点 ∩ S だが,
 σ 不動点では `σ^k x = x` で `Γ.Adj x x = False` (loopless) ゆえ S に属さず空.
 よって `S.card ≡ 0 (mod 11)`. -/
-theorem eleven_dvd_Tk {k : ℕ} (hk : k % 11 ≠ 0) : 11 ∣ h.Tk k := by
+theorem eleven_dvd_Tk {k : ℕ} (_hk : k % 11 ≠ 0) : 11 ∣ h.Tk k := by
   classical
   haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
   -- σ-不変な述語 p

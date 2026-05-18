@@ -57,7 +57,7 @@ theorem Fin5_cycle_involution_classify
 
 /-- τ-誘導 Fin 5 上の関数: σ_fix.v が Fix(σ) との bijection を与えるので,
 τ (σ_fix.v i) ∈ Fix(σ) を σ_fix.v で送り戻す形. -/
-noncomputable def dihedral_τC5_fn (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) (i : Fin 5) : Fin 5 := by
+noncomputable def dihedral_τC5_fn (_hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) (i : Fin 5) : Fin 5 := by
   classical
   have h_τfix : h.σ (h.τ (h.σ_fix.v i)) = h.τ (h.σ_fix.v i) :=
     h.τ_preserves_σ_fix (h.σ_fix.v_fixed i)

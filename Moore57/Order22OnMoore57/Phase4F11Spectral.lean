@@ -372,7 +372,7 @@ theorem E7_idempotent (hΓ : IsMoore57 Γ) :
   have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
   have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
   have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
-  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, one_mul, mul_one]
   rw [hsq, hAJ, hJA, hJJ]
   match_scalars <;> decide
 
@@ -388,7 +388,7 @@ theorem E3_idempotent (hΓ : IsMoore57 Γ) :
   have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
   have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
   have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
-  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, one_mul, mul_one]
   rw [hsq, hAJ, hJA, hJJ]
   match_scalars <;> decide
 
@@ -404,7 +404,7 @@ theorem E7_mul_E3_eq_zero (hΓ : IsMoore57 Γ) :
   have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
   have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
   have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
-  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, one_mul, mul_one]
   rw [hsq, hAJ, hJA, hJJ]
   match_scalars <;> decide
 
@@ -420,7 +420,7 @@ theorem E3_mul_E7_eq_zero (hΓ : IsMoore57 Γ) :
   have hAJ : A * J = (2 : ZMod 11) • J := adjMatrixF11_mul_allOnes hΓ
   have hJA : J * A = (2 : ZMod 11) • J := allOnes_mul_adjMatrixF11 hΓ
   have hJJ : J * J = (5 : ZMod 11) • J := allOnes_mul_allOnes hΓ
-  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, smul_smul, one_mul, mul_one]
+  simp only [add_mul, mul_add, smul_mul_assoc, mul_smul_comm, one_mul, mul_one]
   rw [hsq, hAJ, hJA, hJJ]
   match_scalars <;> decide
 
@@ -830,7 +830,7 @@ theorem ELambda_sum_apply (v : V → ZMod 11) :
   classical
   have h_apply : ∀ M N : Matrix V V (ZMod 11),
       (M + N).toLin' v = M.toLin' v + N.toLin' v := fun M N => by
-    simp [Matrix.toLin'_apply, Matrix.add_mulVec]
+    simp [Matrix.toLin'_apply]
   have h_sum : ((E2MatrixF11 Γ + E7MatrixF11 Γ + E3MatrixF11 Γ).toLin') v =
       (E2MatrixF11 Γ).toLin' v + (E7MatrixF11 Γ).toLin' v + (E3MatrixF11 Γ).toLin' v := by
     rw [h_apply (E2MatrixF11 Γ + E7MatrixF11 Γ) (E3MatrixF11 Γ),
@@ -2742,7 +2742,7 @@ theorem V2Submodule_eq_span_one (h : Order22ActsOnMoore57 V Γ) :
     rw [h_sum]
     ext w
     change ((9 : ZMod 11) * 5) • ((fun _ : V => (1 : ZMod 11)) w) = 1
-    simp only [Pi.smul_apply, smul_eq_mul, mul_one]
+    simp only [smul_eq_mul, mul_one]
     decide
 
 /-- `dim V_2 = 1` over F_11. -/

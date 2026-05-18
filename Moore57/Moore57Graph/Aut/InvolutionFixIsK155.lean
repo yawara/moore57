@@ -102,7 +102,7 @@ graph automorphism, `v` and `σ v` are non-adjacent and distinct.
 This is a constructive choice via `Classical.choose` on the μ=1 singleton. -/
 private noncomputable def commonFixOfSwapPair
     (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
-    (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (_haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
     {v : V} (hne : v ≠ σ v) (hnadj : ¬ Γ.Adj v (σ v)) : V := by
   classical
   have hcard : Fintype.card (Γ.commonNeighbors v (σ v)) = 1 :=

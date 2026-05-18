@@ -211,7 +211,7 @@ theorem aut_involution_fixedVertexCount_regular_eq_sq_add_one
   -- Cast everything to ℤ so we can use ring/linear arithmetic.
   rcases Nat.eq_zero_or_pos k with hk0 | hk_pos
   · subst hk0
-    simp only [Nat.zero_sub, Nat.mul_zero, Nat.zero_mul, Nat.zero_add] at hparam
+    simp only [Nat.zero_sub, Nat.mul_zero] at hparam
     omega
   have h_k_sub_pos : k - 1 + 1 = k := Nat.sub_add_cancel hk_pos
   have hparam_int :
@@ -353,7 +353,6 @@ theorem aut_involution_fixedVertexCount_candidates
     all_goals first
       | (exact absurd (by decide) hkodd)
       | (norm_num at hcard; omega)
-      | (exfalso; norm_num at ha1_nonneg)
   · -- Star branch
     rcases hstrong.exists_isStarWithCenter_of_not_regular hregular with ⟨c, hstar⟩
     rcases aut_involution_fixedVertexCount_star_candidates hΓ σ haut hinv hstar with

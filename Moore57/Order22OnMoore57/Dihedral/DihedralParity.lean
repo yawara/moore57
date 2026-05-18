@@ -208,7 +208,7 @@ noncomputable def dihedral_fixOnSubtype (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
   Finset.univ.filter (fun y => h.dihedral_ρ1 hdihe y = y)
 
 /-- V 側の固定点集合 (Fix(τ) ∩ S). -/
-noncomputable def dihedral_fixτS (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) : Finset V :=
+noncomputable def dihedral_fixτS (_hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) : Finset V :=
   Finset.univ.filter (fun x : V => h.τ x = x ∧ Γ.Adj x (h.σ x))
 
 theorem dihedral_fixOnSubtype_image_val_eq_fixτS
