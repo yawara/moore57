@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 147 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 147 = 3 · 7²</h1>
+    <p class="sub status"><span class="badge open">0 / 6 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>Macaj–Siran 2010, Theorem 6 (odd case).</p>
+</section>
+
+<section>
+  <h2>Group classification (SmallGroup(147, k))</h2>
+  <p>There are <strong>6 groups of order 147</strong> in total.</p>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(147, 1)</code></td><td><code>ℤ₄₉ ⋊ ℤ₃</code></td>          <td>Non-trivial action; exists because <code>3 ∣ 49 − 1 = 48</code>.</td>           <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 2)</code></td><td><code>ℤ₁₄₇</code></td>              <td>Cyclic.</td>                            <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 3)</code></td><td><code>(ℤ₇ × ℤ₇) ⋊ ℤ₃</code></td>    <td>ℤ₃ acts diagonally on <code>ℤ₇²</code>.</td>                <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 4)</code></td><td><code>(ℤ₇ × ℤ₇) ⋊ ℤ₃</code></td>    <td>Different (non-conjugate) ℤ₃-action.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 5)</code></td><td><code>ℤ₇ × (ℤ₇ ⋊ ℤ₃)</code></td>    <td>Direct product.</td>                     <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 6)</code></td><td><code>ℤ₇ × ℤ₂₁</code></td>          <td>Abelian, non-cyclic.</td>                <td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+  <p class="muted">Exact GAP indices may differ; family names are the invariant data.</p>
+</section>
+
+<section>
+  <h2>Status &amp; outlook</h2>
+  <p>
+    Not yet formalized. The Sylow-7 part has order 49; Theorem 5's analogue
+    for <code>p = 7</code> (Lemma 19 / Theorem 5 with <code>p &gt; 5</code>)
+    bounds it. Together with Lemma 12 row <code>p = 7</code> this should
+    yield strong restrictions on the orbit structure.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

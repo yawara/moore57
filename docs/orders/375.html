@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 375 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 375 = 3 · 5³</h1>
+    <p class="sub status"><span class="badge open">0 / 4 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>
+    Macaj–Siran 2010, Theorem 6 (odd case). The largest possible
+    <code>|G|</code> overall (Corollary 3: <code>|G| ≤ 375</code>).
+  </p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <p>
+    There are <strong>4 groups of order 375</strong>
+    (<code>SmallGroup(375, 1) … SmallGroup(375, 4)</code>). By Theorem 5,
+    the Sylow-5
+    subgroup <code>P</code> of size 125 is one of two abelian types
+    (<code>ℤ₁₂₅</code> or <code>ℤ₂₅ × ℤ₅</code>) once
+    <code>SmallGroup(625, 12)</code> is excluded (Proposition 4).
+  </p>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>Family</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ℤ₃₇₅</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>ℤ₃ × P</code></td><td>Direct product with abelian <code>P</code> of order 125.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>P ⋊ ℤ₃</code></td><td>Frobenius / semidirect when <code>3</code> divides the order of <code>Aut(P)</code>.</td><td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+  <p class="muted">
+    SmallGroup IDs <code>SmallGroup(375, k)</code> enumerate the precise
+    extensions; we list them by family here.
+  </p>
+</section>
+
+<section>
+  <h2>Status &amp; outlook</h2>
+  <p>
+    Not yet formalized. This is the most computationally involved
+    candidate: the paper notes that even after Lemma 5's
+    equitable-partition check, <em>hundreds</em> of candidate adjacency
+    matrices for groups of order 375 with 10 orbits survive. The Lean
+    route would mirror the GAP-aided Proposition 4 / 5 arguments and is
+    correspondingly large.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 14 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 14 = 2 · 7</h1>
+    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>
+    Macaj–Siran 2010, Theorem 7 (even case). One of the
+    <code>2p, p ∈ {7, 11, 19}</code> candidates.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(14, 1)</code></td><td><code>D₇</code></td>  <td>Dihedral of order 14.</td>  <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(14, 2)</code></td><td><code>ℤ₁₄</code></td> <td>Cyclic.</td>                <td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+</section>
+
+<section>
+  <h2>Status &amp; outlook</h2>
+  <p>
+    Not yet formalized. The paper does not give a direct Lemma-15-style
+    obstruction for order 14, in contrast with order 22 (the
+    <code>p = q = 11</code> star case of Lemma 15) or the
+    <code>pq = 65</code> star case.
+  </p>
+  <p>
+    A natural attack mirrors the <code>Order22</code> route:
+    <code>σ</code> of order 7, <code>τ</code> involution; use the
+    <code>F₇</code> permutation module + <code>Tk = 7n</code> Higman trace
+    + <code>aut_involution_fixedVertexCount_candidates</code>. The
+    bottleneck is the missing <code>F₇</code> good-reduction analogue of
+    <code>aF11_lambda_seven_eq_159</code>.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

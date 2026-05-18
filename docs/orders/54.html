@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 54 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 54 = 2 · 3³</h1>
+    <p class="sub status"><span class="badge open">0 / 15 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>
+    Macaj–Siran 2010, Theorem 7 (even case). One of the surviving
+    even-order maxima with <code>p = 3</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <p>
+    There are <strong>15 groups of order 54</strong>, listed as
+    <code>SmallGroup(54, 1) … SmallGroup(54, 15)</code> in GAP.
+    Representative types:
+  </p>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>Family</th><th>Examples</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cyclic / abelian</td><td><code>ℤ₅₄</code>, <code>ℤ₃ × ℤ₁₈</code>, <code>ℤ₃² × ℤ₆</code>, <code>ℤ₃³ × ℤ₂</code></td><td><span class="badge open">open</span></td></tr>
+      <tr><td>Dihedral / generalised dihedral</td><td><code>D₂₇</code>, <code>S₃ × ℤ₃²</code>, <code>(ℤ₃²) ⋊ ℤ₆</code></td><td><span class="badge open">open</span></td></tr>
+      <tr><td>Non-trivial extensions of 3-groups by ℤ₂</td><td>various <code>P ⋊ ℤ₂</code> with <code>P</code> one of the 5 groups of order 27</td><td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+</section>
+
+<section>
+  <h2>Status &amp; outlook</h2>
+  <p>
+    Not yet formalized. Macaj–Siran Theorem 4 gives the upper bound
+    <code>|3-part of G| ≤ 27</code>, and Lemma 2 fixes the involution
+    parameters (<code>a₀ = 56, a₁ = 112</code>); the remaining work is to
+    rule out each of the 15 specific extensions. The Sylow-2 element is
+    always the same single involution, so most of the proof effort lies on
+    the 3-side via Corollary 2 (<code>SmallGroup(81, 9)</code>) and the
+    triangle-free obstruction.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

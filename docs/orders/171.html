@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 171 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 171 = 3² · 19</h1>
+    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>
+    Macaj–Siran 2010, Theorem 6 (odd case). The only candidate involving
+    the prime 19 in the odd case.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification (SmallGroup(171, k))</h2>
+  <p>There are <strong>5 groups of order 171</strong>.</p>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(171, 1)</code></td><td><code>ℤ₁₉ ⋊ ℤ₉</code></td>           <td>Non-trivial action of <code>ℤ₉</code> on <code>ℤ₁₉</code>. Exists because <code>9 ∣ 19 − 1 = 18</code>.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(171, 2)</code></td><td><code>ℤ₁₇₁</code></td>               <td>Cyclic.</td>                       <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(171, 3)</code></td><td><code>ℤ₁₉ × (ℤ₃ × ℤ₃)</code></td>    <td>Abelian, non-cyclic.</td>          <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(171, 4)</code></td><td><code>(ℤ₁₉ ⋊ ℤ₃) × ℤ₃</code></td>    <td>Frobenius factor times ℤ₃.</td>    <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(171, 5)</code></td><td><code>ℤ₁₉ ⋊ (ℤ₃ × ℤ₃)</code></td>    <td>ℤ₃² acts via one cyclic ℤ₃ quotient.</td><td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+  <p class="muted">Exact GAP indices may differ; family names are the invariant data.</p>
+</section>
+
+<section>
+  <h2>Status &amp; outlook</h2>
+  <p>
+    Not yet formalized. The <code>p = 19</code> Sylow part is exactly the
+    setting of the unconditional <code>no_D19_acts_on_Moore57</code>
+    theorem when paired with an involution; in the odd case here there is
+    no involution, so the obstruction must come from the structure on the
+    fixed points of the order-19 element instead.
+  </p>
+  <p>
+    Concretely: by Lemma 12 (<code>p = 19</code>, <code>a₀(x) = 1</code>),
+    an order-19 automorphism fixes a single vertex, so the <code>ℤ₉</code>-
+    or <code>ℤ₃²</code>-factor acts on the star of size 56 around that
+    fixed point. Bounding the automorphism group of that star yields the
+    obstruction.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

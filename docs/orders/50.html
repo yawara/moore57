@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 50 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 50 = 2 · 5²</h1>
+    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>
+    Macaj–Siran 2010, Theorem 7 (even case). One of the surviving
+    even-order maxima with <code>p = 5</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification (SmallGroup(50, k))</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(50, 1)</code></td><td><code>D₂₅</code></td>             <td>Dihedral of order 50.</td>                              <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 2)</code></td><td><code>ℤ₅₀</code></td>             <td>Cyclic.</td>                                            <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 3)</code></td><td><code>(ℤ₅ × ℤ₅) ⋊ ℤ₂</code></td> <td>Non-trivial involution on <code>ℤ₅²</code>.</td>        <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 4)</code></td><td><code>ℤ₅ × D₅</code></td>        <td>Direct product.</td>                                    <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 5)</code></td><td><code>ℤ₅ × ℤ₁₀</code></td>       <td>Abelian, non-cyclic.</td>                                <td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+</section>
+
+<section>
+  <h2>Status &amp; outlook</h2>
+  <p>
+    Not yet formalized. By Macaj–Siran Theorem 5, a Sylow-5 subgroup of
+    <code>G</code> of order 25 is one of two abelian types
+    (<code>ℤ₂₅</code> or <code>ℤ₅ × ℤ₅</code>), each with a fixed point
+    set isomorphic to a sub-structure of the Hoffman–Singleton graph; the
+    involution then has <code>a₀ = 56</code> and <code>a₁ = 112</code>
+    (Lemma 2). Combining these would close all five cases.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

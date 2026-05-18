@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 39 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 39 = 3 · 13</h1>
+    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>
+    Macaj–Siran 2010, Theorem 6 (odd case). The only candidate involving
+    the prime 13.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>(39, 1)</code></td>
+        <td><code>ℤ₁₃ ⋊ ℤ₃</code></td>
+        <td>
+          The unique non-abelian group of order 39. Exists because
+          <code>3 ∣ 13 − 1 = 12</code>.
+        </td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+      <tr>
+        <td><code>(39, 2)</code></td>
+        <td><code>ℤ₃₉</code></td>
+        <td>Cyclic.</td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </figure>
+</section>
+
+<section>
+  <h2>Status &amp; outlook</h2>
+  <p>
+    Not yet formalized. Lemma 12 of Macaj–Siran already restricts the
+    possibilities for an element of order 13: <code>a₀(x) = 0</code> and
+    <code>a₁(x) ∈ {65, 260, 455}</code>. Pairing this with the order-3
+    constraints would yield the Lemma-15 row for <code>pq = 39</code>,
+    which is currently not tabulated in the printed paper.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

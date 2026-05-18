@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 38 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 38 = 2 · 19</h1>
+    <p class="sub status"><span class="badge done">2 / 2 groups excluded</span> <span class="muted">unconditional Lean proof</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Source</h2>
+  <p>
+    Macaj–Siran 2010, Theorem 7 (even case). One of the
+    <code>2p, p ∈ {7, 11, 19}</code> candidates.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>(38, 1)</code></td>
+        <td><code>D₁₉</code></td>
+        <td>Dihedral group of order 38.</td>
+        <td><span class="badge done">excluded</span></td>
+      </tr>
+      <tr>
+        <td><code>(38, 2)</code></td>
+        <td><code>ℤ₃₈ = C₃₈</code></td>
+        <td>Cyclic group of order 38.</td>
+        <td><span class="badge done">excluded</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </figure>
+  <p>
+    The two cases are handled by separate Lean theorems:
+    <code>D₁₉</code> is the central case of the project (the original
+    target), and <code>C₃₈</code> reduces to commutativity of
+    <code>ρ = g²</code> and <code>τ = g¹⁹</code> with
+    <code>aut_involution_fixedVertexCount_candidates</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Lean theorems</h2>
+  <pre><code>theorem no_D19_acts_on_Moore57_unconditional
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    ¬ Nonempty (D19ActsOnMoore57 V Γ)
+
+theorem no_C38_acts_on_Moore57_unconditional
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    ¬ Nonempty (C38ActsOnMoore57 V Γ)
+
+theorem Moore57_no_order38_structure
+    {V} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] :
+    (¬ Nonempty (D19ActsOnMoore57 V Γ))
+    ∧ (¬ Nonempty (C38ActsOnMoore57 V Γ))</code></pre>
+  <p>
+    File:
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/Phases/FinalAssembly.lean"><code>Moore57/Phases/FinalAssembly.lean</code></a>.
+    The <code>C₃₈</code> branch lives in
+    <a href="https://github.com/yawara/moore57/blob/main/Moore57/C38OnMoore57/NoGo.lean"><code>Moore57/C38OnMoore57/NoGo.lean</code></a>.
+  </p>
+  <p>
+    By the classification of order-38 groups, the conjunction
+    <code>Moore57_no_order38_structure</code> excludes every group of
+    order 38 acting as a subgroup of <code>Aut(Γ)</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Proof sketch (D₁₉ branch)</h2>
+  <ol>
+    <li>Phase 1: rotation <code>a₀ ≤ 19</code>, reflection
+        <code>a₀ = 56</code> / <code>a₁ = 112</code> from raw action.</li>
+    <li>Phase 2: SRG identity, <code>E₇</code> idempotent, Higman trace,
+        <code>Tr(E₇) = 1729</code>.</li>
+    <li>Phase 3: reflection character <code>χ₇(t) = 33</code>.</li>
+    <li>Phase 4: <code>D₁₉</code> characters <code>1, ε, ρ</code>; linear
+        character formulas; <code>π_V = 114·1 + 58·ε + 171·ρ</code>.</li>
+    <li>Phase 5–7: rotation character constancy versus the compact
+        adjacent-moved residual gives the contradiction.</li>
+  </ol>
+  <p>
+    Locations: see <code>Moore57/Phases/Phase{1..7}.lean</code> and
+    <code>Moore57/D19OnMoore57/</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Proof sketch (C₃₈ branch)</h2>
+  <p>
+    A generator <code>g</code> of order 38 gives <code>ρ = g²</code>
+    (order 19) and <code>τ = g¹⁹</code> (involution) that commute. The
+    abstract Tier-2 result
+    <code>aut_involution_fixedVertexCount_candidates</code> shows
+    <code>|Fix(τ)| ∈ {0, 2, 6, 10, 16, 26, 36, 46, 50, 56}</code>; combined
+    with <code>order19_aut_fixedVertexCount_eq_one</code> for
+    <code>ρ</code> we get a parity / mod-19 contradiction.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>
