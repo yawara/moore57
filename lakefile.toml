@@ -12,6 +12,12 @@ rev = "v4.29.1"
 # etc.). The `weak.` prefix keeps olean caching consistent.
 [leanOptions]
 weak.linter.mathlibStandardSet = true
+# TODO: cleanup section-variable hygiene per theorem (`omit [Fintype V] in ...`),
+# then re-enable. Currently ~100 warnings across the project use a shared
+# `variable` block where some theorems don't need every typeclass.
+weak.linter.unusedSectionVars = false
+weak.linter.unusedDecidableInType = false
+weak.linter.unusedFintypeInType = false
 
 [[lean_lib]]
 name = "Moore57"
