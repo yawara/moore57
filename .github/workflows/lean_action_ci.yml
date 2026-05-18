@@ -61,6 +61,14 @@ jobs:
             exit 1
           fi
 
+      - name: Fail on unused-hypothesis warnings (section-var / decidable / fintype)
+        run: |
+          # Reuse build.log from the previous step.
+          if grep -E 'linter\.(unusedSectionVars|unusedDecidableInType|unusedFintypeInType)' build.log; then
+            echo "::error::Unused-hypothesis warnings detected; fix with 'omit [TypeClass] in' or 'set_option linter.<name> false in' before the declaration"
+            exit 1
+          fi
+
       - name: Text-based lint (mathlib TextBased linters)
         run: lake exe lintText
 
