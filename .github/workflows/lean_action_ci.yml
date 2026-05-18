@@ -20,6 +20,36 @@ jobs:
             exit 1
           fi
 
+      - name: Text-style checks (tab / CRLF / trailing whitespace / final newline)
+        run: |
+          fail=0
+
+          # Run tab / CRLF / trailing-whitespace checks in a single awk pass.
+          find Moore57 -name '*.lean' -print0 \
+            | xargs -0 awk '
+                /\t/   { print FILENAME ":" FNR ": tab character"; bad=1 }
+                /\r$/  { print FILENAME ":" FNR ": CRLF line ending"; bad=1 }
+                / +$/  { print FILENAME ":" FNR ": trailing whitespace"; bad=1 }
+                END    { exit bad ? 1 : 0 }
+              ' || fail=1
+
+          # Final newline missing
+          missing=0
+          while IFS= read -r -d '' f; do
+            if [ -n "$(tail -c1 "$f")" ]; then
+              echo "$f: missing final newline"
+              missing=1
+            fi
+          done < <(find Moore57 -name '*.lean' -print0)
+          if [ "$missing" = 1 ]; then
+            fail=1
+          fi
+
+          if [ "$fail" = 1 ]; then
+            echo "::error::Text-style violations found in Lean sources"
+          fi
+          exit $fail
+
       - uses: leanprover/lean-action@v1
 
       # The main-theorem axioms check runs as part of `lake build`
