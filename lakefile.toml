@@ -18,6 +18,9 @@ weak.linter.mathlibStandardSet = true
 weak.linter.unusedSectionVars = false
 weak.linter.unusedDecidableInType = false
 weak.linter.unusedFintypeInType = false
+# TODO: replace `simp [...]` with `simp only [...]` per occurrence by running
+# `simp?` and pasting the suggested lemma set. 49 occurrences; not mechanical.
+weak.linter.flexible = false
 
 [[lean_lib]]
 name = "Moore57"
