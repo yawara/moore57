@@ -69,6 +69,16 @@ jobs:
             exit 1
           fi
 
+      - name: Fail on flexible-simp warnings
+        run: |
+          # Reuse build.log. New `simp [...]` calls should either use
+          # `simp only [...]` with the simp? suggestion, or be marked
+          # intentional with `set_option linter.flexible false in <decl>`.
+          if grep -E 'linter\.flexible' build.log; then
+            echo "::error::Flexible simp call detected; use simp only [...] (from simp? suggestion) or set_option linter.flexible false in <decl>"
+            exit 1
+          fi
+
       - name: Text-based lint (mathlib TextBased linters)
         run: lake exe lintText
 

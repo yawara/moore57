@@ -19,9 +19,12 @@ weak.linter.mathlibStandardSet = true
 # `theorem foo {ι : Type*} [DecidableEq ι] ...`) — `omit` can't refer to the
 # locally-bound name, so cleanup requires manual signature edits or
 # `set_option` per declaration.
-# TODO: replace `simp [...]` with `simp only [...]` per occurrence by running
-# `simp?` and pasting the suggested lemma set. 49 occurrences; not mechanical.
-weak.linter.flexible = false
+# Enforced. Of the 19 unique flagged sites: 7 converted to
+# `simp only [<simp? suggestion>]`; the remaining 12 use per-declaration
+# `set_option linter.flexible false in` because the original `simp [...]`
+# depended on default-simp normalization that `simp only [...]` (from the
+# linter's auto-suggestion) couldn't reproduce.
+weak.linter.flexible = true
 # TODO: mathlib's 100-char standard is enabled by `mathlibStandardSet` but the
 # project uses very long descriptive identifier names (e.g.,
 # `no_remainingNonRepresentationFrontierAfterDefaultBaseInvolutionK155_…`)
