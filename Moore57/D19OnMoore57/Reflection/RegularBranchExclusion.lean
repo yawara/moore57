@@ -125,6 +125,7 @@ theorem D19LinearCharacterInput.reflection_regular_fixedVertexCount_pos
   rw [hzero] at hmul
   norm_num at hmul
 
+set_option linter.flexible false in
 /-- The strongly-regular parameter equation gives `a₀ = d^2 + 1` for a
 regular reflection fixed-induced graph. -/
 theorem D19LinearCharacterInput.reflection_regular_fixedVertexCount_eq_degree_sq_add_one_int

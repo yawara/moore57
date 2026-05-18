@@ -290,6 +290,7 @@ theorem aut_involution_a1_regular
 
 /-! ### Main candidate-list theorem -/
 
+set_option linter.flexible false in
 /-- For an involutive automorphism `σ` of a Moore57 graph with `σ ≠ 1`, the
 fixed-vertex count lies in `{0, 2, 6, 10, 16, 26, 36, 46, 50, 56}`. -/
 theorem aut_involution_fixedVertexCount_candidates
