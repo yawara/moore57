@@ -1,6 +1,9 @@
 import Moore57.Order22OnMoore57.BasicStructure
 import Moore57.Foundations.GroupAction.InvolutionParity
 
+-- `native_decide` is intentional here (see `Moore57/AxiomsCheck.lean`).
+set_option linter.style.nativeDecide false
+
 /-!
 # Step 1 (Dihedral): τ|Fix(σ) は反射 (C_5 の 1 反射点)
 

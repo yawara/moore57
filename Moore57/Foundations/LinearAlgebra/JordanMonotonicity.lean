@@ -193,11 +193,11 @@ values + 整合性条件 ⟹ 線形.
 theorem concave_linearity_forcing
     (f : ℕ → ℕ) {N α β γ : ℕ}
     (hN : 1 ≤ N)
-    (hf_concave : ∀ k, 1 ≤ k → f (k+1) + f (k-1) ≤ 2 * f k)
-    (hf_mono : ∀ k, f k ≤ f (k+1))
+    (hf_concave : ∀ k, 1 ≤ k → f (k + 1) + f (k - 1) ≤ 2 * f k)
+    (hf_mono : ∀ k, f k ≤ f (k + 1))
     (hf_0 : f 0 = 0)
     (hf_1 : f 1 = α)
-    (hf_Nm1 : f (N-1) = β)
+    (hf_Nm1 : f (N - 1) = β)
     (hf_N : f N = γ)
     (h_consistency : α + (N - 1) * (γ - β) = γ)
     (hβγ : β ≤ γ)
