@@ -61,11 +61,11 @@ private theorem dihedral_neighborFinset_σ_image
     · rw [SimpleGraph.mem_neighborFinset]
       have : Γ.Adj (h.σ x) (h.σ (h.σ⁻¹ y)) := by
         rw [show h.σ (h.σ⁻¹ y) = y from by
-          show (h.σ * h.σ⁻¹) y = y
+          change (h.σ * h.σ⁻¹) y = y
           rw [mul_inv_cancel]; rfl]
         exact hy
       exact (h.σ_aut x (h.σ⁻¹ y)).mpr this
-    · show (h.σ * h.σ⁻¹) y = y
+    · change (h.σ * h.σ⁻¹) y = y
       rw [mul_inv_cancel]; rfl
 
 /-- σ は F_0 を F_1 に写す: σ(F_0) = F_1 (as Finset). -/

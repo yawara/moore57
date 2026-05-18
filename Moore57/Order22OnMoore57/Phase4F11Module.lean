@@ -140,7 +140,7 @@ theorem adjMatrixF11_mul_permMatrixF11_eq_permMatrixF11_mul_adjMatrixF11
   classical
   ext v w
   rw [mul_permMatrixF11_apply, permMatrixF11_mul_apply]
-  show (Γ.adjMatrix (ZMod 11)) v (σ w) = (Γ.adjMatrix (ZMod 11)) (σ.symm v) w
+  change (Γ.adjMatrix (ZMod 11)) v (σ w) = (Γ.adjMatrix (ZMod 11)) (σ.symm v) w
   have hAdj : Γ.Adj v (σ w) ↔ Γ.Adj (σ.symm v) w := by
     simpa using (haut (σ.symm v) w).symm
   by_cases h : Γ.Adj v (σ w)

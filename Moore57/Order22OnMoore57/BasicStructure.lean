@@ -186,11 +186,11 @@ theorem dihedral_σ_six_in_στ_fix (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
     h.dihedral_σ_six_τ_σ_five hdihe
   -- (σ^6 τ σ^5)(σ^6 y) = σ^6 (τ (σ^5 (σ^6 y))) = σ^6 (τ y) = σ^6 y
   have hlhs : (h.σ ^ 6 * h.τ * h.σ ^ 5) ((h.σ ^ 6) y) = (h.σ ^ 6) y := by
-    show (h.σ ^ 6) (h.τ ((h.σ ^ 5) ((h.σ ^ 6) y))) = (h.σ ^ 6) y
+    change (h.σ ^ 6) (h.τ ((h.σ ^ 5) ((h.σ ^ 6) y))) = (h.σ ^ 6) y
     have hsig11 : (h.σ ^ 5) ((h.σ ^ 6) y) = y := by
-      show (h.σ ^ 5 * h.σ ^ 6) y = y
+      change (h.σ ^ 5 * h.σ ^ 6) y = y
       rw [← pow_add]
-      show (h.σ ^ 11) y = y
+      change (h.σ ^ 11) y = y
       rw [h.σ_pow_eleven]; rfl
     rw [hsig11, hy]
   rw [← h_conj]
@@ -207,7 +207,7 @@ theorem dihedral_στ_fix_eq_σ_six (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
     have h_τz : h.τ z = h.σ⁻¹ z := by
       -- hz : σ(τz) = z. (σ⁻¹ * σ * τ) z = σ⁻¹ z. (σ⁻¹ * σ) = 1, so τ z = σ⁻¹ z.
       have hz' : (h.σ⁻¹ * (h.σ * h.τ)) z = h.σ⁻¹ z := by
-        show h.σ⁻¹ ((h.σ * h.τ) z) = h.σ⁻¹ z
+        change h.σ⁻¹ ((h.σ * h.τ) z) = h.σ⁻¹ z
         rw [hz]
       have hsimp : h.σ⁻¹ * (h.σ * h.τ) = h.τ := by
         rw [← mul_assoc, inv_mul_cancel, one_mul]
@@ -218,20 +218,20 @@ theorem dihedral_στ_fix_eq_σ_six (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹)
       simpa [Equiv.Perm.mul_apply] using this
     rw [h_τσ5_apply, h_τz]
     -- σ⁻¹^5 (σ⁻¹ z) = σ^5 z
-    show ((h.σ⁻¹) ^ 5) (h.σ⁻¹ z) = (h.σ ^ 5) z
+    change ((h.σ⁻¹) ^ 5) (h.σ⁻¹ z) = (h.σ ^ 5) z
     have h_sigma_calc : (h.σ⁻¹) ^ 5 * h.σ⁻¹ = h.σ ^ 5 := by
       have h1 : (h.σ⁻¹) ^ 5 * h.σ⁻¹ = (h.σ⁻¹) ^ 6 := by
-        show (h.σ⁻¹) ^ 5 * (h.σ⁻¹) ^ 1 = (h.σ⁻¹) ^ 6
+        change (h.σ⁻¹) ^ 5 * (h.σ⁻¹) ^ 1 = (h.σ⁻¹) ^ 6
         rw [← pow_add]
       have h2 : (h.σ⁻¹) ^ 6 = (h.σ ^ 6)⁻¹ := inv_pow h.σ 6
       have hsum : h.σ ^ 6 * h.σ ^ 5 = 1 := by
-        rw [← pow_add]; show h.σ ^ 11 = 1; exact h.σ_pow_eleven
+        rw [← pow_add]; change h.σ ^ 11 = 1; exact h.σ_pow_eleven
       have h3 : (h.σ ^ 6)⁻¹ = h.σ ^ 5 := inv_eq_of_mul_eq_one_right hsum
       rw [h1, h2, h3]
-    show ((h.σ⁻¹) ^ 5 * h.σ⁻¹) z = (h.σ ^ 5) z
+    change ((h.σ⁻¹) ^ 5 * h.σ⁻¹) z = (h.σ ^ 5) z
     rw [h_sigma_calc]
   · -- σ^6 (σ^5 z) = z
-    show (h.σ ^ 6 * h.σ ^ 5) z = z
+    change (h.σ ^ 6 * h.σ ^ 5) z = z
     rw [← pow_add]
     exact h.σ_pow_eleven_apply z
 
@@ -252,7 +252,7 @@ theorem τ_preserves_σ_fix {x : V} (hx : h.σ x = x) :
     rw [hx] at hτσ
     -- hτσ : τ x = σ⁻¹ (τ x)
     have hcancel : h.σ (h.σ⁻¹ (h.τ x)) = h.τ x := by
-      show (h.σ * h.σ⁻¹) (h.τ x) = h.τ x
+      change (h.σ * h.σ⁻¹) (h.τ x) = h.τ x
       rw [mul_inv_cancel]; rfl
     have := congrArg h.σ hτσ
     rwa [hcancel] at this

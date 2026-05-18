@@ -44,7 +44,7 @@ theorem dihedral_p_not_fix_ρ1
     have hcong := congr_arg h.σ h_π1p_τp
     rw [show h.σ (h.σ⁻¹ (h.dihedral_m1 hdihe p_sub).val) =
          (h.dihedral_m1 hdihe p_sub).val from by
-      show (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe p_sub).val =
+      change (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe p_sub).val =
            (h.dihedral_m1 hdihe p_sub).val
       rw [mul_inv_cancel]; rfl] at hcong
     exact hcong
@@ -111,7 +111,7 @@ theorem dihedral_q_not_fix_ρ1
     have hcong := congr_arg h.σ h_π1q_τq
     rw [show h.σ (h.σ⁻¹ (h.dihedral_m1 hdihe q_sub).val) =
          (h.dihedral_m1 hdihe q_sub).val from by
-      show (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe q_sub).val =
+      change (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe q_sub).val =
            (h.dihedral_m1 hdihe q_sub).val
       rw [mul_inv_cancel]; rfl] at hcong
     exact hcong
@@ -247,7 +247,7 @@ theorem dihedral_fixOnSubtype_image_val_eq_fixτS
     refine ⟨Finset.mem_univ _, ?_⟩
     -- ρ_1 ⟨x, _⟩ = ⟨x, _⟩: τ (π_1 ⟨x, _⟩).val = x.
     apply Subtype.ext
-    show h.τ (h.dihedral_π1 hdihe ⟨x, h_x_F0⟩).val = x
+    change h.τ (h.dihedral_π1 hdihe ⟨x, h_x_F0⟩).val = x
     have h_π1_fix : h.dihedral_π1 hdihe ⟨x, h_x_F0⟩ = ⟨x, h_x_F0⟩ :=
       (h.dihedral_π1_fix_iff_adj hdihe ⟨x, h_x_F0⟩).mpr hadj
     rw [h_π1_fix]

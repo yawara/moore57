@@ -62,13 +62,13 @@ theorem aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
   classical
   let τ := autNeighborPerm σ smul_adj hv
   have hpow : τ ^ p ^ 1 = 1 := by
-    show (autNeighborPerm σ smul_adj hv) ^ p ^ 1 = 1
+    change (autNeighborPerm σ smul_adj hv) ^ p ^ 1 = 1
     unfold autNeighborPerm
     rw [pow_one, Equiv.Perm.subtypePerm_pow]
     apply Equiv.ext
     intro w
     apply Subtype.ext
-    show (σ ^ p) (w : V) = (w : V)
+    change (σ ^ p) (w : V) = (w : V)
     rw [pow_p]; rfl
   have hmod := Equiv.Perm.card_compl_support_modEq
     (α := {w : V // Γ.Adj v w}) (p := p) (n := 1) (σ := τ) hpow

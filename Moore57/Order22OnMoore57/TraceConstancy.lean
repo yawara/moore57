@@ -42,7 +42,7 @@ noncomputable def Tk (k : ℕ) : ℕ :=
 
 /-- `traceNumber h = T_1 / 11` (定義の薄い書き換え). -/
 theorem traceNumber_eq_Tk_one_div_eleven : h.traceNumber = h.Tk 1 / 11 := by
-  show (Finset.univ.filter (fun x : V => Γ.Adj x (h.σ x))).card / 11
+  change (Finset.univ.filter (fun x : V => Γ.Adj x (h.σ x))).card / 11
     = (Finset.univ.filter (fun x : V => Γ.Adj x ((h.σ ^ 1) x))).card / 11
   simp [pow_one]
 
@@ -73,7 +73,7 @@ theorem eleven_dvd_Tk {k : ℕ} (hk : k % 11 ≠ 0) : 11 ∣ h.Tk k := by
     simpa [Equiv.Perm.mul_apply] using this
   -- p の σ-不変性 (subtypePerm の要求形: p (σ x) ↔ p x)
   have hp_iff : ∀ x : V, p (h.σ x) ↔ p x := fun x => by
-    show Γ.Adj (h.σ x) ((h.σ ^ k) (h.σ x)) ↔ Γ.Adj x ((h.σ ^ k) x)
+    change Γ.Adj (h.σ x) ((h.σ ^ k) (h.σ x)) ↔ Γ.Adj x ((h.σ ^ k) x)
     rw [hcomm x]
     exact (h.σ_aut x ((h.σ ^ k) x)).symm
   -- σ を Subtype p に制限
@@ -81,7 +81,7 @@ theorem eleven_dvd_Tk {k : ℕ} (hk : k % 11 ≠ 0) : 11 ∣ h.Tk k := by
   -- τ^11 = 1
   have hτ_pow : τ ^ 11 ^ 1 = 1 := by
     ext ⟨w, _⟩
-    show (h.σ ^ 11) w = w
+    change (h.σ ^ 11) w = w
     rw [h.σ_pow_eleven]; rfl
   -- 主補題: |Subtype p| ≡ |τ.supportᶜ| (mod 11)
   have hmod := Equiv.Perm.card_compl_support_modEq

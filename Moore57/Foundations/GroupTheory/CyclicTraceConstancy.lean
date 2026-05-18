@@ -55,7 +55,7 @@ private theorem range_aeval_cyclotomic_le_ker_sub_one
       rw [map_sub, Polynomial.aeval_X, map_one]] at h3
     exact h3
   rw [hσ] at h4
-  show (σ - 1) (Polynomial.aeval σ (Polynomial.cyclotomic p ℚ) x) = 0
+  change (σ - 1) (Polynomial.aeval σ (Polynomial.cyclotomic p ℚ) x) = 0
   have : ((σ - 1) ∘ₗ Polynomial.aeval σ (Polynomial.cyclotomic p ℚ)) x = (0 : W →ₗ[ℚ] W) x := by
     rw [h4]; simp
   simpa using this
@@ -76,7 +76,7 @@ theorem isCoprime_X_sub_one_cyclotomic
   have hb_eval : (b * Q).eval 1 = 1 := by
     simp [b, hΦp_one, hp_ne]
   have hroot : ((1 : ℚ[X]) - b * Q).IsRoot 1 := by
-    show ((1 : ℚ[X]) - b * Q).eval 1 = 0
+    change ((1 : ℚ[X]) - b * Q).eval 1 = 0
     simp [hb_eval]
   obtain ⟨a, ha⟩ := Polynomial.dvd_iff_isRoot.mpr hroot
   refine ⟨a, b, ?_⟩
@@ -151,7 +151,7 @@ private theorem aeval_cyclotomic_pow_eq_self_of_pow_eq_one
   -- Now: ∑ i, σ^((j*i) % p) = ∑ i, σ^i via bijection (j * ·) % p
   -- Define f i = (j * i) % p
   let f : ℕ → ℕ := fun i => (j * i) % p
-  show ∑ i ∈ Finset.range p, σ ^ f i = ∑ i ∈ Finset.range p, σ ^ i
+  change ∑ i ∈ Finset.range p, σ ^ f i = ∑ i ∈ Finset.range p, σ ^ i
   -- f is injective on Finset.range p
   have hf_inj : Set.InjOn f (Finset.range p) := by
     intros i₁ hi₁ i₂ hi₂ hfeq
@@ -187,7 +187,7 @@ private theorem mapsTo_pow_ker_sub_one (σ : W →ₗ[ℚ] W) (n : ℕ) :
     Set.MapsTo (σ ^ n) (LinearMap.ker (σ - 1)) (LinearMap.ker (σ - 1)) := by
   intro v hv
   have hv' : (σ - 1) v = 0 := hv
-  show (σ - 1) ((σ ^ n) v) = 0
+  change (σ - 1) ((σ ^ n) v) = 0
   -- (σ - 1) (σ^n v) = σ^n ((σ - 1) v) = σ^n 0 = 0
   have hcomm := (commute_sub_one_pow σ n).eq
   have heq := congrArg (· v) hcomm
@@ -208,7 +208,7 @@ private theorem mapsTo_pow_ker_aeval
       (LinearMap.ker (Polynomial.aeval σ f)) := by
   intro v hv
   have hv' : Polynomial.aeval σ f v = 0 := hv
-  show Polynomial.aeval σ f ((σ ^ n) v) = 0
+  change Polynomial.aeval σ f ((σ ^ n) v) = 0
   have hcomm := (commute_aeval_pow σ f n).eq
   have heq := congrArg (· v) hcomm
   simp only [Module.End.mul_apply] at heq
@@ -265,7 +265,7 @@ theorem trace_pow_eq_of_pow_eq_one
       (σ ^ n).restrict (hMaps_W₁ n) = (LinearMap.id : W₁ →ₗ[ℚ] W₁) := by
     intro n
     ext v
-    show ((σ ^ n).restrict (hMaps_W₁ n) v : W) = v.val
+    change ((σ ^ n).restrict (hMaps_W₁ n) v : W) = v.val
     rw [LinearMap.restrict_apply]
     exact h_W₁_pow_val n v
   -- trace 分解
@@ -288,7 +288,7 @@ theorem trace_pow_eq_of_pow_eq_one
       Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n)) (Polynomial.cyclotomic p ℚ) = 0 := by
     intros n hn1 hnp
     ext v
-    show ((Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n))
+    change ((Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n))
           (Polynomial.cyclotomic p ℚ)) v : W) = 0
     -- Expand Φ_p = ∑ X^i, then push restrict inside via Module.End.pow_restrict
     rw [Polynomial.cyclotomic_prime, map_sum]
@@ -342,7 +342,7 @@ theorem trace_idempotent_pow_constant_of_pow_eq_one
   let σ_r : LinearMap.range E →ₗ[ℚ] LinearMap.range E := σ_lin.restrict hmaps
   -- σ_r^p = 1
   have hσr_pow : σ_r ^ p = 1 := by
-    show (σ_lin.restrict hmaps) ^ p = 1
+    change (σ_lin.restrict hmaps) ^ p = 1
     rw [Module.End.pow_restrict]
     ext v
     show ((σ_lin ^ p).restrict _ v : W) = (1 : LinearMap.range E →ₗ[ℚ] LinearMap.range E) v
@@ -357,7 +357,7 @@ theorem trace_idempotent_pow_constant_of_pow_eq_one
       LinearMap.trace ℚ (LinearMap.range E) (σ_r ^ n) =
       LinearMap.trace ℚ W (E ∘ₗ σ_lin ^ n) := by
     intro n
-    show LinearMap.trace ℚ (LinearMap.range E) ((σ_lin.restrict hmaps) ^ n) = _
+    change LinearMap.trace ℚ (LinearMap.range E) ((σ_lin.restrict hmaps) ^ n) = _
     rw [Module.End.pow_restrict]
     exact Moore57.LinearMap.trace_restrict_range_eq_trace_comp_of_isIdempotentElem
       E (σ_lin ^ n) hE_idem (hE_comm_pow n)
@@ -414,7 +414,7 @@ theorem exists_dim_trace_decomp_of_pow_eq_one
       (σ ^ n).restrict (hMaps_W₁ n) = (LinearMap.id : W₁ →ₗ[ℚ] W₁) := by
     intro n
     ext v
-    show ((σ ^ n).restrict (hMaps_W₁ n) v : W) = v.val
+    change ((σ ^ n).restrict (hMaps_W₁ n) v : W) = v.val
     rw [LinearMap.restrict_apply]
     exact h_W₁_pow_val n v
   -- W₂ 上 aeval (σ|_{W₂}) Φ_p = 0
@@ -422,7 +422,7 @@ theorem exists_dim_trace_decomp_of_pow_eq_one
       Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n)) (Polynomial.cyclotomic p ℚ) = 0 := by
     intros n hn1 hnp
     ext v
-    show ((Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n))
+    change ((Polynomial.aeval ((σ ^ n).restrict (hMaps_W₂ n))
           (Polynomial.cyclotomic p ℚ)) v : W) = 0
     rw [Polynomial.cyclotomic_prime, map_sum]
     simp only [Polynomial.aeval_X_pow]
@@ -499,7 +499,7 @@ theorem exists_dim_trace_decomp_of_idempotent_pow_eq_one
   let σ_r : LinearMap.range E →ₗ[ℚ] LinearMap.range E := σ_lin.restrict hmaps
   -- σ_r^p = 1
   have hσr_pow : σ_r ^ p = 1 := by
-    show (σ_lin.restrict hmaps) ^ p = 1
+    change (σ_lin.restrict hmaps) ^ p = 1
     rw [Module.End.pow_restrict]
     ext v
     show ((σ_lin ^ p).restrict _ v : W) = (1 : LinearMap.range E →ₗ[ℚ] LinearMap.range E) v
@@ -514,7 +514,7 @@ theorem exists_dim_trace_decomp_of_idempotent_pow_eq_one
   have hE_comm_pow : Commute E (σ_lin ^ k) := hE_comm.pow_right k
   have hbridge : LinearMap.trace ℚ (LinearMap.range E) (σ_r ^ k) =
       LinearMap.trace ℚ W (E ∘ₗ σ_lin ^ k) := by
-    show LinearMap.trace ℚ (LinearMap.range E) ((σ_lin.restrict hmaps) ^ k) = _
+    change LinearMap.trace ℚ (LinearMap.range E) ((σ_lin.restrict hmaps) ^ k) = _
     rw [Module.End.pow_restrict]
     exact Moore57.LinearMap.trace_restrict_range_eq_trace_comp_of_isIdempotentElem
       E (σ_lin ^ k) hE_idem hE_comm_pow

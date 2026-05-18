@@ -122,7 +122,7 @@ theorem traceNumber_even_of_cyclic (hcomm : h.σ * h.τ = h.τ * h.σ) :
   -- τ は S を保つ
   let p : V → Prop := fun x => Γ.Adj x (h.σ x)
   have hτ_iff : ∀ x : V, p (h.τ x) ↔ p x := fun x => by
-    show Γ.Adj (h.τ x) (h.σ (h.τ x)) ↔ Γ.Adj x (h.σ x)
+    change Γ.Adj (h.τ x) (h.σ (h.τ x)) ↔ Γ.Adj x (h.σ x)
     have hcomm_x : h.σ (h.τ x) = h.τ (h.σ x) := by
       have := congrArg (· x) hcomm
       simpa [Equiv.Perm.mul_apply] using this
@@ -131,7 +131,7 @@ theorem traceNumber_even_of_cyclic (hcomm : h.σ * h.τ = h.τ * h.σ) :
   let τS : Equiv.Perm (Subtype p) := h.τ.subtypePerm hτ_iff
   have hτS_pow : τS ^ 2 ^ 1 = 1 := by
     ext ⟨w, _⟩
-    show (h.τ ^ 2) w = w
+    change (h.τ ^ 2) w = w
     rw [h.τ_pow_two]; rfl
   have hmod := Equiv.Perm.card_compl_support_modEq
     (α := Subtype p) (p := 2) (n := 1) (σ := τS) hτS_pow
@@ -147,9 +147,9 @@ theorem traceNumber_even_of_cyclic (hcomm : h.σ * h.τ = h.τ * h.σ) :
   rw [hfix_empty] at hmod
   -- |Subtype p| = Tk 1
   have hcard : Fintype.card (Subtype p) = h.Tk 1 := by
-    show Fintype.card {x : V // Γ.Adj x (h.σ x)} = h.Tk 1
+    change Fintype.card {x : V // Γ.Adj x (h.σ x)} = h.Tk 1
     rw [Fintype.card_subtype]
-    show (Finset.univ.filter fun x : V => Γ.Adj x (h.σ x)).card =
+    change (Finset.univ.filter fun x : V => Γ.Adj x (h.σ x)).card =
       (Finset.univ.filter fun x : V => Γ.Adj x ((h.σ ^ 1) x)).card
     simp [pow_one]
   rw [hcard] at hmod
@@ -219,7 +219,7 @@ theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
   -- τ は S を保つ
   let p : V → Prop := fun x => Γ.Adj x (h.σ x)
   have hτ_iff : ∀ x : V, p (h.τ x) ↔ p x := fun x => by
-    show Γ.Adj (h.τ x) (h.σ (h.τ x)) ↔ Γ.Adj x (h.σ x)
+    change Γ.Adj (h.τ x) (h.σ (h.τ x)) ↔ Γ.Adj x (h.σ x)
     constructor
     · intro hτx
       -- τ x ~ σ (τ x) ⟹ τ (τ x) ~ σ (τ (τ x))  (involution 経由で巻き戻し)
@@ -233,7 +233,7 @@ theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
   let τS : Equiv.Perm (Subtype p) := h.τ.subtypePerm hτ_iff
   have hτS_pow : τS ^ 2 ^ 1 = 1 := by
     ext ⟨w, _⟩
-    show (h.τ ^ 2) w = w
+    change (h.τ ^ 2) w = w
     rw [h.τ_pow_two]; rfl
   have hmod := Equiv.Perm.card_compl_support_modEq
     (α := Subtype p) (p := 2) (n := 1) (σ := τS) hτS_pow
@@ -280,9 +280,9 @@ theorem traceNumber_even_of_dihedral (hdihe : h.τ * h.σ * h.τ = h.σ⁻¹) :
     omega
   -- |Subtype p| = Tk 1
   have hcard : Fintype.card (Subtype p) = h.Tk 1 := by
-    show Fintype.card {x : V // Γ.Adj x (h.σ x)} = h.Tk 1
+    change Fintype.card {x : V // Γ.Adj x (h.σ x)} = h.Tk 1
     rw [Fintype.card_subtype]
-    show (Finset.univ.filter fun x : V => Γ.Adj x (h.σ x)).card =
+    change (Finset.univ.filter fun x : V => Γ.Adj x (h.σ x)).card =
       (Finset.univ.filter fun x : V => Γ.Adj x ((h.σ ^ 1) x)).card
     simp [pow_one]
   rw [hcard] at hmod

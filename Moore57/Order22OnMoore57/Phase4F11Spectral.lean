@@ -555,7 +555,7 @@ theorem trace_adjMatrixF11_mul_permMatrixF11_σ_eq_zero
   rw [trace_adjMatrixF11_mul_permMatrixF11_eq_adjacentMovedCount]
   -- adjacentMovedCount Γ σ = T_1 = 11 * traceNumber.
   have h_T1 : Moore57.adjacentMovedCount Γ h.σ = 11 * h.traceNumber := by
-    show (Finset.univ.filter (fun v : V => Γ.Adj v (h.σ v))).card = 11 * h.traceNumber
+    change (Finset.univ.filter (fun v : V => Γ.Adj v (h.σ v))).card = 11 * h.traceNumber
     have h_Tk1 : h.Tk 1 = 11 * h.traceNumber :=
       h.Tk_eq_eleven_mul_traceNumber (le_refl _) (by omega)
     have h_Tk_def : h.Tk 1 = (Finset.univ.filter (fun x : V => Γ.Adj x ((h.σ ^ 1) x))).card := rfl
@@ -644,7 +644,7 @@ theorem V2Submodule_le_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   -- Goal: ((P_σ - 1).toLin') ((E_2).toLin' g) = 0
   have h_mat : (permMatrixF11 h.σ - 1) * E2MatrixF11 Γ = 0 := by
     rw [sub_mul, one_mul, permMatrixF11_mul_E2_eq_E2 h.isMoore, sub_self]
-  show ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin')
+  change ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin')
        ((E2MatrixF11 Γ).toLin' g) = 0
   rw [show ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin')
         ((E2MatrixF11 Γ).toLin' g) =
@@ -677,7 +677,7 @@ theorem V7Submodule_invariant_permMatrixF11 (h : Order22ActsOnMoore57 V Γ) :
   obtain ⟨g, hg⟩ := hf
   refine ⟨(permMatrixF11 h.σ).toLin' g, ?_⟩
   rw [← hg]
-  show ((E7MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+  change ((E7MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
        ((permMatrixF11 h.σ).toLin') ((E7MatrixF11 Γ).toLin' g)
   rw [show ((E7MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
         (E7MatrixF11 Γ * permMatrixF11 h.σ).toLin' g from by
@@ -696,7 +696,7 @@ theorem V3Submodule_invariant_permMatrixF11 (h : Order22ActsOnMoore57 V Γ) :
   obtain ⟨g, hg⟩ := hf
   refine ⟨(permMatrixF11 h.σ).toLin' g, ?_⟩
   rw [← hg]
-  show ((E3MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+  change ((E3MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
        ((permMatrixF11 h.σ).toLin') ((E3MatrixF11 Γ).toLin' g)
   rw [show ((E3MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
         (E3MatrixF11 Γ * permMatrixF11 h.σ).toLin' g from by
@@ -715,7 +715,7 @@ private theorem _commute_preserves_ker_T_F11 (h : Order22ActsOnMoore57 V Γ)
     ∀ v ∈ LinearMap.ker (T_F11 h), E.toLin' v ∈ LinearMap.ker (T_F11 h) := by
   intro v hv
   rw [LinearMap.mem_ker, T_F11_def] at hv ⊢
-  show ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin') (E.toLin' v) = 0
+  change ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin') (E.toLin' v) = 0
   calc ((permMatrixF11 h.σ - 1 : Matrix V V (ZMod 11)).toLin') (E.toLin' v)
       = ((permMatrixF11 h.σ - 1) * E).toLin' v := by
           rw [Matrix.toLin'_mul]; rfl
@@ -836,7 +836,7 @@ theorem ELambda_sum_apply (v : V → ZMod 11) :
     rw [h_apply (E2MatrixF11 Γ + E7MatrixF11 Γ) (E3MatrixF11 Γ),
         h_apply (E2MatrixF11 Γ) (E7MatrixF11 Γ)]
   rw [← h_sum, ELambda_sum_eq_one (Γ := Γ)]
-  show (1 : Matrix V V (ZMod 11)).toLin' v = v
+  change (1 : Matrix V V (ZMod 11)).toLin' v = v
   rw [Matrix.toLin'_one]; rfl
 
 /-- `V_2 ⊔ V_7 ⊔ V_3 = ⊤`: V_F_11 全体を V_λ で被覆. -/
@@ -866,7 +866,7 @@ theorem V2_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   rw [T_F11_def]
   have h_eq : (((permMatrixF11 h.σ) - 1).toLin') v =
               (permMatrixF11 h.σ).toLin' v - v := by
-    show ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
+    change ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
     rw [Matrix.sub_mulVec, Matrix.one_mulVec]
   rw [h_eq]
   -- V_2 = span 1 で σ-invariant ⟹ P_σ v ∈ V_2.
@@ -876,7 +876,7 @@ theorem V2_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   obtain ⟨g, hg⟩ := hv
   refine ⟨(permMatrixF11 h.σ).toLin' g, ?_⟩
   rw [← hg]
-  show ((E2MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
+  change ((E2MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
        ((permMatrixF11 h.σ).toLin') ((E2MatrixF11 Γ).toLin' g)
   rw [show ((E2MatrixF11 Γ).toLin') ((permMatrixF11 h.σ).toLin' g) =
         (E2MatrixF11 Γ * permMatrixF11 h.σ).toLin' g from by
@@ -893,7 +893,7 @@ theorem V7_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   rw [T_F11_def]
   have h_eq : (((permMatrixF11 h.σ) - 1).toLin') v =
               (permMatrixF11 h.σ).toLin' v - v := by
-    show ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
+    change ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
     rw [Matrix.sub_mulVec, Matrix.one_mulVec]
   rw [h_eq]
   refine Submodule.sub_mem _ ?_ hv
@@ -906,7 +906,7 @@ theorem V3_invariant_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   rw [T_F11_def]
   have h_eq : (((permMatrixF11 h.σ) - 1).toLin') v =
               (permMatrixF11 h.σ).toLin' v - v := by
-    show ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
+    change ((permMatrixF11 h.σ) - 1).mulVec v = (permMatrixF11 h.σ).mulVec v - v
     rw [Matrix.sub_mulVec, Matrix.one_mulVec]
   rw [h_eq]
   refine Submodule.sub_mem _ ?_ hv
@@ -1083,7 +1083,7 @@ private theorem _commute_preserves_ker_T_F11_pow (h : Order22ActsOnMoore57 V Γ)
         ((((permMatrixF11 h.σ) - 1)^j) * E).toLin' v from by
         rw [Matrix.toLin'_mul]; rfl]
   rw [← h_comm_T_pow]
-  show (E * ((permMatrixF11 h.σ - 1)^j)).toLin' v = 0
+  change (E * ((permMatrixF11 h.σ - 1)^j)).toLin' v = 0
   rw [show (E * ((permMatrixF11 h.σ - 1)^j)).toLin' v =
         E.toLin' ((((permMatrixF11 h.σ) - 1)^j).toLin' v) from by
         rw [Matrix.toLin'_mul]; rfl]
@@ -1194,14 +1194,14 @@ private theorem V2kt_sup_V7kt_inter_V3kt_pow_eq_bot
   obtain ⟨u_7, hu_7⟩ := LinearMap.mem_range.mp hw_7.1
   have h_E3v_eq_v : (E3MatrixF11 Γ).toLin' v = v := by
     rw [← hu_3]
-    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
+    change (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
     rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) =
             (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u_3 from by
           rw [Matrix.toLin'_mul]; rfl,
         E3_idempotent h.isMoore]
   have h_E3v_eq_zero : (E3MatrixF11 Γ).toLin' v = 0 := by
     rw [← h_sum, map_add, ← hu_2, ← hu_7]
-    show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
+    change (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
          (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) = 0
     rw [show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) =
             (E3MatrixF11 Γ * E2MatrixF11 Γ).toLin' u_2 from by
@@ -1661,14 +1661,14 @@ private theorem V2_sup_V7_inter_V3_eq_bot (h : Order22ActsOnMoore57 V Γ) :
   obtain ⟨u_7, hu_7⟩ := LinearMap.mem_range.mp hw_7
   have h_E3v_eq_v : (E3MatrixF11 Γ).toLin' v = v := by
     rw [← hu_3]
-    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
+    change (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
     rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) =
             (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u_3 from by
           rw [Matrix.toLin'_mul]; rfl,
         E3_idempotent h.isMoore]
   have h_E3v_eq_zero : (E3MatrixF11 Γ).toLin' v = 0 := by
     rw [← h_sum, map_add, ← hu_2, ← hu_7]
-    show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
+    change (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
          (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) = 0
     rw [show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) =
             (E3MatrixF11 Γ * E2MatrixF11 Γ).toLin' u_2 from by
@@ -1817,14 +1817,14 @@ private theorem V2kt_sup_V7kt_inter_V3kt_eq_bot (h : Order22ActsOnMoore57 V Γ) 
   obtain ⟨u_7, hu_7⟩ := LinearMap.mem_range.mp hw_7.1
   have h_E3v_eq_v : (E3MatrixF11 Γ).toLin' v = v := by
     rw [← hu_3]
-    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
+    change (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) = (E3MatrixF11 Γ).toLin' u_3
     rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u_3) =
             (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u_3 from by
           rw [Matrix.toLin'_mul]; rfl,
         E3_idempotent h.isMoore]
   have h_E3v_eq_zero : (E3MatrixF11 Γ).toLin' v = 0 := by
     rw [← h_sum, map_add, ← hu_2, ← hu_7]
-    show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
+    change (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) +
          (E3MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u_7) = 0
     rw [show (E3MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u_2) =
             (E3MatrixF11 Γ * E2MatrixF11 Γ).toLin' u_2 from by
@@ -1845,7 +1845,7 @@ private theorem _matrix_pow_ten_commute_of_commute
     (hE : E * permMatrixF11 σ = permMatrixF11 σ * E) :
     (permMatrixF11 σ - 1)^10 * E = E * (permMatrixF11 σ - 1)^10 := by
   have h_mat_comm : Commute (permMatrixF11 σ - 1) E := by
-    show (permMatrixF11 σ - 1) * E = E * (permMatrixF11 σ - 1)
+    change (permMatrixF11 σ - 1) * E = E * (permMatrixF11 σ - 1)
     rw [sub_mul, one_mul, mul_sub, mul_one, hE]
   exact (h_mat_comm.pow_left 10).eq
 
@@ -1887,7 +1887,7 @@ private theorem _pow_apply_eq_zero
     · have hk_pos : k ≥ 1 := Nat.one_le_iff_ne_zero.mpr hk
       have h_ih := ih hk_pos
       rw [pow_succ]
-      show (T^k * T) v = 0
+      change (T^k * T) v = 0
       change (T^k) (T v) = 0
       rw [h, map_zero]
 
@@ -1990,7 +1990,7 @@ theorem V2_inter_range_T_F11_pow_ten_eq_bot (h : Order22ActsOnMoore57 V Γ) :
   obtain ⟨u, hu⟩ := LinearMap.mem_range.mp hv_V2
   have h_E2v : (E2MatrixF11 Γ).toLin' v = v := by
     rw [← hu]
-    show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) = (E2MatrixF11 Γ).toLin' u
+    change (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) = (E2MatrixF11 Γ).toLin' u
     rw [show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) =
           (E2MatrixF11 Γ * E2MatrixF11 Γ).toLin' u from by
           rw [Matrix.toLin'_mul]; rfl,
@@ -2041,14 +2041,14 @@ theorem range_T_F11_pow_ten_le_ker_T_F11 (h : Order22ActsOnMoore57 V Γ) :
   intro v hv
   obtain ⟨u, hu⟩ := LinearMap.mem_range.mp hv
   rw [LinearMap.mem_ker, ← hu]
-  show (T_F11 h) (((T_F11 h)^10) u) = 0
+  change (T_F11 h) (((T_F11 h)^10) u) = 0
   -- T (T^10 u) = T^11 u via pow_succ', and T^11 = 0.
   have h_split : (T_F11 h) (((T_F11 h)^10) u) = ((T_F11 h)^11) u := by
-    show ((T_F11 h) * ((T_F11 h)^10)) u = ((T_F11 h)^11) u
+    change ((T_F11 h) * ((T_F11 h)^10)) u = ((T_F11 h)^11) u
     rw [show ((T_F11 h) * ((T_F11 h)^10)) = ((T_F11 h)^11) from
         (pow_succ' (T_F11 h) 10).symm]
   rw [h_split]
-  show ((T_F11 h)^11) u = 0
+  change ((T_F11 h)^11) u = 0
   have h11 := h.T_F11_pow_eleven_eq_zero
   rw [h11]; rfl
 
@@ -2176,7 +2176,7 @@ theorem V7Submodule_eq_ker_A_sub_seven (h : Order22ActsOnMoore57 V Γ) :
                   E7MatrixF11 Γ = 0 := by
       rw [sub_mul, smul_mul_assoc, one_mul,
           adjMatrixF11_mul_E7_eq_seven_smul_E7 h.isMoore, sub_self]
-    show ((adjMatrixF11 Γ - (7 : ZMod 11) • 1 : Matrix V V (ZMod 11)).toLin')
+    change ((adjMatrixF11 Γ - (7 : ZMod 11) • 1 : Matrix V V (ZMod 11)).toLin')
          ((E7MatrixF11 Γ).toLin' w) = 0
     rw [show ((adjMatrixF11 Γ - (7 : ZMod 11) • 1 : Matrix V V (ZMod 11)).toLin')
             ((E7MatrixF11 Γ).toLin' w) =
@@ -2192,7 +2192,7 @@ theorem V7Submodule_eq_ker_A_sub_seven (h : Order22ActsOnMoore57 V Γ) :
       have h_unfold :
           ((adjMatrixF11 Γ - (7 : ZMod 11) • (1 : Matrix V V (ZMod 11))).toLin') v =
             (adjMatrixF11 Γ).mulVec v - (7 : ZMod 11) • v := by
-        show (adjMatrixF11 Γ - (7 : ZMod 11) • 1).mulVec v = _
+        change (adjMatrixF11 Γ - (7 : ZMod 11) • 1).mulVec v = _
         rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec]
       rw [h_unfold] at hv_ker
       exact sub_eq_zero.mp hv_ker
@@ -2221,8 +2221,8 @@ theorem V7Submodule_eq_ker_A_sub_seven (h : Order22ActsOnMoore57 V Γ) :
       · exact h
     -- Show v = E_7 v ∈ V_7.
     refine ⟨v, ?_⟩
-    show (E7MatrixF11 Γ).toLin' v = v
-    show (E7MatrixF11 Γ).mulVec v = v
+    change (E7MatrixF11 Γ).toLin' v = v
+    change (E7MatrixF11 Γ).mulVec v = v
     rw [E7_eq_closed h.isMoore]
     -- E_7 v = (2 I + 3 A + 5 J) v = 2 v + 3 (A v) + 5 (J v) = 2 v + 21 v + 0 = 23 v = v
     rw [Matrix.add_mulVec, Matrix.add_mulVec,
@@ -2348,7 +2348,7 @@ private lemma adjMatrixF11_eq_intCast_map :
     (adjMatrixF11 Γ) = (Γ.adjMatrix ℤ).map (Int.castRingHom (ZMod 11)) := by
   classical
   ext v w
-  show (Γ.adjMatrix (ZMod 11)) v w =
+  change (Γ.adjMatrix (ZMod 11)) v w =
        Int.castRingHom (ZMod 11) ((Γ.adjMatrix ℤ) v w)
   simp only [SimpleGraph.adjMatrix_apply, eq_intCast]
   by_cases h : Γ.Adj v w
@@ -2369,7 +2369,7 @@ theorem adjMatrix_ℚ_charpoly_eq_intCast_map :
   classical
   have h_eq : (Γ.adjMatrix ℚ) = (Γ.adjMatrix ℤ).map (Int.castRingHom ℚ) := by
     ext v w
-    show (Γ.adjMatrix ℚ) v w =
+    change (Γ.adjMatrix ℚ) v w =
          Int.castRingHom ℚ ((Γ.adjMatrix ℤ) v w)
     simp only [SimpleGraph.adjMatrix_apply, eq_intCast]
     by_cases h : Γ.Adj v w
@@ -2422,10 +2422,10 @@ private lemma range_E_le_eigenspace (E : Matrix V V ℚ) (μ : ℚ)
     Module.End.eigenspace ((Γ.adjMatrix ℚ).toLin' : Module.End ℚ (V → ℚ)) μ := by
   rintro v ⟨w, rfl⟩
   rw [Module.End.eigenspace_def, LinearMap.mem_ker]
-  show ((Γ.adjMatrix ℚ).toLin' - (μ : ℚ) • 1) (E.toLin' w) = 0
+  change ((Γ.adjMatrix ℚ).toLin' - (μ : ℚ) • 1) (E.toLin' w) = 0
   simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply]
   have hAE_apply : (Γ.adjMatrix ℚ).toLin' (E.toLin' w) = μ • (E.toLin' w) := by
-    show (Γ.adjMatrix ℚ).mulVec (E.mulVec w) = μ • E.mulVec w
+    change (Γ.adjMatrix ℚ).mulVec (E.mulVec w) = μ • E.mulVec w
     rw [Matrix.mulVec_mulVec, hAE, Matrix.smul_mulVec]
   rw [hAE_apply, sub_self]
 
@@ -2718,7 +2718,7 @@ theorem V2Submodule_eq_span_one (h : Order22ActsOnMoore57 V Γ) :
     intro g
     ext w
     rw [E2_eq_nine_smul_allOnes h.isMoore]
-    show ((9 : ZMod 11) • allOnesMatrixF11 V).mulVec g w =
+    change ((9 : ZMod 11) • allOnesMatrixF11 V).mulVec g w =
          (((9 : ZMod 11) * ∑ i, g i) • (fun _ : V => (1 : ZMod 11))) w
     simp only [Matrix.mulVec, Matrix.smul_apply, dotProduct, smul_eq_mul,
                Pi.smul_apply, mul_one, allOnesMatrixF11, Matrix.of_apply]
@@ -2731,7 +2731,7 @@ theorem V2Submodule_eq_span_one (h : Order22ActsOnMoore57 V Γ) :
   · -- span{1_V} ≤ V_2
     rw [Submodule.span_le]
     rintro _ (rfl : _ = _)
-    show (fun _ : V => (1 : ZMod 11)) ∈ V2Submodule Γ
+    change (fun _ : V => (1 : ZMod 11)) ∈ V2Submodule Γ
     rw [V2Submodule, LinearMap.mem_range]
     -- E_2 (5 • indicator v_0) = (9 · 5) • 1_V = 1_V (since 9·5 ≡ 1 mod 11)
     refine ⟨fun w => if w = v_0 then (5 : ZMod 11) else 0, ?_⟩
@@ -2741,7 +2741,7 @@ theorem V2Submodule_eq_span_one (h : Order22ActsOnMoore57 V Γ) :
       simp
     rw [h_sum]
     ext w
-    show ((9 : ZMod 11) * 5) • ((fun _ : V => (1 : ZMod 11)) w) = 1
+    change ((9 : ZMod 11) * 5) • ((fun _ : V => (1 : ZMod 11)) w) = 1
     simp only [Pi.smul_apply, smul_eq_mul, mul_one]
     decide
 
@@ -3069,11 +3069,11 @@ orbital basis (separate sorry):
 /-- `E_2` restricted to ker T_F11 is idempotent (lifted from E_2 * E_2 = E_2). -/
 private theorem E2_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
     IsIdempotentElem h.E2_restrict_ker_T := by
-  show h.E2_restrict_ker_T * h.E2_restrict_ker_T = h.E2_restrict_ker_T
+  change h.E2_restrict_ker_T * h.E2_restrict_ker_T = h.E2_restrict_ker_T
   apply LinearMap.ext
   intro v
   apply Subtype.ext
-  show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' v.val) = (E2MatrixF11 Γ).toLin' v.val
+  change (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' v.val) = (E2MatrixF11 Γ).toLin' v.val
   rw [show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' v.val) =
         (E2MatrixF11 Γ * E2MatrixF11 Γ).toLin' v.val from by
       rw [Matrix.toLin'_mul]; rfl,
@@ -3082,11 +3082,11 @@ private theorem E2_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
 /-- `E_7` restricted to ker T_F11 is idempotent. -/
 private theorem E7_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
     IsIdempotentElem h.E7_restrict_ker_T := by
-  show h.E7_restrict_ker_T * h.E7_restrict_ker_T = h.E7_restrict_ker_T
+  change h.E7_restrict_ker_T * h.E7_restrict_ker_T = h.E7_restrict_ker_T
   apply LinearMap.ext
   intro v
   apply Subtype.ext
-  show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' v.val) = (E7MatrixF11 Γ).toLin' v.val
+  change (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' v.val) = (E7MatrixF11 Γ).toLin' v.val
   rw [show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' v.val) =
         (E7MatrixF11 Γ * E7MatrixF11 Γ).toLin' v.val from by
       rw [Matrix.toLin'_mul]; rfl,
@@ -3095,11 +3095,11 @@ private theorem E7_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
 /-- `E_3` restricted to ker T_F11 is idempotent. -/
 private theorem E3_restrict_ker_T_isIdempotent (h : Order22ActsOnMoore57 V Γ) :
     IsIdempotentElem h.E3_restrict_ker_T := by
-  show h.E3_restrict_ker_T * h.E3_restrict_ker_T = h.E3_restrict_ker_T
+  change h.E3_restrict_ker_T * h.E3_restrict_ker_T = h.E3_restrict_ker_T
   apply LinearMap.ext
   intro v
   apply Subtype.ext
-  show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' v.val) = (E3MatrixF11 Γ).toLin' v.val
+  change (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' v.val) = (E3MatrixF11 Γ).toLin' v.val
   rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' v.val) =
         (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' v.val from by
       rw [Matrix.toLin'_mul]; rfl,
@@ -3131,10 +3131,10 @@ private theorem range_E2_restrict_ker_T_map_subtype_eq (h : Order22ActsOnMoore57
     rintro ⟨h_V2, h_kerT⟩
     refine ⟨⟨w, h_kerT⟩, ⟨⟨w, h_kerT⟩, ?_⟩, rfl⟩
     apply Subtype.ext
-    show (E2MatrixF11 Γ).toLin' w = w
+    change (E2MatrixF11 Γ).toLin' w = w
     obtain ⟨u, hu⟩ := LinearMap.mem_range.mp h_V2
     rw [← hu]
-    show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) = (E2MatrixF11 Γ).toLin' u
+    change (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) = (E2MatrixF11 Γ).toLin' u
     rw [show (E2MatrixF11 Γ).toLin' ((E2MatrixF11 Γ).toLin' u) =
           (E2MatrixF11 Γ * E2MatrixF11 Γ).toLin' u from by
         rw [Matrix.toLin'_mul]; rfl,
@@ -3160,10 +3160,10 @@ private theorem range_E7_restrict_ker_T_map_subtype_eq (h : Order22ActsOnMoore57
   · rintro ⟨h_V7, h_kerT⟩
     refine ⟨⟨w, h_kerT⟩, ⟨⟨w, h_kerT⟩, ?_⟩, rfl⟩
     apply Subtype.ext
-    show (E7MatrixF11 Γ).toLin' w = w
+    change (E7MatrixF11 Γ).toLin' w = w
     obtain ⟨u, hu⟩ := LinearMap.mem_range.mp h_V7
     rw [← hu]
-    show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u) = (E7MatrixF11 Γ).toLin' u
+    change (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u) = (E7MatrixF11 Γ).toLin' u
     rw [show (E7MatrixF11 Γ).toLin' ((E7MatrixF11 Γ).toLin' u) =
           (E7MatrixF11 Γ * E7MatrixF11 Γ).toLin' u from by
         rw [Matrix.toLin'_mul]; rfl,
@@ -3189,10 +3189,10 @@ private theorem range_E3_restrict_ker_T_map_subtype_eq (h : Order22ActsOnMoore57
   · rintro ⟨h_V3, h_kerT⟩
     refine ⟨⟨w, h_kerT⟩, ⟨⟨w, h_kerT⟩, ?_⟩, rfl⟩
     apply Subtype.ext
-    show (E3MatrixF11 Γ).toLin' w = w
+    change (E3MatrixF11 Γ).toLin' w = w
     obtain ⟨u, hu⟩ := LinearMap.mem_range.mp h_V3
     rw [← hu]
-    show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u) = (E3MatrixF11 Γ).toLin' u
+    change (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u) = (E3MatrixF11 Γ).toLin' u
     rw [show (E3MatrixF11 Γ).toLin' ((E3MatrixF11 Γ).toLin' u) =
           (E3MatrixF11 Γ * E3MatrixF11 Γ).toLin' u from by
         rw [Matrix.toLin'_mul]; rfl,
@@ -3267,7 +3267,7 @@ private theorem adjMatrixF11_restrict_eq_smul_sum (h : Order22ActsOnMoore57 V Γ
   apply Subtype.ext
   -- LHS.val = (adjMatrixF11 Γ).toLin' v.val
   -- RHS.val = 2 • E_2 v.val + 7 • E_7 v.val + 3 • E_3 v.val (after unfolding smul and add on subtypes)
-  show (adjMatrixF11 Γ).toLin' v.val = _
+  change (adjMatrixF11 Γ).toLin' v.val = _
   -- From ELambda_decomp_A: 2 • E_2 + 7 • E_7 + 3 • E_3 = A.
   have h_decomp_apply :
       ((2 : ZMod 11) • E2MatrixF11 Γ + (7 : ZMod 11) • E7MatrixF11 Γ +
@@ -3276,7 +3276,7 @@ private theorem adjMatrixF11_restrict_eq_smul_sum (h : Order22ActsOnMoore57 V Γ
     rw [ELambda_decomp_A]
   rw [← h_decomp_apply]
   -- LHS = sum.toLin' v.val. Unfold using toLin'_add and toLin'_smul.
-  show ((2 : ZMod 11) • E2MatrixF11 Γ + (7 : ZMod 11) • E7MatrixF11 Γ +
+  change ((2 : ZMod 11) • E2MatrixF11 Γ + (7 : ZMod 11) • E7MatrixF11 Γ +
         (3 : ZMod 11) • E3MatrixF11 Γ).toLin' v.val = _
   have h_add_apply : ∀ (M N : Matrix V V (ZMod 11)),
       (M + N).toLin' v.val = M.toLin' v.val + N.toLin' v.val := fun M N => by
@@ -3479,7 +3479,7 @@ theorem adjMatrixF11_quot_basisFun_apply_at_mk
         (Pi.basisFun (ZMod 11) _ O (Quotient.mk _ w)) := by
   -- adjMatrixF11_quot = e.symm ∘ A_restrict ∘ e
   -- Apply to (Quotient.mk v)
-  show (h.kerTF11_quotientEquiv.symm
+  change (h.kerTF11_quotientEquiv.symm
     (h.adjMatrixF11_restrict_ker_T
       (h.kerTF11_quotientEquiv (Pi.basisFun (ZMod 11) _ O)))) (Quotient.mk _ v) = _
   -- Use e.symm of (e f) = f, with f = orbitNeighborSumQuot O
@@ -3501,7 +3501,7 @@ theorem adjMatrixF11_quot_basisFun_eq_orbitNeighborSumQuot
     [DecidableRel (Equiv.Perm.SameCycle.setoid h.σ).r]
     (O : Quotient (Equiv.Perm.SameCycle.setoid h.σ)) :
     h.adjMatrixF11_quot (Pi.basisFun (ZMod 11) _ O) = h.orbitNeighborSumQuot O := by
-  show h.kerTF11_quotientEquiv.symm
+  change h.kerTF11_quotientEquiv.symm
     (h.adjMatrixF11_restrict_ker_T
       (h.kerTF11_quotientEquiv (Pi.basisFun (ZMod 11) _ O))) = _
   rw [← kerTF11_quotientEquiv_orbitNeighborSumQuot_eq h O]

@@ -180,7 +180,7 @@ theorem dihedral_existsUnique_τFixedInC5
   · exact absurd hId (h.dihedral_τC5_fn_ne_id hdihe)
   · refine ⟨idx, ?_, ?_⟩
     · -- exists witness: τC5 idx = idx ⟹ τ (σ_fix.v idx) = σ_fix.v idx
-      show h.τ (h.σ_fix.v idx) = h.σ_fix.v idx
+      change h.τ (h.σ_fix.v idx) = h.σ_fix.v idx
       have hfix : h.dihedral_τC5_fn hdihe idx = idx := (hUniq idx).mpr rfl
       rw [h.dihedral_τC5_fn_spec hdihe, hfix]
     · -- uniqueness

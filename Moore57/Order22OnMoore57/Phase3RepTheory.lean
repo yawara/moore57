@@ -137,7 +137,7 @@ theorem finrank_range_EMinus8Matrix_eq_1520 (hΓ : IsMoore57 Γ) :
   have hEM8_idem := EMinus8Matrix_toLin'_isIdempotentElem'' hΓ
   -- Matrix.trace (E_-8) = 3250 - 1 - 1729 = 1520
   have h_trace_eq : Matrix.trace (EMinus8Matrix Γ : Matrix V V ℚ) = 1520 := by
-    show Matrix.trace ((1 : Matrix V V ℚ) - E7Matrix Γ - E57Matrix V) = 1520
+    change Matrix.trace ((1 : Matrix V V ℚ) - E7Matrix Γ - E57Matrix V) = 1520
     rw [Matrix.trace_sub, Matrix.trace_sub]
     have htrI : Matrix.trace (1 : Matrix V V ℚ) = (Fintype.card V : ℚ) := by
       rw [Matrix.trace_one]

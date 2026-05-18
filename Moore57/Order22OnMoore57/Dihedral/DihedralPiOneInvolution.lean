@@ -53,14 +53,14 @@ theorem dihedral_σinv_mem_F0_of_mem_F1
     apply hz.1
     have hσ_uτ : h.σ (h.dihedral_uτ hdihe) = h.dihedral_uτ hdihe := h.dihedral_σ_uτ hdihe
     have : z = h.σ (h.σ⁻¹ z) := by
-      show z = (h.σ * h.σ⁻¹) z
+      change z = (h.σ * h.σ⁻¹) z
       rw [mul_inv_cancel]; rfl
     rw [this, heq, hσ_uτ]
   · -- Γ.Adj center (σ⁻¹ z). σ aut applied to center, σ⁻¹ z: Γ.Adj σ(center) (σ(σ⁻¹ z)) = Γ.Adj (σ center) z.
     have h_aut : Γ.Adj h.τ_fix.center (h.σ⁻¹ z) ↔
         Γ.Adj (h.σ h.τ_fix.center) (h.σ (h.σ⁻¹ z)) := h.σ_aut _ _
     rw [show h.σ (h.σ⁻¹ z) = z from by
-      show (h.σ * h.σ⁻¹) z = z
+      change (h.σ * h.σ⁻¹) z = z
       rw [mul_inv_cancel]; rfl] at h_aut
     exact h_aut.mpr hz.2
 
@@ -104,7 +104,7 @@ theorem dihedral_π1_fix_iff_adj
     have h_m1_eq : (h.dihedral_m1 hdihe y).val = h.σ y.val := by
       have hcong := congr_arg h.σ hval
       rw [show h.σ (h.σ⁻¹ (h.dihedral_m1 hdihe y).val) = (h.dihedral_m1 hdihe y).val from by
-        show (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe y).val = (h.dihedral_m1 hdihe y).val
+        change (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe y).val = (h.dihedral_m1 hdihe y).val
         rw [mul_inv_cancel]; rfl] at hcong
       exact hcong
     have hadj : Γ.Adj y.val (h.dihedral_m1 hdihe y).val := h.dihedral_m1_val_adj hdihe y
@@ -121,8 +121,8 @@ theorem dihedral_π1_fix_iff_adj
         (h.dihedral_center_ne_σ_center hdihe) y ⟨h.σ y.val, h_σy_F1⟩ hadj
     apply Subtype.ext
     rw [h.dihedral_π1_val hdihe y, h_m1_eq]
-    show h.σ⁻¹ (h.σ y.val) = y.val
-    show (h.σ⁻¹ * h.σ) y.val = y.val
+    change h.σ⁻¹ (h.σ y.val) = y.val
+    change (h.σ⁻¹ * h.σ) y.val = y.val
     rw [inv_mul_cancel]; rfl
 
 /-! ## Step 12-13: τ ∘ π_1 の involution 性 (中間補題) -/
@@ -166,7 +166,7 @@ theorem dihedral_adj_y_σπ1
     Γ.Adj y.val (h.σ (h.dihedral_π1 hdihe y).val) := by
   rw [h.dihedral_π1_val_eq hdihe y]
   rw [show h.σ (h.σ⁻¹ (h.dihedral_m1 hdihe y).val) = (h.dihedral_m1 hdihe y).val from by
-    show (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe y).val = (h.dihedral_m1 hdihe y).val
+    change (h.σ * h.σ⁻¹) (h.dihedral_m1 hdihe y).val = (h.dihedral_m1 hdihe y).val
     rw [mul_inv_cancel]; rfl]
   exact h.dihedral_m1_val_adj hdihe y
 
@@ -188,7 +188,7 @@ theorem dihedral_ρ1_involutive
   apply Subtype.ext
   -- Goal: (ρ_1 (ρ_1 y)).val = y.val
   -- = τ (π_1 (ρ_1 y)).val = y.val
-  show h.τ (h.dihedral_π1 hdihe (h.dihedral_ρ1 hdihe y)).val = y.val
+  change h.τ (h.dihedral_π1 hdihe (h.dihedral_ρ1 hdihe y)).val = y.val
   -- 戦略: π_1 (ρ_1 y) = ⟨τ y.val, _⟩ を示す (m_1 (ρ_1 y) = ⟨σ(τ y.val), _⟩).
   have h_τy_F0 : h.τ y.val ∈ h.dihedral_F0 hdihe :=
     h.dihedral_τ_mem_F0 hdihe y.property
@@ -206,7 +206,7 @@ theorem dihedral_ρ1_involutive
     (h.σ_aut _ _).mp h_τy_τσπ1
   rw [show h.σ (h.σ⁻¹ (h.τ (h.dihedral_π1 hdihe y).val)) =
        h.τ (h.dihedral_π1 hdihe y).val from by
-    show (h.σ * h.σ⁻¹) (h.τ (h.dihedral_π1 hdihe y).val) =
+    change (h.σ * h.σ⁻¹) (h.τ (h.dihedral_π1 hdihe y).val) =
          h.τ (h.dihedral_π1 hdihe y).val
     rw [mul_inv_cancel]; rfl] at h_στy_τπ1
   -- h_στy_τπ1 : Γ.Adj (σ(τ y.val)) (τ(π_1 y).val)
@@ -224,9 +224,9 @@ theorem dihedral_ρ1_involutive
       (h.dihedral_ρ1 hdihe y) ⟨h.σ (h.τ y.val), h_στy_F1⟩ h_adj
   -- π_1 (ρ_1 y).val = σ⁻¹ (m_1 (ρ_1 y)).val = σ⁻¹ (σ (τ y.val)) = τ y.val.
   rw [h.dihedral_π1_val_eq hdihe (h.dihedral_ρ1 hdihe y), h_m1_ρ1y]
-  show h.τ (h.σ⁻¹ (h.σ (h.τ y.val))) = y.val
+  change h.τ (h.σ⁻¹ (h.σ (h.τ y.val))) = y.val
   rw [show h.σ⁻¹ (h.σ (h.τ y.val)) = h.τ y.val from by
-    show (h.σ⁻¹ * h.σ) (h.τ y.val) = h.τ y.val
+    change (h.σ⁻¹ * h.σ) (h.τ y.val) = h.τ y.val
     rw [inv_mul_cancel]; rfl]
   exact h.τ_involutive y.val
 

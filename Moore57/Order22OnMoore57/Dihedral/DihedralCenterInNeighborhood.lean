@@ -39,12 +39,12 @@ private theorem dihedral_σ_pow_two_implies_σ_fixed
     (hy : h.σ (h.σ y) = y) :
     h.σ y = y := by
   have h_σ10 : (h.σ^10) y = y := by
-    show h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ y))))))))) = y
+    change h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ (h.σ y))))))))) = y
     rw [hy, hy, hy, hy, hy]
   have h_σ11 : (h.σ^11) y = y := by
     rw [h.σ_pow_eleven]; rfl
   have : h.σ ((h.σ^10) y) = y := by
-    show (h.σ^11) y = y
+    change (h.σ^11) y = y
     exact h_σ11
   rw [h_σ10] at this
   exact this
@@ -63,7 +63,7 @@ private theorem dihedral_σ_leaf_in_τFix_implies_leaf_eq_uτ
   have h_σ2 : h.σ (h.σ y) = y := by
     have hcong := congr_arg h.σ hσy_τfix
     have h_cancel : h.σ (h.σ⁻¹ y) = y := by
-      show (h.σ * h.σ⁻¹) y = y
+      change (h.σ * h.σ⁻¹) y = y
       rw [mul_inv_cancel]; rfl
     rw [h_cancel] at hcong
     exact hcong.symm

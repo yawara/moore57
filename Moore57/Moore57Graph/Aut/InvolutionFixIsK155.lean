@@ -408,7 +408,7 @@ theorem aut_involution_nonempty_K155FixedData
         rw [hLfin_def, Finset.mem_erase, mem_fixedFinset]
         exact ⟨hxc, hx⟩
       refine ⟨leafEnum.symm ⟨x, hx_mem⟩, ?_⟩
-      show x = (leafEnum (leafEnum.symm ⟨x, hx_mem⟩)).val
+      change x = (leafEnum (leafEnum.symm ⟨x, hx_mem⟩)).val
       rw [Equiv.apply_symm_apply]
   · -- adj_center
     intro i

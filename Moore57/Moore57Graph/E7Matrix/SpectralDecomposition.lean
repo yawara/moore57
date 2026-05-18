@@ -204,7 +204,7 @@ theorem allOnesMatrix_mul_permMatrix (σ : Equiv.Perm V) :
 theorem trace_E57Matrix_mul_permMatrix (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) :
     Matrix.trace (E57Matrix V * permMatrix σ) = 1 := by
   classical
-  show Matrix.trace ((1 / 3250 : ℚ) • allOnesMatrix V * permMatrix σ) = 1
+  change Matrix.trace ((1 / 3250 : ℚ) • allOnesMatrix V * permMatrix σ) = 1
   rw [Matrix.smul_mul, allOnesMatrix_mul_permMatrix σ]
   rw [Matrix.trace_smul]
   -- tr J = |V| = 3250

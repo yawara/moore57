@@ -471,7 +471,7 @@ private theorem trace_sq_eq_sum_eigenvalues_sq
   rw [hsUU, Matrix.one_mul, Matrix.diagonal_mul_diagonal, Matrix.trace_diagonal]
   apply Finset.sum_congr rfl
   intros i _
-  show ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues) i *
+  change ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues) i *
        ((RCLike.ofReal : ℝ → ℝ) ∘ hHerm.eigenvalues) i =
        (hHerm.eigenvalues i)^2
   simp [Function.comp_apply, pow_two]
@@ -898,7 +898,7 @@ theorem srg_case_B
   set u : ℤ := |u₀| with hu_def
   have hu_nn : (0 : ℤ) ≤ u := abs_nonneg _
   have hu_sq : u * u = 4 * (k : ℤ) - 3 := by
-    show |u₀| * |u₀| = 4 * (k : ℤ) - 3
+    change |u₀| * |u₀| = 4 * (k : ℤ) - 3
     rw [abs_mul_abs_self]; exact hu₀.symm
   -- 4k - 3 ≥ 1 for k ≥ 1, so u ≥ 1.
   have h_4k_3_pos : (1 : ℤ) ≤ 4 * (k : ℤ) - 3 := by

@@ -227,7 +227,7 @@ private noncomputable def quotientSameCycleEquiv (σ : Equiv.Perm V) :
     intro q
     induction q using Quotient.ind with
     | _ v =>
-      show Sum.elim
+      change Sum.elim
           (fun (v : {y // y ∈ Function.fixedPoints σ}) =>
             Quotient.mk (Equiv.Perm.SameCycle.setoid σ) v.1)
           (fun c => Quotient.mk (Equiv.Perm.SameCycle.setoid σ) (cycleRepAux σ c))
@@ -243,10 +243,10 @@ private noncomputable def quotientSameCycleEquiv (σ : Equiv.Perm V) :
         exact h_mem.1.symm
   right_inv := by
     rintro (⟨v, hv⟩ | ⟨c, hc⟩)
-    · show Quotient.lift (toFixOrCycleAux σ) _
+    · change Quotient.lift (toFixOrCycleAux σ) _
           (Quotient.mk (Equiv.Perm.SameCycle.setoid σ) v) = Sum.inl ⟨v, hv⟩
       rw [Quotient.lift_mk, toFixOrCycleAux_eq_inl hv]
-    · show Quotient.lift (toFixOrCycleAux σ) _
+    · change Quotient.lift (toFixOrCycleAux σ) _
           (Quotient.mk (Equiv.Perm.SameCycle.setoid σ) (cycleRepAux σ ⟨c, hc⟩)) =
             Sum.inr ⟨c, hc⟩
       rw [Quotient.lift_mk]
@@ -288,7 +288,7 @@ private theorem card_quotient_sameCycle_eq_300 (h : Order22ActsOnMoore57 V Γ) :
 private theorem permMatrixF11_mulVec_eq (σ : Equiv.Perm V) (f : V → ZMod 11) :
     (permMatrixF11 σ).mulVec f = f ∘ σ.symm := by
   -- permMatrixF11 σ = σ.symm.toPEquiv.toMatrix = (σ⁻¹).permMatrix (ZMod 11)
-  show (σ.symm.toPEquiv.toMatrix : Matrix V V (ZMod 11)).mulVec f = f ∘ σ.symm
+  change (σ.symm.toPEquiv.toMatrix : Matrix V V (ZMod 11)).mulVec f = f ∘ σ.symm
   have h_eq : (σ.symm.toPEquiv.toMatrix : Matrix V V (ZMod 11)) =
       σ⁻¹.permMatrix (ZMod 11) := rfl
   rw [h_eq, Matrix.permMatrix_mulVec]
@@ -347,7 +347,7 @@ theorem sigma_invariant_zpow {α : Type*} (h : Order22ActsOnMoore57 V Γ)
   intro i v
   cases i with
   | ofNat n =>
-    show f ((h.σ ^ (n : ℤ)) v) = f v
+    change f ((h.σ ^ (n : ℤ)) v) = f v
     rw [zpow_natCast]; exact hf_pow_nat n v
   | negSucc n =>
     show f ((h.σ ^ (Int.negSucc n)) v) = f v
@@ -381,7 +381,7 @@ theorem finrank_ker_T_F11_eq_300 (h : Order22ActsOnMoore57 V Γ) :
     · rintro ⟨g, rfl⟩
       -- pb g = g ∘ Quotient.mk. Show σ-invariant.
       intro v
-      show g (Quotient.mk s (h.σ v)) = g (Quotient.mk s v)
+      change g (Quotient.mk s (h.σ v)) = g (Quotient.mk s v)
       congr 1
       apply Quotient.sound
       -- s.r (h.σ v) v ↔ ∃ i : ℤ, (h.σ^i) (h.σ v) = v
@@ -438,7 +438,7 @@ noncomputable def kerTF11_quotientEquiv (h : Order22ActsOnMoore57 V Γ) :
     constructor
     · rintro ⟨g, rfl⟩
       intro v
-      show g (Quotient.mk s (h.σ v)) = g (Quotient.mk s v)
+      change g (Quotient.mk s (h.σ v)) = g (Quotient.mk s v)
       congr 1
       apply Quotient.sound
       refine ⟨(-1 : ℤ), ?_⟩
@@ -565,7 +565,7 @@ private theorem σ_pow_symm_injOn
     have h_factor : h.σ^((k1 : ℤ) - k2) = h.σ^(k1 : ℤ) * (h.σ^(k2 : ℤ))⁻¹ := by
       rw [sub_eq_add_neg, zpow_add, zpow_neg]
     rw [h_factor]
-    show ((h.σ^(k1 : ℤ)) * (h.σ^(k2 : ℤ))⁻¹) v = v
+    change ((h.σ^(k1 : ℤ)) * (h.σ^(k2 : ℤ))⁻¹) v = v
     rw [Equiv.Perm.mul_apply]
     rw [show ((h.σ^(k2 : ℤ))⁻¹ : Equiv.Perm V) = (h.σ^k2).symm from by
       rw [zpow_natCast]; rfl]
@@ -722,14 +722,14 @@ private theorem ker_T_F11_pow_ten_eq_ker_orbitSumProj
     have h_cycle_eq : h.σ.cycleOf (cycleRepAux h.σ c) = c :=
       (Equiv.Perm.cycle_is_cycleOf h_rep_mem c.prop).symm
     rw [h_cycle_eq] at h_apply
-    show (orbitSumProj h f) c = 0
+    change (orbitSumProj h f) c = 0
     rw [orbitSumProj_apply]
     exact h_apply.symm
   · intro h_orbit
     -- orbitSumProj f = 0 ⟹ (T^10 f) = 0.
     ext v
-    show ((T_F11 h)^10) f v = (0 : V → ZMod 11) v
-    show ((T_F11 h)^10) f v = 0
+    change ((T_F11 h)^10) f v = (0 : V → ZMod 11) v
+    change ((T_F11 h)^10) f v = 0
     by_cases hv : h.σ v = v
     · exact T_F11_pow_ten_apply_of_fixed h f hv
     · rw [T_F11_pow_ten_apply_of_cycle h f hv]
