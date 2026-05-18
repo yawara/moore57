@@ -140,7 +140,7 @@ theorem traceNumber_even_of_cyclic (hcomm : h.σ * h.τ = h.τ * h.σ) :
     rw [Finset.card_eq_zero, Finset.eq_empty_iff_forall_notMem]
     rintro ⟨w, hwp⟩ hw
     rw [Finset.mem_compl, Equiv.Perm.mem_support] at hw
-    push_neg at hw
+    push Not at hw
     have hwfix_τ : h.τ w = w := congrArg Subtype.val hw
     have hw_adj : Γ.Adj w (h.σ w) := hwp
     exact h.cyclic_no_τ_fixed_adj_σ hcomm hwfix_τ hw_adj

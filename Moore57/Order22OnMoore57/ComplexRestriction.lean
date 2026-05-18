@@ -49,7 +49,7 @@ theorem traceNumber.eq_five_plus_fifteen_mul_of_modular
   -- m = 11k + 2 for some k : ℤ
   have hk_exists : ∃ k : ℤ, m = 11 * k + 2 := by
     refine ⟨m / 11, ?_⟩
-    have := Int.emod_add_ediv m 11
+    have := Int.emod_add_mul_ediv m 11
     omega
   obtain ⟨k, hk⟩ := hk_exists
   -- 11n = 25 + 15(11k + 2) = 55 + 165k = 11(5 + 15k)
@@ -59,7 +59,7 @@ theorem traceNumber.eq_five_plus_fifteen_mul_of_modular
   have hk_nn : (0 : ℤ) ≤ k := by
     have hn_nn : (0 : ℤ) ≤ (n : ℤ) := Int.natCast_nonneg n
     by_contra h_neg
-    push_neg at h_neg
+    push Not at h_neg
     have hk_le : k ≤ -1 := by linarith
     have : (n : ℤ) ≤ 5 + 15 * (-1) := by
       rw [h_n_int]; linarith

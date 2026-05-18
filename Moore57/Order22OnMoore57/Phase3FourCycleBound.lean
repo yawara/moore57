@@ -126,7 +126,7 @@ theorem slopesAdj_card_le_one_of_not_fixed {x : V} (hx : h.σ x ≠ x) :
     (h.slopesAdj x).card ≤ 1 := by
   classical
   by_contra h_ge
-  push_neg at h_ge
+  push Not at h_ge
   -- h_ge : 1 < |slopesAdj h x|; extract two distinct slopes
   rw [Finset.one_lt_card] at h_ge
   obtain ⟨e₁, he₁, e₂, he₂, he₁₂⟩ := h_ge
@@ -136,12 +136,12 @@ theorem slopesAdj_card_le_one_of_not_fixed {x : V} (hx : h.σ x ≠ x) :
   have hd₁_mem : d₁ ∈ h.slopesAdj x := by
     by_cases hee : e₁ ≤ e₂
     · rw [hdef_d₁, min_eq_left hee]; exact he₁
-    · push_neg at hee
+    · push Not at hee
       rw [hdef_d₁, min_eq_right hee.le]; exact he₂
   have hd₂_mem : d₂ ∈ h.slopesAdj x := by
     by_cases hee : e₁ ≤ e₂
     · rw [hdef_d₂, max_eq_right hee]; exact he₂
-    · push_neg at hee
+    · push Not at hee
       rw [hdef_d₂, max_eq_left hee.le]; exact he₁
   have hlt : d₁ < d₂ := by
     rcases lt_or_gt_of_ne he₁₂ with hee | hee

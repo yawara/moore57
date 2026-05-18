@@ -68,7 +68,7 @@ theorem aut_involution_exists_adjacent_moved
     ∃ a : V, Γ.Adj a (σ a) := by
   classical
   by_contra hno_exists
-  push_neg at hno_exists
+  push Not at hno_exists
   have ha1_zero : adjacentMovedCount Γ σ = 0 :=
     adjacentMovedCount_eq_zero_of_no_adjacent_moved σ hno_exists
   have hformula :

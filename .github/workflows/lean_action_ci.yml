@@ -52,6 +52,15 @@ jobs:
 
       - uses: leanprover/lean-action@v1
 
+      - name: Fail on deprecated-name warnings
+        run: |
+          # Re-run lake build to capture warnings (cached, so fast).
+          lake build 2>&1 | tee build.log
+          if grep -E "has been deprecated" build.log; then
+            echo "::error::Deprecated names used; replace per Lean/Mathlib instructions"
+            exit 1
+          fi
+
       - name: Text-based lint (mathlib TextBased linters)
         run: lake exe lintText
 

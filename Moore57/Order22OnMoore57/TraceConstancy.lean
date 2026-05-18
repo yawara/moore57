@@ -91,7 +91,7 @@ theorem eleven_dvd_Tk {k : ℕ} (hk : k % 11 ≠ 0) : 11 ∣ h.Tk k := by
     rw [Finset.card_eq_zero, Finset.eq_empty_iff_forall_notMem]
     rintro ⟨w, hwp⟩ hw
     rw [Finset.mem_compl, Equiv.Perm.mem_support] at hw
-    push_neg at hw
+    push Not at hw
     -- hw : τ ⟨w, hwp⟩ = ⟨w, hwp⟩ ⟹ σ w = w
     have hwfix : h.σ w = w := congrArg Subtype.val hw
     -- σ w = w → σ^k w = w

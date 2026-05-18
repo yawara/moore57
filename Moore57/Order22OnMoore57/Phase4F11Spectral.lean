@@ -3761,7 +3761,7 @@ private theorem σ_fiber_card_eq_eleven_of_free (h : Order22ActsOnMoore57 V Γ)
       exact_mod_cast this
     have h_z : ((h.σ : Equiv.Perm V) ^ (i % 11)) (Quotient.out O) = v := by
       have h_eq_i : i = (i % 11) + 11 * (i / 11) := by
-        have := Int.emod_add_ediv i 11
+        have := Int.emod_add_mul_ediv i 11
         linarith
       have h_zpow_eq : h.σ ^ i = h.σ ^ (i % 11) := by
         conv_lhs => rw [h_eq_i]
@@ -4078,7 +4078,7 @@ theorem trace_adjMatrixF11_restrict_eq_orbital_side
           exact_mod_cast this
         have h_zpow_eq : h.σ ^ i = h.σ ^ (i % 11) := by
           have h_eq_i : i = (i % 11) + 11 * (i / 11) := by
-            have := Int.emod_add_ediv i 11
+            have := Int.emod_add_mul_ediv i 11
             linarith
           conv_lhs => rw [h_eq_i]
           rw [_root_.zpow_add, _root_.zpow_mul, h_σ11, _root_.one_zpow, mul_one]
