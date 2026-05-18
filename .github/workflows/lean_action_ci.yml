@@ -54,6 +54,10 @@ jobs:
 
       - name: Fail on deprecated-name warnings
         run: |
+          # `pipefail` propagates `lake build`'s exit code through the
+          # tee pipeline; otherwise a transient build failure would be
+          # masked by `tee`'s success and produce false-green CI.
+          set -o pipefail
           # Re-run lake build to capture warnings (cached, so fast).
           lake build 2>&1 | tee build.log
           if grep -E "has been deprecated" build.log; then
