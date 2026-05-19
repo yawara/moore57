@@ -1,6 +1,6 @@
 # Papers and Extracted Texts
 
-Last checked: 2026-05-11
+Last checked: 2026-05-19
 
 This file records which local PDF/text files correspond to which references, so
 the proof notes can refer back to them without guessing from filenames.
@@ -21,5 +21,6 @@ scan, but the extracted text is available for proof work.
 
 | Extracted text | Reference | Notes for the Moore57 proof |
 | --- | --- | --- |
-| `tmp/pdfs/j.laa.2009.07.018.txt` | Martin Macaj and Jozef Siran, "Search for properties of the missing Moore graph", *Linear Algebra and its Applications* 432 (2010), 2381-2398. DOI: `10.1016/j.laa.2009.07.018`. | Main source for restrictions on automorphisms of the hypothetical Moore graph of degree 57; useful around order bounds, odd/even automorphism cases, and the D19/no-order-19 route. |
-| `tmp/pdfs/involution-fixed-star.txt` | A. A. Makhnev and D. V. Paduchikh, "Automorphisms of Aschbacher Graphs", *Algebra and Logic* 40 (2) (2001), 69-74. DOI: `10.1023/A:1010217919915`. | Main source for involution fixed-point structure: every involution fixes a 56-vertex star in the hypothetical Moore graph of valency 57, plus the even-order automorphism-group structure used by later papers. |
+| `tmp/pdfs/j.laa.2009.07.018.txt` | Martin Macaj and Jozef Siran, "Search for properties of the missing Moore graph", *Linear Algebra and its Applications* 432 (2010), 2381-2398. DOI: `10.1016/j.laa.2009.07.018`. | Main source for restrictions on automorphisms of the hypothetical Moore graph of degree 57; useful around order bounds, odd/even automorphism cases, and the D19/no-order-19 route. Scaffolded as `Moore57/Papers/MacajSiran2010/` (paper-structured §2-§9 + MainTheorem). |
+| `tmp/pdfs/involution-fixed-star.txt` | A. A. Makhnev and D. V. Paduchikh, "Automorphisms of Aschbacher Graphs", *Algebra and Logic* 40 (2) (2001), 69-74. DOI: `10.1023/A:1010217919915`. | Main source for involution fixed-point structure: every involution fixes a 56-vertex star in the hypothetical Moore graph of valency 57, plus the even-order automorphism-group structure used by later papers. Scaffolded as `Moore57/Papers/MakhnevPaduchikh2001/`. |
+| `tmp/pdfs/aschbacher_1971.txt` | Michael Aschbacher, "The Nonexistence of Rank Three Permutation Groups of Degree 3250 and Subdegree 57", *Journal of Algebra* 19 (1971), 538-540. DOI: `10.1016/0021-8693(71)90087-1`. | Foundational paper: Lemma 1.1 (strong (0,1) graph is regular or star), Lemma 1.2 (Fix(G) inherits the property), Lemma 1.3 (valence ∈ {2,3,7,57}), Lemma 1.4 (involution fix structure). Cited as the structural backbone behind Macaj-Siran Lem 1 and MP Lem 1. Scaffolded as `Moore57/Papers/Aschbacher1971/`. |
