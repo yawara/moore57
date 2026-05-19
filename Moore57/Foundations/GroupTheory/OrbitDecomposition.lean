@@ -56,8 +56,8 @@ example : 3 * 19 + 27 * 0 = 57 := by decide
 
 The Mačaj–Širáň "class size = 9" step in Corollary 2 follows from
 Lemma 20 once one knows `|orbit| = 27` and `|Fix(stab) ∩ orbit| = 3`.
-The latter equality (encoded as `(stab).relIndex (N stab) = 3`) is the
-geometric input from Lemma 17 — not proven here, taken as a hypothesis. -/
+The latter equality is the geometric input from Lemma 17 — not proven
+here, taken as a hypothesis. -/
 
 open MulAction Subgroup
 
@@ -65,8 +65,8 @@ open MulAction Subgroup
 
 For any `MulAction G α` and `o : α`, if the orbit of `o` has size `27`
 and the `(stab o)`-fixed points in that orbit number `3`
-(equivalently, `[N_G(stab o) : stab o] = 3`), then
-`stab o` has exactly `9` conjugates in `G`.
+(converted by Lemma 20 to `[N_G(stab o) : stab o] = 3`), then `stab o`
+has exactly `9` conjugates in `G`.
 
 This is the direct application of Lemma 20 once the geometric inputs
 are available; in the §7 context these inputs are supplied by Lemma 17
@@ -74,12 +74,17 @@ are available; in the §7 context these inputs are supplied by Lemma 17
 in 3 points). -/
 theorem class_size_9_of_orbit_27_fix_3
     {G α : Type*} [Group G] [MulAction G α] (o : α)
+    [Finite (stabilizer G o : Set G)]
     (h_orbit : (orbit G o).ncard = 27)
-    (h_fix : (stabilizer G o).relIndex
-        (Subgroup.normalizer (stabilizer G o : Set G)) = 3) :
+    (h_fix : (fixedPoints (stabilizer G o) α ∩ orbit G o).ncard = 3) :
     (Subgroup.normalizer (stabilizer G o : Set G)).index = 9 := by
+  have h_relIndex : (stabilizer G o).relIndex
+      (Subgroup.normalizer (stabilizer G o : Set G)) = 3 := by
+    rw [← Moore57.Papers.MacajSiran2010.S6.ncard_fixedPoints_inter_orbit_eq_relIndex_normalizer
+      (G := G) (α := α) o]
+    exact h_fix
   have h := Moore57.Papers.MacajSiran2010.S6.lem20_fix_conjugate (G := G) o
-  rw [h_orbit, h_fix] at h
+  rw [h_orbit, h_relIndex] at h
   omega
 
 end Moore57.Foundations.GroupTheory

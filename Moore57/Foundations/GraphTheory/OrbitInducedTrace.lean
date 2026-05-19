@@ -221,13 +221,9 @@ theorem inducedTrace_orbit_count_formula
 
 /-! ### Lemma 9 (1) finite-group orbit-stabilizer form -/
 
-/-- **Lemma 9 (1) ℕ-form for an actual finite group action.**
-
-This is the same count identity as `orbit_count_identity_of_fiber_uniform`,
-but with `Xfs : Finset G` acting on vertices by `•`.  The fiber size is still
-an explicit hypothesis; `inducedTrace_orbit_count_formula_finite_group` below
-supplies it from orbit-stabilizer for `Finset.univ`. -/
-theorem orbit_count_identity_of_fiber_uniform_group
+/-- Internal counting helper for `inducedTrace_orbit_count_formula_finite_group`.
+It is deliberately not part of the public paper-facing API. -/
+private theorem orbit_count_identity_of_fiber_uniform_group
     {G : Type*} [Group G] [MulAction G V]
     {O : Finset V} {v : V} {Xfs : Finset G}
     (stabCard : ℕ)
