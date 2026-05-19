@@ -48,6 +48,27 @@ theorem aut_fixedVertexCount_modEq_card_of_pow_prime
     simp [fixedVertexCount, Equiv.Perm.support]
   simpa [hcompl] using hmod
 
+/-- **Prime-power generalisation.** For a permutation `σ : Equiv.Perm V` with
+`σ ^ (p ^ n) = 1` (p prime), `fixedVertexCount σ ≡ Fintype.card V [MOD p]`.
+
+This is the natural generalisation of
+`aut_fixedVertexCount_modEq_card_of_pow_prime`: instead of `σ` having prime
+order, we allow `σ` to have order dividing a prime power.  The
+mod-`p` constraint on fixed-point counts is unchanged.
+
+Used in §6 (Lemma 16, 17, 18, 19) where one considers cyclic subgroups of
+order `p^k` inside a `p`-group of automorphisms. -/
+theorem aut_fixedVertexCount_modEq_card_of_pow_prime_pow
+    (σ : Equiv.Perm V) (p n : ℕ) [Fact (Nat.Prime p)]
+    (pow_pn : σ ^ p ^ n = 1) :
+    fixedVertexCount σ ≡ Fintype.card V [MOD p] := by
+  classical
+  have hmod := Equiv.Perm.card_compl_support_modEq
+    (α := V) (p := p) (n := n) (σ := σ) pow_pn
+  have hcompl : σ.supportᶜ.card = fixedVertexCount σ := by
+    simp [fixedVertexCount, Equiv.Perm.support]
+  simpa [hcompl] using hmod
+
 /-! ### Modular constraints from `σ ^ 19 = 1` -/
 
 /-- For an automorphism `σ` of Moore57 with `σ ^ 19 = 1`, `fixedVertexCount σ ≡
@@ -73,6 +94,143 @@ theorem aut_fixedVertexCount_pos_of_pow_nineteen
   have hmod := aut_fixedVertexCount_modEq_one_of_pow_nineteen hΓ σ pow_nineteen
   rw [hzero] at hmod
   exact absurd hmod (by decide)
+
+/-! ### Prime-power-order Moore57 modular constraints
+
+For each prime `p`, an automorphism `σ` with `σ ^ p^k = 1` has
+fixed-vertex count `fixedVertexCount σ ≡ 3250 [MOD p]`.  These are
+direct corollaries of `aut_fixedVertexCount_modEq_card_of_pow_prime_pow`
+specialised to `|V| = 3250` from `IsMoore57`. -/
+
+/-- 13-group fixed count: `3250 = 13 · 250`, hence `fixedVertexCount σ ≡ 0
+(mod 13)`. -/
+theorem aut_fixedVertexCount_modEq_zero_of_pow_thirteen_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 13 ^ k = 1) :
+    fixedVertexCount σ ≡ 0 [MOD 13] := by
+  haveI : Fact (Nat.Prime 13) := ⟨by decide⟩
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 13] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime_pow σ 13 k pow_pk
+  have hVmod : Fintype.card V ≡ 0 [MOD 13] := by
+    rw [hΓ.card]; decide
+  exact hmod1.trans hVmod
+
+/-- 5-group fixed count: `3250 = 5^2 · 130`, hence `fixedVertexCount σ ≡ 0
+(mod 5)`. -/
+theorem aut_fixedVertexCount_modEq_zero_of_pow_five_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 5 ^ k = 1) :
+    fixedVertexCount σ ≡ 0 [MOD 5] := by
+  haveI : Fact (Nat.Prime 5) := ⟨by decide⟩
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 5] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime_pow σ 5 k pow_pk
+  have hVmod : Fintype.card V ≡ 0 [MOD 5] := by
+    rw [hΓ.card]; decide
+  exact hmod1.trans hVmod
+
+/-- 3-group fixed count: `3250 = 3 · 1083 + 1`, hence `fixedVertexCount σ ≡ 1
+(mod 3)`.  This is the §6 Lemma 17 modular ingredient: `|Fix(X)|` for
+a 3-group `X` must be `≡ 1 (mod 3)`, ruling out empty fix and forcing
+case (1) `Fix(X) = Petersen` (10 ≡ 1) or case (2) singleton (1 ≡ 1). -/
+theorem aut_fixedVertexCount_modEq_one_of_pow_three_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 3 ^ k = 1) :
+    fixedVertexCount σ ≡ 1 [MOD 3] := by
+  haveI : Fact (Nat.Prime 3) := ⟨by decide⟩
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 3] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime_pow σ 3 k pow_pk
+  have hVmod : Fintype.card V ≡ 1 [MOD 3] := by
+    rw [hΓ.card]; decide
+  exact hmod1.trans hVmod
+
+/-- 7-group fixed count: `3250 = 7 · 464 + 2`, hence `fixedVertexCount σ ≡ 2
+(mod 7)`.  Used in §6 Lemma 19 case (4): `Fix(X)` is a star
+`K_{1, 1+7l}` of size `2 + 7l ≡ 2 (mod 7)`, and case (5): edge of size 2. -/
+theorem aut_fixedVertexCount_modEq_two_of_pow_seven_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 7 ^ k = 1) :
+    fixedVertexCount σ ≡ 2 [MOD 7] := by
+  haveI : Fact (Nat.Prime 7) := ⟨by decide⟩
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 7] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime_pow σ 7 k pow_pk
+  have hVmod : Fintype.card V ≡ 2 [MOD 7] := by
+    rw [hΓ.card]; decide
+  exact hmod1.trans hVmod
+
+/-- 19-group fixed count: `3250 = 19 · 171 + 1`, hence `fixedVertexCount σ ≡ 1
+(mod 19)`.  Used in §6 Lemma 19 case (2): `Fix(X) = {a}` (size 1). -/
+theorem aut_fixedVertexCount_modEq_one_of_pow_nineteen_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 19 ^ k = 1) :
+    fixedVertexCount σ ≡ 1 [MOD 19] := by
+  haveI : Fact (Nat.Prime 19) := ⟨by decide⟩
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 19] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime_pow σ 19 k pow_pk
+  have hVmod : Fintype.card V ≡ 1 [MOD 19] := by
+    rw [hΓ.card]; decide
+  exact hmod1.trans hVmod
+
+/-- 11-group fixed count: `3250 = 11 · 295 + 5`, hence `fixedVertexCount σ ≡ 5
+(mod 11)`.  Used in §6 Lemma 19 case (3): `Fix(X)` is a pentagon
+(size 5 ≡ 5). -/
+theorem aut_fixedVertexCount_modEq_five_of_pow_eleven_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 11 ^ k = 1) :
+    fixedVertexCount σ ≡ 5 [MOD 11] := by
+  haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
+  have hmod1 : fixedVertexCount σ ≡ Fintype.card V [MOD 11] :=
+    aut_fixedVertexCount_modEq_card_of_pow_prime_pow σ 11 k pow_pk
+  have hVmod : Fintype.card V ≡ 5 [MOD 11] := by
+    rw [hΓ.card]; decide
+  exact hmod1.trans hVmod
+
+/-- **3-group fix is non-empty.** `0 < fixedVertexCount σ` whenever
+`σ ^ 3^k = 1`.  (Since `fixedVertexCount σ ≡ 1 (mod 3) ≠ 0`.) -/
+theorem aut_fixedVertexCount_pos_of_pow_three_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 3 ^ k = 1) :
+    0 < fixedVertexCount σ := by
+  by_contra hpos
+  have hzero : fixedVertexCount σ = 0 := Nat.eq_zero_of_not_pos hpos
+  have hmod := aut_fixedVertexCount_modEq_one_of_pow_three_pow hΓ σ k pow_pk
+  rw [hzero] at hmod
+  exact absurd hmod (by decide)
+
+/-- **7-group fix has size ≥ 2.** `2 ≤ fixedVertexCount σ` whenever
+`σ ^ 7^k = 1`.  (Since `fixedVertexCount σ ≡ 2 (mod 7)` and the values
+`0` and `1` violate this congruence.) -/
+theorem aut_fixedVertexCount_ge_two_of_pow_seven_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 7 ^ k = 1) :
+    2 ≤ fixedVertexCount σ := by
+  have hmod := aut_fixedVertexCount_modEq_two_of_pow_seven_pow hΓ σ k pow_pk
+  by_contra hlt
+  have hlt' : fixedVertexCount σ < 2 := Nat.lt_of_not_le hlt
+  interval_cases (fixedVertexCount σ) <;> exact absurd hmod (by decide)
+
+/-- **19-group fix is non-empty.** `0 < fixedVertexCount σ` whenever
+`σ ^ 19^k = 1`.  (Since `fixedVertexCount σ ≡ 1 (mod 19) ≠ 0`.) -/
+theorem aut_fixedVertexCount_pos_of_pow_nineteen_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 19 ^ k = 1) :
+    0 < fixedVertexCount σ := by
+  by_contra hpos
+  have hzero : fixedVertexCount σ = 0 := Nat.eq_zero_of_not_pos hpos
+  have hmod := aut_fixedVertexCount_modEq_one_of_pow_nineteen_pow hΓ σ k pow_pk
+  rw [hzero] at hmod
+  exact absurd hmod (by decide)
+
+/-- **11-group fix has size ≥ 5.** `5 ≤ fixedVertexCount σ` whenever
+`σ ^ 11^k = 1`.  (Since `fixedVertexCount σ ≡ 5 (mod 11)` and values
+`< 5` violate this congruence.) -/
+theorem aut_fixedVertexCount_ge_five_of_pow_eleven_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 11 ^ k = 1) :
+    5 ≤ fixedVertexCount σ := by
+  have hmod := aut_fixedVertexCount_modEq_five_of_pow_eleven_pow hΓ σ k pow_pk
+  by_contra hlt
+  have hlt' : fixedVertexCount σ < 5 := Nat.lt_of_not_le hlt
+  interval_cases (fixedVertexCount σ) <;> exact absurd hmod (by decide)
 
 /-! ### Modular constraints from `σ ^ 11 = 1` (Moore57 specialisation) -/
 
