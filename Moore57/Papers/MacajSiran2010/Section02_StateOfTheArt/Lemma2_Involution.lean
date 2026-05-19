@@ -1,6 +1,7 @@
 import Moore57.Moore57Graph.Aut.InvolutionCandidates
 import Moore57.Moore57Graph.Aut.InvolutionFixIsK155
 import Moore57.Papers.CameronCh3.Section07_Automorphisms
+import Mathlib.GroupTheory.GroupAction.Basic
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -219,5 +220,100 @@ theorem lem2_four_not_dvd_aut (hΓ : IsMoore57 Γ)
   have hτG_in_ker : signG τG = 1 := τ.property
   rw [hτG_sign] at hτG_in_ker
   exact absurd hτG_in_ker (by decide)
+
+/-- **Corollary of Lemma 2: no vertex-transitive subgroup of `Aut(Γ)`.**
+
+This is Cameron Ch.3 Theorem 3.13, proved by combining
+`lem2_four_not_dvd_aut` with orbit-stabilizer. If `G ≤ Aut(Γ)` acts
+transitively on `V`, then `|G| = |V| · |Stab_v|` for any `v`. Cauchy
+(`2 ∣ |G|` since `2 ∣ 3250 ∣ |G|`) gives an involution `σ ∈ G`, which has
+56 fixed points; pick `v ∈ Fix(σ)`. Then `σ ∈ Stab_v` and `σ ≠ 1`, so
+`2 ∣ |Stab_v|`. Combined with `2 ∣ |V|`, this gives `4 ∣ |G|`,
+contradicting `lem2_four_not_dvd_aut`. -/
+theorem cor_lem2_no_vertex_transitive_aut (hΓ : IsMoore57 Γ)
+    (G : Subgroup (Equiv.Perm V)) [DecidablePred (· ∈ G)]
+    (hG : ∀ σ ∈ G, ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hVtrans : MulAction.IsPretransitive G V) : False := by
+  classical
+  haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  haveI : Nonempty V := Fintype.card_pos_iff.mp (by rw [hΓ.card]; decide)
+  -- Step 1: 3250 = |V| ∣ |G| via vertex-transitivity (orbit-stabilizer).
+  -- Equivalently: |stabilizer G v|.index = |V|, so |V| ∣ |G|.
+  have h2_V : (2 : ℕ) ∣ Fintype.card V := by rw [hΓ.card]; decide
+  -- 2 ∣ |V| ∣ |G|, so 2 ∣ |G|. Use index_stabilizer_of_transitive.
+  have h2_G : (2 : ℕ) ∣ Fintype.card G := by
+    obtain ⟨v₀⟩ := (inferInstance : Nonempty V)
+    have hindex : (MulAction.stabilizer G v₀).index = Nat.card V :=
+      MulAction.index_stabilizer_of_transitive (G := G) v₀
+    have h2V_nat : (2 : ℕ) ∣ Nat.card V := by
+      rw [Nat.card_eq_fintype_card]; exact h2_V
+    rw [← hindex] at h2V_nat
+    have hG_eq : Nat.card G = Nat.card (MulAction.stabilizer G v₀) *
+        (MulAction.stabilizer G v₀).index :=
+      ((MulAction.stabilizer G v₀).card_mul_index).symm
+    have h2G_nat : (2 : ℕ) ∣ Nat.card G := by
+      rw [hG_eq]; exact dvd_mul_of_dvd_right h2V_nat _
+    rwa [Nat.card_eq_fintype_card] at h2G_nat
+  -- Step 2: Cauchy gives involution σ ∈ G.
+  obtain ⟨σ, hσ_ord⟩ := exists_prime_orderOf_dvd_card (G := G) 2 h2_G
+  have hσ_sq : σ ^ 2 = 1 := by rw [← hσ_ord]; exact pow_orderOf_eq_one σ
+  have hσ_ne : σ ≠ 1 := fun h => by
+    rw [h, orderOf_one] at hσ_ord; exact absurd hσ_ord (by decide)
+  -- σ has 56 fixed points; pick one.
+  have hσ_inv : Function.Involutive (σ : Equiv.Perm V) := fun x => by
+    have h := congrArg (Subgroup.subtype G) hσ_sq
+    have hsq : (σ : Equiv.Perm V) ^ 2 = 1 := by simpa using h
+    have h := congrArg (fun (f : Equiv.Perm V) => f x) hsq
+    simpa [pow_two, Equiv.Perm.mul_apply] using h
+  have hσ_ne_perm : (σ : Equiv.Perm V) ≠ 1 := fun h => hσ_ne (Subtype.ext h)
+  have hAut_σ : ∀ a b, Γ.Adj a b ↔ Γ.Adj ((σ : Equiv.Perm V) a) ((σ : Equiv.Perm V) b) :=
+    hG _ σ.property
+  have hfix_card : fixedVertexCount (σ : Equiv.Perm V) = 56 :=
+    aut_involution_fixedVertexCount_eq_56 hΓ _ hAut_σ hσ_inv hσ_ne_perm
+  have hfix_nonempty : (Moore57.fixedVertexSet (σ : Equiv.Perm V)).Nonempty := by
+    have hcard : Fintype.card (Moore57.fixedVertexSet (σ : Equiv.Perm V)) = 56 := by
+      rw [← hfix_card]; exact (Moore57.fixedVertexCount_eq_card_fixedVertexSet _).symm
+    rw [← Set.nonempty_coe_sort]
+    exact Fintype.card_pos_iff.mp (by rw [hcard]; decide)
+  obtain ⟨v, hv⟩ := hfix_nonempty
+  have hv_fix : (σ : Equiv.Perm V) v = v := Moore57.mem_fixedVertexSet.mp hv
+  have hσ_stab : σ ∈ MulAction.stabilizer G v := by
+    rw [MulAction.mem_stabilizer_iff]; exact hv_fix
+  -- Step 3: 2 ∣ |stabilizer G v|.
+  have h2_stab : (2 : ℕ) ∣ Fintype.card (MulAction.stabilizer G v) := by
+    have horder : orderOf (⟨σ, hσ_stab⟩ : MulAction.stabilizer G v) = 2 := by
+      apply orderOf_eq_prime
+      · apply Subtype.ext
+        show (σ : G) ^ 2 = 1
+        exact hσ_sq
+      · intro h
+        apply hσ_ne
+        have hsub : ((⟨σ, hσ_stab⟩ : MulAction.stabilizer G v) : G) = (1 : G) := by
+          rw [h]; rfl
+        simpa using hsub
+    rw [← horder]; exact orderOf_dvd_card
+  -- Step 4: |G| = |orbit| · |stab| = |V| · |stab|, with 2 ∣ |V| and 2 ∣ |stab|.
+  have h_orbit_stab :
+      Fintype.card V * Fintype.card (MulAction.stabilizer G v) =
+      Fintype.card G := by
+    have h_orbit := MulAction.card_orbit_mul_card_stabilizer_eq_card_group
+      (α := G) (β := V) v
+    have h_orbit_eq_univ : MulAction.orbit G v = Set.univ :=
+      MulAction.orbit_eq_univ G v
+    have h_orbit_card : Fintype.card (MulAction.orbit G v) = Fintype.card V := by
+      have : Fintype.card (MulAction.orbit G v) = Fintype.card (Set.univ : Set V) := by
+        apply Fintype.card_congr
+        exact Equiv.setCongr h_orbit_eq_univ
+      rw [this]
+      exact Fintype.card_congr (Equiv.Set.univ V)
+    rw [h_orbit_card] at h_orbit
+    exact h_orbit
+  have h4_G : (4 : ℕ) ∣ Fintype.card G := by
+    rw [← h_orbit_stab]
+    rcases h2_V with ⟨a, ha⟩
+    rcases h2_stab with ⟨b, hb⟩
+    refine ⟨a * b, ?_⟩
+    rw [ha, hb]; ring
+  exact lem2_four_not_dvd_aut hΓ G hG h4_G
 
 end Moore57.Papers.MacajSiran2010.S2
