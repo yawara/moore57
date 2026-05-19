@@ -364,3 +364,4 @@ import Moore57.Order22OnMoore57.NoGo
 -- Papers/ — paper-structured re-exports & skeletons
 import Moore57.Papers.MacajSiran2010.MainTheorem
 import Moore57.Papers.MakhnevPaduchikh2001.MainTheorem
+import Moore57.Papers.Aschbacher1971.MainTheorem
