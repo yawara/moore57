@@ -53,6 +53,7 @@ import Moore57.D19OnMoore57.Fixed.NeighborCounts
 import Moore57.Foundations.GraphTheory.StrongZeroOne
 import Moore57.Foundations.GroupTheory.D19LinearCharacter
 import Moore57.Foundations.GroupTheory.SmallGroup819
+import Moore57.Foundations.GroupTheory.OrbitDecomposition
 import Moore57.D19OnMoore57.D19Core.Dihedral19CharacterValueReduction
 import Moore57.Foundations.GroupTheory.D19RotationInvariantTrace
 import Moore57.Foundations.GroupTheory.D19RotationMovingCyclotomic
