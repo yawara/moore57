@@ -360,3 +360,7 @@ import Moore57.Order22OnMoore57.ModularF11
 import Moore57.Order22OnMoore57.ComplexRestriction
 import Moore57.Order22OnMoore57.Parity
 import Moore57.Order22OnMoore57.NoGo
+
+-- Papers/ — paper-structured re-exports & skeletons
+import Moore57.Papers.MacajSiran2010.MainTheorem
+import Moore57.Papers.MakhnevPaduchikh2001.MainTheorem
