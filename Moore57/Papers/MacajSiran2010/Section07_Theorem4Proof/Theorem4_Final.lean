@@ -1,4 +1,5 @@
 import Mathlib.Tactic.NormNum
+import Moore57.Foundations.GraphTheory.AdjacentMovedCount
 import Moore57.Papers.MacajSiran2010.Section07_Theorem4Proof.Corollary2_SmallGroup81_9
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Theorem4_3GroupBound
 
@@ -24,6 +25,8 @@ Proof strategy (paper §7):
 
 namespace Moore57.Papers.MacajSiran2010.S7
 
+open Moore57
+
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
@@ -38,6 +41,41 @@ theorem thm4_trace_orbit_arithmetic_contradiction (l a k : ℕ)
     (h_orbit : a = 27 * k) :
     False := by
   omega
+
+/-- **Theorem 4 conditional form: contradiction from the three §7
+geometric inputs.** [done given hypotheses]
+
+Encodes the conditional content of §7 Steps 4-5 with the paper's
+intermediate quantities exposed:
+
+* `X` is an order-81 subgroup of `Sym(V)` acting by graph automorphisms
+  on a Moore57 graph `Γ`.
+* `x : X` has order `9`.
+* **Lemma 8 input** (`h_lem8`): `Tr(X) = 26 + 30 l` for some `l : ℕ` — the
+  specific congruence forced by the GAP orbit structure
+  `1 + 3·3 + 6·27 + 38·81 = 3250` (48 orbits, deferred-heavy).
+* **Lemma 9 input** (`h_lem9`): `81 · Tr(X) = 18 · a₁(x)` — combines
+  `|X| · Tr(X) = Σ_y a₁(y)` (Lemma 9 (2), proven) with conjugation
+  symmetry plus vanishing on orders ≠ 9 in `SG(81, 9)` (deferred-heavy).
+* **Common `Z₉ × Z₃` orbit splitting** (`h_orbit_split`): every
+  order-9 element's `a₁` value is divisible by `27`, since the orbits
+  of the common subgroup containing all order-9 elements all have
+  size 27 (deferred-heavy).
+
+The three hypotheses combine to a pure ℕ arithmetic contradiction. -/
+theorem thm4_conditional_arithmetic
+    (_hΓ : IsMoore57 Γ)
+    (X : Subgroup (Equiv.Perm V)) [Fintype X]
+    (_hX_card : Fintype.card X = 81)
+    (_hX_aut : ∀ x : X, ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x • a) (x • b))
+    (x : X) (_hx_order : orderOf x = 9)
+    (Tr l : ℕ) (h_lem8 : Tr = 26 + 30 * l)
+    (h_lem9 : 81 * Tr = 18 * adjacentMovedCount Γ (x : Equiv.Perm V))
+    (k : ℕ)
+    (h_orbit_split : adjacentMovedCount Γ (x : Equiv.Perm V) = 27 * k) :
+    False := by
+  subst h_lem8
+  exact thm4_trace_orbit_arithmetic_contradiction l _ k h_lem9 h_orbit_split
 
 /-- **Theorem 4 (no 3-group of order > 27).** [deferred-heavy] -/
 theorem thm4_final (_hΓ : IsMoore57 Γ) : True := by trivial
