@@ -71,11 +71,18 @@ distance-regular with parameters `c_0 = 0, a_0 = 0, b_0 = k`,
 `c_1 = 1, a_1 = λ, b_1 = k − λ − 1`, `c_2 = μ, a_2 = k − μ, b_2 = 0`). -/
 theorem theorem3_11_srg_diameter_two : True := by trivial
 
-/-- **Edge-count identity** `k(k − λ − 1) = l μ` for an SRG. [skeleton]
+/-- **Edge-count identity** `k(k − λ − 1) = l μ` for an SRG.
 
-(For Moore57 `(n, k, λ, μ) = (3250, 57, 0, 1)`:
-`57 · 56 = 3192 · 1` ✓ — visible in `IsSRGWith.param_eq` already.) -/
-theorem theorem3_11_srg_param_identity : True := by trivial
+Wraps `Mathlib.Combinatorics.SimpleGraph.StronglyRegular.IsSRGWith.param_eq`. -/
+theorem theorem3_11_srg_param_identity {n k ℓ μ : ℕ}
+    (h : Γ.IsSRGWith n k ℓ μ) (hn : 0 < n) :
+    k * (k - ℓ - 1) = (n - k - 1) * μ :=
+  SimpleGraph.IsSRGWith.param_eq (G := Γ) h hn
+
+/-- **Edge-count identity (Moore57 instance):** `57 · 56 = 3192 · 1`. -/
+theorem theorem3_11_moore57_param_identity (hΓ : IsMoore57 Γ) :
+    57 * (57 - 0 - 1) = (3250 - 57 - 1) * 1 :=
+  SimpleGraph.IsSRGWith.param_eq (G := Γ) hΓ (by decide)
 
 /-- **Theorem 3.12 (Moore (k, 2) classification).** [skeleton]
 

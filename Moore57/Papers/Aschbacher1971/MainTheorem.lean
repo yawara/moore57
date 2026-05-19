@@ -5,6 +5,7 @@ import Moore57.Papers.Aschbacher1971.Lemma1_3_ValenceClassification
 import Moore57.Papers.Aschbacher1971.Lemma1_4_InvolutionFix
 import Moore57.Papers.Higman1964.Theorem1_DegreeKSqPlus1
 import Moore57.Papers.CameronCh3.Section07_Automorphisms
+import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Lemma2_Involution
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -76,6 +77,25 @@ Aschbacher's §2 involution / Sylow argument); both dependencies are now
 in-tree as Cameron Ch.3 §§3.1–3.4 (basis algebra, association schemes)
 and Higman 1964 (rank-3 framework). -/
 theorem main_no_rank3_3250_57 : True := by trivial
+
+/-- **Main theorem (proven form, via vertex-transitivity).**
+
+The rank-3 hypothesis implies vertex-transitivity (rank-3 transitive
+groups are 2-transitive on orbital partitions, hence in particular
+transitive on `Ω`). Hence the stronger
+`MacajSiran2010.S2.cor_lem2_no_vertex_transitive_aut` already rules
+out any rank-3 permutation group of degree 3250 on a Moore57 graph.
+
+This wrapper exposes the vertex-transitivity form directly. -/
+theorem main_no_vertex_transitive_3250_57
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : Moore57.IsMoore57 Γ)
+    (G : Subgroup (Equiv.Perm V)) [DecidablePred (· ∈ G)]
+    (hG : ∀ σ ∈ G, ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hVtrans : MulAction.IsPretransitive G V) : False :=
+  Moore57.Papers.MacajSiran2010.S2.cor_lem2_no_vertex_transitive_aut
+    hΓ G hG hVtrans
 
 /-- **Pointer: Higman 1964 Theorem 1, Moore57 valence fork.**
 
