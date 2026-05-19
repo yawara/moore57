@@ -5,17 +5,20 @@ import Moore57.D19OnMoore57.Reflection.RawActionFixedCenterLeaf
 import Moore57.C38OnMoore57.NoGo
 
 /-!
-# Final assembly: closing the geometric witness from raw action
+# `D₁₉` cannot act on a Moore57 graph (final non-existence)
 
-Discovery: the codebase already provides
-`BranchOrbitABCFromCenter.toComplementResidualSplit38WitnessFromBFibersOfReflection`
-which builds the split compact witness from:
+This file assembles the representation-theoretic side
+(`RotationCharacterConstancyPackage`) with the geometric witness constructed
+from raw action to produce the main non-existence theorem
+`no_D19_acts_on_Moore57_unconditional`.
+
+The compact adjacent-moved witness is built from:
 
 * a fixed-center A/B/C branch decomposition (`BranchOrbitABCFromCenter h`,
   available via `ofExistsThreeRotationOrbitFinsetNeighbors h`),
 * the all-A-fiber cardinality `38` boundary
   (`AFiberCardinality38Boundary h data.toAFiberCoordinates univ`,
-  available via Option A: `aFiberCardinality38Boundary_of_closures`),
+  available via `aFiberCardinality38Boundary_of_closures`),
 * an exact reflection swap `sr k · b0 = c0`
   (available via `fixedCenterLeafDefaultBasePair_of_raw_action`).
 
@@ -23,8 +26,10 @@ Forgetting the split to the plain compact form gives
 `AdjacentMovedReflectionComplementResidual38Witness h
 (data.toOrbitBaseSelectionInputFromBFibers)`.
 
-This file assembles all the pieces into the final non-existence theorem
-`no_D19_acts_on_Moore57_unconditional`.
+The order-`38` corollary `Moore57_no_order38_structure` combines the
+D₁₉-side conclusion with the cyclic-`C₃₈` conclusion from
+`C38OnMoore57.NoGo`, since groups of order `38 = 2·19` are exactly the
+two isomorphism classes `D₁₉` and `C₃₈`.
 -/
 
 namespace Moore57
@@ -44,22 +49,19 @@ noncomputable def adjacentMovedReflectionComplementResidual38Witness_of_raw_acti
   classical
   let labeling := h.fixedCenterLeafDefaultBaseLabeling_of_raw_action k
   let data := labeling.data
-  -- AFiberCardinality38Boundary from raw action via Option A.
   have boundary :
       AFiberCardinality38Boundary h data.toAFiberCoordinates
         (Finset.univ : Finset (ZMod 19)) :=
     labeling.aFiberCardinality38Boundary_of_closures
-  -- reflection swap from labeling.
   have href : h.smul (DihedralGroup.sr labeling.k) data.b0 = data.c0 :=
     labeling.reflection_b0_eq_c0
-  -- Build the split witness using the existing infrastructure.
   exact
     (data.toComplementResidualSplit38WitnessFromBFibersOfReflection
       boundary href).toComplementResidual38Witness
 
-/-- Generic Phase 6 (compact form) parametrized by any orbit base input:
-combine Phase 5 RotationCharacterConstancy with a compact adjacent-moved
-witness over any orbit base to get `False`. -/
+/-- Compact-form final assembly parametrized by any orbit base input: combine
+the rotation-character constancy with a compact adjacent-moved witness over
+any orbit base to get `False`. -/
 theorem false_of_RotationCharacterConstancy_and_compactAdjacentMoved_generic
     (h : D19ActsOnMoore57 V Γ)
     (rcc : RotationCharacterConstancy h)
@@ -92,9 +94,9 @@ theorem false_of_RotationCharacterConstancy_and_compactAdjacentMoved_generic
          orbitBase := orbitBase
          adjacentMoved := adjacentMoved }⟩
 
-/-- Unconditional False from `h : D19ActsOnMoore57 V Γ` alone: combining
-Phase 7's RotationCharacterConstancy package (closed in Phase 7) with the
-geometric witness constructed in this file. -/
+/-- Unconditional `False` from `h : D19ActsOnMoore57 V Γ` alone: combining the
+rotation-character constancy package with the geometric witness constructed in
+this file. -/
 theorem false_of_raw_action (h : D19ActsOnMoore57 V Γ) : False := by
   classical
   let pkg := h.rotationCharacterConstancyPackage_of_raw_action
