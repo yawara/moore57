@@ -4,6 +4,7 @@ import Moore57.Papers.Aschbacher1971.Lemma1_2_FixInheritsStar
 import Moore57.Papers.Aschbacher1971.Lemma1_3_ValenceClassification
 import Moore57.Papers.Aschbacher1971.Lemma1_4_InvolutionFix
 import Moore57.Papers.Higman1964.Theorem1_DegreeKSqPlus1
+import Moore57.Papers.CameronCh3.Section07_Automorphisms
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -57,10 +58,19 @@ and its proven arithmetic core
 `Moore57.Papers.Higman1964.theorem1_arithmetic_core`. The valence `k = 57`
 sits in the `4k − 3 = 225` branch of that classification.
 
+**Stronger result available in-tree**:
+`Moore57.Papers.CameronCh3.theorem3_13_no_vertex_transitive_moore57`
+(skeleton) rules out any vertex-transitive Moore57. Since rank-3 ⇒
+vertex-transitive, Cameron 3.13 strictly subsumes this Aschbacher
+result. Cameron's proof Steps 1–4 collapse onto the existing Moore57
+infrastructure (`aut_involution_fixedVertexCount_eq_56`); Step 5
+(parity / alternating intersection) is the remaining substantive piece.
+
 A full proof of the Main Theorem still requires the rank-3
 permutation-group action infrastructure (Lemmas 1–7 of Higman 1964, +
-Aschbacher's §2 involution / Sylow argument); the Higman 1964 dependency
-is no longer external to this repository. -/
+Aschbacher's §2 involution / Sylow argument); both dependencies are now
+in-tree as Cameron Ch.3 §§3.1–3.4 (basis algebra, association schemes)
+and Higman 1964 (rank-3 framework). -/
 theorem main_no_rank3_3250_57 : True := by trivial
 
 /-- **Pointer: Higman 1964 Theorem 1, Moore57 valence fork.**

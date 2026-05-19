@@ -31,5 +31,7 @@ now in scope, Aschbacher 1971's `main_no_rank3_3250_57` can declare its
 external dependency satisfied (at the statement level) by Theorem 1.
 
 (The deeper structural content — `λ = 0, μ = 1` from primitivity + Lemma 5;
-integer eigenvalues from Lemma 7 Case II — is still skeletal.)
+integer eigenvalues from Lemma 7 Case II — is still skeletal. Cameron
+Ch.3 §3.5 Theorem 3.12 is the modern SRG-framework formulation; see
+`Moore57.Papers.CameronCh3.theorem3_12_moore_diameter_two_classification`.)
 -/
