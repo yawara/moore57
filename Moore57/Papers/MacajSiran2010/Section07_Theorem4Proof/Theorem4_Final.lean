@@ -1,3 +1,4 @@
+import Mathlib.Tactic.NormNum
 import Moore57.Papers.MacajSiran2010.Section07_Theorem4Proof.Corollary2_SmallGroup81_9
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Theorem4_3GroupBound
 
@@ -26,7 +27,19 @@ namespace Moore57.Papers.MacajSiran2010.S7
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+/-- **Step 4-5 arithmetic contradiction.** [done]
+
+In the §7 proof, Lemma 8 plus Lemma 9 give
+`81 * (26 + 30 l) = 18 * a₁(x)`, while the common `Z₉ × Z₃` orbit
+splitting gives `a₁(x) = 27 k`.  These two numerical constraints are
+incompatible. -/
+theorem thm4_trace_orbit_arithmetic_contradiction (l a k : ℕ)
+    (h_trace : 81 * (26 + 30 * l) = 18 * a)
+    (h_orbit : a = 27 * k) :
+    False := by
+  omega
+
 /-- **Theorem 4 (no 3-group of order > 27).** [deferred-heavy] -/
-theorem thm4_final (hΓ : IsMoore57 Γ) : True := by trivial
+theorem thm4_final (_hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S7
