@@ -97,9 +97,59 @@ theorem lem5_walks (hΓ : IsMoore57 Γ)
     {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) (k : ℕ) :
     True := by trivial
 
-/-- **Lemma 5 (5) (matrix identity `B² + B − 56 I = 1ᵀ · s`).** [skeleton] -/
+/-- **Lemma 5 (5) (matrix identity `B² + B − 56·I = 1·sᵀ`).** [skeleton]
+
+For an equitable partition with cell sizes `s = (s₁, …, sₖ)` and
+adjacency matrix `B`, the rank-1 identity
+`B² + B − 56·I = 𝟙·sᵀ` holds (entrywise: `(B²)_{ij} + B_{ij} = 56·δ_{ij} + sⱼ`).
+
+Proof outline:
+* Pointwise Moore57 SRG identity at `(v, w) ∈ V × V`:
+  `|cN(v, w)| + [v ~ w] = 56·[v = w] + 1`.
+* Sum over `w ∈ Sⱼ`:
+  - LHS sums to `(B²)_{ij} + B_{ij}` by double-counting (decompose the
+    intermediate vertex `x` by which cell it lies in, then apply
+    `P.equitable` twice).
+  - RHS sums to `56·δ_{ij} + sⱼ` (using `v ∈ Sᵢ`, so `v ∈ Sⱼ ⇔ i = j`).
+
+Pointwise SRG step is proven below as `lem5_pointwise_srg`. The
+double-sum decomposition is the missing piece. -/
 theorem lem5_matrix_identity (hΓ : IsMoore57 Γ)
     {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) :
     True := by trivial
+
+/-- **Lemma 5 (5) helper: pointwise Moore57 SRG identity.**
+
+For Moore57 and any `v, w ∈ V`:
+`|cN(v, w)| + [v ~ w] = 56·[v = w] + 1`.
+
+Three cases:
+* `v = w`: `|cN(v, v)| = degree v = 57`, `[v ~ v] = 0` (loopless),
+  `56·1 + 1 = 57`. ✓
+* `v ≠ w, v ~ w`: `|cN| = λ = 0` (SRG `of_adj`), `[v ~ w] = 1`,
+  `56·0 + 1 = 1`. ✓
+* `v ≠ w, v ≁ w`: `|cN| = μ = 1` (SRG `of_not_adj`), `[v ~ w] = 0`,
+  `56·0 + 1 = 1`. ✓ -/
+theorem lem5_pointwise_srg (hΓ : IsMoore57 Γ) (v w : V) :
+    Fintype.card (Γ.commonNeighbors v w) +
+      (if Γ.Adj v w then (1 : ℕ) else 0) =
+    56 * (if v = w then 1 else 0) + 1 := by
+  classical
+  by_cases hvw : v = w
+  · subst w
+    rw [if_pos rfl]
+    have hadj : ¬ Γ.Adj v v := Γ.irrefl
+    rw [if_neg hadj, Nat.add_zero, Nat.mul_one]
+    have hreg : Γ.degree v = 57 := hΓ.regular v
+    have hcN : Fintype.card (Γ.commonNeighbors v v) = Γ.degree v := by
+      rw [← SimpleGraph.card_neighborSet_eq_degree]
+      apply Fintype.card_congr
+      refine Equiv.setCongr ?_
+      rw [SimpleGraph.commonNeighbors_eq, Set.inter_self]
+    rw [hcN, hreg]
+  · rw [if_neg hvw]
+    by_cases hadj : Γ.Adj v w
+    · rw [if_pos hadj, hΓ.of_adj v w hadj]
+    · rw [if_neg hadj, hΓ.of_not_adj hvw hadj]
 
 end Moore57.Papers.MacajSiran2010.S3
