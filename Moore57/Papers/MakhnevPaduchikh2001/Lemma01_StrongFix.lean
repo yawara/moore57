@@ -30,8 +30,28 @@ namespace Moore57.Papers.MakhnevPaduchikh2001
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 1 (1) (strong (0,1) ⇒ Moore or star).** [deferred-heavy] -/
-theorem lem1_part1 : True := by trivial
+/-- **Lemma 1 (1) (strong (0,1) ⇒ regular or star).**
+
+Any finite strong-`(λ = 0, µ = 1)` graph is either regular (every vertex
+has the same degree, the "Moore graph" branch) or a star with some
+centre.
+
+The Moore-graph branch of the paper's formulation is captured here by
+the regular alternative; the strongly-regular eigenvalue/integrality
+classification `k ∈ {2, 3, 7, 57}` of the regular case is the further
+step (Higman 1964 §6 / Cameron §3.5), and remains a separate
+[deferred-heavy] item. -/
+theorem lem1_part1 {V : Type*} [Fintype V] [DecidableEq V]
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (hG : IsStrongZeroOne G) :
+    (∃ k : ℕ, G.IsRegularOfDegree k) ∨
+      (∃ c : V, IsStarWithCenter G c) := by
+  by_cases hreg : ∃ k : ℕ, ∀ v : V, G.degree v = k
+  · left
+    obtain ⟨k, hk⟩ := hreg
+    exact ⟨k, hk⟩
+  · right
+    exact hG.exists_isStarWithCenter_of_not_regular hreg
 
 /-- **Lemma 1 (2) (`Fix(σ)` is also strong (0,1), single-element case).**
 For a Moore57 graph Γ and any σ ∈ Aut(Γ), the σ-fixed induced subgraph
