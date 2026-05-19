@@ -10,7 +10,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Makhnev–Paduchikh 2001 — main theorem [skeleton]
+# Makhnev–Paduchikh 2001 — main theorem
 
 > Let Γ be the Aschbacher graph and `G = Aut(Γ)`. Assume that `G` contains
 > an involution `t`. Then:
@@ -27,15 +27,40 @@ set_option linter.unusedFintypeInType false
 >     Hoffman–Singleton's graph (`|Y| | 5 or 7, |X| | 25`).
 
 Imported by `Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Theorem2_MakhnevPaduchikh`.
+
+Status:
+* Part (1) `|Fix(t)| = 56` + star structure is **wrapped** from
+  `Moore57.Moore57Graph.Aut.InvolutionFixIsK155` (Cameron/Higman).
+* Parts (2) and (3) (group decomposition + `Fix(X)` cases) remain
+  skeletons — they need substantial new formalization of the
+  involution-centralizer / odd-order subgroup decomposition argument.
 -/
+
+open Moore57
 
 namespace Moore57.Papers.MakhnevPaduchikh2001
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Main theorem (1) (`Fix(t)` is a 56-vertex star).** [skeleton] -/
-theorem main_fix_t_star (hΓ : IsMoore57 Γ) : True := by trivial
+/-- Convert `σ ^ 2 = 1` to `Function.Involutive σ`. -/
+private theorem _involutive_of_sq_eq_one'' {σ : Equiv.Perm V} (hσ : σ ^ 2 = 1) :
+    Function.Involutive σ := fun x => by
+  have h := congrArg (fun (f : Equiv.Perm V) => f x) hσ
+  simpa [pow_two, Equiv.Perm.mul_apply] using h
+
+/-- **Main theorem (1) (`Fix(t)` is a 56-vertex star).**
+For any non-trivial involution `t ∈ Aut(Γ)`, `|Fix(t)| = 56` and `Fix(t)` is
+a star (centered at some vertex). -/
+theorem main_fix_t_star (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hσ : σ ^ 2 = 1) (hne : σ ≠ 1)
+    (hAut : ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b)) :
+    fixedVertexCount σ = 56 ∧
+      ∃ c : fixedVertexSet σ, IsStarWithCenter (autFixedInducedGraph Γ σ) c := by
+  have hinv : Function.Involutive σ := _involutive_of_sq_eq_one'' hσ
+  refine ⟨?_, ?_⟩
+  · exact aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
+  · exact aut_involution_fixedInducedGraph_isStarWithCenter hΓ σ hAut hinv hne
 
 /-- **Main theorem (2) (decomposition `G = ⟨Y, t⟩ × X`).** [skeleton] -/
 theorem main_decomposition (hΓ : IsMoore57 Γ) : True := by trivial
