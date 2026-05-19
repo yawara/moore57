@@ -1,5 +1,5 @@
 import Moore57.Phases.Phase5
-import Moore57.Phases.Phase1
+import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
 import Moore57.D19OnMoore57.Orbit.BaseSelectionFromRawAction
 import Moore57.D19OnMoore57.D19Core.OrbitContributionData
 import Moore57.D19OnMoore57.Final.RepresentationCompact
@@ -47,7 +47,7 @@ noncomputable def d19TraceInput_of_RotationCharacterConstancy
         alpha beta gamma reflection dimension rotation_int)
       reflection minus8_trivial_nonneg minus8_sign_nonneg)
     |>.toD19RepresentationCharacterInput
-    |>.toD19TraceInput (h.rotationFixedUpperBoundInput_of_raw_action)
+    |>.toD19TraceInput (RotationFixedUpperBoundInput.of_provedRotationFixedCountOne h)
 
 /-- Phase 6: build a `D19OrbitContributionData` from Phase 5 multiplicity
 inputs plus the geometric `a1_decomposition` over the canonical orbit base. -/
