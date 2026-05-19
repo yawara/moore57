@@ -1,4 +1,5 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
+import Moore57.Moore57Graph.Aut.NeighborMod
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -41,6 +42,42 @@ theorem lem17_case1_arithmetic_3group_dvd_54_implies_27
     have h_ge : 3 ^ 4 ≤ 3 ^ k := Nat.pow_le_pow_right (by norm_num) h4
     omega
   interval_cases k <;> decide
+
+/-- **Lemma 17 case (1) modular bridge (geometric).** [done]
+
+For a cyclic 3-group `⟨σ⟩` acting on Γ via a single permutation σ with
+`σ ^ 3^k = 1`, the σ-fixed-neighbour count at a fixed vertex `a` is
+divisible by 3 (since `Γ.degree a = 57 ≡ 0 (mod 3)`).
+
+This is the §6 Lem 17 N(a)-divisor input: combined with the global
+constraint `fixedVertexCount σ ≡ 1 (mod 3)`, it produces the
+Petersen-or-singleton dichotomy at the modular level. -/
+theorem lem17_neighbor_fix_mod_three
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    {a : V} (ha : σ a = a) :
+    (Moore57.autFixedNeighborFinset Γ σ a).card ≡ 0 [MOD 3] :=
+  Moore57.aut_card_fixedNeighborFinset_modEq_zero_of_pow_three_pow
+    hΓ σ smul_adj k pow_pk ha
+
+/-- **Lemma 17 case (1) conditional + arithmetic (combined).** [done]
+
+If a single graph-automorphism σ has order a power of 3 (`σ^(3^k) = 1`),
+fixes a vertex `a`, and the count `|N(a) \ Fix(σ)| = 54` (the geometric
+"Petersen complement" assumption), then `orderOf σ ∣ 27`.
+
+This is the §6 Lem 17 (case (1)) reduced to its semi-regular orbit
+input.  The full Lemma 17 then follows by establishing the Petersen
+neighbourhood structure of `Fix(X)`. -/
+theorem lem17_case1_orderOf_dvd_27_of_petersen_complement
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    (h_dvd : orderOf σ ∣ 54) :
+    orderOf σ ∣ 27 := by
+  have h3k : orderOf σ ∣ 3 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 3)).mp h3k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd ⊢
+  exact lem17_case1_arithmetic_3group_dvd_54_implies_27 j h_dvd
 
 /-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy] -/
 theorem lem17_3group_fix (hΓ : IsMoore57 Γ) : True := by trivial

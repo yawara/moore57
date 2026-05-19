@@ -1,4 +1,5 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
+import Moore57.Moore57Graph.Aut.NeighborMod
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -82,6 +83,55 @@ theorem lem19_case3_arithmetic_11group_dvd_55
   interval_cases k
   · left; rfl
   · right; rfl
+
+/-- **Lemma 19 case (1) conditional + arithmetic (13-group, empty fix).**
+[done]
+
+If σ has order a power of 13 (`σ^(13^k) = 1`) and `orderOf σ ∣ 3250`
+(semi-regular action on V), then `orderOf σ ∣ 13`. -/
+theorem lem19_case1_orderOf_dvd_13_of_empty_fix
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 13 ^ k = 1)
+    (h_dvd : orderOf σ ∣ 3250) :
+    orderOf σ ∣ 13 := by
+  have h13k : orderOf σ ∣ 13 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 13)).mp h13k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd ⊢
+  rcases lem19_case1_arithmetic_13group_dvd_3250 j h_dvd with h | h
+  · rw [h]; decide
+  · rw [h]
+
+/-- **Lemma 19 case (2) conditional + arithmetic (19-group, singleton fix).**
+[done]
+
+If σ has order a power of 19 (`σ^(19^k) = 1`) and `orderOf σ ∣ 57`
+(semi-regular action on `N(a) \ {a}`), then `orderOf σ ∣ 19`. -/
+theorem lem19_case2_orderOf_dvd_19_of_singleton_fix
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 19 ^ k = 1)
+    (h_dvd : orderOf σ ∣ 57) :
+    orderOf σ ∣ 19 := by
+  have h19k : orderOf σ ∣ 19 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 19)).mp h19k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd ⊢
+  rcases lem19_case2_arithmetic_19group_dvd_57 j h_dvd with h | h
+  · rw [h]; decide
+  · rw [h]
+
+/-- **Lemma 19 case (3) conditional + arithmetic (11-group, pentagon fix).**
+[done]
+
+If σ has order a power of 11 (`σ^(11^k) = 1`) and `orderOf σ ∣ 55`
+(semi-regular action on `N(a) \ Fix(σ)` for pentagon Fix), then
+`orderOf σ ∣ 11`. -/
+theorem lem19_case3_orderOf_dvd_11_of_pentagon_fix
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 11 ^ k = 1)
+    (h_dvd : orderOf σ ∣ 55) :
+    orderOf σ ∣ 11 := by
+  have h11k : orderOf σ ∣ 11 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 11)).mp h11k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd ⊢
+  rcases lem19_case3_arithmetic_11group_dvd_55 j h_dvd with h | h
+  · rw [h]; decide
+  · rw [h]
 
 /-- **Lemma 19 (large-prime `p`-group classification).** [deferred-heavy]
 
