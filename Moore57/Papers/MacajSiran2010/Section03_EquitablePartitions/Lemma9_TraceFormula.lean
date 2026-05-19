@@ -56,11 +56,9 @@ automorphisms (each `w ∈ O` is the image of `v` under some graph
 automorphism `φ_w` preserving `O`), the induced-subgraph trace
 `Tr(Γ[O])` equals the in-`O` degree of any fixed `v ∈ O`.
 
-The full Mačaj–Širáň statement `Tr(O) = #{x ∈ X : v ∼ xv} · |O| / |X|`
-is the composition of this and the orbit-stabilizer count
-`#{x : v ∼ xv} = deg_{Γ[O]}(v) · |Stab_X(v)| = deg_{Γ[O]}(v) · |X| / |O|`.
-The orbit-stabilizer factor is left abstract here; the `Tr = deg`
-constancy is the substantive geometric content.
+This is the geometric (transitivity-based) content of Lemma 9 (1).
+The full count form `Tr(O) = #{x ∈ X : v ∼ xv} · |O| / |X|` is below
+in `lem9_orbit_inducedTrace_count_formula`.
 
 See `Moore57.inducedTrace_eq_neighborhood_card_of_transitive`. -/
 theorem lem9_orbit_inducedTrace_eq_neighborhood
@@ -71,6 +69,40 @@ theorem lem9_orbit_inducedTrace_eq_neighborhood
         ∀ u : V, u ∈ O ↔ φ u ∈ O) :
     inducedTrace Γ O = ((O.filter (fun w => Γ.Adj v w)).card : ℚ) :=
   Moore57.inducedTrace_eq_neighborhood_card_of_transitive hv hO_trans
+
+/-- **Lemma 9 (1) (full count form): `Tr(O) = count · |O| / |X|`.**
+
+Given:
+* `O` a vertex subset transitively acted upon by graph automorphisms
+  (the geometric data; see `lem9_orbit_inducedTrace_eq_neighborhood`),
+* `Xfs : Finset (Equiv.Perm V)` modelling the (finite) automorphism
+  group whose orbits we are studying,
+* the orbit-stabilizer fiber-uniformity property:
+  every `w ∈ O` has the same `Xfs`-fiber size `stabCard`.
+
+Then `inducedTrace Γ O = count · |O| / |X|` where
+`count = #{y ∈ Xfs : v ~ y v}`.
+
+The fiber-uniformity hypothesis encodes the orbit-stabilizer theorem
+applied pointwise (`#{y ∈ Xfs : y v = w} = |Stab|` is constant); it
+is taken as a hypothesis so the result is purely combinatorial. -/
+theorem lem9_orbit_inducedTrace_count_formula
+    {O : Finset V} {v : V} (hv : v ∈ O)
+    (hO_trans : ∀ w ∈ O, ∃ φ : Equiv.Perm V,
+        (∀ a b : V, Γ.Adj a b ↔ Γ.Adj (φ a) (φ b)) ∧
+        φ v = w ∧
+        ∀ u : V, u ∈ O ↔ φ u ∈ O)
+    {Xfs : Finset (Equiv.Perm V)} (hXfs_nonempty : Xfs.Nonempty)
+    (stabCard : ℕ)
+    (h_fiber : ∀ w ∈ O,
+        (Xfs.filter (fun y : Equiv.Perm V => y v = w)).card = stabCard)
+    (h_orbit_eq : O = Xfs.image (fun y : Equiv.Perm V => y v))
+    (h_yv_in_O : ∀ y ∈ Xfs, y v ∈ O) :
+    inducedTrace Γ O =
+      ((Xfs.filter (fun y : Equiv.Perm V => Γ.Adj v (y v))).card : ℚ) *
+        (O.card : ℚ) / (Xfs.card : ℚ) :=
+  Moore57.inducedTrace_orbit_count_formula hv hO_trans hXfs_nonempty
+    stabCard h_fiber h_orbit_eq h_yv_in_O
 
 /-- **Lemma 9 (2) (ℕ-form: double-counting `Σ_x a₁(x) = |{(x, v) : v ~ x v}|`).**
 
