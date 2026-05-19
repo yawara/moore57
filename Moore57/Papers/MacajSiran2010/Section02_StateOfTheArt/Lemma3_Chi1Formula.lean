@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.HigmanTrace.Congruence
+import Moore57.Moore57Graph.HigmanTrace.Congruence
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false

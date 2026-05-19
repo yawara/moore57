@@ -37,6 +37,7 @@ import Moore57.Order22OnMoore57.Phase4F11OrbitKernel
 import Moore57.Order22OnMoore57.Phase4F11Assembly
 import Moore57.D19OnMoore57.Involution.CountParity
 import Moore57.D19OnMoore57.Involution.FixedDegreeParity
+import Moore57.Moore57Graph.HigmanTrace.Congruence
 import Moore57.D19OnMoore57.HigmanTrace.Congruence
 import Moore57.D19OnMoore57.Involution.HigmanCountArithmetic
 import Moore57.D19OnMoore57.Action.BranchFiberAction

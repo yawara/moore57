@@ -1,4 +1,4 @@
-import Moore57.D19OnMoore57.HigmanTrace.Congruence
+import Moore57.Moore57Graph.HigmanTrace.Congruence
 import Moore57.Foundations.Representation.PermutationRepresentationCharacter
 import Moore57.Moore57Graph.E7Matrix.SpectralDecomposition
 

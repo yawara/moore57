@@ -1,16 +1,17 @@
+import Moore57.Moore57Graph.HigmanTrace.Congruence
 import Moore57.D19OnMoore57.LinearCharacter.Input
-import Moore57.Moore57Graph.Moore57Definition
 import Moore57.D19OnMoore57.Action.D19Action
 import Moore57.Foundations.GroupTheory.D19LinearCharacter
 
 /-!
-# Higman trace congruence
+# Higman trace congruence — D₁₉ reflection instance
 
-Macaj-Siran Lemma 3 records the congruence
-`a₁(x) ≡ 7 a₀(x) + 5 (mod 15)`, obtained from Higman's trace formula once the
-`7`-eigenspace trace is known to be an integer.  This file keeps that
-arithmetic step separate from the harder representation-theoretic integrality
-input.
+The Moore57-abstract Higman congruence
+`adjacentMovedCount Γ σ ≡ 7 fixedVertexCount σ + 5 [MOD 15]`
+now lives in `Moore57.Moore57Graph.HigmanTrace.Congruence` and is reused below.
+
+This file keeps only the **D₁₉-specific** instance that supplies the integer
+trace witness from a packaged D₁₉ linear-character input on a reflection.
 -/
 
 namespace Moore57
@@ -19,44 +20,6 @@ noncomputable section
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
-
-namespace IsMoore57
-
-/-- Higman's trace formula gives the standard congruence once the trace is an
-integer.  This is the `ℤ`-valued form, convenient for algebraic manipulation. -/
-theorem higman_trace_int_intModEq
-    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) {z : ℤ}
-    (htrace :
-      Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ)) :
-    (adjacentMovedCount Γ σ : ℤ) ≡
-      7 * (fixedVertexCount σ : ℤ) + 5 [ZMOD 15] := by
-  have hformula := hΓ.higman_trace_formula σ
-  rw [htrace] at hformula
-  have hnumℚ :
-      8 * (fixedVertexCount σ : ℚ) +
-          (adjacentMovedCount Γ σ : ℚ) - 65 =
-        15 * (z : ℚ) := by
-    linarith
-  have hnumℤ :
-      8 * (fixedVertexCount σ : ℤ) +
-          (adjacentMovedCount Γ σ : ℤ) - 65 =
-        15 * z := by
-    exact_mod_cast hnumℚ
-  rw [Int.modEq_iff_dvd]
-  refine ⟨(fixedVertexCount σ : ℤ) - z - 4, ?_⟩
-  omega
-
-/-- Natural-number form of the Higman congruence. -/
-theorem higman_trace_int_natModEq
-    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) {z : ℤ}
-    (htrace :
-      Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ)) :
-    adjacentMovedCount Γ σ ≡ 7 * fixedVertexCount σ + 5 [MOD 15] := by
-  exact Int.natCast_modEq_iff.mp
-    (by
-      simpa using hΓ.higman_trace_int_intModEq σ htrace)
-
-end IsMoore57
 
 namespace D19ActsOnMoore57
 
