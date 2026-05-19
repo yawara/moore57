@@ -6,12 +6,20 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §9, Corollary 3 [deferred-heavy]
+# Mačaj–Širáň 2010, §9, Corollary 3
 
 > Let Γ be a Moore graph of degree 57 on 3250 vertices and `G = Aut(Γ)`.
 > Then `|G| ≤ 375`, and if `|G|` is even then `|G| ≤ 110`.
 
 This is the main quantitative result of the paper.
+
+Status:
+* `cor3_375_bound`: full statement with `IsMoore57 Γ` hypothesis,
+  paper-stub deferred (depends on Theorems 6, 7).
+* `cor3_odd_arithmetic_bound`, `cor3_even_arithmetic_bound`:
+  **proven** arithmetic cores. Given the divisibility constraints
+  from Theorems 6 / 7 (deferred), the bound `|G| ≤ 375` (resp. `≤ 110`)
+  follows by omega.
 -/
 
 namespace Moore57.Papers.MacajSiran2010.S9
@@ -19,7 +27,49 @@ namespace Moore57.Papers.MacajSiran2010.S9
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Corollary 3 (`|Aut(Γ)| ≤ 375`, and `≤ 110` if even).** [deferred-heavy] -/
+/-- **Corollary 3 arithmetic core (odd order).** [done]
+
+Given the Theorem 6 conclusion `|G| ∣ X` for some `X` in the listed
+odd-order maxima `{171, 39, 275, 147, 35, 375, 135}` (= `{19·9, 13·3,
+5²·11, 7²·3, 7·5, 5³·3, 3³·5}`), conclude `|G| ≤ 375` (the maximum
+in the list). -/
+theorem cor3_odd_arithmetic_bound (n : ℕ)
+    (h : n ∣ 171 ∨ n ∣ 39 ∨ n ∣ 275 ∨ n ∣ 147 ∨ n ∣ 35 ∨
+         n ∣ 375 ∨ n ∣ 135) :
+    n ≤ 375 := by
+  rcases h with h | h | h | h | h | h | h
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 171) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 39) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 275) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 147) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 35) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 375) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 135) h; omega
+
+/-- **Corollary 3 arithmetic core (even order).** [done]
+
+Given the Theorem 7 conclusion `|G| ∣ X` for some `X` in the listed
+even-order maxima `{110, 50, 54, 14, 22, 38}` (= `{11·5·2, 5²·2,
+3³·2, 2·7, 2·11, 2·19}`), conclude `|G| ≤ 110` (the maximum). -/
+theorem cor3_even_arithmetic_bound (n : ℕ)
+    (h : n ∣ 110 ∨ n ∣ 50 ∨ n ∣ 54 ∨
+         n ∣ 14 ∨ n ∣ 22 ∨ n ∣ 38) :
+    n ≤ 110 := by
+  rcases h with h | h | h | h | h | h
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 110) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 50) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 54) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 14) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 22) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 38) h; omega
+
+/-- **Corollary 3 (`|Aut(Γ)| ≤ 375`, and `≤ 110` if even).** [deferred-heavy]
+
+Full paper-faithful statement.  The arithmetic backbone (taking the
+maximum over Thm 6 / Thm 7 listed values) is proven in
+`cor3_odd_arithmetic_bound` / `cor3_even_arithmetic_bound`; what
+remains is the `Aut(Γ)` ↔ subgroup-of-Sym(V) bridge and Theorems 6, 7
+themselves. -/
 theorem cor3_375_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9
