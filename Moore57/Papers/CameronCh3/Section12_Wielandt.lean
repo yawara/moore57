@@ -16,12 +16,12 @@ In particular `p = 5` is the only known prime where a non-2-transitive
 primitive group of degree `2p` exists (the Petersen graph case, `s = 1`).
 Whether other `s` produce examples is an open problem.
 
-Tangential to Moore57. [skeleton]
+Tangential to Moore57. [out-of-scope]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Theorem 3.25 (Wielandt, primitive degree-`2p` non-2-transitive ⇒ rank 3).** [skeleton] -/
+/-- **Theorem 3.25 (Wielandt, primitive degree-`2p` non-2-transitive ⇒ rank 3).** [out-of-scope] -/
 theorem theorem3_25_wielandt : True := by trivial
 
 end Moore57.Papers.CameronCh3

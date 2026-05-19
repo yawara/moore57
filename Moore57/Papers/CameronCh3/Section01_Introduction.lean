@@ -28,18 +28,18 @@ the set of basis matrices of a coherent configuration iff `(CC1*)`–`(CC4*)`
 hold, where `(CC4*)` is `A_i · A_j = Σ_k p_{ij}^k A_k`. The C-span `V(𝓐)`
 is then the *basis algebra* (centraliser algebra in the group case).
 
-[skeleton]
+[out-of-scope]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Definition: coherent configuration.** [skeleton]
+/-- **Definition: coherent configuration.** [out-of-scope]
 
 A coherent configuration is the data of a finite set `Ω` together with a
 partition `𝓡` of `Ω²` satisfying conditions (CC1)–(CC4). -/
 def IsCoherentConfiguration : True := trivial
 
-/-- **Theorem 3.1 (matrix form).** [skeleton]
+/-- **Theorem 3.1 (matrix form).** [out-of-scope]
 
 `{A_1, …, A_r}` is the basis matrix set of a coherent configuration iff:
 

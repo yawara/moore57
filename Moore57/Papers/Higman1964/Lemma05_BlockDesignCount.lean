@@ -34,18 +34,18 @@ For the Moore57 application: rank-3 with `n = 3250 = 57² + 1`, `k = 57`,
 `μ = 1`. Combined with `λ = 0` (this is exactly the strong (0, 1) /
 Moore graph condition).
 
-[skeleton]
+[deferred-heavy]
 -/
 
 namespace Moore57.Papers.Higman1964
 
-/-- **Lemma 5 (μl = k(k − λ − 1)).** [skeleton] -/
+/-- **Lemma 5 (μl = k(k − λ − 1)).** [deferred-heavy] -/
 theorem lem5_block_design_count : True := by trivial
 
-/-- **Corollary 2** (`μ = 0 ⇔ G primitive and k ≤ l ⇔ λ = k − 1`). [skeleton] -/
+/-- **Corollary 2** (`μ = 0 ⇔ G primitive and k ≤ l ⇔ λ = k − 1`). [deferred-heavy] -/
 theorem cor2_lem5_mu_zero_iff_primitive : True := by trivial
 
-/-- **Corollary 3** (`G primitive ⇔ μ ∉ {0, k}`). [skeleton] -/
+/-- **Corollary 3** (`G primitive ⇔ μ ∉ {0, k}`). [deferred-heavy] -/
 theorem cor3_lem5_primitive_iff_mu_nontrivial : True := by trivial
 
 end Moore57.Papers.Higman1964

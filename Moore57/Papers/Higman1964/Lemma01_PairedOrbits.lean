@@ -15,13 +15,13 @@ set_option linter.unusedFintypeInType false
 (cf. WIELANDT [7], 16.6.)
 
 This is purely a permutation-group statement and does not involve any
-graph yet. We state it as a [skeleton] until the action infrastructure
+graph yet. We state it as a [deferred-heavy] until the action infrastructure
 (`MulAction G Ω`, pairing of orbits) is built.
 -/
 
 namespace Moore57.Papers.Higman1964
 
-/-- **Lemma 1 (paired orbit ⇔ even order).** [skeleton]
+/-- **Lemma 1 (paired orbit ⇔ even order).** [deferred-heavy]
 
 A transitive permutation group `G` on `Ω` has a self-paired nontrivial
 `G_a`-orbit iff `|G|` is even. -/

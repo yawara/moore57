@@ -87,17 +87,17 @@ theorem lem5_eigenvalue_57 (hΓ : IsMoore57 Γ)
   obtain ⟨v, hv⟩ := h_nonempty i
   exact P.row_sum_eq_57 hΓ i hv
 
-/-- **Lemma 5 (3) (characteristic polynomial divides).** [skeleton] -/
+/-- **Lemma 5 (3) (characteristic polynomial divides).** [deferred-heavy] -/
 theorem lem5_charpoly_dvd (hΓ : IsMoore57 Γ)
     {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) :
     True := by trivial
 
-/-- **Lemma 5 (4) (entries of `Bᵏ` count `k`-walks).** [skeleton] -/
+/-- **Lemma 5 (4) (entries of `Bᵏ` count `k`-walks).** [deferred-heavy] -/
 theorem lem5_walks (hΓ : IsMoore57 Γ)
     {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) (k : ℕ) :
     True := by trivial
 
-/-- **Lemma 5 (5) (matrix identity `B² + B − 56·I = 1·sᵀ`).** [skeleton]
+/-- **Lemma 5 (5) (matrix identity `B² + B − 56·I = 1·sᵀ`).** [deferred-heavy]
 
 For an equitable partition with cell sizes `s = (s₁, …, sₖ)` and
 adjacency matrix `B`, the rank-1 identity

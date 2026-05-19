@@ -79,7 +79,7 @@ theorem lem1_3_srg_card_eq {n k : ℕ} (hΓ : Γ.IsSRGWith n k 0 1)
     rw [sq, ← hkk]
     omega
 
-/-- **Lemma 1.3 (full `k ∈ {2, 3, 7, 57}` classification).** [skeleton]
+/-- **Lemma 1.3 (full `k ∈ {2, 3, 7, 57}` classification).** [deferred-heavy]
 
 The generic SRG matrix identity `A² + A − (k − 1) • I = J` over `ℚ` and the
 subsequent eigenvalue/integrality argument leading to

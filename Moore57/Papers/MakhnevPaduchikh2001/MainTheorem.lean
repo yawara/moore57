@@ -62,10 +62,10 @@ theorem main_fix_t_star (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
   · exact aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
   · exact aut_involution_fixedInducedGraph_isStarWithCenter hΓ σ hAut hinv hne
 
-/-- **Main theorem (2) (decomposition `G = ⟨Y, t⟩ × X`).** [skeleton] -/
+/-- **Main theorem (2) (decomposition `G = ⟨Y, t⟩ × X`).** [deferred-heavy] -/
 theorem main_decomposition (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Main theorem (3) (`Fix(X)` cases when `X ≠ 1`).** [skeleton] -/
+/-- **Main theorem (3) (`Fix(X)` cases when `X ≠ 1`).** [deferred-heavy] -/
 theorem main_fix_X_cases (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MakhnevPaduchikh2001

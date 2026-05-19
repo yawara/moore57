@@ -39,7 +39,7 @@ namespace Moore57.Papers.MakhnevPaduchikh2001
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 3 (general 6-way classification).** [skeleton] -/
+/-- **Lemma 3 (general 6-way classification).** [deferred-heavy] -/
 theorem lem3_odd_prime_fix (hΓ : IsMoore57 Γ) : True := by trivial
 
 /-- **Lemma 3, case (2): order 19, `|Fix| = 1`.**

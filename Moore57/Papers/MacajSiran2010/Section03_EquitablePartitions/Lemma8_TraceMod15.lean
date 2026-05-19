@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §3, Lemma 8 [skeleton]
+# Mačaj–Širáň 2010, §3, Lemma 8 [deferred-heavy]
 
 > Let `X` have `k` orbits on Γ. Then
 > ```
@@ -23,7 +23,7 @@ namespace Moore57.Papers.MacajSiran2010.S3
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 8 (`Tr(X) ≡ −8(k − 10) mod 15`).** [skeleton] -/
+/-- **Lemma 8 (`Tr(X) ≡ −8(k − 10) mod 15`).** [deferred-heavy] -/
 theorem lem8_trace_mod_fifteen (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S3

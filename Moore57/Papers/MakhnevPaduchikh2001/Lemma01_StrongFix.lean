@@ -30,7 +30,7 @@ namespace Moore57.Papers.MakhnevPaduchikh2001
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 1 (1) (strong (0,1) ⇒ Moore or star).** [skeleton] -/
+/-- **Lemma 1 (1) (strong (0,1) ⇒ Moore or star).** [deferred-heavy] -/
 theorem lem1_part1 : True := by trivial
 
 /-- **Lemma 1 (2) (`Fix(σ)` is also strong (0,1), single-element case).**

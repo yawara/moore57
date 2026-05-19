@@ -47,17 +47,17 @@ theorem lem12_p11_a0_five (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
     fixedVertexCount σ = 5 :=
   aut_order_eleven_fixedVertexCount_eq_five hΓ σ hAut hpow hne
 
-/-- **Lemma 12 (prime-order `(a₀, a₁, χ₁)` table — full statement).** [skeleton]
+/-- **Lemma 12 (prime-order `(a₀, a₁, χ₁)` table — full statement).** [deferred-heavy]
 The full 17-row classification of admissible `(p, a₀, a₁, χ₁)` tuples. -/
 theorem lem12_prime_table (hΓ : IsMoore57 Γ) (x : Equiv.Perm V)
     (hx : ∀ a b, Γ.Adj a b ↔ Γ.Adj (x a) (x b))
     (p : ℕ) (hp : p.Prime) (hxp : x ^ p = 1) :
     True := by trivial
 
-/-- **Lemma 12 (corollary, starred row `p = 3, a₀ = 1` cannot occur).** [skeleton] -/
+/-- **Lemma 12 (corollary, starred row `p = 3, a₀ = 1` cannot occur).** [deferred-heavy] -/
 theorem lem12_no_p3_a0_one (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 12 (corollary, starred row `p = 7, a₀ = 58` cannot occur).** [skeleton] -/
+/-- **Lemma 12 (corollary, starred row `p = 7, a₀ = 58` cannot occur).** [deferred-heavy] -/
 theorem lem12_no_p7_a0_58 (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S5

@@ -22,18 +22,18 @@ algebra*), and `A_i ↦ P_i` extends to a `ℂ`-algebra isomorphism from
 the basis algebra. Identity: `Σ_s p_{ij}^s p_{sk}^u = Σ_t p_{jk}^t p_{it}^u`
 (associative law of matrix multiplication, picture in Figure 3.1).
 
-[skeleton]
+[out-of-scope]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Theorem 3.2 (Wedderburn decomposition).** [skeleton] -/
+/-- **Theorem 3.2 (Wedderburn decomposition).** [out-of-scope] -/
 theorem theorem3_2_wedderburn : True := by trivial
 
-/-- **Corollary 3.3 (commutativity ⇔ multiplicity-free).** [skeleton] -/
+/-- **Corollary 3.3 (commutativity ⇔ multiplicity-free).** [out-of-scope] -/
 theorem cor3_3_commutative_iff_mult_free : True := by trivial
 
-/-- **Theorem 3.4 (basis ≃ intersection algebra).** [skeleton] -/
+/-- **Theorem 3.4 (basis ≃ intersection algebra).** [out-of-scope] -/
 theorem theorem3_4_basis_intersection_iso : True := by trivial
 
 end Moore57.Papers.CameronCh3

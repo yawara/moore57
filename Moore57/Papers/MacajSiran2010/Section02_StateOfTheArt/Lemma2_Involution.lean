@@ -16,11 +16,11 @@ set_option linter.unusedFintypeInType false
 * `lem2_involution_a0`  — wrapped from `aut_involution_fixedVertexCount_eq_56`
   (Cameron's Theorem 3.13 / Higman, fully proved in
   `Moore57.Moore57Graph.Aut.InvolutionFixIsK155`).
-* `lem2_involution_a1` — `a₁(x) = 112`. [skeleton]
+* `lem2_involution_a1` — `a₁(x) = 112`. [deferred-heavy]
   The geometric formula `a₁ = 3250 − 58·a₀ + 2·|E(Fix)|` lives in
   `Moore57.Moore57Graph.InvolutionEdgeCountFormula`; combined with
   `|Fix| = 56` and `|E(Fix)| = 55` (K₁,₅₅ has 55 edges) gives 112.
-* `lem2_four_not_dvd_aut` — `4 ∤ |Aut(Γ)|`. [skeleton]
+* `lem2_four_not_dvd_aut` — `4 ∤ |Aut(Γ)|`. [deferred-heavy]
 -/
 
 open Moore57

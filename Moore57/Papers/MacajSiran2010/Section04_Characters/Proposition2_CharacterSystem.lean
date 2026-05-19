@@ -6,7 +6,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §4, Proposition 2 [skeleton]
+# Mačaj–Širáň 2010, §4, Proposition 2 [deferred-heavy]
 
 > Let `H` be a finite group and let `x₁, …, x_u` be representatives of
 > rational classes of `H`. Let `R₁, …, R_u` be irreducible `ℚ`-representations
@@ -26,7 +26,7 @@ This is the workhorse for the entire §5 table. Already used heavily in
 
 namespace Moore57.Papers.MacajSiran2010.S4
 
-/-- **Proposition 2 (non-negative integer character system).** [skeleton] -/
+/-- **Proposition 2 (non-negative integer character system).** [deferred-heavy] -/
 theorem prop2_character_system : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S4

@@ -35,7 +35,7 @@ The **arithmetic core** — that "`4k − 3 ∈ {1, 9, 25, 225}` ⇒ `k ∈ {1, 
 — is purely number-theoretic and provable here. The setup (rank-3 →
 λ = 0, μ = 1 → integrality of `√(4k − 3)` → divisibility of 225) requires
 the full rank-3 permutation-representation infrastructure of Lemmas 1–7
-and remains as the [skeleton] in `theorem1_n_kSq_plus_one`.
+and remains as the [deferred-heavy] in `theorem1_n_kSq_plus_one`.
 
 For Moore57: Case II with `k = 57` gives `e = 15`, `e² = 225`, exactly
 the `4k − 3 = 225 / k = 57` fork.
@@ -70,7 +70,7 @@ theorem theorem1_arithmetic_core {k e : ℕ}
   -- non-divisor values `e ∈ {2, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14}`.
   interval_cases e <;> omega
 
-/-- **Theorem 1 (Higman §6, full statement).** [skeleton]
+/-- **Theorem 1 (Higman §6, full statement).** [deferred-heavy]
 
 A transitive rank-3 permutation group of degree `n = k² + 1` (where `k`
 is the length of a `G_a`-orbit) has `n ∈ {5, 10, 50, 3250}`, equivalently

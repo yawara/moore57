@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §5, Lemma 14 [skeleton]
+# Mačaj–Širáň 2010, §5, Lemma 14 [deferred-heavy]
 
 > Let `X = P × Q` be an automorphism group of Γ such that `P` (resp. `Q`)
 > acts semi-regularly on `Γ \ Fix(P)` (resp. `Γ \ Fix(Q)`) and
@@ -23,7 +23,7 @@ namespace Moore57.Papers.MacajSiran2010.S5
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 14 (`a₁ ≡ b₁ mod |X|` for semi-regular `P × Q`).** [skeleton] -/
+/-- **Lemma 14 (`a₁ ≡ b₁ mod |X|` for semi-regular `P × Q`).** [deferred-heavy] -/
 theorem lem14_semi_regular_congruence (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S5

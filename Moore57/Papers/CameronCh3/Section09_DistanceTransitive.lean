@@ -17,18 +17,18 @@ vertex stabiliser of order `3 · 2^a` with `a ≤ 4`.
 **Theorem 3.19** (Smith). A finite distance-transitive graph of valency
 `> 2` with imprimitive automorphism group is bipartite or antipodal.
 
-These are tangential to Moore57. [skeleton]
+These are tangential to Moore57. [out-of-scope]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Theorem 3.17 (Biggs–Smith, 12 DT graphs of valency 3).** [skeleton] -/
+/-- **Theorem 3.17 (Biggs–Smith, 12 DT graphs of valency 3).** [out-of-scope] -/
 theorem theorem3_17_biggs_smith : True := by trivial
 
-/-- **Theorem 3.18 (Tutte, valency-3 vertex stabiliser bound).** [skeleton] -/
+/-- **Theorem 3.18 (Tutte, valency-3 vertex stabiliser bound).** [out-of-scope] -/
 theorem theorem3_18_tutte : True := by trivial
 
-/-- **Theorem 3.19 (Smith, imprimitivity ⇒ bipartite or antipodal).** [skeleton] -/
+/-- **Theorem 3.19 (Smith, imprimitivity ⇒ bipartite or antipodal).** [out-of-scope] -/
 theorem theorem3_19_smith : True := by trivial
 
 end Moore57.Papers.CameronCh3

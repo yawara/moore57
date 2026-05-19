@@ -22,18 +22,18 @@ the Krein parameters.
 **Theorem 3.22.** Krein parameters of a symmetric association scheme are
 real numbers in `[0, 1]`.
 
-[skeleton]
+[out-of-scope]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Theorem 3.20 (multiplicity bound).** [skeleton] -/
+/-- **Theorem 3.20 (multiplicity bound).** [out-of-scope] -/
 theorem theorem3_20_mult_bound : True := by trivial
 
-/-- **Theorem 3.21 (Delsarte–Goethals–Seidel sphere bound).** [skeleton] -/
+/-- **Theorem 3.21 (Delsarte–Goethals–Seidel sphere bound).** [out-of-scope] -/
 theorem theorem3_21_DGS_sphere : True := by trivial
 
-/-- **Theorem 3.22 (Krein parameters in `[0, 1]`).** [skeleton] -/
+/-- **Theorem 3.22 (Krein parameters in `[0, 1]`).** [out-of-scope] -/
 theorem theorem3_22_krein_in_unit_interval : True := by trivial
 
 end Moore57.Papers.CameronCh3

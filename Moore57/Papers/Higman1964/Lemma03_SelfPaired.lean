@@ -19,15 +19,15 @@ self-paired ⇔ `|G|` is even.
 * If `|G|` even, `a ∈ Δ(b) ⇒ b ∈ Δ(a)` (the "graph" `b ∈ Δ(a)` is symmetric).
 * If `|G|` odd, `a ∈ Δ(b) ⇒ b ∈ Γ(a)`.
 
-[skeleton]
+[deferred-heavy]
 -/
 
 namespace Moore57.Papers.Higman1964
 
-/-- **Lemma 3 (self-paired structure under parity).** [skeleton] -/
+/-- **Lemma 3 (self-paired structure under parity).** [deferred-heavy] -/
 theorem lem3_self_paired_iff_even : True := by trivial
 
-/-- **Corollary to Lemma 3** (symmetry of `Δ` under even order). [skeleton] -/
+/-- **Corollary to Lemma 3** (symmetry of `Δ` under even order). [deferred-heavy] -/
 theorem cor_lem3_symmetric_delta_of_even : True := by trivial
 
 end Moore57.Papers.Higman1964

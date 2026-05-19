@@ -12,7 +12,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Aschbacher 1971 — main theorem [skeleton]
+# Aschbacher 1971 — main theorem [deferred-heavy]
 
 > No rank-3 permutation group of degree 3250 and subdegree 57 exists.
 
@@ -46,7 +46,7 @@ namespace Moore57.Papers.Aschbacher1971
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Main theorem (rank-3 non-existence on degree 3250 / subdegree 57).** [skeleton]
+/-- **Main theorem (rank-3 non-existence on degree 3250 / subdegree 57).** [deferred-heavy]
 
 Stated symbolically as a placeholder; a full formalisation would require
 introducing the permutation-group action `G ↷ Ω` of rank 3 and the

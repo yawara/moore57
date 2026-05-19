@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §2, Lemma 1 [skeleton]
+# Mačaj–Širáň 2010, §2, Lemma 1 [deferred-heavy]
 
 > Let `X` be a group of automorphisms of Γ. Then `Fix(X)` is empty, an
 > isolated vertex, a pentagon, the Petersen graph, the Hoffman–Singleton
@@ -31,7 +31,7 @@ inductive FixShape
   | starK1n (n : ℕ)
 
 /-- **Lemma 1.** For any group `X ≤ Aut(Γ)`, the fixed subgraph `Fix(X)` has
-one of six shapes (six-way classification). [skeleton] -/
+one of six shapes (six-way classification). [deferred-heavy] -/
 theorem lem1_fixShape (hΓ : IsMoore57 Γ)
     (X : Subgroup (Equiv.Perm V))
     (hX : ∀ g ∈ X, ∀ x y, Γ.Adj x y ↔ Γ.Adj (g x) (g y)) :

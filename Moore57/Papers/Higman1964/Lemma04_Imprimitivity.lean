@@ -22,15 +22,15 @@ set_option linter.unusedFintypeInType false
   doubly transitive on blocks.
 * A rank-3 group of odd order is primitive.
 
-[skeleton]
+[deferred-heavy]
 -/
 
 namespace Moore57.Papers.Higman1964
 
-/-- **Lemma 4 (imprimitivity criterion).** [skeleton] -/
+/-- **Lemma 4 (imprimitivity criterion).** [deferred-heavy] -/
 theorem lem4_imprimitivity_equivalents : True := by trivial
 
-/-- **Corollary (rank-3 of odd order is primitive).** [skeleton] -/
+/-- **Corollary (rank-3 of odd order is primitive).** [deferred-heavy] -/
 theorem cor_lem4_odd_rank3_primitive : True := by trivial
 
 end Moore57.Papers.Higman1964

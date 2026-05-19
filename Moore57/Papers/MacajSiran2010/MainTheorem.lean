@@ -18,7 +18,7 @@ This module bundles the principal results of [Mačaj–Širáň 2010]:
 * Theorem 7: even `|Aut(Γ)|` divides one of five enumerated values.
 * Corollary 3: `|Aut(Γ)| ≤ 375`, and `≤ 110` if even.
 
-All statements currently carry [skeleton] placeholders.
+All statements currently carry [deferred-heavy] placeholders.
 -/
 
 namespace Moore57.Papers.MacajSiran2010

@@ -25,7 +25,7 @@ from the existing spectral-projection infrastructure:
 * `thm1_chi0`  — `χ₀(σ) = 1`.
 * `thm1_chi1_formula` — `χ₁(σ) = (8 a₀(σ) + a₁(σ) − 65) / 15`
   (= the paper's row-1 component of `Q · (a₀,a₁,a₂)ᵀ`).
-* `thm1_chi2_formula` — `χ₂(σ) = (7 a₀(σ) − a₁(σ) + 50) / 15`. [skeleton]
+* `thm1_chi2_formula` — `χ₂(σ) = (7 a₀(σ) − a₁(σ) + 50) / 15`. [deferred-heavy]
   Derivable from `tr(P_σ) = a₀` and `E_57 + E_7 + E_-8 = I`.
 -/
 

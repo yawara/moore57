@@ -28,12 +28,12 @@ set_option linter.unusedFintypeInType false
 For Moore57 (rank-3, `n = 3250`, `λ = 0`, `μ = 1`, `|G|` even):
 `d = 1 + 4·56 = 225`, `√d = 15`, eigenvalues `(−1 ± 15)/2 = 7, −8`.
 
-[skeleton]
+[deferred-heavy]
 -/
 
 namespace Moore57.Papers.Higman1964
 
-/-- **Lemma 6 (two eigenvalues `s, t`).** [skeleton]
+/-- **Lemma 6 (two eigenvalues `s, t`).** [deferred-heavy]
 
 In addition to the eigenvalue `k` (multiplicity 1), the incidence matrix
 `A` of a rank-3 block design has exactly two further eigenvalues `s, t`,

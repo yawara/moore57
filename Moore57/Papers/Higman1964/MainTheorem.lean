@@ -22,7 +22,7 @@ This file exposes the paper's headline results under
   underlying §6 Theorem 1 (`4k = e² + 3` and `e² ∣ 225` ⇒
   `k ∈ {1, 3, 7, 57}`).
 * `theorem1_n_kSq_plus_one` — full §6 Theorem 1 statement (rank-3,
-  `n = k² + 1` ⇒ `n ∈ {5, 10, 50, 3250}`). [skeleton]
+  `n = k² + 1` ⇒ `n ∈ {5, 10, 50, 3250}`). [deferred-heavy]
 * Lemmas 1–7 — skeletons matching §1–§5 of the paper.
 
 Theorem 1 is the load-bearing fact that Aschbacher 1971 cites with

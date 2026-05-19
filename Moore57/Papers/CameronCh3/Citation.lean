@@ -53,7 +53,8 @@ infrastructure:
   some adjacent pair, hence fixes 56 — `aut_involution_exists_adjacent_moved`
   + `aut_involution_fixedVertexCount_eq_56`. This collapses Steps 1–4
   into the unconditional "every involution fixes exactly 56".
-* Step 5 (Sylow / parity argument): in part covered by Macaj–Širáň 2010
-  §2 Lem 2 (`4 ∤ |Aut Γ|`); the full parity contradiction is a [skeleton]
-  pending the alternating-group intersection step.
+* Step 5 (Sylow / parity argument): superseded by Macaj–Širáň 2010
+  §2 `cor_lem2_no_vertex_transitive_aut` (sign + Cauchy, no Sylow), now
+  wrapped as `theorem3_13_no_vertex_transitive_moore57_proven` in
+  `Papers/CameronCh3/MainTheorem.lean`.
 -/

@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §6, Lemma 16 [skeleton]
+# Mačaj–Širáň 2010, §6, Lemma 16 [deferred-heavy]
 
 > Let `X` be a group of automorphisms of Γ such that `X` is a `p`-group for
 > some odd prime `p`. Then one of the following holds:
@@ -30,7 +30,7 @@ namespace Moore57.Papers.MacajSiran2010.S6
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 16 (odd-prime `p`-group fix shape).** [skeleton] -/
+/-- **Lemma 16 (odd-prime `p`-group fix shape).** [deferred-heavy] -/
 theorem lem16_pgroup_fix_shape (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S6

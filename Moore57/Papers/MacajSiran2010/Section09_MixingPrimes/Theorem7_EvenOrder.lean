@@ -7,7 +7,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §9, Theorem 7 [skeleton]
+# Mačaj–Širáň 2010, §9, Theorem 7 [deferred-heavy]
 
 > Let Γ be a Moore graph of degree 57 on 3250 vertices and `G = Aut(Γ)`.
 > If `|G|` is even then `|G|` divides one of
@@ -27,7 +27,7 @@ namespace Moore57.Papers.MacajSiran2010.S9
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Theorem 7 (even `|Aut(Γ)|` divides one of five values).** [skeleton] -/
+/-- **Theorem 7 (even `|Aut(Γ)|` divides one of five values).** [deferred-heavy] -/
 theorem thm7_even_order (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9

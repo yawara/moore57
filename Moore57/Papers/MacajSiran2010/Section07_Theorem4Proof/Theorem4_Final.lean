@@ -6,7 +6,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §7, Theorem 4 (full proof) [skeleton]
+# Mačaj–Širáň 2010, §7, Theorem 4 (full proof) [deferred-heavy]
 
 > Let `X` be a group of automorphisms of Γ of order `3^k`. Then `k ≤ 3`.
 
@@ -26,7 +26,7 @@ namespace Moore57.Papers.MacajSiran2010.S7
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Theorem 4 (no 3-group of order > 27).** [skeleton] -/
+/-- **Theorem 4 (no 3-group of order > 27).** [deferred-heavy] -/
 theorem thm4_final (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S7

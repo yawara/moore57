@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §8, Proposition 5 [skeleton]
+# Mačaj–Širáň 2010, §8, Proposition 5 [deferred-heavy]
 
 > The graph Γ does not admit a group of automorphisms of order 625 with
 > the smallest orbit size 125.
@@ -25,7 +25,7 @@ namespace Moore57.Papers.MacajSiran2010.S8
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Proposition 5 (no `|X| = 625` with smallest orbit 125).** [skeleton] -/
+/-- **Proposition 5 (no `|X| = 625` with smallest orbit 125).** [deferred-heavy] -/
 theorem prop5_orbit_size_125 (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S8

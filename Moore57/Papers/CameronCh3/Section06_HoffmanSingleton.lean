@@ -23,12 +23,17 @@ Cameron's construction uses GAP/GRAPE and verifies:
   constructed (via cocliques of size 15).
 
 For Moore57 this section is orthogonal — included for completeness.
-[skeleton]
+[out-of-scope — Moore57 non-existence does not depend on the existence
+of the Hoffman-Singleton graph; only on numerical constraints.]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Hoffman–Singleton graph (existence + uniqueness).** [skeleton] -/
+/-- **Hoffman–Singleton graph (existence + uniqueness).** [out-of-scope]
+
+Constructive existence (Robertson's 1969 explicit construction) is
+intentionally NOT formalised here: it does not feed into any Moore57
+non-existence chain. -/
 theorem hoffman_singleton_existence : True := by trivial
 
 end Moore57.Papers.CameronCh3

@@ -24,12 +24,12 @@ set_option linter.unusedFintypeInType false
 
 These are the standard rank-3 association-scheme parameters. The
 formalisation needs `MulAction G Ω` set up and the rank-3 hypothesis.
-[skeleton]
+[deferred-heavy]
 -/
 
 namespace Moore57.Papers.Higman1964
 
-/-- **Lemma 2 (intersection numbers `λ, μ`).** [skeleton] -/
+/-- **Lemma 2 (intersection numbers `λ, μ`).** [deferred-heavy] -/
 theorem lem2_intersection_numbers : True := by trivial
 
 end Moore57.Papers.Higman1964

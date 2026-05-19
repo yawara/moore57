@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §6, Lemma 19 [skeleton]
+# Mačaj–Širáň 2010, §6, Lemma 19 [deferred-heavy]
 
 > Let `p > 5` be a prime and let `X` be a group of automorphisms of Γ of
 > order `p^k`. Then one of the following holds:
@@ -28,7 +28,7 @@ namespace Moore57.Papers.MacajSiran2010.S6
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 19 (large-prime `p`-group classification).** [skeleton] -/
+/-- **Lemma 19 (large-prime `p`-group classification).** [deferred-heavy] -/
 theorem lem19_large_prime_pgroup (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S6

@@ -41,24 +41,26 @@ For Moore57 (diameter 2): if it exists, the relations
 `{R_0 = Δ_Ω, R_1 = adjacency, R_2 = non-adjacency}` form a symmetric
 association scheme (a strongly regular one — §3.5).
 
-[skeleton]
+[out-of-scope — Moore57's SRG framework gives this structure directly
+via `IsSRGWith`; the general association-scheme infrastructure is not
+needed for Moore57 non-existence.]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Definition: association scheme** (commutative / symmetric variants). [skeleton] -/
+/-- **Definition: association scheme** (commutative / symmetric variants). [out-of-scope] -/
 def IsAssociationScheme : True := trivial
 
-/-- **Theorem 3.5(a) (commutative ⇔ multiplicity-free).** [skeleton] -/
+/-- **Theorem 3.5(a) (commutative ⇔ multiplicity-free).** [out-of-scope] -/
 theorem theorem3_5a_comm_iff_mult_free : True := by trivial
 
-/-- **Theorem 3.5(b) (symmetric ⇔ all FS index +1).** [skeleton] -/
+/-- **Theorem 3.5(b) (symmetric ⇔ all FS index +1).** [out-of-scope] -/
 theorem theorem3_5b_symm_iff_fs_pos : True := by trivial
 
-/-- **Theorem 3.6 (distance-regular ⇒ scheme).** [skeleton] -/
+/-- **Theorem 3.6 (distance-regular ⇒ scheme).** [out-of-scope] -/
 theorem theorem3_6_distance_regular_scheme : True := by trivial
 
-/-- **Theorem 3.7 (parameter monotonicity).** `c_1 ≤ c_2 ≤ … ≤ c_d` and dual. [skeleton] -/
+/-- **Theorem 3.7 (parameter monotonicity, `c_i / b_i` chains).** [out-of-scope] -/
 theorem theorem3_7_param_monotonic : True := by trivial
 
 end Moore57.Papers.CameronCh3

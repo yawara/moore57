@@ -6,7 +6,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §9, Lemma 26 [skeleton]
+# Mačaj–Širáň 2010, §9, Lemma 26 [deferred-heavy]
 
 > In the standing notation `|X| = p^a q^b` with `p, q` distinct odd primes
 > and `a, b ≥ 1`, we have `p ≤ 5` or `q ≤ 5`.
@@ -20,7 +20,7 @@ which contradicts Lemma 12 (the starred row `p = 7, a₀ = 58`).
 
 namespace Moore57.Papers.MacajSiran2010.S9
 
-/-- **Lemma 26 (`p ≤ 5` or `q ≤ 5`).** [skeleton] -/
+/-- **Lemma 26 (`p ≤ 5` or `q ≤ 5`).** [deferred-heavy] -/
 theorem lem26_small_prime : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9

@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §3, Lemma 10 [skeleton]
+# Mačaj–Širáň 2010, §3, Lemma 10 [deferred-heavy]
 
 > For any `S ⊆ V(Γ)`,
 > ```
@@ -22,7 +22,7 @@ namespace Moore57.Papers.MacajSiran2010.S3
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 10 (spectral trace bounds).** [skeleton] -/
+/-- **Lemma 10 (spectral trace bounds).** [deferred-heavy] -/
 theorem lem10_trace_bounds (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S3

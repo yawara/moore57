@@ -8,7 +8,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §8, Theorem 5 (full proof) [skeleton]
+# Mačaj–Širáň 2010, §8, Theorem 5 (full proof) [deferred-heavy]
 
 > Let `X` be a group of automorphisms of Γ of order a power of 5. Then one
 > of the following holds:
@@ -32,7 +32,7 @@ namespace Moore57.Papers.MacajSiran2010.S8
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Theorem 5 (full 5-group classification).** [skeleton] -/
+/-- **Theorem 5 (full 5-group classification).** [deferred-heavy] -/
 theorem thm5_final (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S8

@@ -64,7 +64,7 @@ open Moore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Theorem 3.11 (SRG ⇔ diameter-2 distance-regular).** [skeleton]
+/-- **Theorem 3.11 (SRG ⇔ diameter-2 distance-regular).** [deferred-heavy]
 
 A connected `IsSRGWith n k λ μ` graph has diameter 2 (and is
 distance-regular with parameters `c_0 = 0, a_0 = 0, b_0 = k`,
@@ -84,7 +84,7 @@ theorem theorem3_11_moore57_param_identity (hΓ : IsMoore57 Γ) :
     57 * (57 - 0 - 1) = (3250 - 57 - 1) * 1 :=
   SimpleGraph.IsSRGWith.param_eq (G := Γ) hΓ (by decide)
 
-/-- **Theorem 3.12 (Moore (k, 2) classification).** [skeleton]
+/-- **Theorem 3.12 (Moore (k, 2) classification).** [deferred-heavy]
 
 A Moore graph of diameter 2 has order `n ∈ {5, 10, 50, 3250}` and
 valency `k ∈ {2, 3, 7, 57}`. The full statement requires the

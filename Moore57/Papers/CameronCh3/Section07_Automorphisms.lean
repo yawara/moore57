@@ -80,7 +80,7 @@ open Moore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Step 1 (fix set is star or Moore subgraph).** [skeleton]
+/-- **Step 1 (fix set is star or Moore subgraph).** [deferred-heavy]
 
 For an involution `g ∈ Aut(Γ)`, the fixed subgraph is either a star or
 a sub-Moore-graph. (Aschbacher 1971 Lem 1.1 applied to the induced
@@ -102,7 +102,7 @@ theorem step2_adjacent_moved_gives_56 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
     fixedVertexCount σ = 56 :=
   aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
 
-/-- **Step 3 (fix is 56-star or 58-star, no other Moore subgraph).** [skeleton]
+/-- **Step 3 (fix is 56-star or 58-star, no other Moore subgraph).** [deferred-heavy]
 
 In the case `g` does NOT interchange any adjacent pair, the fix would
 have to be a 58-star or a 50-point Moore subgraph. Cameron's numerical
@@ -114,7 +114,7 @@ In the Moore57 formalisation this case is structurally excluded by
 arises. -/
 theorem step3_58_star_or_56_star : True := by trivial
 
-/-- **Step 4 (character argument eliminates 58-star case).** [skeleton]
+/-- **Step 4 (character argument eliminates 58-star case).** [deferred-heavy]
 
 The character value on the `−8`-eigenspace for an involution with
 `α_0 = 58, α_1 = 0, α_2 = 3192` is `−1/3`, not an algebraic integer.
@@ -131,7 +131,7 @@ theorem step4_moore57_involution_fixes_56 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm 
     fixedVertexCount σ = 56 :=
   aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
 
-/-- **Step 5 (parity contradiction).** [skeleton]
+/-- **Step 5 (parity contradiction).** [deferred-heavy]
 
 If `Aut(Γ)` is vertex-transitive, then `3250 ∣ |Aut(Γ)|`. Hence `|Aut(Γ)|`
 even, hence contains an involution `g` with `|Fix(g)| = 56`. The

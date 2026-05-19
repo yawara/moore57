@@ -22,12 +22,12 @@ multiplicity constraints `f₂ + f₃ = k + l = n − 1`, `k + s f₂ = t f₃ =
 For Moore57: Case II applies with `d = 225 = 15²` (a square), giving
 integer eigenvalues `s, t = 7, −8`.
 
-[skeleton]
+[deferred-heavy]
 -/
 
 namespace Moore57.Papers.Higman1964
 
-/-- **Lemma 7 (Case I / Case II structure for even `|G|`).** [skeleton] -/
+/-- **Lemma 7 (Case I / Case II structure for even `|G|`).** [deferred-heavy] -/
 theorem lem7_integrality_cases : True := by trivial
 
 end Moore57.Papers.Higman1964

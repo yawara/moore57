@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §6, Lemma 20 [skeleton]
+# Mačaj–Širáň 2010, §6, Lemma 20 [deferred-heavy]
 
 > Let `O` be an orbit of an action of a group `X` on a set and let `X_o` be
 > a stabilizer of an element `o ∈ O`. Let `Conj(X_o)` be the number of
@@ -20,7 +20,7 @@ to Γ.
 
 namespace Moore57.Papers.MacajSiran2010.S6
 
-/-- **Lemma 20 (fix-conjugate orbit count).** [skeleton] -/
+/-- **Lemma 20 (fix-conjugate orbit count).** [deferred-heavy] -/
 theorem lem20_fix_conjugate (X : Type*) [Group X] : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S6

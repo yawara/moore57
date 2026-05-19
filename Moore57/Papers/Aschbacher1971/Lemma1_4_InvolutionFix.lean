@@ -21,7 +21,7 @@ adjacency-moved + K_{1,55} structure).
 
 For part (2) on Moore57: the involution fix is the K_{1,55} star, and we
 prove `f = 56 = k − 1` (the "−" branch). The general "f = k + 1 or
-f = k − 1" disjunction is left as a [skeleton].
+f = k − 1" disjunction is left as a [deferred-heavy].
 -/
 
 open Moore57
@@ -64,7 +64,7 @@ theorem lem1_4_part2_k57 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
   · exact aut_involution_fixedInducedGraph_isStarWithCenter hΓ σ hAut hinv hne
   · exact aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
 
-/-- **Lemma 1.4 (2) (general star-fix dichotomy `f = k ± 1`).** [skeleton] -/
+/-- **Lemma 1.4 (2) (general star-fix dichotomy `f = k ± 1`).** [deferred-heavy] -/
 theorem lem1_4_part2 : True := by trivial
 
 end Moore57.Papers.Aschbacher1971

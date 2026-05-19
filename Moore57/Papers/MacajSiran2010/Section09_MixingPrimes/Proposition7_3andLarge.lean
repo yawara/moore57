@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §9, Proposition 7 [skeleton]
+# Mačaj–Širáň 2010, §9, Proposition 7 [deferred-heavy]
 
 > Let `p = 3` and `q > 5`. Then `q ≠ 11`, `Q ◁ X`, `P ⋪ X`. If `q = 19`,
 > then `|P|` divides 9; if `q ∈ {7, 13}`, then `|P| = 3`.
@@ -19,7 +19,7 @@ when `Q = Z₂₇`.
 
 namespace Moore57.Papers.MacajSiran2010.S9
 
-/-- **Proposition 7 (`(p, q) = (3, large)` classification).** [skeleton] -/
+/-- **Proposition 7 (`(p, q) = (3, large)` classification).** [deferred-heavy] -/
 theorem prop7_3_and_large : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9

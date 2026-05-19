@@ -6,7 +6,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §2, Lemma 4 [skeleton]
+# Mačaj–Širáň 2010, §2, Lemma 4 [deferred-heavy]
 
 > Let `X` be a group of automorphisms of Γ of odd prime order. Then one of
 > the following holds:
@@ -35,7 +35,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
 /-- **Lemma 4 (six-way classification for prime-order automorphism groups).**
-[skeleton] -/
+[deferred-heavy] -/
 theorem lem4_oddPrime_fixShape (hΓ : IsMoore57 Γ)
     (p : ℕ) (hp : p.Prime) (hp_odd : p ≠ 2)
     (X : Subgroup (Equiv.Perm V)) [Fintype X]

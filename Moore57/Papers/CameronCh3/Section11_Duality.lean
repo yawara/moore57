@@ -22,15 +22,15 @@ the schemes of `G` and `G^*` exchange:
 * (e) Krein parameters of `G` (multiplied by `n`) ↔ intersection numbers
   of `G^*`.
 
-Tangential to Moore57. [skeleton]
+Tangential to Moore57. [out-of-scope]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Theorem 3.23 (Brauer's Lemma).** [skeleton] -/
+/-- **Theorem 3.23 (Brauer's Lemma).** [out-of-scope] -/
 theorem theorem3_23_brauer_lemma : True := by trivial
 
-/-- **Theorem 3.24 (Delsarte duality).** [skeleton] -/
+/-- **Theorem 3.24 (Delsarte duality).** [out-of-scope] -/
 theorem theorem3_24_delsarte_duality : True := by trivial
 
 end Moore57.Papers.CameronCh3

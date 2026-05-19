@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Makhnev–Paduchikh 2001, Lemmas 5–9 (involution-centric structure) [skeleton]
+# Makhnev–Paduchikh 2001, Lemmas 5–9 (involution-centric structure) [deferred-heavy]
 
 Throughout this group of lemmas, `t` is a fixed involution of `G` and
 `Fix(t) ⊂ a^⊥` (i.e. the star centered at some vertex `a`). By Lemma 4,
@@ -28,19 +28,19 @@ namespace Moore57.Papers.MakhnevPaduchikh2001
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 5 (transposed `b, c ∈ [a]` adjacency).** [skeleton] -/
+/-- **Lemma 5 (transposed `b, c ∈ [a]` adjacency).** [deferred-heavy] -/
 theorem lem5_transposed_pair (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 6 (no second involution in the same neighbourhood).** [skeleton] -/
+/-- **Lemma 6 (no second involution in the same neighbourhood).** [deferred-heavy] -/
 theorem lem6_unique_involution (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 7 (centraliser of `t` odd elements).** [skeleton] -/
+/-- **Lemma 7 (centraliser of `t` odd elements).** [deferred-heavy] -/
 theorem lem7_centraliser_odd (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 8 (second involution `s ≠ t` constraints).** [skeleton] -/
+/-- **Lemma 8 (second involution `s ≠ t` constraints).** [deferred-heavy] -/
 theorem lem8_second_involution (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 9 (final structure constraints).** [skeleton] -/
+/-- **Lemma 9 (final structure constraints).** [deferred-heavy] -/
 theorem lem9_final_structure (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MakhnevPaduchikh2001

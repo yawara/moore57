@@ -6,7 +6,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §9, Corollary 3 [skeleton]
+# Mačaj–Širáň 2010, §9, Corollary 3 [deferred-heavy]
 
 > Let Γ be a Moore graph of degree 57 on 3250 vertices and `G = Aut(Γ)`.
 > Then `|G| ≤ 375`, and if `|G|` is even then `|G| ≤ 110`.
@@ -19,7 +19,7 @@ namespace Moore57.Papers.MacajSiran2010.S9
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Corollary 3 (`|Aut(Γ)| ≤ 375`, and `≤ 110` if even).** [skeleton] -/
+/-- **Corollary 3 (`|Aut(Γ)| ≤ 375`, and `≤ 110` if even).** [deferred-heavy] -/
 theorem cor3_375_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9

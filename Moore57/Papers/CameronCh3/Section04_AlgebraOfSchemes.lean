@@ -38,18 +38,19 @@ For distance-regular graphs: the minimal polynomial of `A_1` is
 polynomials. Eigenvalues of `A_1` are its roots; idempotents `E` for each
 eigenvalue `θ` give multiplicities via `Trace`.
 
-[skeleton]
+[out-of-scope — replaced by Moore57's explicit E57/E7/EMinus8
+spectral decomposition (`Moore57Graph/E7Matrix/SpectralDecomposition`).]
 -/
 
 namespace Moore57.Papers.CameronCh3
 
-/-- **Theorem 3.8 (multiplicity formula).** [skeleton] -/
+/-- **Theorem 3.8 (multiplicity formula).** [out-of-scope] -/
 theorem theorem3_8_multiplicity_formula : True := by trivial
 
-/-- **Theorem 3.9 (`P Q = Q P = n I`).** [skeleton] -/
+/-- **Theorem 3.9 (`P Q = Q P = n I`).** [out-of-scope] -/
 theorem theorem3_9_PQ_eq_nI : True := by trivial
 
-/-- **Theorem 3.10 (Frame's condition).** [skeleton] -/
+/-- **Theorem 3.10 (Frame's condition).** [out-of-scope] -/
 theorem theorem3_10_frame_condition : True := by trivial
 
 end Moore57.Papers.CameronCh3

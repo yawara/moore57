@@ -6,7 +6,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §8, Proposition 3 [skeleton]
+# Mačaj–Širáň 2010, §8, Proposition 3 [deferred-heavy]
 
 > Let `X` be a group of automorphisms of a Moore (57, 2)-graph Γ of order
 > a power of 5. If `Fix(X)` is the Hoffman–Singleton graph, then `|X| ≤ 5`.
@@ -29,7 +29,7 @@ namespace Moore57.Papers.MacajSiran2010.S8
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Proposition 3 (Hoffman–Singleton-fix 5-group `|X| ≤ 5`).** [skeleton] -/
+/-- **Proposition 3 (Hoffman–Singleton-fix 5-group `|X| ≤ 5`).** [deferred-heavy] -/
 theorem prop3_hs_fix_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S8
