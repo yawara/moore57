@@ -5,7 +5,7 @@ set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
 
 /-!
-# Mačaj–Širáň 2010, §3, Lemma 5 [skeleton]
+# Mačaj–Širáň 2010, §3, Lemma 5
 
 > Let `S = {S₁, …, Sₖ}` be an equitable partition of a Moore (57, 2) graph
 > Γ such that `|Sᵢ| = sᵢ` and let `B = (b_{ij})` be the adjacency matrix of
@@ -28,15 +28,21 @@ namespace Moore57.Papers.MacajSiran2010.S3
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 5 (1) (reciprocal counts).** [skeleton] -/
+/-- **Lemma 5 (1) (reciprocal counts).** `sᵢ · b_{i,j} = sⱼ · b_{j,i}`.
+[skeleton] — both sides count `|{(u,w) : u ∈ Sᵢ, w ∈ Sⱼ, Γ.Adj u w}|`.  -/
 theorem lem5_reciprocal (hΓ : IsMoore57 Γ)
-    {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) :
+    {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) (i j : ι) :
     True := by trivial
 
-/-- **Lemma 5 (2) (57 as eigenvalue).** [skeleton] -/
+/-- **Lemma 5 (2) (57 as eigenvalue, row-sum form).**
+Each row of `B` sums to 57 (assuming all cells are non-empty). This is the
+all-ones eigenvector statement: `B · (1,1,…,1)ᵀ = 57 · (1,1,…,1)ᵀ`. -/
 theorem lem5_eigenvalue_57 (hΓ : IsMoore57 Γ)
-    {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) :
-    True := by trivial
+    {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι)
+    (h_nonempty : ∀ i, (P.cell i).Nonempty) (i : ι) :
+    ∑ j : ι, P.adjMatrix i j = 57 := by
+  obtain ⟨v, hv⟩ := h_nonempty i
+  exact P.row_sum_eq_57 hΓ i hv
 
 /-- **Lemma 5 (3) (characteristic polynomial divides).** [skeleton] -/
 theorem lem5_charpoly_dvd (hΓ : IsMoore57 Γ)
