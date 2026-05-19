@@ -1,0 +1,37 @@
+name: Papers status check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Moore57/Papers/**'
+      - 'bin/gen_papers_status.py'
+      - 'docs/papers/**'
+      - 'docs/index.html'
+      - 'docs/about.html'
+      - 'docs/contribute.html'
+      - 'docs/style.css'
+  pull_request:
+    paths:
+      - 'Moore57/Papers/**'
+      - 'bin/gen_papers_status.py'
+      - 'docs/papers/**'
+      - 'docs/index.html'
+      - 'docs/about.html'
+      - 'docs/contribute.html'
+      - 'docs/style.css'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Verify docs/papers/ is regenerated
+        run: python3 bin/gen_papers_status.py --check

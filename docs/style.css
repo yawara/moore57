@@ -66,6 +66,11 @@
 .badge.done    { background: var(--st-done-bg);    color: var(--st-done-fg);    border-color: var(--st-done-border); }
 .badge.open    { background: var(--st-open-bg);    color: var(--st-open-fg);    border-color: var(--st-open-border); }
 .badge.derived { background: var(--st-derived-bg); color: var(--st-derived-fg); border-color: var(--st-derived-border); }
+.badge.muted   {
+  background: rgba(148, 163, 184, 0.16);
+  color: var(--pico-muted-color);
+  border-color: rgba(148, 163, 184, 0.45);
+}
 
 /* Order tiles ---------------------------------------------------------- */
 
@@ -292,3 +297,90 @@ footer.site a { color: var(--pico-muted-color); }
 /* Inline helpers ------------------------------------------------------- */
 
 .muted { color: var(--pico-muted-color); }
+
+/* Progress bar (papers status) ---------------------------------------- */
+
+.progress {
+  display: flex;
+  width: 100%;
+  height: 0.65rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(148, 163, 184, 0.18);
+  border: 1px solid var(--st-card-border);
+  margin: 0.35rem 0 0.35rem;
+}
+.progress .seg { display: block; height: 100%; }
+.progress .seg.done  { background: var(--st-done-border); }
+.progress .seg.open  { background: var(--st-open-border); }
+.progress .seg.muted { background: rgba(148, 163, 184, 0.55); }
+
+/* Tiny coloured dot for legend lines. */
+.dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  vertical-align: 1px;
+  margin-right: 0.25rem;
+}
+.dot.done  { background: var(--st-done-border); }
+.dot.open  { background: var(--st-open-border); }
+.dot.muted { background: rgba(148, 163, 184, 0.6); }
+
+/* Per-section and per-file panels on docs/papers/*.html --------------- */
+
+h2.paper-section {
+  margin: 1.6rem 0 0.4rem;
+  font-size: 1.2rem;
+  letter-spacing: -0.005em;
+}
+.paper-section-bar { margin: 0 0 0.8rem; }
+.paper-section-bar .progress { margin-bottom: 0; }
+.paper-section-bar p { margin: 0.2rem 0 0; font-size: 0.85rem; }
+
+details.paper-file {
+  margin: 0.45rem 0;
+  padding: 0.55rem 0.85rem;
+  background: var(--st-card-bg);
+  border: 1px solid var(--st-card-border);
+  border-radius: 8px;
+  box-shadow: var(--st-card-shadow);
+}
+details.paper-file > summary {
+  cursor: pointer;
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+details.paper-file > summary > strong { font-weight: 600; }
+details.paper-file .src {
+  font-size: 0.75rem;
+  margin-left: 0.4rem;
+  font-family: var(--pico-font-family-monospace);
+}
+details.paper-file.empty { opacity: 0.7; }
+
+ul.paper-statements {
+  list-style: none;
+  padding: 0;
+  margin: 0.55rem 0 0.2rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+ul.paper-statements > li {
+  padding: 0.2rem 0;
+  border-top: 1px dashed var(--pico-muted-border-color);
+}
+ul.paper-statements > li:first-child { border-top: none; }
+ul.paper-statements .stmt-title {
+  font-weight: 600;
+}
+ul.paper-statements .subtag {
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+}
+ul.paper-statements .src {
+  font-size: 0.72rem;
+  font-family: var(--pico-font-family-monospace);
+  margin-left: 0.25rem;
+}
