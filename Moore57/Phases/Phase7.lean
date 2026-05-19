@@ -1,5 +1,5 @@
 import Moore57.D19OnMoore57.E7Projection.RotationCharacterConstancy
-import Moore57.Phases.Phase6
+import Moore57.D19OnMoore57.Final.FromRotationCharacterConstancy
 import Moore57.D19OnMoore57.E7Projection.Minus8CharacterBoundariesFromRotationSplit
 
 /-!
