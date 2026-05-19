@@ -141,10 +141,24 @@ permutation. But by transitivity `4 ∣ |Aut(Γ)|`, so `Aut(Γ) ∩ A_{3250}`
 is even-order, contains an involution — contradiction. -/
 theorem step5_parity_contradiction : True := by trivial
 
-/-- **Theorem 3.13 (no vertex-transitive Moore57).** [skeleton]
+/-- **Theorem 3.13 (no vertex-transitive Moore57).** [proven downstream]
 
 There is no vertex-transitive automorphism group of a Moore graph of
-diameter 2 and valency 57. -/
+diameter 2 and valency 57.
+
+The full statement and proof live downstream as
+`Moore57.Papers.MacajSiran2010.S2.cor_lem2_no_vertex_transitive_aut`
+(which is the corollary of `lem2_four_not_dvd_aut` + orbit-stabilizer).
+The proof uses:
+
+* `step5_moore57_involution_sign` (this file) — every Moore57 involution
+  has sign `−1`.
+* `MacajSiran2010.S2.lem2_four_not_dvd_aut` — `¬ 4 ∣ |G|` for any
+  subgroup `G ≤ Aut(Γ)` (proven via sign + Cauchy).
+* Mathlib's orbit-stabilizer + Cauchy.
+
+This file keeps a placeholder for the bare `Theorem 3.13` label; the
+actual full statement is `cor_lem2_no_vertex_transitive_aut`. -/
 theorem theorem3_13_no_vertex_transitive_moore57 : True := by trivial
 
 /-- **Theorem 3.13 (Moore57 involution-fix instance)** — wraps the

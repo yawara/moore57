@@ -58,13 +58,17 @@ and its proven arithmetic core
 `Moore57.Papers.Higman1964.theorem1_arithmetic_core`. The valence `k = 57`
 sits in the `4k − 3 = 225` branch of that classification.
 
-**Stronger result available in-tree**:
-`Moore57.Papers.CameronCh3.theorem3_13_no_vertex_transitive_moore57`
-(skeleton) rules out any vertex-transitive Moore57. Since rank-3 ⇒
-vertex-transitive, Cameron 3.13 strictly subsumes this Aschbacher
-result. Cameron's proof Steps 1–4 collapse onto the existing Moore57
-infrastructure (`aut_involution_fixedVertexCount_eq_56`); Step 5
-(parity / alternating intersection) is the remaining substantive piece.
+**Stronger result fully proven downstream**:
+`Moore57.Papers.MacajSiran2010.S2.cor_lem2_no_vertex_transitive_aut`
+rules out any vertex-transitive subgroup `G ≤ Aut(Γ)` of a Moore57
+graph. Since rank-3 ⇒ vertex-transitive, this strictly subsumes the
+present Aschbacher result. The proof uses:
+
+* `CameronCh3.Section07.step5_moore57_involution_sign` (every Moore57
+  involution has sign `−1`).
+* `MacajSiran2010.S2.lem2_four_not_dvd_aut` (`¬ 4 ∣ |G|`, proven via
+  sign + Cauchy, no Sylow theory).
+* Mathlib orbit-stabilizer + Cauchy.
 
 A full proof of the Main Theorem still requires the rank-3
 permutation-group action infrastructure (Lemmas 1–7 of Higman 1964, +
