@@ -8,6 +8,7 @@ import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Algebra.Group.Subgroup.Basic
 import Mathlib.Tactic.FieldSimp
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
+import Moore57.Foundations.Spectral.QuadraticIndicator
 
 /-!
 # Induced trace `Tr(S)` and group trace `Tr(X)`
@@ -194,5 +195,23 @@ theorem sum_adjacentMovedCount_even_of_subgroup_odd_card
     exact Nat.cast_zero
   · intros; exact Finset.mem_univ _
   · intros; exact inv_inv _
+
+open Matrix in
+/-- **`χ_S^T A χ_S = inducedDegreeSum`**: the bridge between the spectral
+quadratic form on the adjacency matrix and the combinatorial induced-degree
+sum over `S`. -/
+theorem dotProduct_indicatorFn_adjMatrix_mulVec
+    (S : Finset V) :
+    dotProduct (indicatorFn S : V → ℚ)
+        ((Γ.adjMatrix ℚ).mulVec (indicatorFn S)) =
+      (inducedDegreeSum Γ S : ℚ) := by
+  classical
+  rw [dotProduct_indicatorFn_mulVec]
+  unfold inducedDegreeSum
+  push_cast
+  refine Finset.sum_congr rfl (fun v _ => ?_)
+  -- ∑ w ∈ S, (Γ.adjMatrix ℚ) v w = ((S.filter (Γ.Adj v ·)).card : ℚ)
+  simp_rw [SimpleGraph.adjMatrix_apply]
+  rw [← Finset.sum_filter, Finset.sum_const, Nat.smul_one_eq_cast]
 
 end Moore57

@@ -1,5 +1,6 @@
 import Moore57.Papers.MacajSiran2010.Section03_EquitablePartitions.Definition
 import Moore57.Foundations.GraphTheory.InducedTrace
+import Moore57.Moore57Graph.E7Matrix.MoharBound
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -49,5 +50,19 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 For any vertex subset `S` of a Moore57 graph,
 `−8 + |S|/50 ≤ Tr(S) ≤ 7 + |S|/65`. -/
 theorem lem10_trace_bounds (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Lemma 10 (proper signature).**
+
+The proper rational-valued Mohar bound for Moore57:
+`−8 + |S|/50 ≤ inducedTrace Γ S ≤ 7 + |S|/65`
+for any nonempty vertex subset `S`.
+
+Fully proven via spectral decomposition + PSD argument (see
+`Moore57.Moore57Graph.E7Matrix.MoharBound`). -/
+theorem lem10_inducedTrace_bounds
+    (hΓ : IsMoore57 Γ) {S : Finset V} (hS : S.Nonempty) :
+    -8 + (S.card : ℚ) / 50 ≤ inducedTrace Γ S ∧
+      inducedTrace Γ S ≤ 7 + (S.card : ℚ) / 65 :=
+  Moore57.mohar_trace_bounds hΓ hS
 
 end Moore57.Papers.MacajSiran2010.S3
