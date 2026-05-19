@@ -1,4 +1,5 @@
 import Moore57.Papers.MacajSiran2010.Section03_EquitablePartitions.Definition
+import Moore57.Foundations.GraphTheory.InducedTrace
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -27,6 +28,8 @@ Status:
   as concrete numerical quantities, plus pairing / centraliser arguments.
 -/
 
+open Moore57
+
 namespace Moore57.Papers.MacajSiran2010.S3
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
@@ -53,12 +56,26 @@ theorem lem6_inverse_contributes
   rw [hxinv]
   exact hadj.symm
 
-/-- **Lemma 6 (2) (odd `|X|` ⇒ `Tr(X)` even).** [deferred-heavy]
+/-- **Lemma 6 (2) (odd `|X|` ⇒ `Σ_{x ∈ X} a₁(x)` even).**
 
-Pairing argument: each `x ∈ X` with `x ≠ x⁻¹` contributes paired
-counts; for `|X|` odd, only `x = 1` is self-inverse, and its
-contribution is `0`. -/
-theorem lem6_trace_even_of_odd_order (hΓ : IsMoore57 Γ) : True := by trivial
+Pairing argument: for `X` a subgroup of `Equiv.Perm V` with odd order,
+the involution `x ↦ x⁻¹` is fixed-point-free except at `x = 1`
+(odd-order groups have no order-2 elements: `orderOf x ∣ |X|` is
+odd, so `orderOf x` is odd, hence `≠ 2`).  Each non-trivial pair
+`{x, x⁻¹}` contributes `a₁(x) + a₁(x⁻¹) = 2 · a₁(x)` via
+`adjacentMovedCount_inv`.  The fixed point `x = 1` contributes
+`a₁(1) = 0`.
+
+This is the paper's "Tr(X) even" claim with the equivalent ℕ-form
+`Σ_{x ∈ X} a₁(x) is even` (since `|X| · Tr(X) = Σ a₁(x)` by Lem 9 (2)).
+
+No Moore57 hypothesis is needed; this is a pure consequence of the
+adjacency-symmetry pairing structure. -/
+theorem lem6_trace_even_of_odd_order
+    (X : Subgroup (Equiv.Perm V)) [Fintype X]
+    (hX_odd : Odd (Fintype.card X)) :
+    Even (∑ x : X, adjacentMovedCount Γ (x : Equiv.Perm V)) :=
+  Moore57.sum_adjacentMovedCount_even_of_subgroup_odd_card X hX_odd
 
 /-- **Lemma 6 (3) (central ⇒ `Tr(O) ≤ 2`).** [deferred-heavy] -/
 theorem lem6_central_trace_le_two (hΓ : IsMoore57 Γ) : True := by trivial

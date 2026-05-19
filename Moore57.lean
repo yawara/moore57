@@ -30,6 +30,7 @@ import Moore57.Foundations.GroupAction.FixedPoints
 import Moore57.Foundations.GroupAction.InvolutionParity
 import Moore57.Foundations.GroupAction.FixedPointConjugacy
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
+import Moore57.Foundations.GraphTheory.InducedTrace
 import Moore57.Foundations.LinearAlgebra.InvolutionTrace
 import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
 import Moore57.Order22OnMoore57.Phase4F11Module

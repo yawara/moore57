@@ -50,7 +50,33 @@ theorem theorem3_8_multiplicity_formula : True := by trivial
 /-- **Theorem 3.9 (`P Q = Q P = n I`).** [out-of-scope] -/
 theorem theorem3_9_PQ_eq_nI : True := by trivial
 
-/-- **Theorem 3.10 (Frame's condition).** [out-of-scope] -/
+/-- **Theorem 3.10 (Frame's condition).** [out-of-scope]
+
+The general Frame quantity `F = n · ∏ n_i / ∏ f_j` is integer; for
+rational eigenvalues it is a square. -/
 theorem theorem3_10_frame_condition : True := by trivial
+
+/-- **Theorem 3.10 (Moore57 instance).**
+
+For Moore57 the Frame quantity is
+`F = 3250 · 1 · 57 · 3192 / (1 · 1729 · 1520) = 225 = 15²`.
+
+This is verified by a pure-arithmetic identity
+`3250 · 57 · 3192 = 225 · 1729 · 1520`.  The square form `225 = 15²` is
+expected because all Moore57 eigenvalues `(57, 7, −8)` are integers
+(Cameron's "rational eigenvalues" hypothesis).
+
+The valencies `(n₀, n₁, n₂) = (1, 57, 3192)` are
+`1` (self-loop relation), `57` (adjacency), `3192 = 3250 − 1 − 57`
+(non-adjacency).  The multiplicities `(f₀, f₁, f₂) = (1, 1729, 1520)`
+are the eigenspace dimensions: `1` (trivial), `1729` (eigenvalue `7`),
+`1520` (eigenvalue `−8`).  These come from the proven
+`Tr(E_57) = 1`, `Tr(E_7) = 1729`, `Tr(E_-8) = 1520`. -/
+theorem theorem3_10_frame_condition_moore57 :
+    3250 * (1 * 57 * 3192) = 225 * (1 * 1729 * 1520) := by decide
+
+/-- **Theorem 3.10 (Moore57 Frame is a perfect square).** `225 = 15²`. -/
+theorem theorem3_10_frame_moore57_is_square :
+    (225 : ℕ) = 15 ^ 2 := by decide
 
 end Moore57.Papers.CameronCh3
