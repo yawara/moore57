@@ -139,6 +139,101 @@ theorem aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
           rfl }
   simpa [hsupport, hdegree] using hmod
 
+/-- **Prime-power generalisation.** For an automorphism `σ` with
+`σ ^ (p ^ n) = 1` and `p` prime, the number of σ-fixed neighbours of a
+σ-fixed vertex is congruent to the degree mod `p`.
+
+This is the natural extension of
+`aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime` from prime to
+prime-power order.  Used for `p`-group divisor constraints in §6
+(Lemmas 16, 17, 18, 19). -/
+theorem aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p n : ℕ) [Fact (Nat.Prime p)]
+    (pow_pn : σ ^ p ^ n = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ Γ.degree v [MOD p] := by
+  classical
+  let τ := autNeighborPerm σ smul_adj hv
+  have hpow : τ ^ p ^ n = 1 := by
+    change (autNeighborPerm σ smul_adj hv) ^ p ^ n = 1
+    unfold autNeighborPerm
+    rw [Equiv.Perm.subtypePerm_pow]
+    apply Equiv.ext
+    intro w
+    apply Subtype.ext
+    change (σ ^ p ^ n) (w : V) = (w : V)
+    rw [pow_pn]; rfl
+  have hmod := Equiv.Perm.card_compl_support_modEq
+    (α := {w : V // Γ.Adj v w}) (p := p) (n := n) (σ := τ) hpow
+  have hsupport :
+      τ.supportᶜ.card = (autFixedNeighborFinset Γ σ v).card := by
+    have hsupportCard :
+        τ.supportᶜ.card =
+          Fintype.card {w : {w : V // Γ.Adj v w} // τ w = w} := by
+      have hcomplCard :
+          Fintype.card {w : {w : V // Γ.Adj v w} // w ∈ τ.supportᶜ} =
+            τ.supportᶜ.card :=
+        Fintype.card_ofFinset τ.supportᶜ (by intro w; rfl)
+      refine hcomplCard.symm.trans (Fintype.card_congr ?supportEquiv)
+      exact
+        { toFun := fun w => ⟨w.1, by simpa [Equiv.Perm.support] using w.2⟩
+          invFun := fun w => ⟨w.1, by simpa [Equiv.Perm.support] using w.2⟩
+          left_inv := by
+            intro w
+            rfl
+          right_inv := by
+            intro w
+            rfl }
+    have hfixedCard :
+        Fintype.card {w : {w : V // Γ.Adj v w} // τ w = w} =
+          Fintype.card {w : V // w ∈ autFixedNeighborFinset Γ σ v} := by
+      refine Fintype.card_congr ?fixedEquiv
+      exact
+        { toFun := fun w =>
+            ⟨w.1.1, by
+              have hwfix : σ w.1.1 = w.1.1 := by
+                simpa [τ, autNeighborPerm] using congr_arg Subtype.val w.2
+              simp [mem_autFixedNeighborFinset, w.1.2, hwfix]⟩
+          invFun := fun w =>
+            ⟨⟨w.1, (mem_autFixedNeighborFinset σ).1 w.2 |>.1⟩, by
+              ext
+              simpa [τ, autNeighborPerm] using
+                ((mem_autFixedNeighborFinset σ).1 w.2 |>.2)⟩
+          left_inv := by
+            intro w
+            ext
+            rfl
+          right_inv := by
+            intro w
+            ext
+            rfl }
+    have hfinsetCard :
+        Fintype.card {w : V // w ∈ autFixedNeighborFinset Γ σ v} =
+          (autFixedNeighborFinset Γ σ v).card := by
+      exact Fintype.card_ofFinset (autFixedNeighborFinset Γ σ v) (by intro w; rfl)
+    exact hsupportCard.trans (hfixedCard.trans hfinsetCard)
+  have hdegree :
+      Fintype.card {w : V // Γ.Adj v w} = Γ.degree v := by
+    rw [← SimpleGraph.card_neighborFinset_eq_degree]
+    have hneighborCard :
+        Fintype.card {w : V // w ∈ Γ.neighborFinset v} = (Γ.neighborFinset v).card :=
+      Fintype.card_ofFinset (Γ.neighborFinset v) (by intro w; rfl)
+    refine (Fintype.card_congr ?neighborEquiv).trans hneighborCard
+    exact
+      { toFun := fun w =>
+          ⟨w.1, (SimpleGraph.mem_neighborFinset (G := Γ) (v := v) w.1).2 w.2⟩
+        invFun := fun w =>
+          ⟨w.1, (SimpleGraph.mem_neighborFinset (G := Γ) (v := v) w.1).1 w.2⟩
+        left_inv := by
+          intro w
+          rfl
+        right_inv := by
+          intro w
+          rfl }
+  simpa [hsupport, hdegree] using hmod
+
 /-- P=19 alias for backward compatibility. -/
 theorem aut_card_fixedNeighborFinset_modEq_degree
     (σ : Equiv.Perm V)
@@ -179,6 +274,96 @@ theorem aut_card_fixedNeighborFinset_modEq_two_of_pow_eleven
   haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
   have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
     σ smul_adj 11 pow_eleven hv
+  have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
+  rw [hdeg] at hmod
+  exact hmod.trans (by decide)
+
+/-! ### Prime-power Moore57 fix-neighbour count modular constraints
+
+For each prime `p`, an automorphism `σ` with `σ ^ p^k = 1` has
+`fixedNeighborFinset` cardinality `≡ 57 [MOD p]` at any σ-fixed vertex.
+These give the §6 N(a)-divisor constraints directly. -/
+
+/-- 3-group: `(autFixedNeighborFinset).card ≡ 0 [MOD 3]` (`57 = 3·19`). -/
+theorem aut_card_fixedNeighborFinset_modEq_zero_of_pow_three_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ 0 [MOD 3] := by
+  haveI : Fact (Nat.Prime 3) := ⟨by decide⟩
+  have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj 3 k pow_pk hv
+  have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
+  rw [hdeg] at hmod
+  exact hmod.trans (by decide)
+
+/-- 5-group: `(autFixedNeighborFinset).card ≡ 2 [MOD 5]` (`57 = 5·11 + 2`). -/
+theorem aut_card_fixedNeighborFinset_modEq_two_of_pow_five_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ 2 [MOD 5] := by
+  haveI : Fact (Nat.Prime 5) := ⟨by decide⟩
+  have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj 5 k pow_pk hv
+  have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
+  rw [hdeg] at hmod
+  exact hmod.trans (by decide)
+
+/-- 7-group: `(autFixedNeighborFinset).card ≡ 1 [MOD 7]` (`57 = 7·8 + 1`). -/
+theorem aut_card_fixedNeighborFinset_modEq_one_of_pow_seven_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 7 ^ k = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ 1 [MOD 7] := by
+  haveI : Fact (Nat.Prime 7) := ⟨by decide⟩
+  have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj 7 k pow_pk hv
+  have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
+  rw [hdeg] at hmod
+  exact hmod.trans (by decide)
+
+/-- 11-group: `(autFixedNeighborFinset).card ≡ 2 [MOD 11]` (`57 = 11·5 + 2`). -/
+theorem aut_card_fixedNeighborFinset_modEq_two_of_pow_eleven_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 11 ^ k = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ 2 [MOD 11] := by
+  haveI : Fact (Nat.Prime 11) := ⟨by decide⟩
+  have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj 11 k pow_pk hv
+  have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
+  rw [hdeg] at hmod
+  exact hmod.trans (by decide)
+
+/-- 13-group: `(autFixedNeighborFinset).card ≡ 5 [MOD 13]` (`57 = 13·4 + 5`). -/
+theorem aut_card_fixedNeighborFinset_modEq_five_of_pow_thirteen_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 13 ^ k = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ 5 [MOD 13] := by
+  haveI : Fact (Nat.Prime 13) := ⟨by decide⟩
+  have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj 13 k pow_pk hv
+  have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
+  rw [hdeg] at hmod
+  exact hmod.trans (by decide)
+
+/-- 19-group: `(autFixedNeighborFinset).card ≡ 0 [MOD 19]` (`57 = 19·3`). -/
+theorem aut_card_fixedNeighborFinset_modEq_zero_of_pow_nineteen_pow
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 19 ^ k = 1)
+    {v : V} (hv : σ v = v) :
+    (autFixedNeighborFinset Γ σ v).card ≡ 0 [MOD 19] := by
+  haveI : Fact (Nat.Prime 19) := ⟨by decide⟩
+  have hmod := aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj 19 k pow_pk hv
   have hdeg : Γ.degree v = 57 := hΓ.regular.degree_eq v
   rw [hdeg] at hmod
   exact hmod.trans (by decide)
