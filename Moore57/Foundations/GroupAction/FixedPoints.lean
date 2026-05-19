@@ -80,4 +80,19 @@ theorem fixedVertexSet_toFinset_eq_supportCompl
   ext v
   simp [fixedVertexSet, Equiv.Perm.mem_support]
 
+/-- **Coprime-power invariance.**  For `k` coprime to `orderOf σ`,
+`σ^k` has the same fixed-point count as `σ`.  This is because
+`⟨σ^k⟩ = ⟨σ⟩` (coprime powers generate the same cyclic subgroup),
+hence `Fix(σ^k) = Fix(σ)`.
+
+(Conjugation invariance is in
+`Moore57.Foundations.GroupAction.FixedPointConjugacy`.) -/
+theorem fixedVertexCount_pow_coprime
+    [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) {k : ℕ}
+    (hk : Nat.Coprime k (orderOf σ)) :
+    fixedVertexCount (σ ^ k) = fixedVertexCount σ := by
+  rw [fixedVertexCount_eq_card_supportCompl,
+      fixedVertexCount_eq_card_supportCompl,
+      Equiv.Perm.support_pow_coprime hk]
+
 end Moore57
