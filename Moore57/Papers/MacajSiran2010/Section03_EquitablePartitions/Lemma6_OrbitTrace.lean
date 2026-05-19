@@ -108,8 +108,31 @@ theorem lem6_central_inducedTrace_le_two
 /-- **Lemma 6 (4) (`Tr(O)² < |O|`).** [deferred-heavy]
 
 Paper-stub kept for backwards compatibility; the proper-signature
-form for `|O| ≥ 64` is `lem6_inducedTrace_sq_lt_card_of_card_ge_64`. -/
+form for `|O| ≥ 64` is `lem6_inducedTrace_sq_lt_card_of_card_ge_64`.
+The corner case `|O| = 1` is `lem6_inducedTrace_sq_lt_card_of_card_eq_one`. -/
 theorem lem6_trace_sq_lt_size (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Singleton induced trace is zero.** [done]
+
+For any simple graph `Γ` (loopless) and any vertex `v`,
+`inducedTrace Γ {v} = 0`.  The induced subgraph on a singleton has
+no edges (irreflexivity of `Γ.Adj`), so the degree sum is `0`. -/
+theorem inducedTrace_singleton_eq_zero (v : V) :
+    inducedTrace Γ ({v} : Finset V) = 0 := by
+  unfold inducedTrace inducedDegreeSum
+  rw [Finset.sum_singleton, Finset.filter_singleton]
+  simp
+
+/-- **Lemma 6 (4) corner case: `|O| = 1`.** [done]
+
+For a singleton `O = {v}`, `(inducedTrace Γ O)² = 0 < 1 = |O|`. -/
+theorem lem6_inducedTrace_sq_lt_card_of_card_eq_one
+    {O : Finset V} (hO : O.card = 1) :
+    (inducedTrace Γ O) ^ 2 < (O.card : ℚ) := by
+  obtain ⟨v, hv⟩ := Finset.card_eq_one.mp hO
+  subst hv
+  rw [inducedTrace_singleton_eq_zero, Finset.card_singleton, Nat.cast_one]
+  norm_num
 
 /-- **Lemma 6 (4) (proper signature: `Tr(O)² < |O|` for `|O| ≥ 64`).**
 
