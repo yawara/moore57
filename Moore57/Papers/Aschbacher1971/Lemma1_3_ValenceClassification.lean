@@ -1,4 +1,5 @@
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Papers.Higman1964.Theorem1_DegreeKSqPlus1
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -79,12 +80,29 @@ theorem lem1_3_srg_card_eq {n k : ℕ} (hΓ : Γ.IsSRGWith n k 0 1)
     rw [sq, ← hkk]
     omega
 
+/-- **Lemma 1.3 arithmetic core** (via Higman 1964 Theorem 1).  [done]
+
+Given the integrality data `4·k = e² + 3` (equivalently `4k − 3 = e²`)
+and `e² ∣ 225`, the only possible `k` values are `{1, 3, 7, 57}`.
+
+This wraps `Moore57.Papers.Higman1964.theorem1_arithmetic_core`.
+Aschbacher's `k = 2` case is the separate `a = b` branch
+(corresponding to the pentagon `IsSRGWith 5 2 0 1`), not covered by
+this arithmetic core. -/
+theorem lem1_3_arithmetic_core {k e : ℕ}
+    (h_eq : 4 * k = e * e + 3) (h_dvd : e * e ∣ 225) :
+    k = 1 ∨ k = 3 ∨ k = 7 ∨ k = 57 :=
+  Moore57.Papers.Higman1964.theorem1_arithmetic_core h_eq h_dvd
+
 /-- **Lemma 1.3 (full `k ∈ {2, 3, 7, 57}` classification).** [deferred-heavy]
 
 The generic SRG matrix identity `A² + A − (k − 1) • I = J` over `ℚ` and the
 subsequent eigenvalue/integrality argument leading to
-`k ∈ {2, 3, 7, 57}` remain unformalised. For `k = 57` see
-`IsMoore57.adjMatrix_sq_eq`. -/
+`k ∈ {2, 3, 7, 57}` remain unformalised at the SRG-bridge level.  The
+arithmetic core for the `(a ≠ b)` branch is proven in
+`lem1_3_arithmetic_core`; for the `k = 2` (pentagon, `a = b`) branch
+see Cameron Ch.3 §3.5 / `Higman1964.Theorem1_moore57_valence`.
+For `k = 57` see `IsMoore57.adjMatrix_sq_eq`. -/
 theorem lem1_3_valence_classification : True := by trivial
 
 /-- **Lemma 1.3 (`k = 57` instance for Moore57).** -/
