@@ -132,18 +132,92 @@ theorem lem2_no_klein_four_in_aut (hΓ : IsMoore57 Γ) (σ τ : Equiv.Perm V)
   rw [map_mul, hsign_σ, hsign_τ] at hsign_στ
   exact absurd hsign_στ (by decide)
 
-/-- **Lemma 2 (3): `4 ∤ |Aut(Γ)|`.** [skeleton — needs Sylow]
+/-- **Lemma 2 (3): `4 ∤ |G|` for any subgroup `G ≤ Aut(Γ)`.**
 
-For any subgroup `G ≤ Aut(Γ)`, `4 ∤ Fintype.card G`. Follows from
-`lem2_no_order_four_aut` + `lem2_no_klein_four_in_aut` via the
-classification of order-4 groups: every group of order 4 is either
-cyclic (`ℤ/4`) or Klein-4 (`ℤ/2 × ℤ/2`), and both are excluded by the
-two preceding lemmas. The 2-Sylow argument: if `4 ∣ |G|`, then `G` has
-a subgroup of order 4 (Sylow), which is one of the two excluded
-groups.
+If `G` is a subgroup of `Equiv.Perm V` whose elements all preserve
+adjacency of a Moore57 graph `Γ`, then `4 ∤ Fintype.card G`.
 
-The Sylow / order-4-group-classification step requires further Mathlib
-group-theory infrastructure and is left as a skeleton. -/
-theorem lem2_four_not_dvd_aut (hΓ : IsMoore57 Γ) : True := by trivial
+Proof. The sign homomorphism `signG : G →* ℤˣ`, obtained by restricting
+`Equiv.Perm.sign` to `G`, has the property that every non-trivial
+involution in `G` maps to `−1` (by `step5_moore57_involution_sign`).
+Suppose `4 ∣ |G|`. Then:
+
+* By Cauchy (`exists_prime_orderOf_dvd_card`), there is an involution
+  `σ ∈ G` with `signG σ = −1`. Hence `signG` is surjective onto `ℤˣ`,
+  so `|range signG| = 2`.
+* By the first isomorphism theorem
+  (`QuotientGroup.quotientKerEquivRange`) and Lagrange
+  (`Subgroup.card_eq_card_quotient_mul_card_subgroup`),
+  `|G| = 2 · |ker signG|`. So `2 ∣ |ker signG|`.
+* By Cauchy on `ker signG`, there is `τ ∈ ker signG` of order 2.
+  Lifting `τ` to `G`, `signG τG = −1` by step5. But `τ ∈ ker signG`
+  means `signG τG = 1`. Contradiction.
+
+This avoids Sylow theory entirely. -/
+theorem lem2_four_not_dvd_aut (hΓ : IsMoore57 Γ)
+    (G : Subgroup (Equiv.Perm V)) [DecidablePred (· ∈ G)]
+    (hG : ∀ σ ∈ G, ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b)) :
+    ¬ (4 ∣ Fintype.card G) := by
+  intro h4
+  classical
+  haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  -- signG = sign restricted to G.
+  let signG : G →* ℤˣ := Equiv.Perm.sign.comp G.subtype
+  -- Helper: every non-trivial τ : G with τ² = 1 has signG τ = -1.
+  have step5G : ∀ τ : G, τ ≠ 1 → τ ^ 2 = 1 →
+      signG τ = -1 := by
+    intro τ hne hsq
+    have hsq' : (τ : Equiv.Perm V) ^ 2 = 1 := by
+      have h := congrArg (Subgroup.subtype G) hsq
+      simpa using h
+    have hne' : (τ : Equiv.Perm V) ≠ 1 := fun h => hne (Subtype.ext h)
+    have hAut : ∀ a b, Γ.Adj a b ↔ Γ.Adj ((τ : Equiv.Perm V) a) ((τ : Equiv.Perm V) b) :=
+      hG (τ : Equiv.Perm V) τ.property
+    exact Moore57.Papers.CameronCh3.step5_moore57_involution_sign hΓ _ hsq' hne' hAut
+  -- Step 1: Cauchy on G — get an involution σ.
+  have h2G : (2 : ℕ) ∣ Fintype.card G := dvd_trans ⟨2, rfl⟩ h4
+  obtain ⟨σ, hσ_ord⟩ := exists_prime_orderOf_dvd_card (G := G) 2 h2G
+  have hσ_sq : σ ^ 2 = 1 := by rw [← hσ_ord]; exact pow_orderOf_eq_one σ
+  have hσ_ne : σ ≠ 1 := fun h => by
+    rw [h, orderOf_one] at hσ_ord
+    exact absurd hσ_ord (by decide)
+  have hσ_sign : signG σ = -1 := step5G σ hσ_ne hσ_sq
+  -- Step 2: signG is surjective (image = ℤˣ).
+  have hSurj : Function.Surjective signG := by
+    intro u
+    rcases Int.units_eq_one_or u with rfl | rfl
+    · exact ⟨1, signG.map_one⟩
+    · exact ⟨σ, hσ_sign⟩
+  -- |G| = 2 · |ker signG| via first iso + Lagrange (using Nat.card).
+  have hker_eq_nat : Nat.card G = 2 * Nat.card signG.ker := by
+    rw [Subgroup.card_eq_card_quotient_mul_card_subgroup signG.ker]
+    rw [Nat.card_congr (QuotientGroup.quotientKerEquivRange signG).toEquiv]
+    rw [MonoidHom.range_eq_top.mpr hSurj]
+    rw [Subgroup.card_top]
+    rw [Nat.card_eq_fintype_card, Fintype.card_units_int]
+  -- 4 ∣ |G| = 2·|ker| ⟹ 2 ∣ |ker|.
+  have h4_nat : (4 : ℕ) ∣ Nat.card G := by
+    rw [Nat.card_eq_fintype_card]; exact h4
+  have h2_ker : (2 : ℕ) ∣ Fintype.card signG.ker := by
+    rw [← Nat.card_eq_fintype_card]
+    have : (4 : ℕ) ∣ 2 * Nat.card signG.ker := hker_eq_nat ▸ h4_nat
+    omega
+  -- Step 3: Cauchy on signG.ker — get an involution τ ∈ ker.
+  obtain ⟨τ, hτ_ord⟩ := exists_prime_orderOf_dvd_card (G := signG.ker) 2 h2_ker
+  have hτ_sq : τ ^ 2 = 1 := by rw [← hτ_ord]; exact pow_orderOf_eq_one τ
+  have hτ_ne : τ ≠ 1 := fun h => by
+    rw [h, orderOf_one] at hτ_ord
+    exact absurd hτ_ord (by decide)
+  -- Lift τ : signG.ker to G via the subtype.
+  let τG : G := τ.val
+  have hτG_sq : τG ^ 2 = 1 := by
+    have h := congrArg (signG.ker.subtype) hτ_sq
+    simpa [τG] using h
+  have hτG_ne : τG ≠ 1 := fun h => hτ_ne (Subtype.ext h)
+  -- Two contradictory facts: signG τG = -1 (by step5) and signG τG = 1 (τ ∈ ker).
+  have hτG_sign : signG τG = -1 := step5G τG hτG_ne hτG_sq
+  have hτG_in_ker : signG τG = 1 := τ.property
+  rw [hτG_sign] at hτG_in_ker
+  exact absurd hτG_in_ker (by decide)
 
 end Moore57.Papers.MacajSiran2010.S2
