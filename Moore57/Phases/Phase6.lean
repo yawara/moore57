@@ -1,4 +1,4 @@
-import Moore57.Phases.Phase5
+import Moore57.D19OnMoore57.E7Projection.RotationCharacterConstancy
 import Moore57.D19OnMoore57.Rotation.FixedCountOneFrontier
 import Moore57.D19OnMoore57.Orbit.BaseSelectionFromRawAction
 import Moore57.D19OnMoore57.D19Core.OrbitContributionData
