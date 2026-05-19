@@ -1,5 +1,6 @@
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma20_ConjugateFix
 
 /-!
 # Orbit decomposition arithmetic for `p`-groups acting on Moore-style sets
@@ -50,5 +51,35 @@ theorem orbit_count_81_on_57 (b d : ℕ)
 This records that the constraint `b ≤ 1` is actually necessary: without
 it, `(b, d) = (19, 0)` (nineteen size-3 orbits) is also a solution. -/
 example : 3 * 19 + 27 * 0 = 57 := by decide
+
+/-! ## Class size from Lemma 20
+
+The Mačaj–Širáň "class size = 9" step in Corollary 2 follows from
+Lemma 20 once one knows `|orbit| = 27` and `|Fix(stab) ∩ orbit| = 3`.
+The latter equality (encoded as `(stab).relIndex (N stab) = 3`) is the
+geometric input from Lemma 17 — not proven here, taken as a hypothesis. -/
+
+open MulAction Subgroup
+
+/-- **Mačaj–Širáň 2010 §7, Cor 2 (class-size step).**
+
+For any `MulAction G α` and `o : α`, if the orbit of `o` has size `27`
+and the `(stab o)`-fixed points in that orbit number `3`
+(equivalently, `[N_G(stab o) : stab o] = 3`), then
+`stab o` has exactly `9` conjugates in `G`.
+
+This is the direct application of Lemma 20 once the geometric inputs
+are available; in the §7 context these inputs are supplied by Lemma 17
+(`Fix(stab o)` is the Petersen graph, intersecting each size-`27` orbit
+in 3 points). -/
+theorem class_size_9_of_orbit_27_fix_3
+    {G α : Type*} [Group G] [MulAction G α] (o : α)
+    (h_orbit : (orbit G o).ncard = 27)
+    (h_fix : (stabilizer G o).relIndex
+        (Subgroup.normalizer (stabilizer G o : Set G)) = 3) :
+    (Subgroup.normalizer (stabilizer G o : Set G)).index = 9 := by
+  have h := Moore57.Papers.MacajSiran2010.S6.lem20_fix_conjugate (G := G) o
+  rw [h_orbit, h_fix] at h
+  omega
 
 end Moore57.Foundations.GroupTheory
