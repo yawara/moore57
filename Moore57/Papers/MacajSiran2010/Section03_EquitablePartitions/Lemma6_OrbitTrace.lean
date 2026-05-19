@@ -134,6 +134,57 @@ theorem lem6_inducedTrace_sq_lt_card_of_card_eq_one
   rw [inducedTrace_singleton_eq_zero, Finset.card_singleton, Nat.cast_one]
   norm_num
 
+/-- **Induced trace of a pair.** [done]
+
+For two distinct vertices `v ≠ w`, `inducedTrace Γ {v, w}` equals `1`
+if `v ~ w` and `0` otherwise.  This is the doubleton analogue of
+`inducedTrace_singleton_eq_zero`. -/
+theorem inducedTrace_pair_eq
+    {v w : V} (hvw : v ≠ w) :
+    inducedTrace Γ ({v, w} : Finset V) =
+      if Γ.Adj v w then 1 else 0 := by
+  classical
+  unfold inducedTrace inducedDegreeSum
+  rw [Finset.sum_pair hvw,
+      Finset.card_insert_of_notMem (by simp [hvw]), Finset.card_singleton]
+  by_cases h : Γ.Adj v w
+  · -- Adj v w: each filter has card 1, total = 2, 2/2 = 1.
+    have hv : (({v, w} : Finset V).filter (Γ.Adj v)).card = 1 := by
+      rw [Finset.filter_insert, Finset.filter_singleton,
+          if_neg (Γ.irrefl), if_pos h]
+      rfl
+    have hw : (({v, w} : Finset V).filter (Γ.Adj w)).card = 1 := by
+      rw [Finset.filter_insert, Finset.filter_singleton,
+          if_pos (Γ.symm h), if_neg (Γ.irrefl)]
+      simp
+    rw [hv, hw, if_pos h]
+    norm_num
+  · -- not Adj: each filter has card 0, total = 0, 0/2 = 0.
+    have hv : (({v, w} : Finset V).filter (Γ.Adj v)).card = 0 := by
+      rw [Finset.filter_insert, Finset.filter_singleton,
+          if_neg (Γ.irrefl), if_neg h]
+      rfl
+    have hw : (({v, w} : Finset V).filter (Γ.Adj w)).card = 0 := by
+      rw [Finset.filter_insert, Finset.filter_singleton,
+          if_neg (fun hh => h hh.symm), if_neg (Γ.irrefl)]
+      rfl
+    rw [hv, hw, if_neg h]
+    norm_num
+
+/-- **Lemma 6 (4) corner case: `|O| = 2`.** [done]
+
+For a pair `O = {v, w}` (v ≠ w), `(inducedTrace Γ O)² ≤ 1 < 2 = |O|`. -/
+theorem lem6_inducedTrace_sq_lt_card_of_card_eq_two
+    {O : Finset V} (hO : O.card = 2) :
+    (inducedTrace Γ O) ^ 2 < (O.card : ℚ) := by
+  classical
+  obtain ⟨v, w, hvw, rfl⟩ := Finset.card_eq_two.mp hO
+  rw [inducedTrace_pair_eq hvw,
+      Finset.card_insert_of_notMem (by simp [hvw]), Finset.card_singleton]
+  by_cases h : Γ.Adj v w
+  · rw [if_pos h]; norm_num
+  · rw [if_neg h]; norm_num
+
 /-- **Lemma 6 (4) (proper signature: `Tr(O)² < |O|` for `|O| ≥ 64`).**
 
 For any nonempty `O ⊆ V` of cardinality at least 64,
