@@ -125,6 +125,20 @@ theorem adjacentMovedCount_reflection_eq_112_of_raw_action
   (h.involutionFixedSetStar56_of_raw_action k).adjacentMovedCount_eq_112
     h.isMoore
 
+/-- Every reflection has 7-eigenspace character trace `33`.
+
+Derived from the Higman trace formula at the reflection, using the raw-action
+consequences `a₀(t) = 56` and `a₁(t) = 112`:
+`χ₇(t) = (8·56 + 112 − 65) / 15 = 495 / 15 = 33`. -/
+theorem reflection_E7_trace_eq_thirtyThree
+    (k : ZMod 19) :
+    Matrix.trace (E7Matrix Γ * permMatrix (h.smulEquiv (DihedralGroup.sr k))) =
+      (33 : ℚ) := by
+  rw [h.isMoore.higman_trace_formula (h.smulEquiv (DihedralGroup.sr k))]
+  rw [h.fixedVertexCount_reflection_eq_56_of_raw_action k,
+    h.adjacentMovedCount_reflection_eq_112_of_raw_action k]
+  norm_num
+
 end D19ActsOnMoore57
 
 namespace BranchOrbitABCReflectionLabeling

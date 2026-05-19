@@ -1,5 +1,4 @@
 import Moore57.Phases.Phase4VertexDecomposition
-import Moore57.Phases.Phase3
 import Moore57.D19OnMoore57.D19Core.RepresentationCharacter
 import Moore57.D19OnMoore57.E7Projection.ProjectionDimension
 import Moore57.D19OnMoore57.E7Projection.CharacterClassTraceBoundary

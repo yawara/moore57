@@ -1,6 +1,5 @@
 import Moore57.Phases.Phase5
 import Moore57.Phases.Phase6
-import Moore57.Phases.Phase3
 import Moore57.D19OnMoore57.E7Projection.Minus8CharacterBoundariesFromRotationSplit
 
 /-!
