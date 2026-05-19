@@ -1,4 +1,4 @@
-import Moore57.Phases.Phase7
+import Moore57.D19OnMoore57.E7Projection.RotationCharacterConstancyPackage
 import Moore57.D19OnMoore57.BranchOrbit.ResidualSplit
 import Moore57.D19OnMoore57.AFiber.Cardinality38FromClosures
 import Moore57.D19OnMoore57.Reflection.RawActionFixedCenterLeaf

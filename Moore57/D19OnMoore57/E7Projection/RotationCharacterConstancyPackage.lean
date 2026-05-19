@@ -3,27 +3,26 @@ import Moore57.D19OnMoore57.Final.FromRotationCharacterConstancy
 import Moore57.D19OnMoore57.E7Projection.Minus8CharacterBoundariesFromRotationSplit
 
 /-!
-# Phase 7 prebuilt: construct `RotationCharacterConstancy` from raw action
+# Constructing `RotationCharacterConstancy` from raw action
 
-The natural-language Lemma 9.2 (D₁₉ representation theory) is already
-formalized in the codebase via the rotation-invariant / rotation-moving
-submodule split (see `Moore57/GroupTheory/D19CharacterClassFromRotationSplit.lean`):
+The D₁₉ representation theory needed for the rotation-character constancy is
+already formalized in the codebase via the rotation-invariant /
+rotation-moving submodule split (see
+`Moore57/GroupTheory/D19CharacterClassFromRotationSplit.lean`):
 
 * For any rational representation `ρ : Representation ℚ (DihedralGroup 19) W`,
   - the rotation-invariant summand contributes `α + β` natural-numbered
     multiplicities of the trivial/sign characters (with reflection trace
     `α − β`);
-  - the rotation-moving summand has dimension `18·γ` and rotation trace `-γ`
+  - the rotation-moving summand has dimension `18·γ` and rotation trace `−γ`
     on every nontrivial rotation (cyclotomic constraint).
-* Combined, every nontrivial rotation has character `α + β − γ`, the same
-  for every `d ≠ 0`.
+* Combined, every nontrivial rotation has character `α + β − γ`, the same for
+  every `d ≠ 0`.
 
 Applied to the concrete `E₇` projection representation
-`h.e7ProjectionRepresentation` (Phase 2: `finrank = 1729`; Phase 3: `χ_7(t) =
-33`), this yields the Phase 5 `RotationCharacterConstancy h` frontier
-constructively, removing it from the list of remaining deep gaps.
-
-The remaining work is therefore the geometric side
+`h.e7ProjectionRepresentation` (`finrank = 1729`; reflection trace `33`), this
+yields the `RotationCharacterConstancy h` frontier constructively.  The
+remaining work is therefore the geometric side
 (`AdjacentMovedReflectionComplementResidual38Witness`).
 -/
 
@@ -34,8 +33,8 @@ namespace D19ActsOnMoore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- Phase 7 packaged record: combines the rotation-character constancy data
-with the integer common-value witness and the admissible side arithmetic. -/
+/-- Packaged record: combines the rotation-character constancy data with the
+integer common-value witness and the admissible side arithmetic. -/
 structure RotationCharacterConstancyPackage (h : D19ActsOnMoore57 V Γ) where
   alpha : ℕ
   beta : ℕ
@@ -50,7 +49,7 @@ namespace RotationCharacterConstancyPackage
 
 variable {h : D19ActsOnMoore57 V Γ}
 
-/-- The Phase 5 `RotationCharacterConstancy` extracted from the package. -/
+/-- The `RotationCharacterConstancy` extracted from the package. -/
 noncomputable def toRotationCharacterConstancy
     (pkg : RotationCharacterConstancyPackage h) :
     RotationCharacterConstancy h where
@@ -71,12 +70,12 @@ noncomputable def toIntegerValue (pkg : RotationCharacterConstancyPackage h) :
     pkg.toRotationCharacterConstancy.IntegerValue where
   intValue := (pkg.alpha : ℤ) + (pkg.beta : ℤ) - (pkg.gamma : ℤ)
   value_eq := by
-    show (pkg.alpha : ℚ) + (pkg.beta : ℚ) - (pkg.gamma : ℚ) =
+    change (pkg.alpha : ℚ) + (pkg.beta : ℚ) - (pkg.gamma : ℚ) =
       (((pkg.alpha : ℤ) + (pkg.beta : ℤ) - (pkg.gamma : ℤ) : ℤ) : ℚ)
     push_cast
     ring
 
-/-- The rotation-int equality consumed by Phase 6. -/
+/-- The rotation-int equality consumed by the downstream final assembly. -/
 theorem rotation_int (pkg : RotationCharacterConstancyPackage h) :
     (pkg.alpha : ℤ) + (pkg.beta : ℤ) - (pkg.gamma : ℤ) =
       pkg.toIntegerValue.intValue := rfl
@@ -88,9 +87,9 @@ theorem dimension (pkg : RotationCharacterConstancyPackage h) :
 
 end RotationCharacterConstancyPackage
 
-/-- Phase 7: build the full rotation-character constancy package directly from
-the ambient `D19ActsOnMoore57` witness. Uses the rotation-split character
-construction with Phase 3 (reflection trace `33`) as input. -/
+/-- Build the full rotation-character constancy package directly from the
+ambient `D19ActsOnMoore57` witness. Uses the rotation-split character
+construction with the reflection trace `33` as input. -/
 noncomputable def rotationCharacterConstancyPackage_of_raw_action
     (h : D19ActsOnMoore57 V Γ) :
     RotationCharacterConstancyPackage h := by
@@ -107,14 +106,14 @@ noncomputable def rotationCharacterConstancyPackage_of_raw_action
       minus8_trivial_nonneg := data.choose_spec.choose_spec.choose_spec.2.2.1
       minus8_sign_nonneg := data.choose_spec.choose_spec.choose_spec.2.2.2 }
 
-/-! ### Phase 7 final assembly: only the geometric witness remains -/
+/-! ### Final assembly: only the geometric witness remains -/
 
-/-- Phase 7 (final): given the geometric compact adjacent-moved witness, the
-ambient `D19ActsOnMoore57` witness produces `False`.
+/-- Given the geometric compact adjacent-moved witness, the ambient
+`D19ActsOnMoore57` witness produces `False`.
 
-The representation-theoretic side (Phase 5 `RotationCharacterConstancy`) is
-fully constructed by `rotationCharacterConstancyPackage_of_raw_action`, so the
-only remaining input is the geometric
+The representation-theoretic side (`RotationCharacterConstancy`) is fully
+constructed by `rotationCharacterConstancyPackage_of_raw_action`, so the only
+remaining input is the geometric
 `AdjacentMovedReflectionComplementResidual38Witness h
 (h.orbitBaseSelectionInput_of_raw_action)`. -/
 theorem false_of_compactAdjacentMoved
