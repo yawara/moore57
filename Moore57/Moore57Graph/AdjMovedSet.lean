@@ -130,6 +130,46 @@ theorem adjMovedSet_inducedTrace_le_two
       2 * ((adjMovedSet Γ x).card : ℚ) := by exact_mod_cast h_nat
   linarith
 
+/-- **Generalisation of `Tr(S) ≤ 2`** to any subset of the adjacency-moved
+set.
+
+For `O ⊆ adjMovedSet Γ x`, the induced trace `Tr(Γ[O]) ≤ 2`.  The argument
+is the same no-quadrangle bound: each `v ∈ O ⊆ S` has at most 2 in-`S`
+neighbors, and in-`O` neighbors form a subset, hence at most 2.
+
+This generalisation is used for Mačaj–Širáň §3 Lemma 6 (3) (central
+element ⇒ `Tr(O) ≤ 2`), where `O` is an `X`-orbit contained in the
+adjacency-moved set of a central element `x ∈ X`. -/
+theorem subset_adjMovedSet_inducedTrace_le_two
+    (hΓ : IsMoore57 Γ) {x : Equiv.Perm V}
+    (hx : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x a) (x b))
+    {O : Finset V} (hO_subset : O ⊆ adjMovedSet Γ x)
+    (hO_nonempty : O.Nonempty) :
+    inducedTrace Γ O ≤ 2 := by
+  classical
+  unfold inducedTrace
+  have h_card_pos : (0 : ℚ) < (O.card : ℚ) := by
+    exact_mod_cast Finset.card_pos.mpr hO_nonempty
+  rw [div_le_iff₀ h_card_pos]
+  -- Show `inducedDegreeSum Γ O ≤ 2 * |O|` in ℕ.
+  have h_nat : inducedDegreeSum Γ O ≤ 2 * O.card := by
+    unfold inducedDegreeSum
+    calc ∑ v ∈ O, (O.filter (fun w => Γ.Adj v w)).card
+        ≤ ∑ _v ∈ O, 2 := by
+          apply Finset.sum_le_sum
+          intro v hv
+          calc (O.filter (fun w => Γ.Adj v w)).card
+              ≤ ((adjMovedSet Γ x).filter (fun w => Γ.Adj v w)).card := by
+                apply Finset.card_le_card
+                intro w hw
+                rw [Finset.mem_filter] at hw ⊢
+                exact ⟨hO_subset hw.1, hw.2⟩
+            _ ≤ 2 := adjMovedSet_filter_card_le_two hΓ hx (hO_subset hv)
+      _ = 2 * O.card := by rw [Finset.sum_const, smul_eq_mul, Nat.mul_comm]
+  have h_rat : (inducedDegreeSum Γ O : ℚ) ≤ 2 * (O.card : ℚ) := by
+    exact_mod_cast h_nat
+  linarith
+
 /-- **Mačaj–Širáň Corollary 1**: `a₁(x) ≤ 500` for every automorphism
 `x` of a Moore57 graph.
 

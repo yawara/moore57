@@ -1,5 +1,6 @@
 import Moore57.Papers.MacajSiran2010.Section03_EquitablePartitions.Definition
 import Moore57.Foundations.GraphTheory.InducedTrace
+import Moore57.Moore57Graph.AdjMovedSet
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -77,10 +78,56 @@ theorem lem6_trace_even_of_odd_order
     Even (∑ x : X, adjacentMovedCount Γ (x : Equiv.Perm V)) :=
   Moore57.sum_adjacentMovedCount_even_of_subgroup_odd_card X hX_odd
 
-/-- **Lemma 6 (3) (central ⇒ `Tr(O) ≤ 2`).** [deferred-heavy] -/
+/-- **Lemma 6 (3) (central ⇒ `Tr(O) ≤ 2`).** [deferred-heavy]
+
+Paper-stub kept for backwards compatibility; see
+`lem6_central_inducedTrace_le_two` for the proper-signature version. -/
 theorem lem6_central_trace_le_two (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 6 (4) (`Tr(O)² < |O|`).** [deferred-heavy] -/
+/-- **Lemma 6 (3) (proper signature: central element ⇒ `Tr(O) ≤ 2`).**
+
+If `O ⊆ adjMovedSet Γ x` (every vertex of `O` is adjacency-moved by `x`),
+then the induced trace of `O` is at most `2`.
+
+In the paper context, this hypothesis comes from `x` being central
+in the group `X` and contributing to the `X`-orbit `O`: by centrality
+`x` commutes with all `y ∈ X`, so the contribution `v ~ x v` propagates
+along the orbit `O = X · v` to give `w ~ x w` for every `w ∈ O`, i.e.,
+`O ⊆ adjMovedSet Γ x`.  The bound `Tr(O) ≤ 2` then follows from the
+Moore57 no-quadrangle argument (`μ = 1`, `λ = 0`).
+
+See `Moore57.subset_adjMovedSet_inducedTrace_le_two`. -/
+theorem lem6_central_inducedTrace_le_two
+    (hΓ : IsMoore57 Γ) {x : Equiv.Perm V}
+    (hx : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x a) (x b))
+    {O : Finset V} (hO_subset : O ⊆ Moore57.adjMovedSet Γ x)
+    (hO_nonempty : O.Nonempty) :
+    inducedTrace Γ O ≤ 2 :=
+  Moore57.subset_adjMovedSet_inducedTrace_le_two hΓ hx hO_subset hO_nonempty
+
+/-- **Lemma 6 (4) (`Tr(O)² < |O|`).** [deferred-heavy]
+
+Paper-stub kept for backwards compatibility; the proper-signature
+form for `|O| ≥ 64` is `lem6_inducedTrace_sq_lt_card_of_card_ge_64`. -/
 theorem lem6_trace_sq_lt_size (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Lemma 6 (4) (proper signature: `Tr(O)² < |O|` for `|O| ≥ 64`).**
+
+For any nonempty `O ⊆ V` of cardinality at least 64,
+`(inducedTrace Γ O)² < |O|`.
+
+This follows from the Mohar upper bound `Tr(O) ≤ 7 + |O|/65` (Lemma 10)
+plus the algebraic fact `(7 + n/65)² < n` for `n ∈ [64, 3250]` (using
+`|O| ≤ |V| = 3250` from Moore57).  For small orbits `|O| < 64`,
+parity (`d·|O|` even from sum-of-degrees) and the no-triangle /
+no-quadrangle structural constraints of Moore57 are needed; these
+are left as `[deferred-heavy]` since they require case analysis.
+
+See `Moore57.inducedTrace_sq_lt_card_of_card_ge_64`. -/
+theorem lem6_inducedTrace_sq_lt_card_of_card_ge_64
+    (hΓ : IsMoore57 Γ) {O : Finset V}
+    (hO_nonempty : O.Nonempty) (hO_large : 64 ≤ O.card) :
+    (inducedTrace Γ O) ^ 2 < (O.card : ℚ) :=
+  Moore57.inducedTrace_sq_lt_card_of_card_ge_64 hΓ hO_nonempty hO_large
 
 end Moore57.Papers.MacajSiran2010.S3

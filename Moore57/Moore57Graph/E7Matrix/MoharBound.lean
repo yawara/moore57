@@ -245,4 +245,53 @@ theorem mohar_trace_bounds
         (S.card : ℚ) ^ 2 / 65 + 7 * (S.card : ℚ) := by ring
     linarith
 
+/-- **`Tr(S)² < |S|` for `|S| ≥ 64`** (Mohar-quadratic consequence).
+
+For any nonempty `S ⊆ V` of cardinality at least 64,
+`(inducedTrace Γ S)² < |S|` (as `ℚ`-inequality).
+
+Proof: from Mohar `Tr(S) ≤ 7 + |S|/65` and `Tr(S) ≥ 0`,
+`Tr(S)² ≤ (7 + |S|/65)²`.  The algebraic identity
+`|S| · 4225 - (7 + |S|/65)² · 4225 = -|S|² + 3315·|S| - 207025`
+is positive on `|S| ∈ [64, 3250]` (using `S.card ≤ Fintype.card V = 3250`
+from `IsMoore57`), giving strict inequality.
+
+This abstracts Mačaj–Širáň §3 Lemma 6 (4) `Tr(O)² < |O|` (for any
+sufficiently large `X`-orbit `O`; the small-orbit cases use further
+structural / parity / no-quadrangle arguments not formalised here). -/
+theorem inducedTrace_sq_lt_card_of_card_ge_64
+    (hΓ : IsMoore57 Γ) {S : Finset V}
+    (hS_nonempty : S.Nonempty) (hS_large : 64 ≤ S.card) :
+    (inducedTrace Γ S) ^ 2 < (S.card : ℚ) := by
+  classical
+  obtain ⟨_, h_upper⟩ := mohar_trace_bounds hΓ hS_nonempty
+  -- Tr ≥ 0 since it is an average of natural-number degrees.
+  have h_nonneg : 0 ≤ inducedTrace Γ S := by
+    unfold inducedTrace
+    apply div_nonneg
+    · exact_mod_cast Nat.zero_le _
+    · exact_mod_cast Nat.zero_le _
+  -- |S| ≤ 3250 from IsMoore57.
+  have hS_le : (S.card : ℚ) ≤ 3250 := by
+    have h1 : S.card ≤ Fintype.card V := Finset.card_le_univ S
+    have h2 : Fintype.card V = 3250 := hΓ.card
+    rw [h2] at h1
+    exact_mod_cast h1
+  have hS_ge : (64 : ℚ) ≤ (S.card : ℚ) := by exact_mod_cast hS_large
+  -- Squaring step: 0 ≤ Tr ≤ 7 + n/65 ⟹ Tr² ≤ (7 + n/65)².
+  have h_upper_nonneg : (0 : ℚ) ≤ 7 + (S.card : ℚ) / 65 :=
+    le_trans h_nonneg h_upper
+  have h_sq_le : (inducedTrace Γ S) ^ 2 ≤ (7 + (S.card : ℚ) / 65) ^ 2 := by
+    rw [sq, sq]
+    exact mul_le_mul h_upper h_upper h_nonneg h_upper_nonneg
+  -- Algebraic step: (7 + n/65)² < n for n ∈ [64, 3250].
+  -- (n - 64)(3251 - n) ≥ 0 ⟹ n² - 3315n + 208064 ≤ 0
+  --                      ⟹ n² - 3315n + 207025 ≤ -1039 < 0
+  --                      ⟹ (7 + n/65)² < n.
+  have h_key : ((S.card : ℚ) - 64) * (3251 - (S.card : ℚ)) ≥ 0 := by
+    apply mul_nonneg <;> linarith
+  have h_algebra : (7 + (S.card : ℚ) / 65) ^ 2 < (S.card : ℚ) := by
+    nlinarith [h_key]
+  linarith
+
 end Moore57

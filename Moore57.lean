@@ -31,6 +31,7 @@ import Moore57.Foundations.GroupAction.InvolutionParity
 import Moore57.Foundations.GroupAction.FixedPointConjugacy
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
 import Moore57.Foundations.GraphTheory.InducedTrace
+import Moore57.Foundations.GraphTheory.OrbitInducedTrace
 import Moore57.Foundations.Spectral.QuadraticIndicator
 import Moore57.Moore57Graph.E7Matrix.MoharBound
 import Moore57.Moore57Graph.AdjMovedSet
