@@ -15,12 +15,13 @@ set_option linter.unusedFintypeInType false
 >
 > (2) if `F(x)` is a star of order `f`, then `f = k ± 1`.
 
-For Moore57 (`k = 57`), part (1) gives `|F(x)| = 56`, which is wrapped from
+For Moore57 (`k = 57`), part (1) gives `|F(x)| = 56`, wrapped from
 `aut_involution_fixedVertexCount_eq_56` (Cameron/Higman, via Moore57's
 adjacency-moved + K_{1,55} structure).
 
-Part (2) (`f = k ± 1` from a star fix) is a structural lemma about
-involutions on strong (0,1) graphs and is left as a general skeleton.
+For part (2) on Moore57: the involution fix is the K_{1,55} star, and we
+prove `f = 56 = k − 1` (the "−" branch). The general "f = k + 1 or
+f = k − 1" disjunction is left as a [skeleton].
 -/
 
 open Moore57
@@ -46,7 +47,24 @@ theorem lem1_4_part1_k57 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
   aut_involution_fixedVertexCount_eq_56 hΓ σ hAut
     (_involutive_of_sq_eq_one hσ) hne
 
-/-- **Lemma 1.4 (2) (star fix forces `f = k ± 1`).** [skeleton] -/
+/-- **Lemma 1.4 (2), `k = 57` instance — the "minus" branch is realised.**
+
+For a non-trivial involution `σ ∈ Aut(Γ)`, `Fix(σ)` is a star (by part 1
+combined with Moore57's structural lemma) and `|Fix(σ)| = 56 = k − 1`.
+
+So the Moore57 instance of Aschbacher's Lemma 1.4 (2) sits in the `f = k − 1`
+branch of the dichotomy. -/
+theorem lem1_4_part2_k57 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hσ : σ ^ 2 = 1) (hne : σ ≠ 1)
+    (hAut : ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b)) :
+    (∃ c : fixedVertexSet σ, IsStarWithCenter (autFixedInducedGraph Γ σ) c) ∧
+      fixedVertexCount σ = 56 := by
+  have hinv := _involutive_of_sq_eq_one hσ
+  refine ⟨?_, ?_⟩
+  · exact aut_involution_fixedInducedGraph_isStarWithCenter hΓ σ hAut hinv hne
+  · exact aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
+
+/-- **Lemma 1.4 (2) (general star-fix dichotomy `f = k ± 1`).** [skeleton] -/
 theorem lem1_4_part2 : True := by trivial
 
 end Moore57.Papers.Aschbacher1971
