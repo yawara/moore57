@@ -260,6 +260,122 @@ theorem lem6_inducedTrace_sq_lt_card_of_card_eq_three
   -- Goal: (s / 3)² < 3. With 0 ≤ s ≤ 4: s² ≤ 16 < 27, so (s/3)² = s²/9 ≤ 16/9 < 3.
   nlinarith [sq_nonneg s, sq_nonneg (s - 4), h_sum_nn, h_sum_q]
 
+/-- **Lemma 6 (4) corner case: `|O| = 4`.** [done]
+
+For four distinct vertices `{a, b, c, d}`, the induced subgraph in
+Moore57 has at most 3 edges (no triangle + no 4-cycle ⟹ induced
+subgraph on 4 vertices is a forest, hence ≤ 3 edges), so the induced
+degree sum is at most 6, giving `Tr(O) ≤ 6/4 = 3/2` and
+`Tr(O)² ≤ 9/4 < 4`. -/
+theorem lem6_inducedTrace_sq_lt_card_of_card_eq_four
+    (hΓ : IsMoore57 Γ) {O : Finset V} (hO : O.card = 4) :
+    (inducedTrace Γ O) ^ 2 < (O.card : ℚ) := by
+  classical
+  obtain ⟨a, b, c, d, hab, hac, had, hbc, hbd, hcd, rfl⟩ :=
+    Finset.card_eq_four.mp hO
+  have hcard : ({a, b, c, d} : Finset V).card = 4 := by
+    rw [Finset.card_insert_of_notMem (by simp [hab, hac, had]),
+        Finset.card_insert_of_notMem (by simp [hbc, hbd]),
+        Finset.card_insert_of_notMem (by simp [hcd]),
+        Finset.card_singleton]
+  -- Compute each filter card via Finset.card_filter.
+  have hf : ∀ (x : V), (({a, b, c, d} : Finset V).filter (Γ.Adj x)).card =
+        (if Γ.Adj x a then 1 else 0) +
+        ((if Γ.Adj x b then 1 else 0) +
+         ((if Γ.Adj x c then 1 else 0) +
+          (if Γ.Adj x d then 1 else 0))) := by
+    intro x
+    rw [Finset.card_filter,
+        show ({a, b, c, d} : Finset V) = insert a (insert b (insert c {d})) from rfl,
+        Finset.sum_insert (by simp [hab, hac, had]),
+        Finset.sum_insert (by simp [hbc, hbd]),
+        Finset.sum_insert (by simp [hcd]),
+        Finset.sum_singleton]
+  -- Set up the no-triangle and no-4-cycle constraints
+  have h_no_3_abc : ¬ (Γ.Adj a b ∧ Γ.Adj a c ∧ Γ.Adj b c) :=
+    fun ⟨h1, h2, h3⟩ => hΓ.no_triangle h1 h3 h2.symm
+  have h_no_3_abd : ¬ (Γ.Adj a b ∧ Γ.Adj a d ∧ Γ.Adj b d) :=
+    fun ⟨h1, h2, h3⟩ => hΓ.no_triangle h1 h3 h2.symm
+  have h_no_3_acd : ¬ (Γ.Adj a c ∧ Γ.Adj a d ∧ Γ.Adj c d) :=
+    fun ⟨h1, h2, h3⟩ => hΓ.no_triangle h1 h3 h2.symm
+  have h_no_3_bcd : ¬ (Γ.Adj b c ∧ Γ.Adj b d ∧ Γ.Adj c d) :=
+    fun ⟨h1, h2, h3⟩ => hΓ.no_triangle h1 h3 h2.symm
+  have h_no_C4_1 : ¬ (Γ.Adj a b ∧ Γ.Adj b c ∧ Γ.Adj c d ∧ Γ.Adj a d) :=
+    fun ⟨h1, h2, h3, h4⟩ =>
+      hΓ.no_four_cycle hab hac had hbc hbd hcd h1 h2 h3 h4.symm
+  have h_no_C4_2 : ¬ (Γ.Adj a b ∧ Γ.Adj b d ∧ Γ.Adj c d ∧ Γ.Adj a c) :=
+    fun ⟨h1, h2, h3, h4⟩ =>
+      hΓ.no_four_cycle hab had hac hbd hbc hcd.symm h1 h2 h3.symm h4.symm
+  have h_no_C4_3 : ¬ (Γ.Adj a c ∧ Γ.Adj b c ∧ Γ.Adj b d ∧ Γ.Adj a d) :=
+    fun ⟨h1, h2, h3, h4⟩ =>
+      hΓ.no_four_cycle hac hab had hbc.symm hcd hbd h1 h2.symm h3 h4.symm
+  -- inducedDegreeSum bound via case analysis on the 6 booleans
+  have h_sum_le : inducedDegreeSum Γ ({a, b, c, d} : Finset V) ≤ 6 := by
+    unfold inducedDegreeSum
+    rw [show ({a, b, c, d} : Finset V) = insert a (insert b (insert c {d})) from rfl]
+    rw [Finset.sum_insert (by simp [hab, hac, had])]
+    rw [Finset.sum_insert (by simp [hbc, hbd])]
+    rw [Finset.sum_insert (by simp [hcd])]
+    rw [Finset.sum_singleton]
+    rw [show ({a, b, c, d} : Finset V) = insert a (insert b (insert c {d})) from rfl] at hf
+    rw [hf a, hf b, hf c, hf d]
+    -- Reflexivity cases = 0
+    have e_aa : (if Γ.Adj a a then (1 : ℕ) else 0) = 0 := if_neg (Γ.irrefl)
+    have e_bb : (if Γ.Adj b b then (1 : ℕ) else 0) = 0 := if_neg (Γ.irrefl)
+    have e_cc : (if Γ.Adj c c then (1 : ℕ) else 0) = 0 := if_neg (Γ.irrefl)
+    have e_dd : (if Γ.Adj d d then (1 : ℕ) else 0) = 0 := if_neg (Γ.irrefl)
+    -- Symmetry of adjacency
+    have e_ba : (if Γ.Adj b a then (1 : ℕ) else 0) =
+        (if Γ.Adj a b then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj a b
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    have e_ca : (if Γ.Adj c a then (1 : ℕ) else 0) =
+        (if Γ.Adj a c then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj a c
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    have e_cb : (if Γ.Adj c b then (1 : ℕ) else 0) =
+        (if Γ.Adj b c then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj b c
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    have e_da : (if Γ.Adj d a then (1 : ℕ) else 0) =
+        (if Γ.Adj a d then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj a d
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    have e_db : (if Γ.Adj d b then (1 : ℕ) else 0) =
+        (if Γ.Adj b d then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj b d
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    have e_dc : (if Γ.Adj d c then (1 : ℕ) else 0) =
+        (if Γ.Adj c d then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj c d
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    rw [e_aa, e_bb, e_cc, e_dd, e_ba, e_ca, e_cb, e_da, e_db, e_dc]
+    -- Goal: now 2·([ab] + [ac] + [ad] + [bc] + [bd] + [cd]) ≤ 6
+    by_cases h1 : Γ.Adj a b <;>
+    by_cases h2 : Γ.Adj a c <;>
+    by_cases h3 : Γ.Adj a d <;>
+    by_cases h4 : Γ.Adj b c <;>
+    by_cases h5 : Γ.Adj b d <;>
+    by_cases h6 : Γ.Adj c d <;>
+    simp_all
+  -- Convert to Tr bound
+  have h_sum_nn : 0 ≤ (inducedDegreeSum Γ ({a, b, c, d} : Finset V) : ℚ) :=
+    Nat.cast_nonneg _
+  have h_sum_q : (inducedDegreeSum Γ ({a, b, c, d} : Finset V) : ℚ) ≤ 6 := by
+    exact_mod_cast h_sum_le
+  rw [show (({a, b, c, d} : Finset V).card : ℚ) = 4 by rw [hcard]; norm_num]
+  unfold inducedTrace
+  rw [show (({a, b, c, d} : Finset V).card : ℚ) = 4 by rw [hcard]; norm_num]
+  set s := (inducedDegreeSum Γ ({a, b, c, d} : Finset V) : ℚ)
+  -- Goal: (s / 4)² < 4. With 0 ≤ s ≤ 6: (s/4)² ≤ 36/16 = 9/4 < 4.
+  nlinarith [sq_nonneg s, sq_nonneg (s - 6), h_sum_nn, h_sum_q]
+
 /-- **Lemma 6 (4) (proper signature: `Tr(O)² < |O|` for `|O| ≥ 64`).**
 
 For any nonempty `O ⊆ V` of cardinality at least 64,
