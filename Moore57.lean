@@ -365,3 +365,4 @@ import Moore57.Order22OnMoore57.NoGo
 import Moore57.Papers.MacajSiran2010.MainTheorem
 import Moore57.Papers.MakhnevPaduchikh2001.MainTheorem
 import Moore57.Papers.Aschbacher1971.MainTheorem
+import Moore57.Papers.Higman1964.MainTheorem

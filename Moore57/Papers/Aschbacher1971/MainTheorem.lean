@@ -3,6 +3,7 @@ import Moore57.Papers.Aschbacher1971.Lemma1_1_RegularOrStar
 import Moore57.Papers.Aschbacher1971.Lemma1_2_FixInheritsStar
 import Moore57.Papers.Aschbacher1971.Lemma1_3_ValenceClassification
 import Moore57.Papers.Aschbacher1971.Lemma1_4_InvolutionFix
+import Moore57.Papers.Higman1964.Theorem1_DegreeKSqPlus1
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -49,13 +50,25 @@ Stated symbolically as a placeholder; a full formalisation would require
 introducing the permutation-group action `G ↷ Ω` of rank 3 and the
 distinguishing data of the proof above.
 
-**External dependency**: the line "Results of D. Higman show that 𝒢 satisfies
-(*) [2]" cites [Higman, *Finite permutation groups of rank 3*,
-Math. Zeitschr. 86 (1964), 145–156]. Formalising this Main Theorem
-therefore requires either importing Higman 1964 results or building the
-rank-3 permutation-group theory directly in Lean (extending Mathlib's
-existing `GroupAction` / `Equiv.Perm` infrastructure with rank-3-specific
-results). -/
+**External dependency now in-tree**: the line "Results of D. Higman show
+that 𝒢 satisfies (*) [2]" cites Higman 1964 §6 Theorem 1, available as
+`Moore57.Papers.Higman1964.theorem1_n_kSq_plus_one` (statement skeleton)
+and its proven arithmetic core
+`Moore57.Papers.Higman1964.theorem1_arithmetic_core`. The valence `k = 57`
+sits in the `4k − 3 = 225` branch of that classification.
+
+A full proof of the Main Theorem still requires the rank-3
+permutation-group action infrastructure (Lemmas 1–7 of Higman 1964, +
+Aschbacher's §2 involution / Sylow argument); the Higman 1964 dependency
+is no longer external to this repository. -/
 theorem main_no_rank3_3250_57 : True := by trivial
+
+/-- **Pointer: Higman 1964 Theorem 1, Moore57 valence fork.**
+
+The valence `k = 57` is one of the four allowed by Higman's
+classification (`{2, 3, 7, 57}`). -/
+theorem main_valence_in_higman_classification :
+    (57 : ℕ) = 2 ∨ (57 : ℕ) = 3 ∨ (57 : ℕ) = 7 ∨ (57 : ℕ) = 57 :=
+  Moore57.Papers.Higman1964.theorem1_moore57_valence
 
 end Moore57.Papers.Aschbacher1971
