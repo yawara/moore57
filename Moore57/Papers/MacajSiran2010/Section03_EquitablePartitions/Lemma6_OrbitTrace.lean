@@ -185,6 +185,81 @@ theorem lem6_inducedTrace_sq_lt_card_of_card_eq_two
   · rw [if_pos h]; norm_num
   · rw [if_neg h]; norm_num
 
+/-- **Lemma 6 (4) corner case: `|O| = 3`.** [done]
+
+For three distinct vertices `{a, b, c}`, the induced subgraph in
+Moore57 has at most 2 edges (no triangle), so the induced degree
+sum is at most 4, giving `Tr(O) ≤ 4/3` and `Tr(O)² ≤ 16/9 < 3`. -/
+theorem lem6_inducedTrace_sq_lt_card_of_card_eq_three
+    (hΓ : IsMoore57 Γ) {O : Finset V} (hO : O.card = 3) :
+    (inducedTrace Γ O) ^ 2 < (O.card : ℚ) := by
+  classical
+  obtain ⟨a, b, c, hab, hac, hbc, rfl⟩ := Finset.card_eq_three.mp hO
+  have hcard : ({a, b, c} : Finset V).card = 3 := by
+    rw [Finset.card_insert_of_notMem (by simp [hab, hac]),
+        Finset.card_insert_of_notMem (by simp [hbc]),
+        Finset.card_singleton]
+  -- Compute each filter card via Finset.card_filter.
+  have hf : ∀ (x : V), (({a, b, c} : Finset V).filter (Γ.Adj x)).card =
+        (if Γ.Adj x a then 1 else 0) +
+        ((if Γ.Adj x b then 1 else 0) +
+         (if Γ.Adj x c then 1 else 0)) := by
+    intro x
+    rw [Finset.card_filter,
+        show ({a, b, c} : Finset V) = insert a (insert b {c}) from rfl,
+        Finset.sum_insert (by simp [hab, hac]),
+        Finset.sum_insert (by simp [hbc]),
+        Finset.sum_singleton]
+  -- inducedDegreeSum = (filter a) + (filter b) + (filter c)
+  -- = [aa=0] + [ab] + [ac] + [ba] + [bb=0] + [bc] + [ca] + [cb] + [cc=0]
+  -- = 2 ([ab] + [ac] + [bc])  by symmetry
+  have h_sum_le : inducedDegreeSum Γ ({a, b, c} : Finset V) ≤ 4 := by
+    unfold inducedDegreeSum
+    rw [show ({a, b, c} : Finset V) = insert a (insert b {c}) from rfl]
+    rw [Finset.sum_insert (by simp [hab, hac])]
+    rw [Finset.sum_insert (by simp [hbc])]
+    rw [Finset.sum_singleton]
+    rw [show ({a, b, c} : Finset V) = insert a (insert b {c}) from rfl] at hf
+    rw [hf a, hf b, hf c]
+    have e_aa : (if Γ.Adj a a then (1 : ℕ) else 0) = 0 := if_neg (Γ.irrefl)
+    have e_bb : (if Γ.Adj b b then (1 : ℕ) else 0) = 0 := if_neg (Γ.irrefl)
+    have e_cc : (if Γ.Adj c c then (1 : ℕ) else 0) = 0 := if_neg (Γ.irrefl)
+    have e_ba : (if Γ.Adj b a then (1 : ℕ) else 0) =
+        (if Γ.Adj a b then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj a b
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    have e_ca : (if Γ.Adj c a then (1 : ℕ) else 0) =
+        (if Γ.Adj a c then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj a c
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    have e_cb : (if Γ.Adj c b then (1 : ℕ) else 0) =
+        (if Γ.Adj b c then (1 : ℕ) else 0) := by
+      by_cases h : Γ.Adj b c
+      · rw [if_pos h, if_pos h.symm]
+      · rw [if_neg h, if_neg (fun hh => h hh.symm)]
+    rw [e_aa, e_bb, e_cc, e_ba, e_ca, e_cb]
+    -- Goal: now 2·([ab] + [ac] + [bc]) ≤ 4
+    -- By no-triangle, NOT (Adj a b ∧ Adj a c ∧ Adj b c)
+    have h_no_3 : ¬ (Γ.Adj a b ∧ Γ.Adj a c ∧ Γ.Adj b c) := fun ⟨h1, h2, h3⟩ =>
+      hΓ.no_triangle h1 h3 h2.symm
+    by_cases h1 : Γ.Adj a b <;>
+    by_cases h2 : Γ.Adj a c <;>
+    by_cases h3 : Γ.Adj b c <;>
+    simp_all
+  -- Now derive Tr² < 3 from inducedDegreeSum ≤ 4.
+  have h_sum_nn : 0 ≤ (inducedDegreeSum Γ ({a, b, c} : Finset V) : ℚ) :=
+    Nat.cast_nonneg _
+  have h_sum_q : (inducedDegreeSum Γ ({a, b, c} : Finset V) : ℚ) ≤ 4 := by
+    exact_mod_cast h_sum_le
+  rw [show (({a, b, c} : Finset V).card : ℚ) = 3 by rw [hcard]; norm_num]
+  unfold inducedTrace
+  rw [show (({a, b, c} : Finset V).card : ℚ) = 3 by rw [hcard]; norm_num]
+  set s := (inducedDegreeSum Γ ({a, b, c} : Finset V) : ℚ)
+  -- Goal: (s / 3)² < 3. With 0 ≤ s ≤ 4: s² ≤ 16 < 27, so (s/3)² = s²/9 ≤ 16/9 < 3.
+  nlinarith [sq_nonneg s, sq_nonneg (s - 4), h_sum_nn, h_sum_q]
+
 /-- **Lemma 6 (4) (proper signature: `Tr(O)² < |O|` for `|O| ≥ 64`).**
 
 For any nonempty `O ⊆ V` of cardinality at least 64,
