@@ -42,6 +42,38 @@ theorem thm4_trace_orbit_arithmetic_contradiction (l a k : ℕ)
     False := by
   omega
 
+/-- **Step 4-5 sharper arithmetic contradiction (ℤ form, parity-free).**
+[done]
+
+Drops the parity input: Lemma 8's mod-15 congruence alone, combined
+with Lemma 9's trace-a₁ link and the orbit-splitting, suffices to
+derive a contradiction.  This isolates the *minimal* set of arithmetic
+constraints the paper actually uses:
+
+* `h_lem8` : Lemma 8 with `k = 48` orbits: `Tr(X) ≡ 11 (mod 15)`.
+* `h_lem9` : Lemma 9 (2) + conjugation symmetry: `81·Tr(X) = 18·a₁(x)`.
+* `h_orbit` : Common Z₉ × Z₃ orbit splitting: `a₁(x) = 27·k`.
+
+The proof reduces (via `h_lem9` + `h_orbit`) to `Tr(X) = 6·k`, then
+checks via the mod-15 congruence that `6·k ≡ 11 (mod 15)` has no
+solution (since `6·k mod 15 ∈ {0, 3, 6, 9, 12}`). -/
+theorem thm4_trace_orbit_arithmetic_min_contradiction (Tr a k : ℤ)
+    (h_lem8 : (Tr - 11) % 15 = 0)
+    (h_lem9 : 81 * Tr = 18 * a)
+    (h_orbit : a = 27 * k) :
+    False := by
+  omega
+
+/-- **Lemma 8 + parity ⇒ `Tr = 26 + 30·l` pin-down.** [done]
+
+Combining Lemma 8 (mod-15 congruence with `k = 48`) and Lemma 6 (2)
+parity (`|X| = 81` odd ⇒ `Tr(X)` even) via CRT pins `Tr(X)` to the
+form `26 + 30·l` that appears in the §7 Theorem 4 proof. -/
+theorem trace_pin_down_via_lem8_and_parity (Tr : ℤ)
+    (h_lem8 : (Tr - 11) % 15 = 0) (h_parity : Tr % 2 = 0) :
+    (Tr - 26) % 30 = 0 := by
+  omega
+
 /-- **Theorem 4 conditional form: contradiction from the three §7
 geometric inputs.** [done given hypotheses]
 
