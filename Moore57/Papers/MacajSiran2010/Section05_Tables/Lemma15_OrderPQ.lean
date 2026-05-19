@@ -40,6 +40,15 @@ theorem lem15_no_order_22 :
     ¬ Nonempty (Order22ActsOnMoore57 V Γ) :=
   no_Order22_acts_on_Moore57
 
+/-- **Lemma 15 starred row `pq = 35` arithmetic contradiction.** [done]
+
+For the starred row `pq = 35, a₀(x) = 1, a₀(x⁵) = 51, a₀(x⁷) = 50`,
+the character system forces `Tr(x) = 206`, while the orbit-trace
+upper bound gives `Tr(x) ≤ 186`.  These are mutually inconsistent. -/
+theorem lem15_starred_row_pq35_trace_above_bound
+    (Tr : ℤ) (h_eq : Tr = 206) (h_bd : Tr ≤ 186) : False := by
+  omega
+
 /-- **Lemma 15 (no order-65 automorphism).** [deferred-heavy] -/
 theorem lem15_no_order_65 (hΓ : IsMoore57 Γ) : True := by trivial
 
