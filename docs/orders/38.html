@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 38 = 2 · 19</h1>
-    <p class="sub status"><span class="badge done">2 / 2 groups excluded</span> <span class="muted">unconditional Lean proof</span></p>
+    <p class="sub status"><span class="badge done">1 / 2 paper-excluded</span> <span class="badge done">2 / 2 Lean-excluded</span> <span class="muted">unconditional Lean proof</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -39,9 +39,17 @@
     <li>Lemma 15 has no entry for <code>pq = 38</code>.</li>
   </ul>
   <p>
-    <strong>The paper does not exclude group order 38</strong>
-    (or either of its two groups <code>D₁₉</code> / <code>C₃₈</code>).
-    The complete exclusion is original to this project.
+    However, <strong>Theorem 2</strong> (Makhnev–Paduchikh) requires
+    <code>G = ⟨Y, t⟩ × X</code> with
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code>; if
+    <code>X ≠ 1</code>, then <code>Fix(X) ∈ {star, pentagon, Petersen,
+    HS}</code>. For <code>ℤ₃₈ = ℤ₂ × ℤ₁₉</code>, the only decomposition
+    has <code>Y = 1, X = ℤ₁₉</code> — but <code>Fix(ℤ₁₉) = singleton</code>
+    (Lemma 4(2)), which is NOT in Theorem 2(b)'s list. So
+    <strong><code>ℤ₃₈</code> is paper-excluded</strong>. The remaining
+    case <strong><code>D₁₉</code></strong> (with <code>Y = ℤ₁₉</code>
+    inverted, <code>|Y| = 19 ∣ 57 ✓</code>) is the genuine paper-survivor,
+    and is closed only by the Lean proof of this project.
   </p>
 </section>
 
@@ -107,19 +115,21 @@ theorem Moore57_no_order38_structure
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
       <tr>
         <td><code>(38, 1)</code></td>
         <td><code>D₁₉</code></td>
-        <td>Dihedral group of order 38.</td>
-        <td><span class="badge done">excluded</span></td>
+        <td>Dihedral; <code>ℤ₁₉</code> inverted by <code>t</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge done">excluded</span> <span class="muted">(original)</span></td>
       </tr>
       <tr>
         <td><code>(38, 2)</code></td>
         <td><code>ℤ₃₈ = C₃₈</code></td>
-        <td>Cyclic group of order 38.</td>
+        <td>Cyclic; <code>t</code> centralizes <code>ℤ₁₉</code>.</td>
+        <td><span class="badge done">excluded</span> <span class="muted">(Thm 2)</span></td>
         <td><span class="badge done">excluded</span></td>
       </tr>
     </tbody>

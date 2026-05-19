@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 22 = 2 · 11</h1>
-    <p class="sub status"><span class="badge done">2 / 2 groups excluded</span> <span class="muted">unconditional Lean proof</span></p>
+    <p class="sub status"><span class="badge done">1 / 2 paper-excluded</span> <span class="badge done">2 / 2 Lean-excluded</span> <span class="muted">unconditional Lean proof</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -39,8 +39,15 @@
         <strong>not a contradiction</strong>.</li>
   </ul>
   <p>
-    <strong>The paper does not exclude group order 22.</strong>
-    The full exclusion is original to this project.
+    However, <strong>Theorem 2</strong> (Makhnev–Paduchikh) further
+    requires the structural decomposition <code>G = ⟨Y, t⟩ × X</code>
+    with <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code>. For
+    <code>D₁₁ = ℤ₁₁ ⋊ ℤ₂</code>, the only inverted subgroup is
+    <code>ℤ₁₁</code> itself (<code>|Y| = 11 ∉</code> allowed set), and
+    no other decomposition works — so <strong><code>D₁₁</code> is
+    paper-excluded</strong>. The remaining case
+    <strong><code>ℤ₂₂</code></strong> is paper-allowed (<code>|Y| = 1,
+    X = ℤ₁₁, Fix(X) = pentagon</code>) and is the genuine paper-survivor.
   </p>
 </section>
 
@@ -96,20 +103,22 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
       <tr>
         <td><code>(22, 1)</code></td>
         <td><code>D₁₁</code></td>
-        <td>Dihedral group of order 22 (symmetries of an 11-gon).</td>
+        <td>Dihedral group of order 22; <code>ℤ₁₁</code> inverted by <code>t</code>.</td>
+        <td><span class="badge done">excluded</span> <span class="muted">(Thm 2: |Y|=11)</span></td>
         <td><span class="badge done">excluded</span></td>
       </tr>
       <tr>
         <td><code>(22, 2)</code></td>
         <td><code>ℤ₂₂</code></td>
-        <td>Cyclic group of order 22.</td>
-        <td><span class="badge done">excluded</span></td>
+        <td>Cyclic group of order 22; <code>t</code> centralizes <code>ℤ₁₁</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge done">excluded</span> <span class="muted">(original)</span></td>
       </tr>
     </tbody>
   </table>

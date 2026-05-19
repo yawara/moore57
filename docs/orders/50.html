@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 50 = 2 · 5²</h1>
-    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span></p>
+    <p class="sub status"><span class="badge done">4 / 5 paper-excluded</span> <span class="badge open">0 / 5 Lean-excluded</span> <span class="muted">even candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -28,15 +28,25 @@
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Theorem 7 lists 50 as a surviving even-order maximum
-    (<code>p = 5</code>). Lemma 13 (<code>p² = 25</code>) gives detailed
-    constraints on order-25 elements; Lemma 2 fixes involution
-    parameters. Theorem 5 limits the Sylow-5 subgroup to two abelian
-    types.
+    Theorem 7 lists 50 as a surviving even-order maximum. But
+    <strong>Theorem 2</strong> (Makhnev–Paduchikh) combined with
+    <strong>Proposition 3</strong> excludes most groups of this order:
   </p>
-  <p>
-    <strong>The paper does not exclude group order 50.</strong>
-  </p>
+  <ul>
+    <li>Theorem 2 requires <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code>,
+        so <code>|Y| = 25</code> is impossible — this excludes
+        <code>D₂₅</code> and the full-inversion
+        <code>(ℤ₅)² ⋊ ℤ₂</code>.</li>
+    <li>For <code>|Y| = 1</code> the remaining odd part has
+        <code>|X| = 25</code>; Theorem 2(b) requires
+        <code>Fix(X) ∈ {star, pentagon, Petersen, HS}</code>. Pentagon
+        needs <code>|X| ∣ 55</code> (fails) and HS forces
+        <code>|X| ≤ 5</code> (Proposition 3) — both impossible. So
+        <code>ℤ₅₀</code> and <code>ℤ₂ × (ℤ₅)²</code> are paper-excluded.</li>
+    <li>The only allowed decomposition is <code>|Y| = 5, |X| = 5</code>,
+        giving <strong><code>D₅ × ℤ₅</code></strong> as the unique
+        paper-allowed group at this order.</li>
+  </ul>
 </section>
 
 <section>
@@ -63,17 +73,21 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Theorem-2 obstruction</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(50, 1)</code></td><td><code>D₂₅</code></td>             <td>Dihedral of order 50.</td>                              <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(50, 2)</code></td><td><code>ℤ₅₀</code></td>             <td>Cyclic.</td>                                            <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(50, 3)</code></td><td><code>(ℤ₅ × ℤ₅) ⋊ ℤ₂</code></td> <td>Non-trivial involution on <code>ℤ₅²</code>.</td>        <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(50, 4)</code></td><td><code>ℤ₅ × D₅</code></td>        <td>Direct product.</td>                                    <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(50, 5)</code></td><td><code>ℤ₅ × ℤ₁₀</code></td>       <td>Abelian, non-cyclic.</td>                                <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 1)</code></td><td><code>D₂₅</code></td>             <td>Dihedral; needs <code>|Y| = 25</code>.</td>                                    <td><span class="badge done">excluded</span> <span class="muted">(Thm 2)</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 2)</code></td><td><code>ℤ₅₀ = ℤ₂ × ℤ₂₅</code></td>   <td><code>X = ℤ₂₅</code>; no allowed <code>Fix(X)</code>.</td>                    <td><span class="badge done">excluded</span> <span class="muted">(Thm 2 + Prop 3)</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 3)</code></td><td><code>(ℤ₅)² ⋊ ℤ₂</code> <span class="muted">(t inverts all)</span></td> <td>Needs <code>|Y| = 25</code>.</td> <td><span class="badge done">excluded</span> <span class="muted">(Thm 2)</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 4)</code></td><td><code>D₅ × ℤ₅</code></td>          <td><code>|Y| = 5, |X| = 5</code>, Fix(X) ∈ {pentagon, HS}.</td>                  <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(50, 5)</code></td><td><code>ℤ₂ × (ℤ₅)²</code></td>       <td><code>X = (ℤ₅)²</code>; no allowed <code>Fix(X)</code>.</td>                  <td><span class="badge done">excluded</span> <span class="muted">(Thm 2 + Prop 3)</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>
+  <p class="muted" style="font-size:0.85rem">
+    GAP SmallGroup IDs are illustrative; paper-status is determined by
+    isomorphism class.
+  </p>
 </section>
 
 <footer class="site">

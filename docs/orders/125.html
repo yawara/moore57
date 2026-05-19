@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 125 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 125 = 5³</h1>
+    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span> <span class="muted">odd candidate</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Why a candidate</h2>
+  <p>
+    Order 125 = 5³ is a candidate because it divides the following Theorem 6 maxima: <a href="375.html">375</a>.
+  </p>
+</section>
+
+<section>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>Lemma 18 / Theorem 5: a 5-group of order 125 has Fix(X) either a pentagon or empty. Propositions 4–5 exclude specific cases.</p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(125, 1)</code></td><td><code>ℤ₁₂₅</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 2)</code></td><td><code>ℤ₂₅ × ℤ₅</code></td><td>Abelian, rank 2.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 3)</code></td><td><code>(non-abelian)</code></td><td>Heisenberg (exponent 5).</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 4)</code></td><td><code>(non-abelian)</code></td><td>Exponent 25.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 5)</code></td><td><code>(ℤ₅)³</code></td><td>Elementary abelian.</td><td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+</section>
+
+<section>
+  <h2>Project status</h2>
+  <p>
+    <span class="badge open">open</span> — no natural-language proof or Lean
+    formalization yet. See <a href="../contribute.html">Contribute</a> for
+    pointers if you want to attack this case.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

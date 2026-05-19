@@ -3,6 +3,14 @@
    We only override a few variables and add components Pico does not
    provide (status badges and the order tile grid). */
 
+/* Cap the container width on large screens so prose stays readable.
+   Pico v2 hardcodes .container max-width per breakpoint up to 1450px at
+   xl; for technical text that is too long a line. Cap at 1024px so the
+   orders grid still breathes while body copy stays near 70–80ch. */
+@media (min-width: 1024px) { main.container { max-width: 1024px; } }
+@media (min-width: 1280px) { main.container { max-width: 1024px; } }
+@media (min-width: 1536px) { main.container { max-width: 1024px; } }
+
 :root {
   /* Local palette — Pico v2's default bundle does not expose
      --pico-color-jade-500 etc., so we use literal values. */
@@ -102,7 +110,19 @@
   color: var(--pico-muted-color);
   font-family: var(--pico-font-family-monospace);
 }
+.order-card .card-meta {
+  font-size: 0.72rem;
+  color: var(--pico-muted-color);
+  margin-top: 0.15rem;
+}
 .order-card .badge { margin-top: 0.4rem; align-self: flex-start; }
+
+.parity-heading {
+  margin: 1.4rem 0 0.5rem;
+  font-size: 1.05rem;
+  letter-spacing: -0.005em;
+}
+.parity-heading .muted { font-weight: 400; font-size: 0.9rem; }
 
 /* Summary stat row ----------------------------------------------------- */
 

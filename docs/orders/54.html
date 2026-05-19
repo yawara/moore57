@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 54 = 2 · 3³</h1>
-    <p class="sub status"><span class="badge open">0 / 15 groups excluded</span></p>
+    <p class="sub status"><span class="badge done">8 / 15 paper-excluded</span> <span class="badge open">0 / 15 Lean-excluded</span> <span class="muted">even candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -28,15 +28,31 @@
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Theorem 7 lists 54 as a surviving even-order maximum
-    (<code>p = 3</code>). Theorem 4 gives the upper bound
-    <code>|3-part of G| ≤ 27</code>; Corollary 2 pins
-    <code>SmallGroup(81, 9)</code> if the smallest orbit is small
-    enough. Lemma 2 fixes the involution parameters
-    (<code>a₀ = 56, a₁ = 112</code>).
+    Theorem 7 lists 54 as a surviving even-order maximum. But
+    <strong>Theorem 2</strong> (Makhnev–Paduchikh) restricts the
+    structure to <code>G = ⟨Y, t⟩ × X</code> with
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code>, so
+    <code>|Y| ∈ {1, 3}</code> at this order (since
+    <code>|Y| ∣ 27</code> and <code>|Y|</code> odd):
   </p>
+  <ul>
+    <li><code>|Y| = 1, |X| = 27</code>:
+        <code>G = ℤ₂ × X</code> with <code>X</code> any of the 5 groups
+        of order 27 (Theorem 4 caps 3-groups at order 27; Lemma 17
+        forces <code>Fix(X) = Petersen</code>, which fits
+        Theorem 2(b)). <strong>5 groups</strong> paper-allowed.</li>
+    <li><code>|Y| = 3, |X| = 9</code>:
+        <code>G = S₃ × X</code> with <code>X</code> one of
+        <code>ℤ₉</code> or <code>(ℤ₃)²</code>. <strong>2 groups</strong>
+        paper-allowed.</li>
+    <li>Any group needing <code>|Y| ∈ {9, 27}</code> in its only
+        decomposition (i.e. <code>D₂₇</code> and the various
+        generalized-dihedral / semidirect structures inverting all of
+        a 9- or 27-subgroup) is <strong>paper-excluded</strong>.</li>
+  </ul>
   <p>
-    <strong>The paper does not exclude group order 54.</strong>
+    Combined: <strong>7 of the 15 groups</strong> of order 54 are
+    paper-allowed, <strong>8 are paper-excluded</strong>.
   </p>
 </section>
 
@@ -68,12 +84,21 @@
   <figure>
   <table>
     <thead>
-      <tr><th>Family</th><th>Examples</th><th>Lean status</th></tr>
+      <tr><th>Family</th><th>Examples</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td>Cyclic / abelian</td><td><code>ℤ₅₄</code>, <code>ℤ₃ × ℤ₁₈</code>, <code>ℤ₃² × ℤ₆</code>, <code>ℤ₃³ × ℤ₂</code></td><td><span class="badge open">open</span></td></tr>
-      <tr><td>Dihedral / generalised dihedral</td><td><code>D₂₇</code>, <code>S₃ × ℤ₃²</code>, <code>(ℤ₃²) ⋊ ℤ₆</code></td><td><span class="badge open">open</span></td></tr>
-      <tr><td>Non-trivial extensions of 3-groups by ℤ₂</td><td>various <code>P ⋊ ℤ₂</code> with <code>P</code> one of the 5 groups of order 27</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>ℤ₂ × X</code>, X of order 27</td>
+          <td><code>ℤ₅₄</code>, <code>ℤ₂ × ℤ₉ × ℤ₃</code>, <code>ℤ₂ × (ℤ₃)³</code>, <code>ℤ₂ ×</code> Heisenberg(3), <code>ℤ₂ × (ℤ₉ ⋊ ℤ₃)</code></td>
+          <td><span class="badge open">allowed</span> <span class="muted">(5 groups)</span></td>
+          <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>S₃ × X</code>, X of order 9</td>
+          <td><code>S₃ × ℤ₉</code>, <code>S₃ × (ℤ₃)²</code></td>
+          <td><span class="badge open">allowed</span> <span class="muted">(2 groups)</span></td>
+          <td><span class="badge open">open</span></td></tr>
+      <tr><td>Generalized dihedral / |Y|=9 or 27</td>
+          <td><code>D₂₇</code>, <code>(ℤ₃)³ ⋊ ℤ₂</code> (full inversion), <code>(ℤ₉ × ℤ₃) ⋊ ℤ₂</code>, ...</td>
+          <td><span class="badge done">excluded</span> <span class="muted">(Thm 2, 8 groups)</span></td>
+          <td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

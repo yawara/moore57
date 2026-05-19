@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 147 = 3 · 7²</h1>
-    <p class="sub status"><span class="badge open">0 / 6 groups excluded</span></p>
+    <p class="sub status"><span class="badge done">2 / 6 paper-excluded</span> <span class="badge open">0 / 6 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -28,13 +28,18 @@
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
   <p>
-    Theorem 6 lists 147 as a surviving odd-order maximum. The
-    <code>p &gt; 5</code> bounds (Lemma 19 / Theorem 5) apply to the
-    Sylow-7 of order 49; Lemma 12 row <code>p = 7</code> gives several
-    <code>(a₀, a₁, χ₁)</code> shapes.
+    Theorem 6 lists 147 as a surviving odd-order maximum.
+    <strong>Lemma 19 case (5)</strong> forces the Sylow-7 (order 49)
+    to be <code>ℤ₇ × ℤ₇</code>, not <code>ℤ₄₉</code>. The two groups
+    of order 147 whose 7-Sylow is <code>ℤ₄₉</code> are therefore
+    paper-excluded: <code>ℤ₁₄₇</code> (cyclic) and
+    <code>ℤ₄₉ ⋊ ℤ₃</code>.
   </p>
   <p>
-    <strong>The paper does not exclude group order 147.</strong>
+    The remaining 4 groups (with 7-Sylow <code>ℤ₇ × ℤ₇</code>) are
+    constrained but not excluded by the paper: Lemma 12 row
+    <code>p = 7</code> gives several <code>(a₀, a₁, χ₁)</code> shapes,
+    and Lemma 13 / 14 add further trace constraints.
   </p>
 </section>
 
@@ -59,15 +64,15 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>7-Sylow</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(147, 1)</code></td><td><code>ℤ₄₉ ⋊ ℤ₃</code></td>          <td>Non-trivial action; exists because <code>3 ∣ 49 − 1 = 48</code>.</td>           <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(147, 2)</code></td><td><code>ℤ₁₄₇</code></td>              <td>Cyclic.</td>                            <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(147, 3)</code></td><td><code>(ℤ₇ × ℤ₇) ⋊ ℤ₃</code></td>    <td>ℤ₃ acts diagonally on <code>ℤ₇²</code>.</td>                <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(147, 4)</code></td><td><code>(ℤ₇ × ℤ₇) ⋊ ℤ₃</code></td>    <td>Different (non-conjugate) ℤ₃-action.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(147, 5)</code></td><td><code>ℤ₇ × (ℤ₇ ⋊ ℤ₃)</code></td>    <td>Direct product.</td>                     <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(147, 6)</code></td><td><code>ℤ₇ × ℤ₂₁</code></td>          <td>Abelian, non-cyclic.</td>                <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 1)</code></td><td><code>ℤ₄₉ ⋊ ℤ₃</code></td>          <td><code>ℤ₄₉</code></td><td><span class="badge done">excluded</span> <span class="muted">(Lemma 19)</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 2)</code></td><td><code>ℤ₁₄₇ = ℤ₃ × ℤ₄₉</code></td>    <td><code>ℤ₄₉</code></td><td><span class="badge done">excluded</span> <span class="muted">(Lemma 19)</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 3)</code></td><td><code>(ℤ₇ × ℤ₇) ⋊ ℤ₃</code></td>    <td><code>ℤ₇²</code></td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 4)</code></td><td><code>(ℤ₇ × ℤ₇) ⋊ ℤ₃</code></td>    <td><code>ℤ₇²</code></td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 5)</code></td><td><code>ℤ₇ × (ℤ₇ ⋊ ℤ₃)</code></td>    <td><code>ℤ₇²</code></td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(147, 6)</code></td><td><code>ℤ₃ × ℤ₇ × ℤ₇</code></td>        <td><code>ℤ₇²</code></td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

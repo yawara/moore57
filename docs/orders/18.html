@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order 18 — Moore (57, 2) tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main class="container">
+
+<header class="site">
+  <hgroup>
+    <h1>Order 18 = 2 · 3²</h1>
+    <p class="sub status"><span class="badge done">2 / 5 paper-excluded</span> <span class="badge open">0 / 5 Lean-excluded</span> <span class="muted">even candidate</span></p>
+  </hgroup>
+  <nav>
+    <ul>
+      <li><a href="../index.html">← Top</a></li>
+      <li><a href="../about.html">About</a></li>
+      <li><a href="../contribute.html">Contribute</a></li>
+      <li><a href="https://github.com/yawara/moore57">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section>
+  <h2>Why a candidate</h2>
+  <p>
+    Order 18 = 2 · 3² is a candidate because it divides the following Theorem 7 maxima: <a href="54.html">54</a>.
+  </p>
+</section>
+
+<section>
+  <h2>From the paper (Macaj–Siran 2010)</h2>
+  <p>
+    <strong>Theorem 2</strong> (Makhnev–Paduchikh) restricts any
+    even-order <code>G</code> to <code>G = ⟨Y, t⟩ × X</code> with
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code>. Combined with Lemma 17
+    (3-group fixes Petersen or singleton), the two groups of order 18
+    whose only allowed decomposition would need <code>|Y| = 9</code>
+    (i.e. all of the 3²-subgroup inverted by <code>t</code>) are
+    paper-excluded: <code>D₉</code> and the generalized-dihedral
+    <code>(ℤ₃)² ⋊ ℤ₂</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Group classification</h2>
+  <figure>
+  <table>
+    <thead>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>(18, 1)</code></td><td><code>D₉</code></td><td>Dihedral of order 18; <code>ℤ₉</code> inverted by <code>t</code>.</td><td><span class="badge done">excluded</span> <span class="muted">(Thm 2: |Y|=9)</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(18, 2)</code></td><td><code>ℤ₁₈</code></td><td>Cyclic; decomposes as <code>⟨t⟩ × ℤ₉</code> with <code>|Y|=1, |X|=9</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(18, 3)</code></td><td><code>(ℤ₃)² ⋊ ℤ₂</code></td><td>Generalized dihedral; <code>t</code> inverts the whole <code>(ℤ₃)²</code>.</td><td><span class="badge done">excluded</span> <span class="muted">(Thm 2: |Y|=9)</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(18, 4)</code></td><td><code>S₃ × ℤ₃</code></td><td>Direct product; decomposes as <code>⟨ℤ₃, t⟩ × ℤ₃</code> with <code>|Y|=3, |X|=3</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(18, 5)</code></td><td><code>ℤ₆ × ℤ₃ ≅ ℤ₂ × (ℤ₃)²</code></td><td>Abelian; decomposes as <code>⟨t⟩ × (ℤ₃)²</code> with <code>|Y|=1, |X|=9</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+  <p class="muted" style="font-size:0.85rem">
+    SmallGroup IDs are illustrative — exact GAP IDs may differ; the
+    paper-status is determined by isomorphism class.
+  </p>
+</section>
+
+<section>
+  <h2>Project status</h2>
+  <p>
+    <span class="badge open">open</span> — no natural-language proof or Lean
+    formalization yet. See <a href="../contribute.html">Contribute</a> for
+    pointers if you want to attack this case.
+  </p>
+</section>
+
+<footer class="site">
+  Source &amp; Lean proofs: <a href="https://github.com/yawara/moore57">github.com/yawara/moore57</a>.
+</footer>
+
+</main>
+</body>
+</html>

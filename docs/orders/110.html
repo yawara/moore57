@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 110 = 2 · 5 · 11</h1>
-    <p class="sub status"><span class="badge done">6 / 6 groups excluded</span> <span class="muted">via order-22 Sylow reduction</span></p>
+    <p class="sub status"><span class="badge done">4 / 6 paper-excluded</span> <span class="badge done">6 / 6 Lean-excluded</span> <span class="muted">via order-22 Sylow reduction</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -41,12 +41,26 @@
     </p>
   </blockquote>
   <p>
-    But this excludes an <strong>element</strong> of order 110 — not a
-    <strong>group</strong> of order 110 (which can well exist without
-    any element of order 110, e.g. <code>D₅₅</code>).
-    <strong>The paper does not exclude group order 110</strong>; the
-    full exclusion is original to this project, as a corollary of the
-    order-22 result via Sylow + Cauchy.
+    This excludes only an <strong>element</strong> of order 110 — i.e.
+    <code>ℤ₁₁₀</code> (cyclic). But <strong>Theorem 2</strong>
+    (Makhnev–Paduchikh) further constrains the structure:
+    <code>G = ⟨Y, t⟩ × X</code> with
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code>. This excludes three
+    more groups at order 110:
+  </p>
+  <ul>
+    <li><code>D₅₅</code> needs <code>|Y| = 55</code> (or 11) — both
+        disallowed.</li>
+    <li><code>ℤ₅ × D₁₁</code> needs <code>|Y| = 11</code> — disallowed.</li>
+    <li>The Frobenius <code>F₁₁₀ = ℤ₁₁ ⋊ ℤ₁₀</code> has no allowed
+        decomposition (the involution in <code>ℤ₁₀</code> inverts
+        <code>ℤ₁₁</code>, forcing <code>|Y| = 11</code>).</li>
+  </ul>
+  <p>
+    So the paper already excludes <strong>4 of the 6 groups</strong>.
+    The remaining two (<code>D₅ × ℤ₁₁</code> and
+    <code>ℤ₂ × (ℤ₁₁ ⋊ ℤ₅)</code>) are paper-allowed and are closed only
+    by this project via the order-22 Sylow + Cauchy reduction.
   </p>
 </section>
 
@@ -91,20 +105,40 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(110, 1)</code></td><td><code>D₅₅</code></td>      <td>Dihedral of order 110.</td>            <td><span class="badge done">excluded</span></td></tr>
-      <tr><td><code>(110, 2)</code></td><td><code>ℤ₅ × D₁₁</code></td> <td>Direct product.</td>                  <td><span class="badge done">excluded</span></td></tr>
-      <tr><td><code>(110, 3)</code></td><td><code>ℤ₁₁ × D₅</code></td> <td>Direct product.</td>                  <td><span class="badge done">excluded</span></td></tr>
-      <tr><td><code>(110, 4)</code></td><td><code>ℤ₁₁₀</code></td>     <td>Cyclic.</td>                          <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>ℤ₁₁₀</code></td>
+          <td>Cyclic; has an element of order 110.</td>
+          <td><span class="badge done">excluded</span> <span class="muted">(§9, no order-110 element)</span></td>
+          <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>D₅₅</code></td>
+          <td>Dihedral; <code>ℤ₅₅</code> inverted by <code>t</code>.</td>
+          <td><span class="badge done">excluded</span> <span class="muted">(Thm 2: |Y|=55)</span></td>
+          <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>ℤ₅ × D₁₁</code></td>
+          <td>Direct product; involution inverts <code>ℤ₁₁</code> only.</td>
+          <td><span class="badge done">excluded</span> <span class="muted">(Thm 2: |Y|=11)</span></td>
+          <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>F₁₁₀ = ℤ₁₁ ⋊ ℤ₁₀</code></td>
+          <td>Frobenius; <code>ℤ₁₀</code> acts faithfully on <code>ℤ₁₁</code>.</td>
+          <td><span class="badge done">excluded</span> <span class="muted">(Thm 2)</span></td>
+          <td><span class="badge done">excluded</span></td></tr>
+      <tr><td><code>D₅ × ℤ₁₁</code></td>
+          <td>Involution inverts <code>ℤ₅</code> only; <code>ℤ₁₁</code> centralized. <code>Y=ℤ₅, X=ℤ₁₁, Fix(X)=pentagon</code>.</td>
+          <td><span class="badge open">allowed</span></td>
+          <td><span class="badge done">excluded</span> <span class="muted">(original)</span></td></tr>
+      <tr><td><code>ℤ₂ × (ℤ₁₁ ⋊ ℤ₅)</code></td>
+          <td>Involution centralizes the Frobenius <code>F₅₅</code>. <code>Y=1, X=F₅₅, Fix(X)=pentagon</code>.</td>
+          <td><span class="badge open">allowed</span></td>
+          <td><span class="badge done">excluded</span> <span class="muted">(original)</span></td></tr>
     </tbody>
   </table>
   </figure>
   <p class="muted">
-    GAP's SmallGroup library lists six entries for order 110; the four
-    above are the canonical metabelian shapes that survive the standard
-    Sylow analysis (<code>n₁₁ = 1</code>, <code>n₅ ∈ {1, 11}</code>).
+    All 6 groups of order 110 (Sylow analysis: <code>n₁₁ = 1</code>;
+    <code>n₅ ∈ {1, 11}</code>) are Lean-excluded uniformly via the
+    order-22 Sylow + Cauchy reduction.
   </p>
 </section>
 

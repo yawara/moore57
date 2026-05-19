@@ -35,17 +35,38 @@
   <p>
     Whether a Moore graph <code>Γ</code> of degree 57 and diameter 2
     exists is a long-standing open question. If it does, its automorphism
-    group <code>G = Aut(Γ)</code> has a finite order, which by results of
-    Aschbacher, Higman, Makhnev–Paduchikh, and Macaj–Siran (2010) divides
-    one of 13 specific maxima.
+    group <code>G = Aut(Γ)</code> has a finite order. By results of
+    Aschbacher, Higman, Makhnev–Paduchikh, and Macaj–Siran (2010),
+    <code>|G|</code> divides one of <strong>13 maxima</strong> — and
+    therefore takes one of <strong>35 candidate values</strong> (the
+    union of divisors of those 13 maxima). For each candidate order
+    <code>d</code> there are <code>a(d)</code> finite groups up to
+    isomorphism (OEIS
+    <a href="https://oeis.org/A000001">A000001</a>), giving
+    <strong>103 candidate groups</strong> in total.
   </p>
   <p>
-    Three of these candidates (<strong>22, 38, 110</strong>) have now been
-    completely ruled out — and <strong>that exclusion is original to this
-    project</strong>. The published Macaj–Siran 2010 paper lists 22 and 38
-    only as surviving candidates with partial constraints (Lemma 12, 13,
-    15), and only rules out <em>elements</em> of order 110 (not the group
-    itself). This site tracks two distinct layers of work:
+    Within the 35-order candidate space, Macaj–Siran (2010) — combined
+    with the cited Makhnev–Paduchikh (2001) Theorem — already excludes
+    <strong>23 specific groups</strong> at the group level (not just
+    constrains orbits): notably <em>cyclic</em> Z₄₉ at order 49
+    (Lemma 19); <code>D₁₁</code>, <code>Z₃₈</code>, <code>Z₁₁₀</code>
+    and many large-<code>|Y|</code> dihedral-like groups at orders 18,
+    22, 38, 50, 54, 110, 147 via Theorem 2's structural restriction
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code>
+    and §9's "no element of order 110" remark. That leaves
+    <strong>80 paper-allowed candidate groups</strong>.
+  </p>
+  <p>
+    This project closes three full orders — <strong>22, 38, 110</strong>
+    — at the <em>group</em> level (10 of the 103 groups), and the
+    <strong>4 of those 10</strong> that the paper had <em>not</em>
+    excluded are the original contribution here:
+    <code>Z₂₂</code> (order 22), <code>D₁₉</code> (order 38), and the
+    two groups at order 110 outside the paper's reach
+    (<code>D₅ × Z₁₁</code>, <code>Z₂ × (Z₁₁ ⋊ Z₅)</code>).
+    All ten are formally verified in Lean. This site tracks two
+    distinct layers of work:
   </p>
   <ol class="layer-list">
     <li>
@@ -69,30 +90,36 @@
 
   <div class="summary">
     <div class="stat">
-      <span class="num">3 / 13</span>
-      <span class="lbl">orders excluded</span>
-      <span class="delta progress-done">≈ 23%</span>
+      <span class="num">3 / 35</span>
+      <span class="lbl">candidate orders excluded</span>
+      <span class="delta progress-done">≈ 9%</span>
     </div>
     <div class="stat">
-      <span class="num">10 / 59</span>
-      <span class="lbl">finite groups excluded</span>
-      <span class="delta progress-done">≈ 17%</span>
+      <span class="num">23 / 103</span>
+      <span class="lbl">paper-excluded <span class="muted">(Macaj–Siran + Lemma 19 / Thm 2 / §9)</span></span>
+      <span class="delta muted">≈ 22% of the candidate space</span>
     </div>
     <div class="stat">
-      <span class="num">≤ 375</span>
-      <span class="lbl">max <span class="muted">(odd)</span></span>
-      <span class="delta muted">unchanged from paper</span>
+      <span class="num">10 / 103</span>
+      <span class="lbl">Lean-excluded <span class="muted">(this project)</span></span>
+      <span class="delta progress-done">≈ 10%</span>
     </div>
     <div class="stat">
-      <span class="num">≤ 54</span>
-      <span class="lbl">max <span class="muted">(even)</span></span>
-      <span class="delta"><s class="muted">was ≤ 110</s> <span class="badge done">−56</span></span>
+      <span class="num">4 / 80</span>
+      <span class="lbl">project-original <span class="muted">(beyond paper)</span></span>
+      <span class="delta progress-done">closures the paper had not</span>
     </div>
   </div>
   <p class="muted" style="font-size:0.85rem;margin-top:-0.5rem">
-    Denominators: <strong>13</strong> = max candidate orders from
-    Macaj–Siran Theorem 6 + 7. <strong>59</strong> = total finite groups
-    across those 13 orders (OEIS <a href="https://oeis.org/A000001">A000001</a>).
+    Denominators: <strong>35</strong> = candidate orders = union of
+    divisors of the 13 Macaj–Siran maxima (25 odd via Theorem 6,
+    10 even via Theorem 7). <strong>103</strong> = total finite groups
+    across those 35 orders (61 odd + 42 even), OEIS
+    <a href="https://oeis.org/A000001">A000001</a>.
+    <strong>80</strong> = paper-allowed candidate groups (103 − 23
+    paper-excluded). Max remaining: <code>|G| ≤ 375</code> (odd,
+    unchanged from paper); <code>|G| ≤ 54</code> (even, down from
+    <code>110</code> after this project closed orders 22, 38, 110).
   </p>
 </section>
 
@@ -100,11 +127,13 @@
   <div class="join-text">
     <h3>Want to help close one of these?</h3>
     <p>
-      This is an open formalization project. <strong>49 finite groups</strong>
-      across 10 candidate orders are still open. Each one is a concrete
-      target with a published proof outline in Macaj–Siran (2010), Lemma 12–15.
-      Lean 4 / Mathlib contributors, finite-group specialists, paper-side
-      reviewers, and GAP-aided computations are all welcome.
+      This is an open formalization project. <strong>93 finite groups</strong>
+      across 32 candidate orders are still open. Each one is a concrete
+      target — the 13 paper maxima have Macaj–Siran (2010) Lemma 12–15
+      constraints; the 22 sub-divisor orders inherit those plus prime/p-group
+      lemmas (Lemma 4, 16–19, Theorems 4–5). Lean 4 / Mathlib contributors,
+      finite-group specialists, paper-side reviewers, and GAP-aided
+      computations are all welcome.
     </p>
   </div>
   <div class="join-actions">
@@ -114,57 +143,108 @@
 </aside>
 
 <section>
-  <h2>At a glance</h2>
+  <h2>At a glance — 35 candidate orders</h2>
   <p class="muted">
-    Each tile is a maximum candidate order from Macaj–Siran (2010);
-    every actual <code>|G|</code> divides one of these. Click for the group
-    classification.
+    Each tile is a candidate value of <code>|G|</code>: the 13
+    Macaj–Siran (2010) maxima together with their proper divisors
+    (which inherit the maxima's constraints). The Theorem 6 / 7 tables
+    below show which maxima each order divides. Click for full group
+    classification and paper context.
   </p>
+
+  <h3 class="parity-heading">Odd candidates <span class="muted">(25 orders, 61 groups, 0 excluded)</span></h3>
   <div class="orders-grid">
-    <a class="order-card" href="orders/14.html"><span class="order">14</span><span class="factor">2 · 7</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/22.html"><span class="order">22</span><span class="factor">2 · 11</span><span class="badge done">excluded</span></a>
-    <a class="order-card" href="orders/35.html"><span class="order">35</span><span class="factor">5 · 7</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/38.html"><span class="order">38</span><span class="factor">2 · 19</span><span class="badge done">excluded</span></a>
-    <a class="order-card" href="orders/39.html"><span class="order">39</span><span class="factor">3 · 13</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/50.html"><span class="order">50</span><span class="factor">2 · 5²</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/54.html"><span class="order">54</span><span class="factor">2 · 3³</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/110.html"><span class="order">110</span><span class="factor">2 · 5 · 11</span><span class="badge done">excluded</span></a>
-    <a class="order-card" href="orders/135.html"><span class="order">135</span><span class="factor">3³ · 5</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/147.html"><span class="order">147</span><span class="factor">3 · 7²</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/171.html"><span class="order">171</span><span class="factor">3² · 19</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/275.html"><span class="order">275</span><span class="factor">5² · 11</span><span class="badge open">open</span></a>
-    <a class="order-card" href="orders/375.html"><span class="order">375</span><span class="factor">3 · 5³</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/1.html"><span class="order">1</span><span class="factor">1</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/3.html"><span class="order">3</span><span class="factor">3</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/5.html"><span class="order">5</span><span class="factor">5</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/7.html"><span class="order">7</span><span class="factor">7</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/9.html"><span class="order">9</span><span class="factor">3²</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/11.html"><span class="order">11</span><span class="factor">11</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/13.html"><span class="order">13</span><span class="factor">13</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/15.html"><span class="order">15</span><span class="factor">3 · 5</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/19.html"><span class="order">19</span><span class="factor">19</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/21.html"><span class="order">21</span><span class="factor">3 · 7</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/25.html"><span class="order">25</span><span class="factor">5²</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/27.html"><span class="order">27</span><span class="factor">3³</span><span class="card-meta">5 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/35.html"><span class="order">35</span><span class="factor">5 · 7</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/39.html"><span class="order">39</span><span class="factor">3 · 13</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/45.html"><span class="order">45</span><span class="factor">3² · 5</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/49.html"><span class="order">49</span><span class="factor">7²</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/55.html"><span class="order">55</span><span class="factor">5 · 11</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/57.html"><span class="order">57</span><span class="factor">3 · 19</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/75.html"><span class="order">75</span><span class="factor">3 · 5²</span><span class="card-meta">3 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/125.html"><span class="order">125</span><span class="factor">5³</span><span class="card-meta">5 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/135.html"><span class="order">135</span><span class="factor">3³ · 5</span><span class="card-meta">4 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/147.html"><span class="order">147</span><span class="factor">3 · 7²</span><span class="card-meta">6 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/171.html"><span class="order">171</span><span class="factor">3² · 19</span><span class="card-meta">5 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/275.html"><span class="order">275</span><span class="factor">5² · 11</span><span class="card-meta">4 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/375.html"><span class="order">375</span><span class="factor">3 · 5³</span><span class="card-meta">4 groups</span><span class="badge open">open</span></a>
+  </div>
+
+  <h3 class="parity-heading">Even candidates <span class="muted">(10 orders, 42 groups, 10 excluded)</span></h3>
+  <div class="orders-grid">
+    <a class="order-card" href="orders/2.html"><span class="order">2</span><span class="factor">2</span><span class="card-meta">1 group</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/6.html"><span class="order">6</span><span class="factor">2 · 3</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/10.html"><span class="order">10</span><span class="factor">2 · 5</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/14.html"><span class="order">14</span><span class="factor">2 · 7</span><span class="card-meta">2 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/18.html"><span class="order">18</span><span class="factor">2 · 3²</span><span class="card-meta">5 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/22.html"><span class="order">22</span><span class="factor">2 · 11</span><span class="card-meta">2 groups</span><span class="badge done">excluded</span></a>
+    <a class="order-card" href="orders/38.html"><span class="order">38</span><span class="factor">2 · 19</span><span class="card-meta">2 groups</span><span class="badge done">excluded</span></a>
+    <a class="order-card" href="orders/50.html"><span class="order">50</span><span class="factor">2 · 5²</span><span class="card-meta">5 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/54.html"><span class="order">54</span><span class="factor">2 · 3³</span><span class="card-meta">15 groups</span><span class="badge open">open</span></a>
+    <a class="order-card" href="orders/110.html"><span class="order">110</span><span class="factor">2 · 5 · 11</span><span class="card-meta">6 groups</span><span class="badge done">excluded</span></a>
   </div>
 </section>
 
 <section>
-  <h2>Theorem 6 (odd case)</h2>
+  <h2>Theorem 6 (odd case) — full candidate list</h2>
   <p>
     <em>Macaj–Siran, 2010, Theorem 6.</em>
     Let <code>Γ</code> be a Moore graph of degree 57 on 3250 vertices and
-    <code>G = Aut(Γ)</code>. If <code>|G|</code> is odd then <code>|G|</code>
-    divides one of the following.
+    <code>G = Aut(Γ)</code>. If <code>|G|</code> is odd then
+    <code>|G|</code> divides one of <strong>35, 39, 135, 147, 171, 275,
+    375</strong> — and therefore <code>|G|</code> equals one of the
+    <strong>25 odd divisors</strong> below.
   </p>
   <figure>
   <table>
     <thead>
-      <tr><th>Max <code>|G|</code></th><th>Factorization</th><th>Groups of this order</th><th>Lean status</th></tr>
+      <tr><th><code>|G|</code></th><th>Factor</th><th>Divides T6 max</th><th># groups</th><th>Lean status</th></tr>
     </thead>
     <tbody>
-      <tr><td><a href="orders/35.html">35</a></td>  <td><code>5 · 7</code></td>   <td>1 group: <code>ℤ₃₅</code></td>                                            <td><span class="badge open">0 / 1 open</span></td></tr>
-      <tr><td><a href="orders/39.html">39</a></td>  <td><code>3 · 13</code></td>  <td>2 groups: <code>ℤ₃₉</code>, <code>ℤ₁₃⋊ℤ₃</code></td>                       <td><span class="badge open">0 / 2 open</span></td></tr>
-      <tr><td><a href="orders/135.html">135</a></td><td><code>3³ · 5</code></td>  <td>5 groups <span class="muted">(SmallGroup(135, k))</span></td>             <td><span class="badge open">0 / 5 open</span></td></tr>
-      <tr><td><a href="orders/147.html">147</a></td><td><code>3 · 7²</code></td>  <td>6 groups <span class="muted">(SmallGroup(147, k))</span></td>             <td><span class="badge open">0 / 6 open</span></td></tr>
-      <tr><td><a href="orders/171.html">171</a></td><td><code>3² · 19</code></td> <td>5 groups <span class="muted">(SmallGroup(171, k))</span></td>             <td><span class="badge open">0 / 5 open</span></td></tr>
-      <tr><td><a href="orders/275.html">275</a></td><td><code>5² · 11</code></td> <td>4 groups <span class="muted">(SmallGroup(275, k))</span></td>             <td><span class="badge open">0 / 4 open</span></td></tr>
-      <tr><td><a href="orders/375.html">375</a></td><td><code>3 · 5³</code></td>  <td>4 groups <span class="muted">(SmallGroup(375, k))</span></td>             <td><span class="badge open">0 / 4 open</span></td></tr>
+      <tr><td><a href="orders/1.html">1</a></td><td><code>1</code></td><td><a href="orders/35.html">35</a>, <a href="orders/39.html">39</a>, <a href="orders/135.html">135</a>, <a href="orders/147.html">147</a>, <a href="orders/171.html">171</a>, <a href="orders/275.html">275</a>, <a href="orders/375.html">375</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/3.html">3</a></td><td><code>3</code></td><td><a href="orders/39.html">39</a>, <a href="orders/135.html">135</a>, <a href="orders/147.html">147</a>, <a href="orders/171.html">171</a>, <a href="orders/375.html">375</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/5.html">5</a></td><td><code>5</code></td><td><a href="orders/35.html">35</a>, <a href="orders/135.html">135</a>, <a href="orders/275.html">275</a>, <a href="orders/375.html">375</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/7.html">7</a></td><td><code>7</code></td><td><a href="orders/35.html">35</a>, <a href="orders/147.html">147</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/9.html">9</a></td><td><code>3²</code></td><td><a href="orders/135.html">135</a>, <a href="orders/171.html">171</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/11.html">11</a></td><td><code>11</code></td><td><a href="orders/275.html">275</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/13.html">13</a></td><td><code>13</code></td><td><a href="orders/39.html">39</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/15.html">15</a></td><td><code>3 · 5</code></td><td><a href="orders/135.html">135</a>, <a href="orders/375.html">375</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/19.html">19</a></td><td><code>19</code></td><td><a href="orders/171.html">171</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/21.html">21</a></td><td><code>3 · 7</code></td><td><a href="orders/147.html">147</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/25.html">25</a></td><td><code>5²</code></td><td><a href="orders/275.html">275</a>, <a href="orders/375.html">375</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/27.html">27</a></td><td><code>3³</code></td><td><a href="orders/135.html">135</a></td><td>5</td><td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/35.html">35</a></td><td><code>5 · 7</code></td><td><strong>max</strong></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/39.html">39</a></td><td><code>3 · 13</code></td><td><strong>max</strong></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/45.html">45</a></td><td><code>3² · 5</code></td><td><a href="orders/135.html">135</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/49.html">49</a></td><td><code>7²</code></td><td><a href="orders/147.html">147</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/55.html">55</a></td><td><code>5 · 11</code></td><td><a href="orders/275.html">275</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/57.html">57</a></td><td><code>3 · 19</code></td><td><a href="orders/171.html">171</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/75.html">75</a></td><td><code>3 · 5²</code></td><td><a href="orders/375.html">375</a></td><td>3</td><td><span class="badge open">0 / 3 open</span></td></tr>
+      <tr><td><a href="orders/125.html">125</a></td><td><code>5³</code></td><td><a href="orders/375.html">375</a></td><td>5</td><td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/135.html">135</a></td><td><code>3³ · 5</code></td><td><strong>max</strong></td><td>4</td><td><span class="badge open">0 / 4 open</span></td></tr>
+      <tr><td><a href="orders/147.html">147</a></td><td><code>3 · 7²</code></td><td><strong>max</strong></td><td>6</td><td><span class="badge open">0 / 6 open</span></td></tr>
+      <tr><td><a href="orders/171.html">171</a></td><td><code>3² · 19</code></td><td><strong>max</strong></td><td>5</td><td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/275.html">275</a></td><td><code>5² · 11</code></td><td><strong>max</strong></td><td>4</td><td><span class="badge open">0 / 4 open</span></td></tr>
+      <tr><td><a href="orders/375.html">375</a></td><td><code>3 · 5³</code></td><td><strong>max</strong></td><td>4</td><td><span class="badge open">0 / 4 open</span></td></tr>
     </tbody>
     <tfoot>
       <tr>
         <th>Total</th>
         <th>—</th>
-        <th><strong>27 groups</strong></th>
-        <th><span class="badge open">0 / 27 excluded</span></th>
+        <th>25 orders</th>
+        <th><strong>61 groups</strong></th>
+        <th><span class="badge open">0 / 61 excluded</span></th>
       </tr>
     </tfoot>
   </table>
@@ -172,46 +252,42 @@
 </section>
 
 <section>
-  <h2>Theorem 7 (even case)</h2>
+  <h2>Theorem 7 (even case) — full candidate list</h2>
   <p>
     <em>Macaj–Siran, 2010, Theorem 7.</em>
-    If <code>|G|</code> is even then <code>|G|</code> divides one of the
-    following. Note <code>4 ∤ |G|</code> (Lemma 2; Higman / Cameron).
+    If <code>|G|</code> is even then <code>|G|</code> divides one of
+    <strong>14, 22, 38, 50, 54, 110</strong>. Note <code>4 ∤ |G|</code>
+    (Lemma 2; Higman / Cameron), so even divisors take one of the
+    <strong>10 values</strong> below.
   </p>
   <figure>
   <table>
     <thead>
-      <tr><th>Max <code>|G|</code></th><th>Factorization</th><th>Groups of this order</th><th>Lean status</th></tr>
+      <tr><th><code>|G|</code></th><th>Factor</th><th>Divides T7 max</th><th># groups</th><th>Lean status</th></tr>
     </thead>
     <tbody>
-      <tr><td><a href="orders/14.html">14</a></td>  <td><code>2 · 7</code></td>     <td>2 groups: <code>ℤ₁₄</code>, <code>D₇</code></td>           <td><span class="badge open">0 / 2 open</span></td></tr>
-      <tr><td><a href="orders/22.html">22</a></td>  <td><code>2 · 11</code></td>    <td>2 groups: <code>ℤ₂₂</code>, <code>D₁₁</code></td>          <td><span class="badge done">2 / 2 excluded</span></td></tr>
-      <tr><td><a href="orders/38.html">38</a></td>  <td><code>2 · 19</code></td>    <td>2 groups: <code>ℤ₃₈</code>, <code>D₁₉</code></td>          <td><span class="badge done">2 / 2 excluded</span></td></tr>
-      <tr><td><a href="orders/50.html">50</a></td>  <td><code>2 · 5²</code></td>    <td>5 groups <span class="muted">(SmallGroup(50, k))</span></td>  <td><span class="badge open">0 / 5 open</span></td></tr>
-      <tr><td><a href="orders/54.html">54</a></td>  <td><code>2 · 3³</code></td>    <td>15 groups <span class="muted">(SmallGroup(54, k))</span></td> <td><span class="badge open">0 / 15 open</span></td></tr>
-      <tr><td><a href="orders/110.html">110</a></td><td><code>2 · 5 · 11</code></td><td>6 groups <span class="muted">(SmallGroup(110, k))</span></td> <td><span class="badge done">6 / 6 excluded <span class="muted">(via 22)</span></span></td></tr>
+      <tr><td><a href="orders/2.html">2</a></td><td><code>2</code></td><td><a href="orders/14.html">14</a>, <a href="orders/22.html">22</a>, <a href="orders/38.html">38</a>, <a href="orders/50.html">50</a>, <a href="orders/54.html">54</a>, <a href="orders/110.html">110</a></td><td>1</td><td><span class="badge open">0 / 1 open</span></td></tr>
+      <tr><td><a href="orders/6.html">6</a></td><td><code>2 · 3</code></td><td><a href="orders/54.html">54</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/10.html">10</a></td><td><code>2 · 5</code></td><td><a href="orders/50.html">50</a>, <a href="orders/110.html">110</a></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/14.html">14</a></td><td><code>2 · 7</code></td><td><strong>max</strong></td><td>2</td><td><span class="badge open">0 / 2 open</span></td></tr>
+      <tr><td><a href="orders/18.html">18</a></td><td><code>2 · 3²</code></td><td><a href="orders/54.html">54</a></td><td>5</td><td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/22.html">22</a></td><td><code>2 · 11</code></td><td><strong>max</strong> · also divides <a href="orders/110.html">110</a></td><td>2</td><td><span class="badge done">2 / 2 excluded</span></td></tr>
+      <tr><td><a href="orders/38.html">38</a></td><td><code>2 · 19</code></td><td><strong>max</strong></td><td>2</td><td><span class="badge done">2 / 2 excluded</span></td></tr>
+      <tr><td><a href="orders/50.html">50</a></td><td><code>2 · 5²</code></td><td><strong>max</strong></td><td>5</td><td><span class="badge open">0 / 5 open</span></td></tr>
+      <tr><td><a href="orders/54.html">54</a></td><td><code>2 · 3³</code></td><td><strong>max</strong></td><td>15</td><td><span class="badge open">0 / 15 open</span></td></tr>
+      <tr><td><a href="orders/110.html">110</a></td><td><code>2 · 5 · 11</code></td><td><strong>max</strong></td><td>6</td><td><span class="badge done">6 / 6 excluded <span class="muted">(via 22)</span></span></td></tr>
     </tbody>
     <tfoot>
       <tr>
         <th>Total</th>
         <th>—</th>
-        <th><strong>32 groups</strong></th>
-        <th><span class="badge done">10 / 32 excluded</span></th>
+        <th>10 orders</th>
+        <th><strong>42 groups</strong></th>
+        <th><span class="badge done">10 / 42 excluded</span></th>
       </tr>
     </tfoot>
   </table>
   </figure>
-</section>
-
-<section>
-  <h2>What "candidate order" means</h2>
-  <p>
-    Every actual <code>|G|</code> divides one of the 13 maxima above. So all
-    candidate orders are precisely the union of divisors of these 13
-    numbers (roughly 35 distinct values once <code>1</code> is included).
-    The per-order pages enumerate them along with their group
-    classifications.
-  </p>
 </section>
 
 <section>
