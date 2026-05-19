@@ -1,3 +1,5 @@
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.NormNum
 import Moore57.Moore57Graph.Moore57Definition
 
 set_option linter.unusedSectionVars false
@@ -28,17 +30,42 @@ set_option linter.unusedFintypeInType false
 For Moore57 (rank-3, `n = 3250`, `λ = 0`, `μ = 1`, `|G|` even):
 `d = 1 + 4·56 = 225`, `√d = 15`, eigenvalues `(−1 ± 15)/2 = 7, −8`.
 
-[deferred-heavy]
+Status:
+* `lem6_two_eigenvalues`: paper-stub (full matrix-spectrum derivation,
+  deferred-heavy).
+* `lem6_moore57_eigenvalues_arithmetic`: **proven** — the pure ℤ
+  arithmetic computation of the Moore57 secondary eigenvalues `7, −8`
+  as roots of `x² + x − 56 = (x − 7)(x + 8)`.
 -/
 
 namespace Moore57.Papers.Higman1964
+
+/-- **Moore57 secondary eigenvalue arithmetic.** [done]
+
+For Moore57 with `(λ, μ, k) = (0, 1, 57)`, the secondary eigenvalues
+of the adjacency matrix are roots of the quadratic
+`x² − (λ − μ)·x − (k − μ) = x² + x − 56`, factoring as
+`(x − 7)(x + 8)`.  Hence the eigenvalues are `{7, −8}`. -/
+theorem lem6_moore57_eigenvalues_arithmetic (x : ℤ) :
+    x^2 + x - 56 = 0 ↔ x = 7 ∨ x = -8 := by
+  constructor
+  · intro h
+    have factored : (x - 7) * (x + 8) = x ^ 2 + x - 56 := by ring
+    have h0 : (x - 7) * (x + 8) = 0 := factored.trans h
+    rcases mul_eq_zero.mp h0 with h1 | h2
+    · left; omega
+    · right; omega
+  · rintro (rfl | rfl) <;> ring
 
 /-- **Lemma 6 (two eigenvalues `s, t`).** [deferred-heavy]
 
 In addition to the eigenvalue `k` (multiplicity 1), the incidence matrix
 `A` of a rank-3 block design has exactly two further eigenvalues `s, t`,
 the roots of `X² − (λ − μ)X − (k − μ) = 0` (when `|G|` is even) or
-`X² + X + (k + 1)/2 = 0` (when `|G|` is odd). -/
+`X² + X + (k + 1)/2 = 0` (when `|G|` is odd).
+
+The Moore57 specialization of the eigenvalue arithmetic is proven in
+`lem6_moore57_eigenvalues_arithmetic`. -/
 theorem lem6_two_eigenvalues : True := by trivial
 
 end Moore57.Papers.Higman1964
