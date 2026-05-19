@@ -14,11 +14,6 @@ have the corresponding nonzero index differences.
 
 namespace Moore57
 
-private theorem zmod19_sub_ne_zero_of_ne {a b : ZMod 19} (h : a ≠ b) :
-    a - b ≠ 0 := by
-  intro hsub
-  exact h (sub_eq_zero.mp hsub)
-
 /-- Candidate indices for the card-two common-neighbor construction relative
 to a nonzero reference index `j`. -/
 structure ZMod19CardTwoCandidateIndices (j : ZMod 19) where
@@ -53,12 +48,12 @@ def ofBasic
   k_ne_j := hkj
   l_ne_j := hlj
   k_ne_l := hkl
-  k_sub_j_ne_zero := zmod19_sub_ne_zero_of_ne hkj
-  l_sub_j_ne_zero := zmod19_sub_ne_zero_of_ne hlj
-  j_sub_k_ne_zero := zmod19_sub_ne_zero_of_ne hkj.symm
-  j_sub_l_ne_zero := zmod19_sub_ne_zero_of_ne hlj.symm
-  k_sub_l_ne_zero := zmod19_sub_ne_zero_of_ne hkl
-  l_sub_k_ne_zero := zmod19_sub_ne_zero_of_ne hkl.symm
+  k_sub_j_ne_zero := sub_ne_zero.mpr hkj
+  l_sub_j_ne_zero := sub_ne_zero.mpr hlj
+  j_sub_k_ne_zero := sub_ne_zero.mpr hkj.symm
+  j_sub_l_ne_zero := sub_ne_zero.mpr hlj.symm
+  k_sub_l_ne_zero := sub_ne_zero.mpr hkl
+  l_sub_k_ne_zero := sub_ne_zero.mpr hkl.symm
 
 end ZMod19CardTwoCandidateIndices
 

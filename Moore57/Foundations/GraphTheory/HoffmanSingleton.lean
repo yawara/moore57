@@ -53,13 +53,6 @@ variable {W : Type*} [Fintype W] [DecidableEq W]
 /-- Discriminant of the SRG`(k²+1, k, 0, 1)` eigenvalue equation. -/
 def srgDiscriminant (k : ℕ) : ℤ := 4 * (k : ℤ) - 3
 
-omit [DecidableEq W] in
-/-- For SRG`(k²+1, k, 0, 1)`, `|W| ≥ 1`. -/
-theorem srg_kk_plus_one_card_pos {G : SimpleGraph W} [DecidableRel G.Adj]
-    (hsrg : G.IsSRGWith (k * k + 1) k 0 1) :
-    0 < Fintype.card W := by
-  rw [hsrg.card]; omega
-
 /-! ## Stage S1: SRG matrix identity -/
 
 /-- The all-ones matrix over `α`. -/
