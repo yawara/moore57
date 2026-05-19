@@ -446,6 +446,28 @@ theorem rotation_trace_eq_of_higman_character
   norm_num
   exact hq'
 
+/-- `Tr(E₇) = 1729`: dimension of the 7-eigenspace.  Obtained by specialising
+the Higman trace formula at `σ = 1`, using `a₀(1) = |V| = 3250` and
+`a₁(1) = 0`. -/
+theorem IsMoore57.E7Matrix_trace_eq_1729
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] (hΓ : IsMoore57 Γ) :
+    Matrix.trace (E7Matrix Γ) = (1729 : ℚ) := by
+  classical
+  have hform := hΓ.higman_trace_formula (1 : Equiv.Perm V)
+  have hperm : (permMatrix (1 : Equiv.Perm V) : Matrix V V ℚ) = 1 := by
+    ext v w
+    by_cases hvw : v = w
+    · subst w; simp [permMatrix]
+    · simp [permMatrix, hvw]
+  rw [hperm, Matrix.mul_one] at hform
+  have hfix : fixedVertexCount (1 : Equiv.Perm V) = Fintype.card V := by
+    simp [fixedVertexCount]
+  have hadj : adjacentMovedCount Γ (1 : Equiv.Perm V) = 0 := by
+    simp [adjacentMovedCount, Equiv.Perm.one_apply, SimpleGraph.irrefl]
+  rw [hfix, hΓ.card, hadj] at hform
+  rw [hform]
+  norm_num
+
 end HigmanTrace
 
 end Moore57

@@ -1,5 +1,4 @@
 import Moore57.Phases.Phase1
-import Moore57.Phases.Phase2
 
 /-!
 # Phase 3 prebuilt: reflection 7-eigenspace character value
