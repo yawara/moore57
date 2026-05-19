@@ -97,27 +97,6 @@ theorem lem5_walks (hΓ : IsMoore57 Γ)
     {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) (k : ℕ) :
     True := by trivial
 
-/-- **Lemma 5 (5) (matrix identity `B² + B − 56·I = 1·sᵀ`).** [deferred-heavy]
-
-For an equitable partition with cell sizes `s = (s₁, …, sₖ)` and
-adjacency matrix `B`, the rank-1 identity
-`B² + B − 56·I = 𝟙·sᵀ` holds (entrywise: `(B²)_{ij} + B_{ij} = 56·δ_{ij} + sⱼ`).
-
-Proof outline:
-* Pointwise Moore57 SRG identity at `(v, w) ∈ V × V`:
-  `|cN(v, w)| + [v ~ w] = 56·[v = w] + 1`.
-* Sum over `w ∈ Sⱼ`:
-  - LHS sums to `(B²)_{ij} + B_{ij}` by double-counting (decompose the
-    intermediate vertex `x` by which cell it lies in, then apply
-    `P.equitable` twice).
-  - RHS sums to `56·δ_{ij} + sⱼ` (using `v ∈ Sᵢ`, so `v ∈ Sⱼ ⇔ i = j`).
-
-Pointwise SRG step is proven below as `lem5_pointwise_srg`. The
-double-sum decomposition is the missing piece. -/
-theorem lem5_matrix_identity (hΓ : IsMoore57 Γ)
-    {ι : Type*} [Fintype ι] (P : EquitablePartition Γ ι) :
-    True := by trivial
-
 /-- **Lemma 5 (5) helper: pointwise Moore57 SRG identity.**
 
 For Moore57 and any `v, w ∈ V`:
@@ -151,5 +130,172 @@ theorem lem5_pointwise_srg (hΓ : IsMoore57 Γ) (v w : V) :
     by_cases hadj : Γ.Adj v w
     · rw [if_pos hadj, hΓ.of_adj v w hadj]
     · rw [if_neg hadj, hΓ.of_not_adj hvw hadj]
+
+/-- **Lemma 5 (5) helper: `|cN(v, w)|` as a filter cardinality over `V`.** -/
+private theorem cN_card_eq_filter (v w : V) :
+    Fintype.card (Γ.commonNeighbors v w) =
+      ((Finset.univ : Finset V).filter
+        (fun x => Γ.Adj v x ∧ Γ.Adj x w)).card := by
+  classical
+  rw [Fintype.card_subtype]
+  congr 1
+  ext x
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+    SimpleGraph.mem_commonNeighbors]
+  refine ⟨fun ⟨h1, h2⟩ => ⟨h1, h2.symm⟩, fun ⟨h1, h2⟩ => ⟨h1, h2.symm⟩⟩
+
+/-- **Lemma 5 (5) (matrix identity `B² + B − 56·I = 1·sᵀ`).**
+
+For a Moore57 equitable partition with non-empty cells, the entrywise
+matrix identity `(B²)_{ij} + B_{ij} = 56·δ_{ij} + sⱼ` holds.
+
+Proof: sum the pointwise Moore57 SRG identity (`lem5_pointwise_srg`)
+over `w ∈ Sⱼ`, for a fixed `v ∈ Sᵢ`.  The LHS resolves into `(B²)_{ij}`
+via swap-of-sums and the equitable property applied twice; the RHS
+resolves into `56·[i = j] + sⱼ` via cell disjointness. -/
+theorem lem5_matrix_identity (hΓ : IsMoore57 Γ)
+    {ι : Type*} [Fintype ι] [DecidableEq ι] (P : EquitablePartition Γ ι)
+    (h_nonempty : ∀ i, (P.cell i).Nonempty)
+    (i j : ι) :
+    (∑ k : ι, P.adjMatrix i k * P.adjMatrix k j) + P.adjMatrix i j =
+      56 * (if i = j then 1 else 0) + P.cellSize j := by
+  classical
+  -- Pick `v ∈ Sᵢ`.
+  obtain ⟨v, hv⟩ := h_nonempty i
+  -- Sum the pointwise SRG identity over `w ∈ P.cell j`.
+  have hsum := Finset.sum_congr rfl
+    (fun w (_ : w ∈ P.cell j) => lem5_pointwise_srg hΓ v w)
+  -- ---- RHS computation.
+  -- The "v = w" indicator sums to [v ∈ P.cell j] = [i = j].
+  have hsum_eq :
+      (∑ w ∈ P.cell j, (if v = w then (1 : ℕ) else 0)) =
+        (if i = j then 1 else 0) := by
+    by_cases hij : i = j
+    · subst hij
+      rw [if_pos rfl]
+      rw [Finset.sum_eq_single v]
+      · rw [if_pos rfl]
+      · intro w _ hw_ne_v
+        exact if_neg (fun h => hw_ne_v h.symm)
+      · intro h
+        exact (h hv).elim
+    · rw [if_neg hij]
+      apply Finset.sum_eq_zero
+      intro w hw
+      apply if_neg
+      intro heq
+      subst heq
+      have hdisj : Disjoint (P.cell i) (P.cell j) :=
+        P.pairwise_disjoint (Finset.mem_coe.mpr (Finset.mem_univ i))
+          (Finset.mem_coe.mpr (Finset.mem_univ j)) hij
+      exact (Finset.disjoint_left.mp hdisj) hv hw
+  have hRHS_eq :
+      ∑ w ∈ P.cell j, (56 * (if v = w then (1 : ℕ) else 0) + 1) =
+        56 * (if i = j then 1 else 0) + P.cellSize j := by
+    rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, smul_eq_mul,
+        Nat.mul_one, hsum_eq]
+    rfl
+  -- ---- LHS computation.
+  have hLHS_split :
+      ∑ w ∈ P.cell j,
+        (Fintype.card (Γ.commonNeighbors v w) +
+          (if Γ.Adj v w then (1 : ℕ) else 0)) =
+      (∑ w ∈ P.cell j, Fintype.card (Γ.commonNeighbors v w)) +
+        (∑ w ∈ P.cell j, if Γ.Adj v w then (1 : ℕ) else 0) :=
+    Finset.sum_add_distrib
+  -- The B_{ij} term.
+  have hLHS_B :
+      (∑ w ∈ P.cell j, if Γ.Adj v w then (1 : ℕ) else 0) = P.adjMatrix i j := by
+    rw [← Finset.card_filter]
+    exact P.equitable i j v hv
+  -- The (B²)_{ij} term.
+  have hLHS_Bsq :
+      (∑ w ∈ P.cell j, Fintype.card (Γ.commonNeighbors v w)) =
+        ∑ k : ι, P.adjMatrix i k * P.adjMatrix k j := by
+    -- Step A: rewrite each card cN as filter card.
+    have step_a :
+        (∑ w ∈ P.cell j, Fintype.card (Γ.commonNeighbors v w)) =
+          ∑ w ∈ P.cell j,
+            ((Finset.univ : Finset V).filter
+              (fun x => Γ.Adj v x ∧ Γ.Adj x w)).card := by
+      refine Finset.sum_congr rfl (fun w _ => ?_)
+      exact cN_card_eq_filter v w
+    -- Step B: filter card as sum-of-indicators.
+    have step_b :
+        (∑ w ∈ P.cell j,
+            ((Finset.univ : Finset V).filter
+              (fun x => Γ.Adj v x ∧ Γ.Adj x w)).card) =
+          ∑ w ∈ P.cell j, ∑ x : V,
+            if Γ.Adj v x ∧ Γ.Adj x w then (1 : ℕ) else 0 := by
+      refine Finset.sum_congr rfl (fun w _ => ?_)
+      rw [Finset.card_filter]
+    -- Step C: swap sum order.
+    have step_c :
+        (∑ w ∈ P.cell j, ∑ x : V,
+            if Γ.Adj v x ∧ Γ.Adj x w then (1 : ℕ) else 0) =
+          ∑ x : V, ∑ w ∈ P.cell j,
+            if Γ.Adj v x ∧ Γ.Adj x w then (1 : ℕ) else 0 :=
+      Finset.sum_comm
+    -- Step D: split by `adj v x`.
+    have step_d :
+        (∑ x : V, ∑ w ∈ P.cell j,
+            if Γ.Adj v x ∧ Γ.Adj x w then (1 : ℕ) else 0) =
+          ∑ x : V,
+            (if Γ.Adj v x then (1 : ℕ) else 0) *
+              ((P.cell j).filter (fun w => Γ.Adj x w)).card := by
+      refine Finset.sum_congr rfl (fun x _ => ?_)
+      by_cases hadj_vx : Γ.Adj v x
+      · rw [if_pos hadj_vx, Nat.one_mul, Finset.card_filter]
+        refine Finset.sum_congr rfl (fun w _ => ?_)
+        simp [hadj_vx]
+      · rw [if_neg hadj_vx, Nat.zero_mul]
+        apply Finset.sum_eq_zero
+        intro w _
+        simp [hadj_vx]
+    -- Step E: partition x by cells.
+    have step_e :
+        (∑ x : V,
+            (if Γ.Adj v x then (1 : ℕ) else 0) *
+              ((P.cell j).filter (fun w => Γ.Adj x w)).card) =
+          ∑ k : ι, ∑ x ∈ P.cell k,
+            (if Γ.Adj v x then (1 : ℕ) else 0) *
+              ((P.cell j).filter (fun w => Γ.Adj x w)).card := by
+      conv_lhs => rw [show (Finset.univ : Finset V) =
+        (Finset.univ : Finset ι).biUnion P.cell from P.covers.symm]
+      rw [Finset.sum_biUnion P.pairwise_disjoint]
+    -- Step F: apply equitable on the inner filter card.
+    have step_f :
+        (∑ k : ι, ∑ x ∈ P.cell k,
+            (if Γ.Adj v x then (1 : ℕ) else 0) *
+              ((P.cell j).filter (fun w => Γ.Adj x w)).card) =
+          ∑ k : ι, ∑ x ∈ P.cell k,
+            (if Γ.Adj v x then (1 : ℕ) else 0) * P.adjMatrix k j := by
+      refine Finset.sum_congr rfl (fun k _ => ?_)
+      refine Finset.sum_congr rfl (fun x hx => ?_)
+      congr 1
+      exact P.equitable k j x hx
+    -- Step G: factor out adjMatrix k j and resolve inner sum via equitable on v.
+    have step_g :
+        (∑ k : ι, ∑ x ∈ P.cell k,
+            (if Γ.Adj v x then (1 : ℕ) else 0) * P.adjMatrix k j) =
+          ∑ k : ι, P.adjMatrix i k * P.adjMatrix k j := by
+      refine Finset.sum_congr rfl (fun k _ => ?_)
+      have hinner :
+          (∑ x ∈ P.cell k, (if Γ.Adj v x then (1 : ℕ) else 0)) =
+            P.adjMatrix i k := by
+        rw [← Finset.card_filter]
+        exact P.equitable i k v hv
+      rw [← Finset.sum_mul, hinner]
+    rw [step_a, step_b, step_c, step_d, step_e, step_f, step_g]
+  -- Combine.
+  calc (∑ k : ι, P.adjMatrix i k * P.adjMatrix k j) + P.adjMatrix i j
+      = (∑ w ∈ P.cell j, Fintype.card (Γ.commonNeighbors v w)) +
+          (∑ w ∈ P.cell j, if Γ.Adj v w then (1 : ℕ) else 0) := by
+        rw [hLHS_Bsq, hLHS_B]
+    _ = ∑ w ∈ P.cell j,
+          (Fintype.card (Γ.commonNeighbors v w) +
+            (if Γ.Adj v w then (1 : ℕ) else 0)) := hLHS_split.symm
+    _ = ∑ w ∈ P.cell j, (56 * (if v = w then (1 : ℕ) else 0) + 1) := hsum
+    _ = 56 * (if i = j then 1 else 0) + P.cellSize j := hRHS_eq
 
 end Moore57.Papers.MacajSiran2010.S3
