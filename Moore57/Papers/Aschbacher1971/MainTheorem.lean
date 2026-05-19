@@ -47,7 +47,15 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 Stated symbolically as a placeholder; a full formalisation would require
 introducing the permutation-group action `G ↷ Ω` of rank 3 and the
-distinguishing data of the proof above. -/
+distinguishing data of the proof above.
+
+**External dependency**: the line "Results of D. Higman show that 𝒢 satisfies
+(*) [2]" cites [Higman, *Finite permutation groups of rank 3*,
+Math. Zeitschr. 86 (1964), 145–156]. Formalising this Main Theorem
+therefore requires either importing Higman 1964 results or building the
+rank-3 permutation-group theory directly in Lean (extending Mathlib's
+existing `GroupAction` / `Equiv.Perm` infrastructure with rank-3-specific
+results). -/
 theorem main_no_rank3_3250_57 : True := by trivial
 
 end Moore57.Papers.Aschbacher1971
