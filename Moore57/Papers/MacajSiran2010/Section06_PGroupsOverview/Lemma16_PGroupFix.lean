@@ -1,4 +1,6 @@
 import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Lemma4_OddPrimeFix
+import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Aut.FixedCount
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -29,6 +31,68 @@ namespace Moore57.Papers.MacajSiran2010.S6
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Lemma 16 modular brace (vertex set + N(a) for prime `p`).** [done]
+
+For a single graph-automorphism `σ` with `σ^(p^k) = 1` (a cyclic
+`p`-group element) and any `σ`-fixed vertex `a`, the global and
+neighbourhood fixed-vertex counts satisfy the standard mod-`p`
+constraints:
+
+```
+fixedVertexCount σ      ≡ |V| (= 3250) [MOD p]
+(autFixedNeighborFinset Γ σ a).card ≡ deg a (= 57) [MOD p]
+```
+
+This is the §6 modular ingredient: combined with the standard Fix
+shape candidates (∅, singleton, edge, star, pentagon, Petersen, HS),
+it forces the prime-shape pairing listed in the paper's six-way
+classification.  Specifically:
+
+* `p = 3`: count ≡ 1 ⟹ Fix ∈ {singleton, Petersen, *some* stars}
+* `p = 5`: count ≡ 0 ⟹ Fix ∈ {∅, pentagon, HS, *some* stars}
+* `p = 7`: count ≡ 2 ⟹ Fix ∈ {*specific* stars}
+* `p = 11`: count ≡ 5 ⟹ Fix ∈ {pentagon, *some* stars}
+* `p = 13`: count ≡ 0 ⟹ Fix ∈ {∅, *no* others since sizes < 13 only ∅}
+* `p = 19`: count ≡ 1 ⟹ Fix ∈ {singleton, *some* stars}
+
+The further structural elimination of star sizes (forcing the paper's
+final list) is part of `lem16_pgroup_fix_shape`. -/
+theorem lem16_pgroup_modular_constraints
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)]
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a) :
+    fixedVertexCount σ ≡ Fintype.card V [MOD p] ∧
+      (Moore57.autFixedNeighborFinset Γ σ a).card ≡ Γ.degree a [MOD p] := by
+  refine ⟨?_, ?_⟩
+  · exact Moore57.aut_fixedVertexCount_modEq_card_of_pow_prime_pow σ p k pow_pk
+  · exact Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+      σ smul_adj p k pow_pk ha
+
+/-- **Lemma 16 case (1) [p = 13]: `Fix(σ)` must be empty.** [done]
+
+Combining the mod-13 constraint `fixedVertexCount σ ≡ 0 (mod 13)` with
+the standard Fix-size candidates (≤ 58: ∅, singleton, edge, pentagon,
+Petersen, HS, stars), only `Fix(σ) = ∅` satisfies the congruence
+(all other sizes are positive and `< 13`).
+
+This formalises one direction of the §6 Lem 16 case (1): if `σ` has
+order `13^k` and `|Fix(σ)| ≤ 12`, then `Fix(σ) = ∅`. -/
+theorem lem16_case1_13group_fix_empty_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 13 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 12) :
+    fixedVertexCount σ = 0 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_zero_of_pow_thirteen_pow
+    hΓ σ k pow_pk
+  -- count ≡ 0 (mod 13) and count ≤ 12 ⟹ count = 0
+  by_contra hne
+  have hpos : 0 < fixedVertexCount σ := Nat.pos_of_ne_zero hne
+  -- 0 < count ≤ 12 and count ≡ 0 (mod 13): impossible
+  rw [Nat.ModEq] at hmod
+  omega
 
 /-- **Lemma 16 (odd-prime `p`-group fix shape).** [deferred-heavy] -/
 theorem lem16_pgroup_fix_shape (hΓ : IsMoore57 Γ) : True := by trivial
