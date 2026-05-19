@@ -33,6 +33,7 @@ import Moore57.Foundations.GraphTheory.AdjacentMovedCount
 import Moore57.Foundations.GraphTheory.InducedTrace
 import Moore57.Foundations.Spectral.QuadraticIndicator
 import Moore57.Moore57Graph.E7Matrix.MoharBound
+import Moore57.Moore57Graph.AdjMovedSet
 import Moore57.Foundations.LinearAlgebra.InvolutionTrace
 import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
 import Moore57.Order22OnMoore57.Phase4F11Module
