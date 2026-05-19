@@ -1,7 +1,9 @@
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Moore57Graph.Aut.InvolutionFixIsK155
 import Moore57.Papers.Aschbacher1971.Lemma1_4_InvolutionFix
+import Moore57.Foundations.GroupAction.FixedPoints
 import Mathlib.GroupTheory.GroupAction.Defs
+import Mathlib.GroupTheory.Perm.Cycle.Type
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -162,5 +164,48 @@ theorem step5_transposition_count_odd :
     (3250 - 56) / 2 = 1597 ∧ Odd 1597 := by
   refine ⟨by norm_num, ?_⟩
   decide
+
+/-- **Bridge: `Function.fixedPoints σ` cardinality equals `fixedVertexCount σ`.**
+
+Mathlib's permutation-sign machinery is phrased in terms of
+`Fintype.card (Function.fixedPoints σ)`. This lemma identifies it with
+the Moore57 convention `fixedVertexCount σ`. -/
+theorem card_fixedPoints_eq_fixedVertexCount (σ : Equiv.Perm V) :
+    Fintype.card (Function.fixedPoints σ) = fixedVertexCount σ := by
+  classical
+  rw [fixedVertexCount_eq_card_fixedVertexSet]
+  refine Fintype.card_congr ?_
+  refine Equiv.setCongr ?_
+  ext v
+  simp [Function.fixedPoints, Function.IsFixedPt, fixedVertexSet]
+
+/-- **Step 5 sign lemma (Moore57 involution is an odd permutation).**
+
+Every non-trivial automorphism `σ` of Moore57 with `σ ^ 2 = 1` has
+`Equiv.Perm.sign σ = −1`.
+
+Proof. `aut_involution_fixedVertexCount_eq_56` gives `|Fix(σ)| = 56`.
+By Mathlib's `Equiv.Perm.sign_of_pow_two_eq_one`:
+`sign σ = (−1)^((|V| − |Fix(σ)|) / 2) = (−1)^((3250 − 56)/2) = (−1)^1597 = −1`. -/
+theorem step5_moore57_involution_sign
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (hσ : σ ^ 2 = 1) (hne : σ ≠ 1)
+    (hAut : ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b)) :
+    Equiv.Perm.sign σ = -1 := by
+  have hinv : Function.Involutive σ := fun x => by
+    have h := congrArg (fun (f : Equiv.Perm V) => f x) hσ
+    simpa [pow_two, Equiv.Perm.mul_apply] using h
+  have h56 : fixedVertexCount σ = 56 :=
+    aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
+  have hcard : Fintype.card V = 3250 := hΓ.card
+  have hfix : Fintype.card (Function.fixedPoints σ) = 56 := by
+    rw [card_fixedPoints_eq_fixedVertexCount, h56]
+  have hsign := Equiv.Perm.sign_of_pow_two_eq_one hσ
+  rw [hcard, hfix] at hsign
+  rw [hsign]
+  -- Goal: (-1 : ℤˣ)^((3250 - 56) / 2) = -1
+  have h1597 : (3250 - 56) / 2 = 1597 := by norm_num
+  rw [h1597]
+  -- Goal: (-1 : ℤˣ)^1597 = -1
+  exact Odd.neg_one_pow (by decide : Odd 1597)
 
 end Moore57.Papers.CameronCh3
