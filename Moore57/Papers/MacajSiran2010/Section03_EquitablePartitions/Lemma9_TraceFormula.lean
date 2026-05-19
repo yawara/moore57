@@ -46,7 +46,7 @@ Proof outline: by orbit-stabilizer, `|X| = |O| · |Stab_X(v)|`, and the
 multiplicity of `xv = w` over `x ∈ X` is `|Stab_X(v)|` for each
 `w ∈ O`.  Hence `#{x : v ∼ xv} = deg_O(v) · |Stab_X(v)|`, giving
 `Tr(O) = deg_O(v) = #{x : v ∼ xv} · |O| / |X|`. -/
-theorem lem9_orbit_trace_formula (hΓ : IsMoore57 Γ) : True := by trivial
+theorem lem9_orbit_trace_formula (_hΓ : IsMoore57 Γ) : True := by trivial
 
 /-- **Lemma 9 (1) (proper signature: `Tr(O) = deg_{Γ[O]}(v)` for any
 `v ∈ O`).**
@@ -103,6 +103,25 @@ theorem lem9_orbit_inducedTrace_count_formula
         (O.card : ℚ) / (Xfs.card : ℚ) :=
   Moore57.inducedTrace_orbit_count_formula hv hO_trans hXfs_nonempty
     stabCard h_fiber h_orbit_eq h_yv_in_O
+
+/-- **Lemma 9 (1) (finite subgroup form).**
+
+For a finite subgroup `X ≤ Sym(V)` acting by graph automorphisms and
+`O = X · v`, the orbit trace formula needs no separate fiber-uniformity
+hypothesis: the uniform fiber count is supplied by orbit-stabilizer.
+
+This is the preferred formal entry point when the paper's `X` is available
+as an actual subgroup rather than a raw `Finset` of permutations. -/
+theorem lem9_orbit_inducedTrace_count_formula_subgroup
+    (X : Subgroup (Equiv.Perm V)) [Fintype X]
+    (hX_aut : ∀ x : X, ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x • a) (x • b))
+    {O : Finset V} {v : V}
+    (h_orbit_eq : O = (Finset.univ : Finset X).image (fun x : X => x • v)) :
+    inducedTrace Γ O =
+      (((Finset.univ : Finset X).filter (fun x : X => Γ.Adj v (x • v))).card : ℚ) *
+        (O.card : ℚ) / (Fintype.card X : ℚ) :=
+  Moore57.inducedTrace_orbit_count_formula_finite_group
+    (Γ := Γ) (G := X) hX_aut h_orbit_eq
 
 /-- **Lemma 9 (2) (ℕ-form: double-counting `Σ_x a₁(x) = |{(x, v) : v ~ x v}|`).**
 

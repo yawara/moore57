@@ -219,4 +219,162 @@ theorem inducedTrace_orbit_count_formula
     exact_mod_cast h_nat
   linarith
 
+/-! ### Lemma 9 (1) finite-group orbit-stabilizer form -/
+
+/-- **Lemma 9 (1) ℕ-form for an actual finite group action.**
+
+This is the same count identity as `orbit_count_identity_of_fiber_uniform`,
+but with `Xfs : Finset G` acting on vertices by `•`.  The fiber size is still
+an explicit hypothesis; `inducedTrace_orbit_count_formula_finite_group` below
+supplies it from orbit-stabilizer for `Finset.univ`. -/
+theorem orbit_count_identity_of_fiber_uniform_group
+    {G : Type*} [Group G] [MulAction G V]
+    {O : Finset V} {v : V} {Xfs : Finset G}
+    (stabCard : ℕ)
+    (h_fiber : ∀ w ∈ O,
+        (Xfs.filter (fun y : G => y • v = w)).card = stabCard)
+    (h_orbit_eq : O = Xfs.image (fun y : G => y • v))
+    (h_yv_in_O : ∀ y ∈ Xfs, y • v ∈ O) :
+    Xfs.card * (O.filter (fun w => Γ.Adj v w)).card =
+      (Xfs.filter (fun y : G => Γ.Adj v (y • v))).card * O.card := by
+  classical
+  -- Step 1: Xfs.card = O.card * stabCard.
+  have h_X_decomp : Xfs.card = O.card * stabCard := by
+    have hpart : Xfs.card = ∑ w ∈ O,
+        (Xfs.filter (fun y => y • v = w)).card := by
+      rw [h_orbit_eq, ← Finset.card_eq_sum_card_fiberwise
+        (f := fun y => y • v) (s := Xfs)
+        (t := Xfs.image (fun y => y • v)) (H := ?_)]
+      intros y hy
+      exact Finset.mem_image_of_mem _ hy
+    rw [hpart]
+    have hsum : ∑ w ∈ O, (Xfs.filter (fun y => y • v = w)).card =
+        ∑ _w ∈ O, stabCard := Finset.sum_congr rfl h_fiber
+    rw [hsum, Finset.sum_const, smul_eq_mul]
+  -- Step 2: count = deg · stabCard.
+  have h_count : (Xfs.filter (fun y => Γ.Adj v (y • v))).card =
+      (O.filter (fun w => Γ.Adj v w)).card * stabCard := by
+    have h_eq : Xfs.filter (fun y => Γ.Adj v (y • v)) =
+        (O.filter (fun w => Γ.Adj v w)).biUnion
+          (fun w => Xfs.filter (fun y => y • v = w)) := by
+      ext y
+      simp only [Finset.mem_filter, Finset.mem_biUnion]
+      constructor
+      · intro ⟨hy_in, hy_adj⟩
+        exact ⟨y • v, ⟨h_yv_in_O y hy_in, hy_adj⟩, hy_in, rfl⟩
+      · rintro ⟨w, ⟨_, hwadj⟩, hy_in, hy_eq⟩
+        exact ⟨hy_in, hy_eq ▸ hwadj⟩
+    rw [h_eq, Finset.card_biUnion]
+    · have hsum : ∑ w ∈ O.filter (fun w => Γ.Adj v w),
+          (Xfs.filter (fun y => y • v = w)).card =
+          ∑ _w ∈ O.filter (fun w => Γ.Adj v w), stabCard := by
+        apply Finset.sum_congr rfl
+        intros w hw
+        rw [Finset.mem_filter] at hw
+        exact h_fiber w hw.1
+      rw [hsum, Finset.sum_const, smul_eq_mul]
+    · intros w1 _ w2 _ hne
+      simp only [Function.onFun, Finset.disjoint_left, Finset.mem_filter]
+      intros y hy1 hy2
+      exact hne (hy1.2.symm.trans hy2.2)
+  -- Step 3: Combine.
+  rw [h_X_decomp, h_count]; ring
+
+/-- **Lemma 9 (1) ℚ-form for a finite group orbit.**
+
+If a finite group `G` acts on the vertices by graph automorphisms and `O` is
+the `G`-orbit of `v`, then the orbit trace formula follows without a separate
+fiber-uniformity hypothesis:
+
+`Tr(O) = #{g : G | v ~ g • v} * |O| / |G|`. -/
+theorem inducedTrace_orbit_count_formula_finite_group
+    {G : Type*} [Group G] [Fintype G] [MulAction G V]
+    (h_aut : ∀ g : G, ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (g • a) (g • b))
+    {O : Finset V} {v : V}
+    (h_orbit_eq : O = (Finset.univ : Finset G).image (fun g : G => g • v)) :
+    inducedTrace Γ O =
+      (((Finset.univ : Finset G).filter (fun g : G => Γ.Adj v (g • v))).card : ℚ) *
+        (O.card : ℚ) / (Fintype.card G : ℚ) := by
+  classical
+  have hv : v ∈ O := by
+    rw [h_orbit_eq]
+    exact Finset.mem_image.mpr ⟨(1 : G), Finset.mem_univ _, by simp⟩
+  have hO_trans : ∀ w ∈ O, ∃ φ : Equiv.Perm V,
+      (∀ a b : V, Γ.Adj a b ↔ Γ.Adj (φ a) (φ b)) ∧
+      φ v = w ∧
+      ∀ u : V, u ∈ O ↔ φ u ∈ O := by
+    intro w hw
+    rw [h_orbit_eq] at hw
+    obtain ⟨g, _, rfl⟩ := Finset.mem_image.mp hw
+    refine ⟨MulAction.toPerm g, h_aut g, rfl, ?_⟩
+    intro u
+    change u ∈ O ↔ g • u ∈ O
+    constructor
+    · intro hu
+      rw [h_orbit_eq] at hu ⊢
+      obtain ⟨h, _, rfl⟩ := Finset.mem_image.mp hu
+      exact Finset.mem_image.mpr ⟨g * h, Finset.mem_univ _, by rw [mul_smul]⟩
+    · intro hgu
+      rw [h_orbit_eq] at hgu ⊢
+      obtain ⟨h, _, hh⟩ := Finset.mem_image.mp hgu
+      refine Finset.mem_image.mpr ⟨g⁻¹ * h, Finset.mem_univ _, ?_⟩
+      calc
+        (g⁻¹ * h) • v = g⁻¹ • (h • v) := mul_smul _ _ _
+        _ = g⁻¹ • (g • u) := by rw [hh]
+        _ = u := by rw [← mul_smul, inv_mul_cancel, one_smul]
+  have h_fiber : ∀ w ∈ O,
+      ((Finset.univ : Finset G).filter (fun y : G => y • v = w)).card =
+        Fintype.card (MulAction.stabilizer G v) := by
+    intro w hw
+    rw [h_orbit_eq] at hw
+    obtain ⟨g₀, _, hg₀⟩ := Finset.mem_image.mp hw
+    have hcard : Fintype.card {y : G // y • v = w} =
+        Fintype.card (MulAction.stabilizer G v) := by
+      refine Fintype.card_congr ?_
+      refine
+        { toFun := fun y => ⟨g₀⁻¹ * y.1, ?_⟩
+          invFun := fun k => ⟨g₀ * k.1, ?_⟩
+          left_inv := ?_
+          right_inv := ?_ }
+      · calc
+          (g₀⁻¹ * y.1) • v = g₀⁻¹ • (y.1 • v) := mul_smul _ _ _
+          _ = g₀⁻¹ • w := by rw [y.2]
+          _ = g₀⁻¹ • (g₀ • v) := by rw [← hg₀]
+          _ = v := by rw [← mul_smul, inv_mul_cancel, one_smul]
+      · calc
+          (g₀ * k.1) • v = g₀ • (k.1 • v) := mul_smul _ _ _
+          _ = g₀ • v := by rw [k.2]
+          _ = w := hg₀
+      · intro y
+        ext
+        simp
+      · intro k
+        ext
+        simp
+    rw [Fintype.card_subtype (fun y : G => y • v = w)] at hcard
+    exact hcard
+  have h_nat := orbit_count_identity_of_fiber_uniform_group (Γ := Γ)
+    (G := G) (O := O) (v := v)
+    (Xfs := Finset.univ) (Fintype.card (MulAction.stabilizer G v))
+    h_fiber h_orbit_eq (fun y _ => by
+      rw [h_orbit_eq]
+      exact Finset.mem_image.mpr ⟨y, Finset.mem_univ _, rfl⟩)
+  have h_tr : inducedTrace Γ O = ((O.filter (fun w => Γ.Adj v w)).card : ℚ) :=
+    inducedTrace_eq_neighborhood_card_of_transitive (Γ := Γ) hv hO_trans
+  have hG_card_pos : 0 < Fintype.card G := Fintype.card_pos_iff.mpr ⟨(1 : G)⟩
+  have hG_ne : (Fintype.card G : ℚ) ≠ 0 := by exact_mod_cast hG_card_pos.ne'
+  rw [h_tr]
+  rw [eq_div_iff hG_ne]
+  have h_rat_univ :
+      (((Finset.univ : Finset G).card : ℚ) *
+          ((O.filter (fun w => Γ.Adj v w)).card : ℚ) =
+        (((Finset.univ : Finset G).filter (fun g : G => Γ.Adj v (g • v))).card : ℚ) *
+          (O.card : ℚ)) := by
+    exact_mod_cast h_nat
+  have h_rat : (Fintype.card G : ℚ) * (O.filter (fun w => Γ.Adj v w)).card =
+      ((Finset.univ : Finset G).filter (fun g : G => Γ.Adj v (g • v))).card *
+        (O.card : ℚ) := by
+    simpa using h_rat_univ
+  simpa [mul_comm] using h_rat
+
 end Moore57
