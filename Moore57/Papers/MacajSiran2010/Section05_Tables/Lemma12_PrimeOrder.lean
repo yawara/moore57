@@ -107,7 +107,86 @@ aut.  Combined with the character-theoretic table `a₁ ∈ {27 + 45k : k ∈ �
 pair and hence cannot occur. -/
 theorem lem12_no_p3_a0_one (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 12 (corollary, starred row `p = 7, a₀ = 58` cannot occur).** [deferred-heavy] -/
+/-- **Lemma 12 (p=7 starred row): if `Fix(σ)` contains the closed
+neighbourhood of some vertex, then `a₁(σ) = 0`.** [done]
+
+Geometric core of the `p = 7, a₀ = 58` starred case (and more
+generally, any case where the star center `c` and all of `N(c)` are
+fixed).  The proof uses Moore57 diameter 2:
+
+* If `v ~ σv` with `v ≠ c` and `v ∉ N(c)`, then `v` is at distance 2
+  from `c`, so the Moore57 `μ = 1` axiom gives a unique common
+  neighbour `b ∈ N(v) ∩ N(c)`.
+* `b ∈ N(c) ⊆ Fix(σ)` gives `σ b = b`.
+* Applying `σ` to `v ~ b` yields `σv ~ b`.
+* `v`, `σv`, `b` form a triangle, contradicting Moore57's `λ = 0`.
+
+The case `v ∈ Fix(σ)` is ruled out by graph irreflexivity (`v ~ σv = v`
+impossible).
+
+For the `p = 7, a₀ = 58` row specifically, `a₀ = 58 = 2 + 7·8` and
+`Fix(σ)` is a star with center `c` and `57` leaves filling `N(c)`,
+which satisfies the hypothesis. -/
+theorem lem12_a1_zero_of_closed_neighbourhood_fixed
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (c : V)
+    (h_fix_center : σ c = c)
+    (h_fix_neighbours : ∀ v ∈ Γ.neighborSet c, σ v = v) :
+    adjacentMovedCount Γ σ = 0 := by
+  classical
+  by_contra hne_zero
+  have hpos : 0 < adjacentMovedCount Γ σ := Nat.pos_of_ne_zero hne_zero
+  unfold adjacentMovedCount at hpos
+  obtain ⟨v, hv_mem⟩ := Finset.card_pos.mp hpos
+  rw [Finset.mem_filter] at hv_mem
+  have hv : Γ.Adj v (σ v) := hv_mem.2
+  -- v ≠ σv (else irrefl).
+  have hv_ne_σv : v ≠ σ v := by
+    intro h
+    have hv' : Γ.Adj v v := by rw [← h] at hv; exact hv
+    exact Γ.irrefl hv'
+  -- v ≠ c (else σv = σc = c = v).
+  have hv_ne_c : v ≠ c := by
+    intro hc
+    apply hv_ne_σv
+    rw [hc, h_fix_center]
+  -- v ∉ N(c) (else σv = v).
+  have hv_not_adj_c : ¬ Γ.Adj v c := by
+    intro h_adj_vc
+    have hv_in_Nc : v ∈ Γ.neighborSet c := by
+      rw [SimpleGraph.mem_neighborSet]
+      exact h_adj_vc.symm
+    exact hv_ne_σv (h_fix_neighbours v hv_in_Nc).symm
+  -- Moore57 μ = 1: get a common neighbour b of v and c.
+  have hμ : Fintype.card (Γ.commonNeighbors v c) = 1 :=
+    hΓ.of_not_adj hv_ne_c hv_not_adj_c
+  have h_card_pos : 0 < Fintype.card (Γ.commonNeighbors v c) := by
+    rw [hμ]; decide
+  have hne_subtype : Nonempty (Γ.commonNeighbors v c) :=
+    Fintype.card_pos_iff.mp h_card_pos
+  obtain ⟨⟨b, hb⟩⟩ := hne_subtype
+  rw [SimpleGraph.mem_commonNeighbors] at hb
+  obtain ⟨hvb, hcb⟩ := hb
+  -- b ∈ N(c), so σ b = b.
+  have hσb : σ b = b := by
+    apply h_fix_neighbours
+    rw [SimpleGraph.mem_neighborSet]
+    exact hcb
+  -- Apply σ to v ~ b: σv ~ σb = b.
+  have hσvb : Γ.Adj (σ v) b := by
+    have := (hAut v b).mp hvb
+    rw [hσb] at this
+    exact this
+  -- Triangle v ~ σv, σv ~ b, b ~ v.
+  exact hΓ.no_triangle hv hσvb hvb.symm
+
+/-- **Lemma 12 (corollary, starred row `p = 7, a₀ = 58` cannot occur).** [deferred-heavy]
+
+The geometric `a₁ = 0` consequence is fully formalised in
+`lem12_a1_zero_of_closed_neighbourhood_fixed`.  Combining this with
+the character-theoretic `a₁ ∈ {21 + 105k : k ∈ ℕ}` (from
+Proposition 2, deferred) yields the contradiction. -/
 theorem lem12_no_p7_a0_58 (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S5
