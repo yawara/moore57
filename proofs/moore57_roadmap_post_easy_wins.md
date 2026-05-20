@@ -150,6 +150,13 @@
   - `lem12_p13_a0_zero_from_emptyFixedData`
   - `lem12_p3_a0_ten_from_petersenFixedData` (Lem 12 p=3 non-starred)
   - `lem12_a0_one_from_singletonFixedData`
+* **[B5.0+] (done)** Section 3 True-stub → proper signature unstub
+  (commit `79cf986`, `f167ac0`):
+  - Cor 1 `cor1_a1_le_500`: True-stub → `adjacentMovedCount_le_500` wrap
+  - Lem 6 (3) `lem6_central_trace_le_two`: True-stub → proper-signature wrap
+  - Lem 9 (1) `lem9_orbit_trace_formula`: True-stub → orbit count formula wrap
+  - Lem 10 `lem10_trace_bounds`: True-stub → Mohar bound wrap
+  - Lem 11 `lem11_a2_via_characters` (character chain a₂ conj)
 * **[B5.1] (部分 done)** `lem14_arithmetic_decomp` (`a₁ ≡ b₁_P + b₁_Q
   (mod n)` ℤ-arithmetic packaging) 既に done。
   さらに `lem15_no_pq_14_a0_49_conditional` (Lem 15 pq=14 row, commit `b35143b`)
