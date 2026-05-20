@@ -1,5 +1,9 @@
 import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma12_PrimeOrder
 import Moore57.Foundations.GroupAction.FixedPoints
+import Moore57.Moore57Graph.Aut.PetersenFixedData
+import Moore57.Moore57Graph.Aut.HSFixedData
+import Moore57.Moore57Graph.Aut.FixedSubgraphData
+import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -112,6 +116,50 @@ theorem lem13_p3_row_1_1_pow3_a1_zero
   have h_pow3_pow3 : (σ ^ 3) ^ 3 = 1 := by
     rw [← pow_mul]; exact h_pow9
   exact lem12_p3_a1_eq_zero hΓ (σ ^ 3) (graphAut_pow σ hAut 3) h_pow3_pow3
+
+/-- **Lemma 13 (p=3 row `(?, 10)` via PetersenFixedData for `σ³`).** [done]
+
+If `σ` has order 9 and `σ³` has Petersen fix (non-starred Lem 12 p=3),
+then `a₀(σ³) = 10` and `a₀(σ) ≤ 10`. -/
+theorem lem13_p3_a0_le_10_via_petersenFixedData_pow3
+    (σ : Equiv.Perm V)
+    (h : Moore57.PetersenFixedData Γ (σ ^ 3)) :
+    fixedVertexCount σ ≤ 10 := by
+  have h_pow3 : fixedVertexCount (σ ^ 3) = 10 := h.fixedVertexCount_eq_10
+  have h_le := Moore57.fixedVertexCount_le_pow σ 3
+  omega
+
+/-- **Lemma 13 (p=5 row `(?, 0)` via EmptyFixedData for `σ⁵`).** [done]
+
+If `σ⁵` has empty fix (Lem 12 p=5 empty row), then `a₀(σ) = 0`. -/
+theorem lem13_p5_a0_zero_via_emptyFixedData_pow5
+    (σ : Equiv.Perm V)
+    (h : Moore57.EmptyFixedData (σ ^ 5)) :
+    fixedVertexCount σ = 0 := by
+  have h_pow5 : fixedVertexCount (σ ^ 5) = 0 := h.fixedVertexCount_eq_zero
+  exact lem13_p5_a0_zero_of_pow5_zero σ h_pow5
+
+/-- **Lemma 13 (p=5 row `(?, 50)` via HSFixedData for `σ⁵`).** [done]
+
+If `σ⁵` has HS fix (Lem 12 p=5 HS row), then `a₀(σ) ≤ 50`. -/
+theorem lem13_p5_a0_le_50_via_HSFixedData_pow5
+    (σ : Equiv.Perm V)
+    (h : Moore57.HSFixedData Γ (σ ^ 5)) :
+    fixedVertexCount σ ≤ 50 := by
+  have h_pow5 : fixedVertexCount (σ ^ 5) = 50 := h.fixedVertexCount_eq_50
+  have h_le := Moore57.fixedVertexCount_le_pow σ 5
+  omega
+
+/-- **Lemma 13 (p=5 row `(?, 5)` via C5FixedData for `σ⁵`).** [done]
+
+If `σ⁵` has pentagon fix (Lem 12 p=5 pentagon row), then `a₀(σ) ≤ 5`. -/
+theorem lem13_p5_a0_le_5_via_C5FixedData_pow5
+    (σ : Equiv.Perm V)
+    (h : Moore57.C5FixedData Γ (σ ^ 5)) :
+    fixedVertexCount σ ≤ 5 := by
+  have h_pow5 : fixedVertexCount (σ ^ 5) = 5 := h.fixedVertexCount_eq_5
+  have h_le := Moore57.fixedVertexCount_le_pow σ 5
+  omega
 
 /-- **Lemma 13 (`p²`-order auto: `(a₁(x), a₁(x^p), Tr(x))` table).** [deferred-heavy]
 
