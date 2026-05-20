@@ -65,7 +65,64 @@ theorem main_fix_t_star (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
 /-- **Main theorem (2) (decomposition `G = ⟨Y, t⟩ × X`).** [deferred-heavy] -/
 theorem main_decomposition (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Main theorem (2) `|Y|` arithmetic bound**. [done]
+
+Given the paper's structural conclusion `|Y| ∣ 5 ∨ |Y| ∣ 57 ∨ |Y| ∣ 21`
+(the three possibilities for the odd subgroup `Y` of `G = ⟨Y, t⟩ × X`),
+conclude `|Y| ≤ 57`.
+
+This is the arithmetic envelope of the `|Y|` constraints. The maximum
+is `|Y| = 57` (the `|Y| ∣ 57` branch). -/
+theorem main_decomposition_Y_card_le_57
+    (Y : ℕ) (h : Y ∣ 5 ∨ Y ∣ 57 ∨ Y ∣ 21) :
+    Y ≤ 57 := by
+  rcases h with h | h | h
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 5) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 57) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 21) h; omega
+
 /-- **Main theorem (3) (`Fix(X)` cases when `X ≠ 1`).** [deferred-heavy] -/
 theorem main_fix_X_cases (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Main theorem (3) `|X|` arithmetic dispatch**. [done]
+
+Given the paper's four-way dispatch for `Fix(X)` shape and `|X|`:
+* Star case: `|Y| = 1, |X| = 7`.
+* Pentagon case: `|Y| ∣ 5, |X| ∣ 55`.
+* Petersen case: `|Y| ∣ 3, |X| ∣ 27`.
+* Hoffman-Singleton case: `|Y| ∣ 5 or 7, |X| ∣ 25`.
+
+Conclude `|X| ∣ 55 ∨ |X| ∣ 27 ∨ |X| ∣ 25 ∨ |X| = 7`, which captures
+the four `|X|`-bound possibilities. -/
+theorem main_fix_X_cases_arithmetic
+    (X Y : ℕ)
+    (h_dispatch :
+      (Y = 1 ∧ X = 7) ∨
+      (Y ∣ 5 ∧ X ∣ 55) ∨
+      (Y ∣ 3 ∧ X ∣ 27) ∨
+      ((Y ∣ 5 ∨ Y ∣ 7) ∧ X ∣ 25)) :
+    X ∣ 55 ∨ X ∣ 27 ∨ X ∣ 25 ∨ X = 7 := by
+  rcases h_dispatch with ⟨_, hX⟩ | ⟨_, hX⟩ | ⟨_, hX⟩ | ⟨_, hX⟩
+  · right; right; right; exact hX
+  · left; exact hX
+  · right; left; exact hX
+  · right; right; left; exact hX
+
+/-- **Main theorem (3) `|X|` numeric bound**. [done]
+
+The `|X|` dispatch gives `|X| ≤ 55`. -/
+theorem main_fix_X_cases_card_le_55
+    (X Y : ℕ)
+    (h_dispatch :
+      (Y = 1 ∧ X = 7) ∨
+      (Y ∣ 5 ∧ X ∣ 55) ∨
+      (Y ∣ 3 ∧ X ∣ 27) ∨
+      ((Y ∣ 5 ∨ Y ∣ 7) ∧ X ∣ 25)) :
+    X ≤ 55 := by
+  rcases main_fix_X_cases_arithmetic X Y h_dispatch with h | h | h | h
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 55) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 27) h; omega
+  · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 25) h; omega
+  · omega
 
 end Moore57.Papers.MakhnevPaduchikh2001
