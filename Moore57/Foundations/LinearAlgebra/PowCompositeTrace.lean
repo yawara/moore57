@@ -1,4 +1,5 @@
 import Moore57.Foundations.LinearAlgebra.PowPrimeTrace
+import Moore57.Foundations.GroupTheory.CyclotomicGenericTrace
 import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 import Mathlib.RingTheory.Polynomial.Basic
@@ -246,6 +247,83 @@ theorem trace_eq_sum_trace_restrict_ker_aeval_cyclotomic_divisors
   exact _root_.LinearMap.trace_eq_sum_trace_restrict
     (isInternal_ker_aeval_cyclotomic_divisors f hn hf)
     (fun d => mapsTo_f_ker_aeval_cyclotomic f d.val)
+
+/-! ### Step 4 (full): per-block trace is an integer ⟹ total trace is an integer -/
+
+/-- Generic `aeval`-restriction commutativity: for any polynomial `p`,
+applying `aeval (f.restrict) p` and then coercing to `W` matches
+`aeval f p` applied to the coerced argument. -/
+theorem aeval_restrict_apply
+    (f : W →ₗ[ℚ] W) (S : Submodule ℚ W)
+    (hmaps : Set.MapsTo f S S) (p : ℚ[X]) (v : S) :
+    (Polynomial.aeval (f.restrict hmaps) p v : W) =
+      Polynomial.aeval f p (v : W) := by
+  rw [Polynomial.aeval_endomorphism, Polynomial.aeval_endomorphism]
+  -- Expand the `Polynomial.sum` on both sides as Finset sums, then push `(↑·)` inside.
+  rw [Polynomial.sum_def, Polynomial.sum_def, Submodule.coe_sum]
+  refine Finset.sum_congr rfl ?_
+  intro n _
+  rw [Submodule.coe_smul]
+  congr 1
+  exact restrict_pow_apply f S hmaps n v
+
+/-- `aeval (f.restrict mapsTo) (cyclotomic d ℚ) = 0`: the restriction of
+`f` to its `(aeval f Φ_d)`-kernel is annihilated by `cyclotomic d ℚ`. -/
+theorem aeval_cyclotomic_f_restrict_eq_zero
+    (f : W →ₗ[ℚ] W) (d : ℕ) :
+    Polynomial.aeval
+        (f.restrict (mapsTo_f_ker_aeval_cyclotomic f d))
+        (Polynomial.cyclotomic d ℚ) = 0 := by
+  apply LinearMap.ext
+  intro ⟨v, hv⟩
+  have heq := aeval_restrict_apply f _
+    (mapsTo_f_ker_aeval_cyclotomic f d) (Polynomial.cyclotomic d ℚ) ⟨v, hv⟩
+  apply Subtype.val_injective
+  simp only [LinearMap.zero_apply, ZeroMemClass.coe_zero]
+  rw [heq]
+  exact hv
+
+/-- **B4.3 Step 4 full (per-block)**: for each `d ∣ n` with `0 < d`, the
+trace of `f.restrict (mapsTo to ker(aeval f Φ_d))` is an integer.
+
+For `d = 0` we get the trivial case from `cyclotomic 0 ℚ = 1`
+(annihilation forces the underlying module to be zero, hence trace zero). -/
+theorem trace_restrict_ker_aeval_cyclotomic_isInt
+    [FiniteDimensional ℚ W]
+    (f : W →ₗ[ℚ] W) {d : ℕ} (hd : 0 < d) :
+    ∃ k : ℤ, LinearMap.trace ℚ _
+        (f.restrict (mapsTo_f_ker_aeval_cyclotomic f d)) = (k : ℚ) := by
+  apply Moore57.trace_int_of_cyclotomic_aeval_eq_zero d hd
+  exact aeval_cyclotomic_f_restrict_eq_zero f d
+
+/-- **B4.3 Step 4 full (main)**: `f^n = 1` with `n > 0` ⟹
+`LinearMap.trace ℚ W f` is a rational-integer.
+
+This is the composite-order generalization of B4.1's
+`exists_int_trace_of_pow_prime_eq_one`.  The proof combines:
+* Step 4 partial: trace `f` decomposes as sum over `d ∣ n` of per-block traces.
+* Step 4 full (per-block): each per-block trace is an integer
+  (`trace_int_of_cyclotomic_aeval_eq_zero` from
+  `CyclotomicGenericTrace.lean`).
+* Sum of integers is an integer. -/
+theorem trace_int_of_pow_eq_one
+    [FiniteDimensional ℚ W]
+    (f : W →ₗ[ℚ] W) {n : ℕ} (hn : 0 < n) (hf : f ^ n = 1) :
+    ∃ k : ℤ, LinearMap.trace ℚ W f = (k : ℚ) := by
+  classical
+  rw [trace_eq_sum_trace_restrict_ker_aeval_cyclotomic_divisors f hn hf]
+  -- Each summand is an integer (via Step 4 per-block), so the sum is an integer.
+  have hper : ∀ d : (Nat.divisors n : Finset ℕ),
+      ∃ k : ℤ, LinearMap.trace ℚ _
+          (f.restrict (mapsTo_f_ker_aeval_cyclotomic f d.val)) = (k : ℚ) := by
+    intro ⟨d, hd⟩
+    have hpos : 0 < d := Nat.pos_of_mem_divisors hd
+    exact trace_restrict_ker_aeval_cyclotomic_isInt f hpos
+  -- Choose integers per index and sum them.
+  choose ks hks using hper
+  refine ⟨∑ d, ks d, ?_⟩
+  push_cast
+  exact Finset.sum_congr rfl (fun d _ => hks d)
 
 end
 

@@ -188,6 +188,7 @@ import Moore57.Foundations.Representation.SpectralSubrepresentation
 import Moore57.Foundations.GroupTheory.SylowSchurZassenhaus
 import Moore57.Foundations.GroupTheory.RankAndOrbital
 import Moore57.Foundations.LinearAlgebra.ProjectionTrace
+import Moore57.Foundations.GroupTheory.CyclotomicGenericTrace
 import Moore57.Foundations.LinearAlgebra.PowCompositeTrace
 import Moore57.D19OnMoore57.D19Core.VertexPermutationRepresentation
 import Moore57.D19OnMoore57.Final.TraceRotationOne
