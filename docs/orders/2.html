@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 2 = 2</h1>
-    <p class="sub status"><span class="badge open">0 / 1 groups excluded</span> <span class="muted">even candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 1 paper-excluded</span> <span class="badge open">0 / 1 Lean-excluded</span> <span class="muted">even candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,20 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 2: every involution fixes a 56-vertex star (a₀=56, a₁=112). Lemma 2 also forces 4 ∤ |Aut(Γ)|.</p>
+  <p>
+    Lemma 2 (Higman / Cameron): every involution <code>t</code> fixes a
+    56-vertex star (<code>a₀(t) = 56, a₁(t) = 112</code>), and
+    <code>4 ∤ |Aut(Γ)|</code> — so the involution is isolated in its
+    Sylow 2-subgroup.
+  </p>
+  <p>
+    <strong>Theorem 2</strong> (Makhnev–Paduchikh) reads the order-2
+    group via the trivial decomposition <code>G = ⟨1, t⟩ × 1</code>
+    with <code>|Y| = 1 ∈ {1, 3, 5, 7, 19, 21, 57}</code> ✓ and
+    <code>X = 1</code> (condition (b) on <code>Fix(X)</code> vacuous).
+    The single group <code>ℤ₂</code> is <strong>paper-allowed</strong>;
+    closing it requires the deeper star / involution-action analysis.
+  </p>
 </section>
 
 <section>
@@ -42,10 +55,16 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(2, 1)</code></td><td><code>ℤ₂</code></td><td>Cyclic group of order 2 — a single involution.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(2, 1)</code></td>
+        <td><code>ℤ₂</code></td>
+        <td>Cyclic; single involution <code>t</code>, <code>|Y|=1, |X|=1</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 14 = 2 · 7</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">even candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -32,10 +32,27 @@
     <code>2p, p ∈ {7, 11, 19}</code>). Available partial constraints:
   </p>
   <ul>
+    <li>Lemma 2 (Higman / Cameron): an involution <code>t</code> fixes a
+        56-vertex star.</li>
     <li>Lemma 12 row <code>p = 7</code> gives several shapes
         <code>(a₀, a₁, χ₁)</code>.</li>
-    <li>Lemma 2: an involution fixes a 56-vertex star.</li>
     <li>Lemma 15 has no entry for <code>pq = 14</code>.</li>
+  </ul>
+  <p>
+    <strong>Theorem 2</strong> (Makhnev–Paduchikh) reads the two
+    order-14 groups via <code>G = ⟨Y, t⟩ × X</code> with
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code> and (if
+    <code>X ≠ 1</code>) <code>Fix(X) ∈ {star, pentagon, Petersen, HS}</code>:
+  </p>
+  <ul>
+    <li><code>D₇</code>: <code>Y = ℤ₇</code> inverted by <code>t</code>,
+        <code>X = 1</code>; <code>|Y| = 7 ✓</code>, condition (b)
+        vacuous. <strong>Paper-allowed</strong>.</li>
+    <li><code>ℤ₁₄ = ℤ₂ × ℤ₇</code>: <code>Y = 1, X = ℤ₇</code>;
+        <code>|Y| = 1 ✓</code>. By MP 2001 Lemma 3 case (3) for
+        <code>p = 7</code>, <code>Fix(ℤ₇)</code> is necessarily a
+        <em>star</em> — which is in the Theorem 2(b) list.
+        <strong>Paper-allowed</strong>.</li>
   </ul>
   <p>
     <strong>The paper does not exclude group order 14.</strong>
@@ -69,11 +86,23 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(14, 1)</code></td><td><code>D₇</code></td>  <td>Dihedral of order 14.</td>  <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(14, 2)</code></td><td><code>ℤ₁₄</code></td> <td>Cyclic.</td>                <td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(14, 1)</code></td>
+        <td><code>D₇</code></td>
+        <td>Dihedral; <code>ℤ₇</code> inverted by <code>t</code>, <code>|Y|=7, |X|=1</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+      <tr>
+        <td><code>(14, 2)</code></td>
+        <td><code>ℤ₁₄</code></td>
+        <td>Cyclic; decomposes as <code>⟨t⟩ × ℤ₇</code> with <code>|Y|=1, |X|=7</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 6 = 2 · 3</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">even candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">even candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,29 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 15 row pq=6 (a₀=2, a₀(x_p)=10, a₀(x_q)=56) constrains order-6 elements. No starred row.</p>
+  <p>
+    Lemma 15 row <code>pq = 6</code> (<code>a₀ = 2, a₀(x_p) = 10,
+    a₀(x_q) = 56</code>) constrains order-6 elements; no starred row.
+  </p>
+  <p>
+    <strong>Theorem 2</strong> (Makhnev–Paduchikh) reads the two
+    order-6 groups via <code>G = ⟨Y, t⟩ × X</code> with
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code> and (if
+    <code>X ≠ 1</code>) <code>Fix(X) ∈ {star, pentagon, Petersen, HS}</code>:
+  </p>
+  <ul>
+    <li><code>S₃ = D₃</code>: <code>Y = ℤ₃</code> inverted by
+        <code>t</code>, <code>X = 1</code>; <code>|Y| = 3 ✓</code>,
+        condition (b) vacuous. <strong>Paper-allowed</strong>.</li>
+    <li><code>ℤ₆ = ℤ₂ × ℤ₃</code>: <code>Y = 1, X = ℤ₃</code>;
+        <code>|Y| = 1 ✓</code>. MP 2001 Lemma 3 cases (2) / (5) for
+        <code>p = 3</code> give <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>;
+        condition (b) eliminates the singleton, but the Petersen
+        branch survives. <strong>Paper-allowed</strong>.</li>
+  </ul>
+  <p>
+    The paper does not exclude either group of order 6.
+  </p>
 </section>
 
 <section>
@@ -42,11 +64,23 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(6, 1)</code></td><td><code>S₃</code></td><td>Symmetric group on 3 letters / D₃.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(6, 2)</code></td><td><code>ℤ₆</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(6, 1)</code></td>
+        <td><code>S₃</code></td>
+        <td>Symmetric on 3 letters / <code>D₃</code>; <code>ℤ₃</code> inverted by <code>t</code>, <code>|Y|=3, |X|=1</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+      <tr>
+        <td><code>(6, 2)</code></td>
+        <td><code>ℤ₆</code></td>
+        <td>Cyclic; decomposes as <code>⟨t⟩ × ℤ₃</code> with <code>|Y|=1, |X|=3</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

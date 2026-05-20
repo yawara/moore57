@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 10 = 2 · 5</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">even candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">even candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,33 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 15 rows pq=10 (a₀ ∈ {1, 6}) constrain order-10 elements. Theorem 7 proof: 'G cannot contain ℤ₁₀ and ℤ₃₅ with common subgroup of order 5'.</p>
+  <p>
+    Lemma 15 rows <code>pq = 10</code> (<code>a₀ ∈ {1, 6}</code>)
+    constrain order-10 elements. Theorem 7 proof remark:
+    "<code>G</code> cannot contain <code>ℤ₁₀</code> and
+    <code>ℤ₃₅</code> with a common <code>ℤ₅</code>".
+  </p>
+  <p>
+    <strong>Theorem 2</strong> (Makhnev–Paduchikh) reads the two
+    order-10 groups via <code>G = ⟨Y, t⟩ × X</code> with
+    <code>|Y| ∈ {1, 3, 5, 7, 19, 21, 57}</code> and (if
+    <code>X ≠ 1</code>) <code>Fix(X) ∈ {star, pentagon, Petersen, HS}</code>:
+  </p>
+  <ul>
+    <li><code>D₅</code>: <code>Y = ℤ₅</code> inverted by <code>t</code>,
+        <code>X = 1</code>; <code>|Y| = 5 ✓</code>, condition (b)
+        vacuous. <strong>Paper-allowed</strong>.</li>
+    <li><code>ℤ₁₀ = ℤ₂ × ℤ₅</code>: <code>Y = 1, X = ℤ₅</code>;
+        <code>|Y| = 1 ✓</code>. MP 2001 Lemma 3 cases (1), (4), (6)
+        for <code>p = 5</code> give
+        <code>Fix(ℤ₅) ∈ {empty, pentagon, HS}</code>; condition (b)
+        rules out the empty case, leaving
+        <code>Fix(ℤ₅) ∈ {pentagon, HS}</code>.
+        <strong>Paper-allowed</strong>.</li>
+  </ul>
+  <p>
+    The paper does not exclude either group of order 10.
+  </p>
 </section>
 
 <section>
@@ -42,11 +68,23 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(10, 1)</code></td><td><code>D₅</code></td><td>Dihedral group of order 10.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(10, 2)</code></td><td><code>ℤ₁₀</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(10, 1)</code></td>
+        <td><code>D₅</code></td>
+        <td>Dihedral; <code>ℤ₅</code> inverted by <code>t</code>, <code>|Y|=5, |X|=1</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+      <tr>
+        <td><code>(10, 2)</code></td>
+        <td><code>ℤ₁₀</code></td>
+        <td>Cyclic; decomposes as <code>⟨t⟩ × ℤ₅</code> with <code>|Y|=1, |X|=5</code>.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>
