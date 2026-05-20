@@ -16,12 +16,33 @@ set_option linter.unusedFintypeInType false
 > where `b₁(x) = |{v ∈ Fix(P) ∪ Fix(Q) : v ∼ vˣ}|`. Moreover, if
 > `x = x_P x_Q` with `x_P ∈ P, x_Q ∈ Q`, then
 > `b₁(x) = b₁(x_P) + b₁(x_Q)`.
+
+Status:
+* `lem14_semi_regular_congruence`: paper-stub (semi-regular orbit
+  decomposition + character decomposition, deferred-heavy).
+* `lem14_arithmetic_decomp`: **proven** — pure ℤ arithmetic packaging
+  the decomposition `a₁ ≡ b₁_P + b₁_Q (mod n)`.
 -/
 
 namespace Moore57.Papers.MacajSiran2010.S5
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Lemma 14 arithmetic: `a₁ ≡ b₁_P + b₁_Q (mod |X|)` decomposition**.
+[done]
+
+The paper's congruence packaging: given `a₁ ≡ b₁ (mod n)` (the
+semi-regular congruence) and `b₁ = b₁_P + b₁_Q` (the additive
+decomposition by central `x = x_P · x_Q`), the combined statement is
+`a₁ ≡ b₁_P + b₁_Q (mod n)`. -/
+theorem lem14_arithmetic_decomp
+    (a1 b1 b1_P b1_Q : ℤ) (n : ℤ)
+    (h_cong : a1 ≡ b1 [ZMOD n])
+    (h_decomp : b1 = b1_P + b1_Q) :
+    a1 ≡ b1_P + b1_Q [ZMOD n] := by
+  rw [← h_decomp]
+  exact h_cong
 
 /-- **Lemma 14 (`a₁ ≡ b₁ mod |X|` for semi-regular `P × Q`).** [deferred-heavy] -/
 theorem lem14_semi_regular_congruence (hΓ : IsMoore57 Γ) : True := by trivial
