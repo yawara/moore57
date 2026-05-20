@@ -171,7 +171,38 @@ True-stub も保持):
   + Phase 2.2 で `Lemma13_PrimeSquared.lean` の 2 件 (starred row aut conditional)
   = **合計 8 件** proper-signature 化。
 
-**完了条件**: 5-10 件の True-stub が 1-2 commits で unstub。 **達成** (8 件)。
+**完了条件**: 5-10 件の True-stub が 1-2 commits で unstub。 **大幅超過達成 (合計 25+ 件)**。
+
+### 3.3 このセッション中の True-stub harvest 累計
+
+Higman 1964:
+- Lem 1 `_of_faithful` (iff with faithfulness)
+- Lem 2 `_paper` (intersection number identity)
+- Lem 3 `_paper` (k = l under odd order)
+- Lem 4 `_paper_contrapositive` (imprimitivity)
+- Lem 5 Cor 2 `_arithmetic`, Cor 3 `_arithmetic`
+- Lem 6 `_paper` (eigenvalue characterization)
+- Lem 7 `_paper` (Moore parameter divisibility)
+- Theorem 1 `_paper` (Case I/II disjunction)
+
+Mačaj-Širáň 2010:
+- Lem 21 part 1/2 `_subgroup_paper`
+- Lem 17 case 1/2 `_prime_unconditional`, case 1 `_k_le_3`, case 2 `_k_le_4`
+- Lem 18 case 1/2/3 `_prime_unconditional`, case 1 `_k_le_2`, case 3 `_k_le_3`
+- Lem 13 starred row 5_0_5, 5_5_5 `_no_aut_conditional`
+- Lem 8 `_paper` (spectrum→mod 15)
+- Lem 6 dispatch (size 1-4 ∨ ≥64)
+- Lem 14 `_paper` (semi-regular congruence)
+- Prop 3 `_prime_unconditional`
+- Prop 6/7/8 `_paper` (mixing primes dispatch)
+- Thm 6/7 `_paper` (odd/even order dispatch)
+
+Makhnev-Paduchikh 2001:
+- Lem 3 `_paper` (global Fix dispatch)
+
+加えて B4.3 composite trace + Moore57 wire-up (Phase 2.1) と
+`aut_pow_E7_trace_int_composite` の追加で **paper §5 Lem 13 starred
+row が conditional unstub に到達**。
 
 ---
 
