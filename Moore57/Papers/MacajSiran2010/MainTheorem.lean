@@ -104,11 +104,30 @@ theorem aut_card_le_375_conditional
     n ≤ 375 ∧ (Even n → n ≤ 110) :=
   S9.cor3_bound_from_props_and_oddpart n h_odd_props h_even_oddpart
 
+/-- **Main theorem (paper-faithful conditional form, top-level).** [done]
+
+Proper-signature paper-faithful packaging of the headline Mačaj-Širáň
+2010 Corollary 3: `|G| ≤ 375` and `Even |G| → |G| ≤ 110`, given the
+Props 6/7/8 (odd case) + Thm 7 odd-part (even case) Prop-level dispatch.
+
+Re-export of `aut_card_le_375_conditional` with the headline naming. -/
+theorem aut_card_le_375_paper
+    (n : ℕ)
+    (h_odd_props : Odd n →
+      ((n ∣ 135 ∨ n ∣ 375) ∨
+       (n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171) ∨
+       (n ∣ 35 ∨ n ∣ 275)))
+    (h_even_oddpart : Even n →
+      ∃ m, n = 2 * m ∧ (m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19)) :
+    n ≤ 375 ∧ (Even n → n ≤ 110) :=
+  aut_card_le_375_conditional n h_odd_props h_even_oddpart
+
 /-- **Main theorem (Mačaj–Širáň 2010, Corollary 3).** `|Aut(Γ)| ≤ 375`.
 [deferred-heavy]
 
 The unconditional form awaits the `Aut(Γ)` ↔ subgroup-of-Sym(V)
-bridge and the per-section geometric content (Thms 4/5, Props 6/7/8). -/
+bridge and the per-section geometric content (Thms 4/5, Props 6/7/8).
+Proper-signature conditional form is `aut_card_le_375_paper` (above). -/
 theorem aut_card_le_375 (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010
