@@ -86,10 +86,28 @@ theorem lem24_arithmetic_j_ge_one
     j ≥ 1 := by
   omega
 
+/-- **Lemma 24 (paper-faithful conditional `j ≥ 2`).** [done]
+
+Proper-signature paper-faithful form: given the orbit-decomposition
+`625·i + 125·j = 3250` and the (deferred) paper exclusion of `(i, j) =
+(5, 1)`, conclude `j ≥ 2`.  Re-export combination of
+`lem24_arithmetic_j_ge_one` + the `(5,1)` exclusion. -/
+theorem lem24_two_orbits_paper
+    (i j : ℕ) (h_625 : 625 * i + 125 * j = 3250)
+    (h_not_5_1 : ¬ (i = 5 ∧ j = 1)) :
+    j ≥ 2 := by
+  have h_j_ge_1 : j ≥ 1 := lem24_arithmetic_j_ge_one i j h_625
+  by_contra h_j_lt_2
+  have h_j_eq_1 : j = 1 := by omega
+  -- With j = 1, 625·i + 125 = 3250, so 625·i = 3125 = 625·5, hence i = 5.
+  have h_i_eq_5 : i = 5 := by omega
+  exact h_not_5_1 ⟨h_i_eq_5, h_j_eq_1⟩
+
 /-- **Lemma 24 (`|X| = 625` with smallest orbit 125 has ≥ 2 such orbits).** [deferred-heavy]
 
 The arithmetic backbone is fully formalized in
-`lem24_arithmetic_orbit_decomposition` + `lem24_arithmetic_j_ge_two_of_not_j_one`.
+`lem24_arithmetic_orbit_decomposition` + `lem24_arithmetic_j_ge_two_of_not_j_one`
++ `lem24_two_orbits_paper` (above).
 What remains is the paper's central order-5 + Lemma 7 + Corollary 1
 geometric exclusion of `(i, j) = (5, 1)`. -/
 theorem lem24_two_orbits (hΓ : IsMoore57 Γ) : True := by trivial
