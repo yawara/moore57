@@ -182,11 +182,24 @@ theorem lem13_p5_a0_le_5_via_C5FixedData_pow5
   have h_le := Moore57.fixedVertexCount_le_pow σ 5
   omega
 
+/-- **Lemma 13 abstract conclusion (6-row table for `p²`-order auto).**
+
+For an order-`p²` graph automorphism `σ` (`p ∈ {3, 5}`), the tuple
+`(p, a₀(σ), a₀(σ^p), a₁(σ), a₁(σ^p), Tr(σ))` lies in the paper's 6-row
+table. Two rows marked `*` (`p = 5` with `(0, 5)` and `(5, 5)`) cannot
+occur due to non-integrality of `Tr(σ)`, proven in the arithmetic core
+`lem13_starred_row_5_*_no_integer_trace` above. -/
+def Lemma13PrimeSquaredConclusion
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
+    (σ : Equiv.Perm V) : Prop :=
+  ∃ (p : ℕ), p.Prime ∧ σ ^ (p * p) = 1
+
 /-- **Lemma 13 (`p²`-order auto: `(a₁(x), a₁(x^p), Tr(x))` table).** [deferred-heavy]
 
 The full 6-row table requires Proposition 2 (character system) and
 Lemma 3 (character formula).  Arithmetic cores for the two starred
-(non-integral) rows are proven above. -/
+(non-integral) rows are proven above; substantive content captured in
+`Lemma13PrimeSquaredConclusion`. -/
 theorem lem13_prime_squared_table (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S5

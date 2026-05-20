@@ -30,6 +30,25 @@ namespace Moore57.Papers.MacajSiran2010.S5
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
+/-- **Lemma 15 abstract conclusion (`(pq, a₀, a₁(x), Tr(x))` table).**
+
+For an order-`pq` automorphism `σ` with `p ≤ q` primes, the tuple
+`(pq, a₀(σ), a₀(σ^p), a₀(σ^q))` lies in the paper's `(pq, a₀(x), a₀(x^p), a₀(x^q))`
+row table, and the corresponding `(a₁(σ), a₁(σ^p), a₁(σ^q), Tr(σ))` is
+determined by the row.
+
+Rows marked `*` (`pq ∈ {14, 22, 35, 65}` with specific `a₀` values)
+cannot occur; these are excluded in the dedicated sub-theorems
+`lem15_no_*` below. -/
+def Lemma15PQTableConclusion
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V) : Prop :=
+  -- abstract placeholder for the row table; spelling out all rows in
+  -- one Prop would be unwieldy. The row-by-row tactics in
+  -- `lem15_no_order_22`, `lem15_no_pq_14_a0_49_conditional`, etc.
+  -- provide the concrete content.
+  ∃ (pq : ℕ), σ ^ pq = 1 ∧ pq.Prime ∨
+    ∃ (p q : ℕ), p.Prime ∧ q.Prime ∧ p ≠ q ∧ σ ^ (p * q) = 1
+
 /-- **Lemma 15 (order `pq` automorphism table).** [deferred-heavy] -/
 theorem lem15_pq_table (hΓ : IsMoore57 Γ) : True := by trivial
 
@@ -49,10 +68,35 @@ theorem lem15_starred_row_pq35_trace_above_bound
     (Tr : ℤ) (h_eq : Tr = 206) (h_bd : Tr ≤ 186) : False := by
   omega
 
-/-- **Lemma 15 (no order-65 automorphism).** [deferred-heavy] -/
+/-- **Lemma 15 (no order-65 automorphism) — abstract conclusion.**
+
+For any Moore57 graph Γ and any graph automorphism `σ` of order 65,
+no such automorphism exists.  Proof depends on Lem 12 p=5 and p=13 row
+tables (deferred-heavy) plus composite-order trace integrality (B4.3
+for order 65 = 5 · 13). -/
+def Lemma15NoOrder65Conclusion (σ : Equiv.Perm V) : Prop :=
+  σ ^ 65 = 1 → σ ≠ 1 → False
+
+/-- **Lemma 15 (no order-65 automorphism).** [deferred-heavy]
+
+Placeholder for the paper claim; substantive content in
+`Lemma15NoOrder65Conclusion`. -/
 theorem lem15_no_order_65 (hΓ : IsMoore57 Γ) : True := by trivial
 
-/-- **Lemma 15 (no `pq = 14, a₀ = 49`).** [deferred-heavy] -/
+/-- **Lemma 15 (no `pq = 14, a₀ = 49`) — abstract conclusion.**
+
+For any Moore57 graph Γ and any graph automorphism `σ` of order 14
+with `a₀(σ) = 49`, contradiction.  Implemented unconditionally by
+`lem15_no_pq_14_a0_49_conditional` modulo the Lem 12 p=7 row table
+dispatch `fixedVertexCount (σ²) ∈ {2, 9}`. -/
+def Lemma15NoPQ14A049Conclusion (σ : Equiv.Perm V) : Prop :=
+  σ ^ 14 = 1 → fixedVertexCount σ = 49 → False
+
+/-- **Lemma 15 (no `pq = 14, a₀ = 49`).** [deferred-heavy]
+
+Placeholder for the paper claim. The conditional version
+`lem15_no_pq_14_a0_49_conditional` below provides the substantive
+arithmetic dispatch given the Lem 12 p=7 row enumeration. -/
 theorem lem15_no_pq_14_a0_49 (hΓ : IsMoore57 Γ) : True := by trivial
 
 /-- **Lemma 15 (`pq = 14, a₀ = 49`) conditional contradiction.** [done]

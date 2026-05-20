@@ -165,11 +165,52 @@ theorem lem11_a2_via_characters
   have h_a1 := lem11_a1_via_characters hΓ σ τ hτ
   linarith [h_a0, h_a1]
 
-/-- **Lemma 11 (`aᵢ` constant on rational classes).** [deferred-heavy]
+/-- **Lemma 11 (`aᵢ` constant on rational classes — via `χⱼ` constancy).** [conditional]
 
-The `a₀` part is fully proven as `lem11_a0_constant_on_rational_classes`
-(direct, no character theory).  The `a₁, a₂` parts require Theorem 3
-plus Lemma 3 / Theorem 1 character formulas. -/
-theorem lem11_ai_constant_on_rational_classes (hΓ : IsMoore57 Γ) : True := by trivial
+Assuming the (deferred) Theorem 3 (Curtis–Reiner) input
+`h_chi_const`, that each spectral character `χⱼ` is constant on rational
+classes of graph automorphisms, conclude that `a₀, a₁` are likewise
+constant on rational classes.
+
+`a₂` then follows trivially from `a₂ = |V| − a₀ − a₁`, which is the
+project's definition of `a₂`.
+
+The hypothesis `h_chi_const` is precisely what Theorem 3 + the
+Moore57 spectral subrep identification (B3.1+) supply.
+
+For the special case `k = ±1` the hypothesis is unconditionally available
+via `chi_j_conj` (k = +1) and a `χⱼ(σ⁻¹) = χⱼ(σ)` lemma (k = -1, future
+work).  For general coprime `k` the hypothesis remains deferred-heavy
+(B4.3, composite-order trace integrality + Galois action). -/
+theorem lem11_ai_constant_on_rational_classes
+    (hΓ : IsMoore57 Γ)
+    (h_chi_const :
+        ∀ (σ τ : Equiv.Perm V) (k : ℤ),
+          Nat.Coprime k.natAbs (orderOf σ) →
+          (∀ a b : V, Γ.Adj a b ↔ Γ.Adj (τ a) (τ b)) →
+          chi0 (V := V) (τ * σ ^ k * τ⁻¹) = chi0 (V := V) σ ∧
+          chi1 Γ (τ * σ ^ k * τ⁻¹) = chi1 Γ σ ∧
+          chi2 Γ (τ * σ ^ k * τ⁻¹) = chi2 Γ σ) :
+    ∀ (σ τ : Equiv.Perm V) (k : ℤ),
+      Nat.Coprime k.natAbs (orderOf σ) →
+      (∀ a b : V, Γ.Adj a b ↔ Γ.Adj (τ a) (τ b)) →
+      (fixedVertexCount (τ * σ ^ k * τ⁻¹) : ℚ) = (fixedVertexCount σ : ℚ) ∧
+      (adjacentMovedCount Γ (τ * σ ^ k * τ⁻¹) : ℚ) =
+        (adjacentMovedCount Γ σ : ℚ) := by
+  intro σ τ k hk hτ
+  obtain ⟨h0, h1, h2⟩ := h_chi_const σ τ k hk hτ
+  refine ⟨?_, ?_⟩
+  · -- a₀(τ σ^k τ⁻¹) = χ₀ + χ₁ + χ₂ = a₀(σ) via chi-sum bridge
+    have h_src := chi_sum_eq_fixedVertexCount (V := V) (Γ := Γ) σ
+    have h_dest :=
+      chi_sum_eq_fixedVertexCount (V := V) (Γ := Γ) (τ * σ ^ k * τ⁻¹)
+    rw [h0, h1, h2] at h_dest
+    linarith [h_src, h_dest]
+  · -- a₁(τ σ^k τ⁻¹) = 57·χ₀ + 7·χ₁ − 8·χ₂ = a₁(σ)
+    have h_src := adjacentMovedCount_eq_chi_combination hΓ σ
+    have h_dest :=
+      adjacentMovedCount_eq_chi_combination hΓ (τ * σ ^ k * τ⁻¹)
+    rw [h0, h1, h2] at h_dest
+    linarith [h_src, h_dest]
 
 end Moore57.Papers.MacajSiran2010.S4

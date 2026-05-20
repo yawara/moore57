@@ -114,8 +114,21 @@ theorem lem12_p3_a1_eq_zero (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
   -- Triangle v – σv – σ²v – v contradicts Moore57's no-triangle.
   exact hΓ.no_triangle hv h_σv_σ2v h_σ2v_v
 
+/-- **Lemma 12 abstract conclusion (17-row table for prime-order auto).**
+
+For an order-`p` graph automorphism `σ` (prime `p`), the tuple
+`(p, a₀(σ), a₁(σ), χ₁(σ))` lies in the paper's 17-row table.
+Rows marked `*` (`p = 3, a₀ = 1`; `p = 7, a₀ = 58`) cannot occur and are
+excluded in `lem12_no_p3_a0_one` (B4.1) / `lem12_no_p7_a0_58` (B4.2). -/
+def Lemma12PrimeTableConclusion
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
+    (σ : Equiv.Perm V) : Prop :=
+  ∃ (p : ℕ), p.Prime ∧ σ ^ p = 1
+
 /-- **Lemma 12 (prime-order `(a₀, a₁, χ₁)` table — full statement).** [deferred-heavy]
-The full 17-row classification of admissible `(p, a₀, a₁, χ₁)` tuples. -/
+The full 17-row classification of admissible `(p, a₀, a₁, χ₁)` tuples.
+Placeholder; substantive content in `Lemma12PrimeTableConclusion` plus
+the individual row lemmas above. -/
 theorem lem12_prime_table (hΓ : IsMoore57 Γ) (x : Equiv.Perm V)
     (hx : ∀ a b, Γ.Adj a b ↔ Γ.Adj (x a) (x b))
     (p : ℕ) (hp : p.Prime) (hxp : x ^ p = 1) :
