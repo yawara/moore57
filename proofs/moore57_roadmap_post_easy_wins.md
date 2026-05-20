@@ -137,7 +137,19 @@
   - `lem13_p5_a0_zero_of_pow5_zero` (p=5 (0,0) propagation)
   - `lem13_p3_a0_le_one_of_pow3_one` (p=3 (?, 1) constraint)
   - `lem13_p3_row_1_1_pow3_a1_zero` (p=3 (1,1) bridge to Lem 12 p=3 starred)
+  さらに (commit `9ab7eca`) FixedData-parameterised row bridges:
+  - `lem13_p3_a0_le_10_via_petersenFixedData_pow3` (Petersen σ³ → a₀(σ) ≤ 10)
+  - `lem13_p5_a0_{zero, le_50, le_5}_via_{Empty, HS, C5}FixedData_pow5`
   full 6-row table を char-theoretic に ⟶ Theorem 3 / Prop 2 待ち、deferred。
+* **[B5.0+] (部分 done)** Lem 11 a₀/a₁ character chain (commit `f17f4df`):
+  paper-faithful の `a₀(τστ⁻¹) = a₀(σ)` を `χ₀+χ₁+χ₂ = a₀` + chi_conj 経由
+  で再導出 (`lem11_a{0,1}_via_characters`)。
+* **[B5.0+] (部分 done)** Lem 12 paper-faithful wrappers (commit `f17f4df`):
+  - `lem12_p2_a0_56` / `lem12_p2_a1_112` (involution wrap)
+  - `lem12_p5_a0_dispatch` (Empty/C5/HS FixedData dispatch via Nonempty)
+  - `lem12_p13_a0_zero_from_emptyFixedData`
+  - `lem12_p3_a0_ten_from_petersenFixedData` (Lem 12 p=3 non-starred)
+  - `lem12_a0_one_from_singletonFixedData`
 * **[B5.1] (部分 done)** `lem14_arithmetic_decomp` (`a₁ ≡ b₁_P + b₁_Q
   (mod n)` ℤ-arithmetic packaging) 既に done。
   さらに `lem15_no_pq_14_a0_49_conditional` (Lem 15 pq=14 row, commit `b35143b`)
