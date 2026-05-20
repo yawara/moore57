@@ -62,6 +62,22 @@ theorem lem5_block_design_count_srg
   rw [Nat.mul_comm m (n - k - 1)]
   exact (SimpleGraph.IsSRGWith.param_eq G h hn).symm
 
+/-- **Lemma 5 (μl = k(k − λ − 1)) — conditional form**. [done]
+
+Given the orbital ↔ SRG bridge for a rank-3 perm group (concretely,
+the SRG parameters `n, k, λ, μ` arise from the orbital structure with
+`l = n − k − 1`), Lemma 5 follows directly from
+`lem5_block_design_count_srg`.
+
+The conditional form: given any `IsSRGWith n k λ μ`-witness for the
+orbital structure of a rank-3 group (the deferred orbital ↔ SRG
+bridge), the rank-3 form of Lem 5 holds. -/
+theorem lem5_block_design_count_conditional
+    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {n k l m : ℕ} (h_srg : G.IsSRGWith n k l m) (hn : 0 < n) :
+    m * (n - k - 1) = k * (k - l - 1) :=
+  lem5_block_design_count_srg G h_srg hn
+
 /-- **Lemma 5 (μl = k(k − λ − 1)).** [deferred-heavy]
 
 Paper-faithful rank-3 perm group statement.  The SRG version is fully

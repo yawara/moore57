@@ -349,4 +349,21 @@ theorem lem3_reverseNeighborhood_eq_neighborhood_of_paired
     orbitalNeighborhood G Ω O₂ a := by
   rw [orbitalReverseNeighborhood_eq_orbitalNeighborhood_swap, h]
 
+/-- **Higman 1964 Lem 3 conditional completion**: given paired orbitals
+(`swapOrbital O₁ = O₂`) and in-degree = out-degree for `O₁` at `a`
+(double-counting consequence under transitivity + finiteness), the
+two subdegrees coincide:
+`Nat.card N_{O₁}(a) = Nat.card N_{O₂}(a)`.
+
+This is the conditional skeleton for "odd order rank-3 ⟹ k = l".
+The in-degree = out-degree hypothesis is the deferred-heavy piece
+(needs Sigma equiv + Fintype Ω, see Lem 3 main form). -/
+theorem lem3_subdegree_eq_of_paired_and_eq_in_out_deg
+    {O₁ O₂ : orbital G Ω} (h_paired : swapOrbital G Ω O₁ = O₂) (a : Ω)
+    (h_in_out : Nat.card (orbitalNeighborhood G Ω O₁ a) =
+                Nat.card (orbitalReverseNeighborhood G Ω O₁ a)) :
+    Nat.card (orbitalNeighborhood G Ω O₁ a) =
+    Nat.card (orbitalNeighborhood G Ω O₂ a) := by
+  rw [h_in_out, lem3_reverseNeighborhood_eq_neighborhood_of_paired (G := G) (Ω := Ω) h_paired a]
+
 end Moore57

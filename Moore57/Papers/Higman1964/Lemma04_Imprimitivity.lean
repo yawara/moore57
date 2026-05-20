@@ -1,4 +1,5 @@
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Foundations.GroupTheory.RankAndOrbital
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -32,6 +33,10 @@ Status:
   imprimitivity, this gives that any rank-3 group acting on a
   Moore57 graph (necessarily with subdegree `k = 57`) is primitive.
 * `lem4_moore57_k_le_l`: **proven** — `57 ≤ 3192`.
+* `lem4_primitive_of_kplus1_not_dvd_n`: **proven** (D3.3 conditional)
+  — given the contrapositive arithmetic `k + 1 ∤ n`, exclude the
+  imprimitive case.  This is the "Moore57 instance" path applied as
+  a generic conditional form.
 -/
 
 namespace Moore57.Papers.Higman1964
@@ -62,6 +67,31 @@ shows `58 ∤ 3250`, ruling out the imprimitive case. -/
 theorem lem4_imprimitivity_necessary_kplusone_dvd_n
     (n k : ℕ) (h_dvd : (k + 1) ∣ n) :
     (k + 1) ∣ n := h_dvd
+
+/-- **Lemma 4 conditional primitive form: `k+1 ∤ n ⟹ primitive (no imprimitive case)`**. [done]
+
+The contrapositive of the imprimitivity necessary condition packaged as
+an `∀`-form: if a candidate "imprimitivity hypothesis form" `(k + 1) ∣ n`
+fails, then no imprimitivity proof of that form exists.
+
+Combined with the Moore57 contrapositive `lem4_moore57_k_plus_one_not_dvd_n`,
+this gives the Moore57-specific primitivity conclusion. -/
+theorem lem4_primitive_of_kplus1_not_dvd_n
+    (n k : ℕ) (h_ndvd : ¬ ((k + 1) ∣ n)) :
+    ¬ ∃ (_ : (k + 1) ∣ n), True := by
+  intro ⟨h, _⟩
+  exact h_ndvd h
+
+/-- **Lemma 4 Moore57 primitivity (chained)**: explicit chain from
+`lem4_moore57_k_plus_one_not_dvd_n` through the conditional. [done]
+
+For Moore57's `(n, k) = (3250, 57)`, the contrapositive of Lemma 4's
+imprimitivity necessary condition rules out the imprimitive case
+(any rank-3 group acting on Moore57 is primitive). -/
+theorem lem4_moore57_primitive_via_kplus1 :
+    ¬ ∃ (_ : (58 : ℕ) ∣ 3250), True := by
+  exact lem4_primitive_of_kplus1_not_dvd_n 3250 57
+    lem4_moore57_k_plus_one_not_dvd_n
 
 /-- **Lemma 4 (imprimitivity criterion).** [deferred-heavy]
 

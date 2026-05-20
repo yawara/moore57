@@ -81,6 +81,31 @@ theorem lem3_subdegree_G_invariant
     Nat.card (Moore57.orbitalNeighborhood G Ω O a) :=
   Moore57.orbitalNeighborhood_card_smul G Ω O g a
 
+/-- **Lemma 3 main form (conditional)**: under paired orbitals + in-deg
+= out-deg hypothesis (which holds under transitive + finite Ω by
+double counting), the two paired-orbital subdegrees coincide
+(`k = l` in the paper's notation).
+
+This is the conditional "k = l" form of Higman 1964 Lem 3:
+* Paired hypothesis (`swap O₁ = O₂`) comes from Lem 1 main form under
+  odd order: in a rank-3 odd-order group, the two non-diagonal
+  orbitals are paired by swap.
+* In-deg = out-deg comes from double-counting (`∑_a |N_O(a)| =
+  |orbital_set O| = ∑_a |N⁻_O(a)|`) under transitivity + Fintype Ω.
+
+Both inputs are then independently formalisable.  Wraps
+`Moore57.lem3_subdegree_eq_of_paired_and_eq_in_out_deg`. -/
+theorem lem3_subdegree_eq_of_paired_and_eq_in_out_deg
+    (G Ω : Type*) [Group G] [MulAction G Ω]
+    {O₁ O₂ : Moore57.orbital G Ω}
+    (h_paired : Moore57.swapOrbital G Ω O₁ = O₂) (a : Ω)
+    (h_in_out : Nat.card (Moore57.orbitalNeighborhood G Ω O₁ a) =
+                Nat.card (Moore57.orbitalReverseNeighborhood G Ω O₁ a)) :
+    Nat.card (Moore57.orbitalNeighborhood G Ω O₁ a) =
+    Nat.card (Moore57.orbitalNeighborhood G Ω O₂ a) :=
+  Moore57.lem3_subdegree_eq_of_paired_and_eq_in_out_deg
+    (G := G) (Ω := Ω) h_paired a h_in_out
+
 /-- **Lemma 3 odd-order arithmetic: `n = 2k + 1`**. [done]
 
 The paper's odd-`|G|` rank-3 conclusion: `k = l` and `n = 1 + k + l = 1 + 2k`.
