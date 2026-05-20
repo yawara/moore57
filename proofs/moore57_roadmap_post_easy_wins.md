@@ -178,8 +178,22 @@ Lem 13 fullテーブル, Lem 14 paper-faithful 形, Lem 18 一般。
   semi-regular を separate に取得。Tier C の semi-regular bridge を
   unconditional 化するのに必要。
 
-* **[C3.5] (未)** Lem 17/18 case (2-3): pentagon / empty / singleton 接続。
-  C5FixedData (既存) + K155FixedData (既存) + 新規 EmptyFixedData (未)。
+* **[C3.5] (done)** Lem 17/18/19 case (2-3): pentagon / empty / singleton
+  接続。`SingletonFixedData` + `EmptyFixedData` 新規作成
+  (`Moore57Graph/Aut/SingletonAndEmptyFixedData.lean`)。 既存 `C5FixedData` /
+  `K155FixedData` (`FixedSubgraphData.lean`) に bridge を追加:
+  - 各 FixedData に `fixedVertexCount_eq_*` (Petersen 10, HS 50, C5 5,
+    K155 56, Singleton 1, Empty 0)
+  - 各 FixedData に `autFixedNeighborFinset_card_eq_*` + complement count
+    bridge (Petersen 3→54, HS 7→50, C5 2→55, K155 center 55→2, K155
+    leaf 1→56, Singleton 0→57, Empty global 3250)
+  - **Lem 4 (§2 odd-prime classification)**:
+    `lem4_case{1,2,4,5,6}_with_{Empty,Singleton,C5,Petersen,HS}FixedData`
+    で各 case を FixedData parameterise。case (3) は star general
+    `2 + 7l` で K155 (= 56 ≠ 2 + 7l) と異なるためスキップ。
+  - **Lem 17/18/19 wrappers**: 各 case で
+    `lem{17,18,19}_case{n}_orderOf_dvd_*_with_*FixedData` conditional
+    wrapper を追加。
 
 * **[C3.6] (未)** §8 Prop 3: `Fix(X) = HS ⟹ |X| ≤ 5`。
   入力: `prop3_arithmetic_core_no_partition_of_7_with_sq_31` (done) +
