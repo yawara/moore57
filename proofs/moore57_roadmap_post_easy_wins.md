@@ -522,14 +522,23 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
 
 ### D3. Higman 1964 Lems 1-7 抽象版
 
-* **[D3.0] (partial done, 2026-05-21)** Lem 1: paired orbit ⇔ even order。
+* **[D3.0] (done, 2026-05-21)** Lem 1: paired orbit ⇔ even order。
   Cauchy + pairing。 `Lemma01_PairedOrbits.lean` に以下を追加:
   - `lem1_self_paired_iff_swap_fixed`: `IsSelfPaired O ↔ swapOrbital O = O`
     (定義の paper-faithful 言い換え)
   - `lem1_diagonal_self_paired`: 対角 orbital は常に自己paired
   - `lem1_swapOrbital_involutive`: pairing は involution
-  本体「偶位数 ⇔ 非対角自己paired orbital が存在」は Cauchy + counting
-  argument で重く、deferred。
+  - `lem1_self_paired_orbital_of_order_two`: 「order-2 element τ + 動かす
+    点 a ⟹ ⟦(a, τ•a)⟧ が non-diagonal self-paired」(⟸ 構成)
+  - `lem1_swap_element_of_self_paired`: non-diagonal self-paired ⟹
+    swap element g (g•a = b, g•b = a)
+  - `lem1_even_card_of_non_diagonal_self_paired`: non-diagonal self-paired
+    ⟹ 2 ∣ |G| (⟹ |G|-form; faithfulness 不要)。
+    Proof: g² ∈ Stab(a) but g ∉ Stab(a), Nat.mod parity contradiction.
+  - `lem1_order_two_of_even_card`: Cauchy at p = 2 wrap
+  - 完全 iff packaging (moved-point witness 付きで ⟸,
+    unconditional で ⟹) + 対偶
+    `lem1_no_non_diagonal_self_paired_of_odd_card`。
 * **[D3.1] (done, 2026-05-21)** Lem 2: intersection numbers λ, μ, λ₁, μ₁
   の定数性 (rank-3 仮定下)。 `RankAndOrbital.lean` に以下の構造を追加:
   - `orbitalNeighborhood O a := { c | (a, c) ∈ O }` (orbital が定める
@@ -547,27 +556,39 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
   - `IsRank3 G Ω : Prop := permRank G Ω = 3` (rank-3 predicate)
   - `Lemma02_IntersectionNumbers.lean` で
     `lem2_intersection_count_orbital_invariant` として paper-faithful wrap。
-* **[D3.2] (partial done, 2026-05-21)** Lem 3: odd order rank-3 ⟹
-  k = l, n = 2k+1, λ = μ。 structural backbone を `RankAndOrbital.lean`
-  に追加:
-  - `orbitalNeighborhood_card_smul`: subdegree (`|N_O(a)|`) は G-action
-    不変 (bijection `c ↦ g⁻¹ • c` 経由)
-  - `orbitalReverseNeighborhood O a := { c | (c, a) ∈ O }` (in-degree
-    集合 — 逆方向 neighborhood)
-  - `orbitalReverseNeighborhood_eq_orbitalNeighborhood_swap`:
-    `N⁻_O(a) = N_{swapOrbital O}(a)` (in-degree ↔ paired orbital の
-    out-degree)
-  - `lem3_reverseNeighborhood_eq_neighborhood_of_paired`:
-    `swapOrbital O₁ = O₂` (paired) なら `N⁻_{O₁}(a) = N_{O₂}(a)`
-    — paper の "Δ'(a) = Γ(a)" の構造的核
-  - `Lemma03_SelfPaired.lean` で paper-faithful wrap
-    (`lem3_paired_orbital_neighborhood_card_eq`,
-    `lem3_subdegree_G_invariant`)
-  本体「odd order ⟹ k = l」は Lem 1 主形 (Cauchy + counting) +
-  in-deg = out-deg (double counting) と組み合わせて導く。 これは
-  deferred 維持。
-* **[D3.3] (未)** Lem 4: 不可約性 ⇔ G_a ≠ G_{Γ(a)} ⇔ Γ(a) = Γ(b) for some a ≠ b。
-* **[D3.4] (未)** Lem 5: μl = k(k − λ − 1) (rank-3 perm group 形)。Moore57 SRG 形は既に proven。
+* **[D3.2] (done, 2026-05-21)** Lem 3: odd order rank-3 ⟹
+  k = l, n = 2k+1, λ = μ。 unconditional main form 完成:
+  - Stage A (`lem3_swap_pairs_non_diagonal_orbitals`): rank-3 + odd
+    ⟹ swap が 2 つの non-diagonal orbital を pair (Lem 1 対偶を使う)
+  - Stage B (`orbitalNeighborhood_card_eq_orbitalReverseNeighborhood_card`):
+    transitive + Fintype Ω ⟹ in-deg = out-deg。 Proof: 両 sums
+    `∑_x |N_O(x)|`, `∑_x |N⁻_O(x)|` が orbital preimage |O_pairs| と等しい
+    (Sigma 双射 `orbitalPreimageFstEquiv`/`orbitalPreimageSndEquiv`)、
+    G-invariance + transitivity で summand 定数化、`|Ω|` 約分。
+  - 統合 (`lem3_subdegree_eq_of_odd_rank3`): transitive + rank-3 +
+    odd |G| ⟹ `|N_{O₁}(a)| = |N_{O₂}(a)|` (= k = l).
+  - その他: `lem3_in_deg_eq_out_deg` (Stage B wrap),
+    `lem3_non_diagonal_orbitals_paired_of_odd_rank3` (paper-faithful
+    paired conclusion)。
+* **[D3.3] (done, 2026-05-21)** Lem 4: 不可約性 ⇔ G_a ≠ G_{Γ(a)}。
+  Mathlib `MulAction.IsPreprimitive` bridge:
+  - `lem4_stabilizer_le_stabilizer_orbitalNeighborhood`: 基本包含
+    G_a ≤ G_{N_O(a)} (setwise)。
+  - `lem4_isCoatom_stabilizer_iff_preprimitive`: Mathlib
+    `isCoatom_stabilizer_iff_preprimitive` の direct wrap (Wielandt).
+  - `lem4_not_preprimitive_of_stabilizer_lt`: 厳密包含 G_a <
+    G_{N_O(a)} ∧ G_{N_O(a)} ≠ ⊤ ⟹ ¬ preprimitive (対偶)。
+  paper の 3-way iff (rank-3 specific block 構造) は deferred-heavy
+  維持 (Δ(a) ∪ {a} block 分析が必要)。
+* **[D3.4] (done, 2026-05-21)** Lem 5: μl = k(k − λ − 1) 一般化。
+  - `lem5_rank3_perm_group_form_int` (ℤ 形): `λk + μl = k(k − 1)` ⟹
+    `μl = k(k − λ − 1)`. SRG 形と algebraically 等価だが、SRG packaging
+    に依存しない直接 paper-faithful 形。
+  - `lem5_rank3_perm_group_form_iff_int` (双方向)。
+  - `lem5_rank3_perm_group_form_moore57`: ℤ form の Moore57 instance。
+  - `orbitalIntersectionAt`: paper notation alias for D3.1
+    intersection number。 `lem5_intersection_number_constant`: constancy
+    の wrap。
 * **[D3.5] (未)** Lem 6, 7: incidence matrix の eigenvalue 解析。
 * **[D3.6] (未)** Thm 1 full: n = k² + 1 ⟹ k ∈ {2, 3, 7, 57}。算術 core は既に proven。
 
