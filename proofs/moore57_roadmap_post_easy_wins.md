@@ -1,48 +1,60 @@
-# Moore57 Roadmap — Easy-wins 後の残務整理 (2026-05-21 更新 (晩))
+# Moore57 Roadmap — Easy-wins 後の残務整理 (2026-05-21 更新 (深夜))
 
 このドキュメントは Moore57/Papers/ scaffold (commit `42e1662` 起点) で
 「簡単に潰せるもの」を一通り処理した時点での残務を **粒度の細かいタスク** に
-分解したものです。 直近の主要進捗: Tier B **finish (B-final, commit
-`40bb98a`)** — 残る全 True-stub に companion `XConclusion : Prop` def
-(Theorem 3, Prop 2, Lem 12/13/14/15 の paper claim を `Prop` 化) を
-追加 + `lem11_ai_constant_on_rational_classes` を True-stub から
-**proper conditional bridge** (`χⱼ` 定数性仮説 → `aᵢ` 定数性結論、
-Theorem 1 inverse formula 経由) に格上げ。 これで Tier B は「Lean-未移植
-external 依存 (Curtis–Reiner Theorem 3 全形 + semi-regular orbit
-decomposition + 一般 fix-shape classification) を **proper signature
-化された hypothesis として明示**」状態に。 下流補題は必要に応じて
-`Theorem3RationalClasses` 等を hypothesis として取って unconditional に
-進める形に整った。
+分解したものです。
 
-直前: B4.2 完了 — Lem 12 p=7 a₀=58 starred + Lem 13 p=3 (?, 1) row を
-B4.1 (cyclotomic integer trace) で unconditional 化。 prime-order
-starred 行は実質的にすべて Theorem 3 不要で dispatch 可能。
+直近の主要進捗 (2026-05-21 同日内 3 並行セッション):
 
-## 0. 現状の確定スコア
+- **Tier C 全体完了** — C1, C2, C3 (含 C3.4 semi-regular orbit + C3.6
+  Prop 3) すべて done または scope-skip。 `SemiRegularOrbit.lean` +
+  graph-aut bridge + 各 FixedData wrapper + Lem 17/18 unconditional
+  wrapper が稼動。
+- **Tier D 全体完了** — D2.x, D3.0–D3.6, D4.0–D4.1 すべて done。
+  Higman 1964 §§1-2 (Lems 1-7 抽象版) + Aschbacher 1.4 (involution
+  dichotomy + combined classification) が paper-faithful に Lean 化。
+- **Tier B B4.3 Step 4 full 完了** — `trace_int_of_pow_eq_one`:
+  任意の有限位数 ℚ-線形作用素で trace ∈ ℤ。 **B4.1 prime-case の
+  composite-order 完全一般化**。 `CyclotomicGenericTrace.lean` + 既存
+  `Module.AEval` infrastructure を再利用。 Moore57 specific な
+  wire-up (Step 5-6) のみ残。
 
-* `lake build` clean, CI ratchet sorry-free (`grep` で proof-position `sorry`/`admit` ゼロ)。
-* True-stub の数: 約 78 (B4.2 で `lem12_no_p7_a0_58` が True-stub →
-  fully unconditional に格上げ → 1 件減少。 累計 B4.1+B4.2 で 2 件減)。
-  残りの 30 件程度は意図的な backwards-compat shell で、paper-faithful
-  side theorem はその後ろに proven 版がある状態。
-* 主要な依存外部 (Lean 未移植) 定理 — 更新版:
+これで Mathlib に未移植の大物外部定理は **GAP SmallGroup uniqueness 1 件**
+にほぼ収束。 ロードマップの認識ではかつて巨大な Theorem 3 composite-order
+ボトルネックも本日 hand-roll で取得済 (詳細 §2 [B4.3] / §8.1)。
+
+## 0. 現状の確定スコア (2026-05-21 深夜)
+
+* `lake build` clean (4063 jobs)、CI ratchet sorry-free
+  (`grep ":= sorry$\|:= by sorry$\|:= admit$\|by admit$"` で 0 件)。
+* True-stub の数: 94 (`grep "True := by trivial\|True := trivial"` 計測)。
+  B-final + C3.6 + D3.6 + D4.1 + B4.3 の各段階で `XConclusion : Prop` /
+  proper-signature 化された companion def が追加され、結果として
+  backward-compat shell の数自体は若干増加。 paper-faithful 側はその
+  後ろに proven 版が並ぶ状態。
+* 主要な依存外部 (Lean 未移植) 定理 — 2026-05-21 深夜版:
   1. **Feit–Thompson 奇数位数定理** — Mathlib 未移植。**Moore57 では不要**
-     (詳細は §5 で議論)。
-  2. **Philip Hall (可解群の Hall π-部分群存在)** — Mathlib 未移植。**Moore57 では不要**。
+     (Sylow + Schur-Zassenhaus で代替、§5 参照)。
+  2. **Philip Hall (可解群の Hall π-部分群存在)** — Mathlib 未移植。
+     **Moore57 では不要**。
   3. **Burnside `p^a q^b` 可解性** — Mathlib 未移植。**Moore57 では不要**。
-  4. **Curtis–Reiner Theorem 3 (rational class character integrality, full form)**
-     — Mathlib 未移植。 **Moore57 では prime order p のみで十分** で、
-     `Foundations/LinearAlgebra/PowPrimeTrace.lean` (B4.1) が cyclotomic 経由で
-     unconditional に処理する形に置き換え可能。 全 rational class への
-     一般化は依然 Theorem 3 待ち (paper では §4 Prop 2 や Lem 13 の
-     composite-order な数論的同値類で使用)。
-  5. **GAP SmallGroup library** — Lean に同等品なし。SG(81,9) は手構築済
-     (`SmallGroup819.lean`)、SG(625,12) も Heis(F₅) × Z₅ で手構築済
-     (`SmallGroup625_12.lean`, commit ~`e673d3d`)。 uniqueness はまだ。
-* 既に proven な arithmetic / SRG-spectral / **cyclotomic-trace** core が
-  大量にあり、上に置けば unconditional version になる「橋」が幾つも
-  待っている状態。 特に B4.1 で得た `aut_pow_prime_E7_trace_int` は
-  Lem 12 や Lem 13 の prime-order starred row 全てに直接適用可能。
+  4. ~~**Curtis–Reiner Theorem 3 (rational class character integrality)**~~
+     — **本日 B4.3 Step 4 (`trace_int_of_pow_eq_one`) で実質的に bypass**。
+     任意有限位数で trace ∈ ℤ は cyclotomic + Module.AEval 経由で
+     unconditional に取得。 ただし paper §4 Prop 2 の rational class
+     一般形 (character system non-neg integer solution) は依然 Lean 化
+     必要 (deferred-heavy, 別 Prop として encode 済)。
+  5. **GAP SmallGroup library** — Lean に同等品なし。SG(81,9) と
+     SG(625,12) は手構築済、uniqueness (15 群 / 10 群 enumeration) は
+     downstream consumer 無しで投資非推奨。
+* 既に proven な arithmetic / SRG-spectral / cyclotomic-trace /
+  **composite-order trace** core が大量にあり、上に置けば
+  unconditional version になる「橋」が複数待機:
+  - B4.1 `aut_pow_prime_E7_trace_int` — prime-order starred row
+    (Lem 12, Lem 13 prime cases)
+  - **B4.3 `trace_int_of_pow_eq_one` — composite-order (任意 n)**。
+    Moore57 への wire-up (`σ ∈ Aut(Γ) → ℚ-linear endomorphism`) は
+    Step 5-6 で実装。
 
 ---
 
@@ -130,21 +142,26 @@ starred 行は実質的にすべて Theorem 3 不要で dispatch 可能。
 
 ## 2. Tier B — 文字理論 (Macaj–Širáň §4)
 
-**進捗 (2026-05-21 晩 / commit `40bb98a`)**: Tier B **finish (B-final)**。
+**進捗 (2026-05-21 深夜)**: Tier B **B4.3 Step 4 full まで完了**。
 [B1], [B2.0], [B2.1], [B3.0], [B3.1] (+ [B3.1+] subrep full bridge),
 [B4.0] (+ [B4.0+] Lemma 11 χⱼ conj wrappers), **[B4.1] (prime-order
-cyclotomic 経由)**, **[B4.2] (starred p-prime row dispatch)**, [B5.0]/[B5.1]
-(arithmetic core + FixedData bridges), そして **[B-final] (全 True-stub
-の `XConclusion : Prop` def 化 + Lem 11 conditional bridge)** 完了。
-残り **deferred-heavy** のみ:
-- [B4.3] composite-order Theorem 3 移植 (Galois 機構 + generalized
-  eigenspace)
+cyclotomic 経由)**, **[B4.2] (starred p-prime row dispatch)**,
+[B5.0]/[B5.1] (arithmetic core + FixedData bridges), **[B-final]**
+(全 True-stub の `XConclusion : Prop` def 化 + Lem 11 conditional bridge)、
+そして **[B4.3] Steps 1-4 full (composite-order trace integrality, 本日深夜)** 完了。
+
+Tier B 内部のメインボトルネック (Theorem 3 composite-order) は本日
+`trace_int_of_pow_eq_one` の hand-roll で **実質的に bypass**。
+残り:
+- **[B4.3] Step 5-6**: Moore57 wire-up (任意有限位数 σ ∈ Aut(Γ) で
+  `tr(E₇·P_σ) ∈ ℤ` の composite 版 + `lem13_starred_row_5_*` unstub)
 - [B5.0] full paper-faithful 6-row Lem 13 / 17-row Lem 12 表 (character
   system 全形)
 - [B5.1] full semi-regular orbit decomposition for Lem 14
-これらは Lean-未移植 external (Curtis–Reiner Theorem 3 全形 + structural
-fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion`
-を hypothesis として取ることで unconditional に進められる状態に整った。
+
+[B5.0]/[B5.1] は Lean-未移植 external (paper §4 Prop 2 + structural
+fix-shape classification) 待ちだが、`XConclusion` Prop def 経由で
+downstream lemmas は unconditional に進められる状態に整っている。
 
 ### B1. Mathlib `Mathlib.RepresentationTheory` の整備状況確認
 
@@ -790,11 +807,10 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 7.1 短期 (1 commit 単位、各 < 200 LOC)
 
-**進捗 (2026-05-21 夜)**: 旧 1〜13 項目すべて **完了**。 加えて
-B-final (Tier B True-stub finalization, commit `40bb98a`) と
-[C3.4] Semi-regular orbit argument (本日夜 commit) も done。
-次の短期項目候補は [D3.x] Higman 1964 Lems 1-3 拡張、または個別 Tier
-B/D 拡張。
+**進捗 (2026-05-21 深夜)**: 旧 1〜16 項目 + 本日 3 並行セッション
+([C3.4], [C3.6], [D3.0]–[D3.6], [D4.0], [D4.1], [B4.3 Step 2-4])
+すべて **完了**。 これにより Tier C/D の scope 全閉鎖、B4.3 も
+Moore57 specific な wire-up (Step 5-6) を残すのみ。
 
 1. ~~**[E1.1]** Prop 6 Sylow analysis~~ — **done** (commit `e673d3d`)。
 2. ~~**[E4.0]** Thm 7 Sylow analysis (110 dispatch)~~ — **done**。
@@ -842,13 +858,30 @@ B/D 拡張。
     conditional bridge + C3.4 semi-regular 経由 unconditional bridge +
     `Proposition3HSFixConclusion / Step5Conclusion` abstract Prop defs
     を `Proposition3_HSFixBound.lean` に追加 (詳細は §3 C3.6)。
-17. **[★ 次の短期項目]** 候補:
-   - **[B4.3]** Composite-order Galois cyclotomic decomp (deferred-heavy)。
-   - **[D3.x]** Higman 1964 Lems 1–3 抽象版 (orbital infrastructure に
-     乗せて proper signature 化)。
-   - **[B5.0+] / Lem 21**: `Fix(σ^l) = Fix(σ)` の paper-faithful 整備
+17. ~~**[B4.3]** Composite-order Galois cyclotomic decomp~~ — **Step 2-4
+    full done (2026-05-21 深夜)**: `Foundations/LinearAlgebra/PowCompositeTrace.lean`
+    + `Foundations/GroupTheory/CyclotomicGenericTrace.lean` で
+    `trace_int_of_pow_eq_one` (任意 n) まで到達。 Step 5-6 (Moore57 wire-up) 残。
+18. ~~**[D3.0]–[D3.6] + [D4.0]–[D4.1]**~~ — **done (2026-05-21 夜)**:
+    Higman 1964 §§1-2 (Lems 1-7 抽象版) + Aschbacher 1.4
+    (involution dichotomy + combined Cor) すべて paper-faithful 化。
+19. **[★ 次の短期項目]** 候補:
+   - **[B4.3 Step 5]** `trace_int_of_pow_eq_one` を Moore57 wire-up:
+     - `σ ∈ Aut(Γ)` の permMatrix 経由で W = E₇.range への ℚ-linear
+       endomorphism として認識
+     - n = 25 specialize (orderOf σ = 25 case)
+     - `aut_pow_E7_trace_int_composite` (`σ^n = 1` ⟹ `tr(E₇·P_σ) ∈ ℤ`)
+       を B4.1 prime-order 版の真の一般化として追加
+   - **[B4.3 Step 6]** `lem13_starred_row_5_*_no_integer_trace` の
+     unstub (B4.3 Step 5 経由)。 これで Lem 13 p=5 starred の
+     order-25 row が unconditional False に。
+   - **[Lem 21]** `Fix(σ^l) = Fix(σ)` paper-faithful 整備
      (C3.4 で残った "semi-regular 自体" hypothesis を unstub するための
-     paper-faithful 前提)。
+     paper-faithful 前提、MS 2010 §6)。 中規模 (≥ 1 commit)。
+   - **[Tier A]** A1.2 / A3 / A4 — downstream consumer 無しで非推奨。
+   - **[B5.0 full / B5.1 full]** paper-faithful 6-row Lem 13 / 17-row
+     Lem 12 + semi-regular orbit decomposition — Theorem 3 全形 + Prop 2
+     依存で deferred-heavy。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -863,13 +896,20 @@ B/D 拡張。
 
 12. ~~**[C3.4]** Semi-regular orbit argument~~ — **done (2026-05-21 夜)**:
     詳細は §3 C3.4 / §7.1 #15。
-13. **[B4.3]** Composite-order / general rational-class Theorem 3 移植
-    (Galois 理論 + generalized eigenspace decomp)。 prime-order は B4.1
-    で代替済なので優先度低。
-14. **[D1-D4]** Rank-3 perm group framework + Higman 1964 全体。
-15. **[A3, A4]** Order-625 group classification (Lem 22, Prop 4)。
+13. ~~**[B4.3]** Composite-order trace integrality~~ — **本質的に done
+    (2026-05-21 深夜, B4.3 Step 4 full)**: `trace_int_of_pow_eq_one`。
+    paper §4 Prop 2 の rational-class character system 全形は依然遠い
+    が、Moore57 specific には不要。
+14. ~~**[D1-D4]**~~ — **done (2026-05-21 夜)**: Rank-3 perm group
+    framework + Higman 1964 Lems 1-7 + Aschbacher 1.4 すべて Lean 化。
+15. **[A3, A4]** Order-625 group classification (Lem 22, Prop 4) —
+    downstream consumer 無しで投資非推奨 (Tier A 投資判断 §1 参照)。
 16. **Lem 21**: `Fix(σ^l) = Fix(σ)` paper-faithful 整備 — C3.4 で残った
     "semi-regular 自体" hypothesis を unstub する paper-faithful 前提。
+17. **[Theorem 3 全形 / Prop 2]** Lean 化 (composite-order trace integrality
+    は B4.3 でカバー済、残るは rational class character system non-neg
+    integer solution 等の「分類論」側)。 Mathlib RepresentationTheory
+    が将来整備されたら自然に乗る位置。 paper §4 Prop 2 として encode 済。
 
 ### 7.4 見送り推奨
 
@@ -885,42 +925,59 @@ B/D 拡張。
 
 paper を素直に読むと必要に見えるが、Moore57 specific には不要な定理:
 
-| 定理 | 当初推測 | 実状 |
+| 定理 | 当初推測 | 実状 (2026-05-21 深夜) |
 |---|---|---|
 | Feit–Thompson (奇数位数定理) | §9 Thm 6 で必須 | **不要**: |G| ≤ 375 odd は ≤ 2 distinct primes ⟹ Sylow + Schur-Zassenhaus で十分 |
 | Philip Hall (Hall π-部分群存在) | §9 Thm 6/7 で必須 | **不要**: 2-prime case は Sylow = Hall, 3-prime case 110 は Sylow 11 normal で取れる |
 | Burnside p^a q^b 可解性 | §9 で必要かと推測 | **不要**: 解能性経由せず Sylow 直接で処理可 |
-| 一般 SRG 分類 (k ∈ {2, 3, 7, 57}) | Aschbacher Lem 1.3 で必須 | **不要 (Moore57 instance level)**: Higman 1964 算術 core (`theorem1_arithmetic_core`) 経由で Moore57 k=57 は Cameron 3.13 で済む |
-| Curtis–Reiner Theorem 3 (full) | §4 Lem 12/13 starred で必須 | **prime order は不要**: B4.1 `aut_pow_prime_E7_trace_int` (cyclotomic 経由) で代替可能。 composite-order/rational-class 一般形のみ残る (B4.3 deferred) |
+| 一般 SRG 分類 (k ∈ {2, 3, 7, 57}) | Aschbacher Lem 1.3 で必須 | **不要 (Moore57 instance level)**: Higman 1964 算術 core (`theorem1_arithmetic_core`) 経由で Moore57 k=57 は Cameron 3.13 で済む。 加えて Tier D D3.5/D3.6/D4.x 完了で paper-faithful 形 (k ∈ {3, 7, 57}) も Lean 化済 |
+| ~~Curtis–Reiner Theorem 3 (trace integrality)~~ | §4 Lem 12/13 starred で必須 | **本日 B4.3 Step 4 で取得**: `trace_int_of_pow_eq_one` (任意 n)。 prime-order は B4.1、composite-order は B4.3 で対応。 paper §4 Prop 2 の rational-class character system 全形のみ deferred |
+| ~~Petersen / HS explicit graph~~ | §6 Lem 17/18 で暗黙必須 | **不要**: `PetersenFixedData` / `HSFixedData` の SRG パラメータベース設計で十分 (§3.0)。 |
 
-paper-level の本当のボトルネックは:
+paper-level の **本当の** ボトルネック (2026-05-21 深夜):
 - **GAP SmallGroup library**: Lean 等価物が無いため手構築必須 (Tier A)。
-  SG(81,9), SG(625,12) 本体は手構築済、uniqueness が残課題。
-- ~~**Character theory** (Mathlib にあるが Moore57 spectral との bridge 必要)~~:
-  Mathlib `Representation.character` ↔ `fixedVertexCount` bridge (B2) は
-  完了 + 自前 `chi0/chi1/chi2` (B3) + cyclotomic prime-order trace (B4.1)
-  まで揃ったので、prime-order starred 行は順次 unstub できる状態 (B4.2)。
-- ~~**Petersen / HS explicit graphs**~~: Petersen は decide 用に explicit 化済、
-  HS は SRG パラメータベースで `HSFixedData` を回せるので explicit 構築 **不要**
-  (§3.0 参照)。 ~~残る唯一の Tier C substantive 項目は [C3.4] semi-regular
-  orbit argument~~ — **本日 (2026-05-21 夜) 完了**。 Tier C は §3 C3.4
-  まで完全に組み上がり、Lem 17/18 の paper-faithful な semi-regular
-  hypothesis 受領 wrapper が利用可能。
+  SG(81,9), SG(625,12) 本体は手構築済、uniqueness (15 群 / 10 群 enumeration)
+  が残るが downstream consumer 無しで投資非推奨。
+- **Lem 21 paper-faithful** (`Fix(σ^l) = Fix(σ)`): C3.4 で残った
+  semi-regular hypothesis 自体を unstub するための前提。 中規模仕事。
+- **paper §4 Prop 2** (rational character system non-neg integer
+  solution): Theorem 3 系の「分類論」側、まだ Lean 未整備。 ただし
+  proper `Prop` def として encode 済 (B-final で)、下流 lemma は
+  hypothesis として取れる。
 
-### 8.1 知見の累積による状態変化 (2026-05-21 時点)
+### 8.1 知見の累積による状態変化 (2026-05-21 深夜 / 同日 3 並行セッション完了時点)
 
-過去のロードマップ版 (commit `4805b0f` 起点) と比べての地殻変動:
+過去のロードマップ版 (commit `4805b0f` 起点 → `42e1662` papers scaffold)
+と比べての地殻変動:
 
-* **Theorem 3 が "全部" ボトルネック → prime-order だけ bypass 可能** に。
-  これにより Lem 12 starred の少なくとも p=3, p=7 行 + Lem 13 starred の
-  prime-order 行は **B4.1 + 既存 mod-arithmetic だけで** unstub できる。
-  全 starred 行を Theorem 3 待ちにする必要は無い。
-* **Cyclotomic infrastructure (`PowPrimeTrace.lean`) が再利用可能**: 同じ
-  pattern は将来的に `E_57` や `E_-8` projection trace、または他の
-  Mathlib Moore-bound 系の議論にも使える。
-* **残る "真の" Lean-未移植定理**: Schur–Zassenhaus は Mathlib にあり、
-  Sylow も完備、Cyclotomic も整備済。 Moore57 に必要な大物外部定理は
-  ほぼゼロに近い (GAP SmallGroup uniqueness と Theorem 3 composite-order 拡張のみ)。
+* **Theorem 3 が "全部" ボトルネック → prime-order だけ bypass 可能 (B4.1)
+  → 任意 composite n で取得 (B4.3 Step 4 full)** へ。
+  本日 B4.3 完成で `trace_int_of_pow_eq_one` (任意 n) を hand-roll で
+  獲得。 既存 `Module.AEval` + cyclotomic.irreducible_rat (Mathlib) を
+  活用し、prime-case proof body の generic 化で実現。 Moore57 specific な
+  Step 5-6 wire-up で Lem 13 p=5 starred order-25 row も unconditional
+  False になる位置に。
+* **Tier C は scope 全閉鎖** (本日 C3.4 + C3.6 完了): SRG-parameter
+  ベースの FixedData 設計で Aut(Petersen)/Aut(HS)/HS explicit/SRG 一意性
+  をすべて bypass。 残る唯一の長期項目は Lem 21 paper-faithful 整備。
+* **Tier D は paper §§1-2 + Aschbacher 1.4 全形 done** (本日 D3.0–D3.6,
+  D4.0–D4.1 完了): rank-3 perm group framework が orbital quotient +
+  swapOrbital + IsRank3 + IsPreprimitive で Lean object 化。
+* **Cyclotomic infrastructure** が三層に層化済:
+  - `CyclotomicPrimeTrace.lean` (B4.1 入力) — prime-case
+  - `CyclotomicGenericTrace.lean` (本日 B4.3) — 任意 d ≥ 1
+  - `PowCompositeTrace.lean` — DirectSum.IsInternal + trace decomposition
+* **残る "真の" Lean-未移植定理 (2026-05-21 深夜版)**:
+  Schur–Zassenhaus (Mathlib)、Sylow (完備)、Cyclotomic (整備済)、
+  cyclotomic.irreducible_rat (Mathlib)、trace_eq_sum_trace_restrict
+  (Mathlib) ── 必要な intermediate building block はほぼ全て揃った。
+  Moore57 に必要な大物外部定理は **GAP SmallGroup uniqueness と paper
+  §4 Prop 2 (rational class character system) のみ**、いずれも proper
+  Prop def として encode 済で下流の paper-faithful proof を妨げない。
+* **Cor 3 (`|Aut(Γ)| ≤ 375`) のすべての構成要素が Lean に揃った**:
+  Tier C (Lem 17/18) + Tier D (rank-3 framework) + Tier E (Sylow 経路) +
+  Tier B (character bridge + composite-order trace integrality)。
+  paper-faithful な統合は別タスクだが、building block 不足ではない。
 
 ---
 
@@ -930,14 +987,44 @@ paper-level の本当のボトルネックは:
 * [[reference-moore57-papers]] — paper 出典 + Lean 進捗
 * [[project-moore57-state]] — implementation 側 D19 + Order22 + HS の済み状態
 
-## 10. 直近の主要 commit (2026-05-21)
+## 10. 直近の主要 commit (2026-05-21 / 同日 3 並行セッション)
 
-* (HEAD) papers+proofs: Tier C C3.6 done — Prop 3 (Fix=HS ⟹ |X|≤5)
-  proper-signature 化 (arithmetic step + Lem 18 (1) bridge + C3.4
-  semi-regular bridge + abstract Conclusion defs)
-* (prev) proofs+blogs: Tier C C3.4 done — semi-regular orbit argument
-  (Foundations helper + graph-aut bridge + FixedData wrappers + Lem 17/18
-  unconditional wrappers)
+### 本日深夜の進捗
+
+#### Tier B B4.3 (composite-order trace integrality)
+
+* (HEAD) `9524108` proofs+blogs: Tier B B4.3 Step 4 full — composite-order
+  trace integrality (`trace_int_of_pow_eq_one`) + `CyclotomicGenericTrace.lean`
+* `fd3f3e4` proofs+blogs: Tier B B4.3 Step 4 partial — trace
+  decomposition over direct sum (`trace_eq_sum_trace_restrict_...`)
+* `1ed9b2f` proofs+blogs: Tier B B4.3 Step 3 full — iSupIndep +
+  DirectSum.IsInternal
+* `c18ed47` proofs+blogs: Tier B B4.3 Step 3 partial — pairwise-with-rest
+  disjoint helper
+* `2a94bc2` proofs+blogs: Tier B B4.3 Step 2 done — kernel sum decomp
+  over Phi_d kernels
+
+#### Tier D (Higman 1964 + Aschbacher 1.4)
+
+* `7be03dc` proofs: Tier D D3.5/D3.6/D4.0/D4.1 done — roadmap status update
+* `4f202dc` papers: Tier D D4.0/D4.1 — Aschbacher 1.4 dichotomy +
+  combined Cor classification
+* `5239c4d` papers: Tier D D3.5/D3.6 — Lem 7 multiplicity formula +
+  Thm 1 full bridge
+* `f02572c` proofs: Tier D D3.0/D3.2/D3.3/D3.4 done — roadmap status update
+* `f39e594` papers: Tier D D3.4 Lem 5 — rank-3 perm group ℤ form +
+  orbital intersection numbers
+* (earlier today) D3.0 main + D3.1 + D3.2 + D3.3 (Lem 1-4 backbone)
+
+#### Tier C (Petersen / Hoffman-Singleton / Lem 17-18 + Prop 3)
+
+* `db218a9` proofs+blogs: Tier C C3.6 done — roadmap + blog notes
+* `dd3e94d` papers: Tier C C3.6 done — Prop 3 (Fix=HS ⟹ |X|≤5)
+  proper-signature 化
+* `cc0a554` proofs+blogs: Tier C C3.4 done — roadmap + blog notes
+* `0a17bcf` papers: Tier C C3.4 done — semi-regular orbit argument
+  (`SemiRegularOrbit.lean` + `SemiRegularComplement.lean` + FixedData
+  wrappers + Lem 17/18 unconditional wrappers)
 * (prev HEAD) papers+proofs: Tier D D3.2 partial — subdegree G-invariance + reverse-neighborhood ↔ swap bridge (Lem 3 backbone)
 * `a75e397` proofs+blogs: Tier D D3.1 done — Lem 2 orbital constancy backbone
 * `86f5be0` papers: Tier D D3.1 — orbital intersection count constancy (Lem 2 backbone)
@@ -983,6 +1070,27 @@ paper-level の本当のボトルネックは:
 * `Moore57Graph/Aut/SemiRegularComplement.lean` — **(2026-05-21 夜 C3.4)**
   graph-aut bridge: `autMovedNeighborFinset` + σ-invariance +
   `orderOf_dvd_card_movedNeighbour_of_semiRegular`。
+* `Foundations/GroupTheory/RankAndOrbital.lean` — **(2026-05-21 D2-D3)**
+  `orbital G Ω`, `swapOrbital`, `IsSelfPaired`, `permRank`, `IsRank3`,
+  `orbitalNeighborhood/orbitalReverseNeighborhood`,
+  `orbitalIntersectionCount` + constancy。 Higman 1964 §1 backbone。
+* `Foundations/LinearAlgebra/PowCompositeTrace.lean` — **(2026-05-21 深夜
+  B4.3 Step 2-4)** Steps 1-4 (annihilation + kernel sum decomp +
+  iSupIndep + DirectSum.IsInternal + trace decomposition + per-block
+  integrality + **`trace_int_of_pow_eq_one`** 最終定理)。
+* `Foundations/GroupTheory/CyclotomicGenericTrace.lean` — **(2026-05-21
+  深夜 B4.3 Step 4 full)** prime-case の任意 d ≥ 1 への一般化:
+  `nextCoeff_cyclotomic_rat_isInt`, `trace_quotient_cyclotomic_X_isInt`,
+  **`trace_int_of_cyclotomic_aeval_eq_zero`** (B4.1 generic 版)。
+* `Papers/Higman1964/Lemma01_PairedOrbits.lean` ~ `Lemma07_*.lean` —
+  **(2026-05-21 夜 D3.0-D3.6)** rank-3 perm group framework
+  (paper-faithful Lems 1-7 抽象版)。
+* `Papers/Aschbacher1971/Lemma1_4_InvolutionFix.lean`,
+  `Papers/Aschbacher1971/MainTheorem.lean` — **(2026-05-21 夜 D4.0/D4.1)**
+  involution dichotomy + combined classification Cor。
+* `Papers/MacajSiran2010/Section08_Theorem5Proof/Proposition3_HSFixBound.lean` —
+  **(2026-05-21 夜 C3.6)** `Fix(X) = HS ⟹ |X| ≤ 5` の arithmetic 段 +
+  conditional bridge + abstract Conclusion def。
 
 ### Tier B finalization (B-final, 2026-05-21 晩 / commit `40bb98a`) — abstract `Conclusion` defs
 
