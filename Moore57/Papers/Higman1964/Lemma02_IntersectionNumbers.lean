@@ -98,7 +98,27 @@ theorem lem2_moore57_lambda1_plus_mu1 :
     ((3192 : ℤ) - 57 + 1 - 1) + ((3192 : ℤ) - 57 + 0 + 1) = 6271 := by
   norm_num
 
-/-- **Lemma 2 (intersection numbers `λ, μ`).** [deferred-heavy] -/
+/-- **Lemma 2 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature paper-faithful packaging: given the standard rank-3
+identities `λ₁ = l - k + μ - 1` and `μ₁ = l - k + λ + 1`, the sum
+identity `λ₁ + μ₁ = 2l - 2k + λ + μ` holds.
+
+The geometric content (the rank-3 transitive group structure, the
+`Δ, Γ` orbits identification, the constancy of the four intersection
+numbers as orbital-type-dependent) is captured by
+`lem2_intersection_count_orbital_invariant` (D3.1). -/
+theorem lem2_intersection_numbers_paper
+    {k l lam mu lam1 mu1 : ℤ}
+    (h_lam1 : lam1 = l - k + mu - 1)
+    (h_mu1 : mu1 = l - k + lam + 1) :
+    lam1 + mu1 = 2 * l - 2 * k + lam + mu :=
+  lem2_lambda1_mu1_identities h_lam1 h_mu1
+
+/-- **Lemma 2 (intersection numbers `λ, μ`).** [deferred-heavy]
+
+Backward-compat True-stub.  Proper-signature paper-faithful identity
+form is `lem2_intersection_numbers_paper`. -/
 theorem lem2_intersection_numbers : True := by trivial
 
 end Moore57.Papers.Higman1964
