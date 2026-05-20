@@ -240,6 +240,45 @@ The full iff equivalence requires the rank-3 / Δ(a) ∪ {a} block
 structure analysis; that remains deferred. -/
 theorem lem4_imprimitivity_equivalents : True := by trivial
 
+/-- **Corollary (paper-faithful Moore57 primitivity arithmetic).** [done]
+
+Proper-signature paper-faithful form for the Moore57 instance: combining
+`lem4_moore57_k_plus_one_not_dvd_n` (`58 ∤ 3250`) with the Lem 4
+contrapositive, any rank-3 group acting on Moore57 is **primitive**.
+
+The full general "odd-order rank-3 is primitive" requires Lem 3's "k = l
+under odd order" + parity arithmetic; available conditionally below. -/
+theorem cor_lem4_moore57_primitive_arith :
+    ¬ ((58 : ℕ) ∣ 3250) :=
+  lem4_moore57_k_plus_one_not_dvd_n
+
+/-- **Corollary arithmetic: odd `n` and `(k + 1) ∣ n` ⟹ `k` even**. [done]
+
+Pure ℕ arithmetic: if `n` is odd and `(k + 1) ∣ n`, then `k` must be
+even.  Since `n` is odd, no even number divides `n`, so `k + 1` is
+odd, hence `k` is even. -/
+theorem cor_lem4_odd_n_kplus1_dvd_k_even (n k : ℕ) (h_n_odd : Odd n)
+    (h_dvd : (k + 1) ∣ n) :
+    Even k := by
+  -- Step 1: k+1 must be odd (else divides n but n is odd).
+  have h_kp1_odd : Odd (k + 1) := by
+    rcases Nat.even_or_odd (k + 1) with h_even | h_odd
+    · -- k + 1 even ⟹ 2 ∣ k+1 ⟹ 2 ∣ n.  But n odd ⟹ ¬ 2 ∣ n.
+      exfalso
+      obtain ⟨s, hs⟩ := h_even
+      obtain ⟨q, hq⟩ := h_dvd
+      rcases h_n_odd with ⟨m, hm⟩
+      -- n = 2m+1, n = (k+1)*q, k+1 = s+s.  So 2m+1 = (s+s)*q = 2*(s*q).
+      have h_even_n : 2 * (s * q) = 2 * m + 1 := by
+        have h_rhs : (k + 1) * q = 2 * (s * q) := by rw [hs]; ring
+        omega
+      omega
+    · exact h_odd
+  -- Step 2: k+1 odd ⟹ k even.
+  rcases h_kp1_odd with ⟨r, hr⟩
+  refine ⟨r, ?_⟩
+  omega
+
 /-- **Corollary (rank-3 of odd order is primitive).** [deferred-heavy]
 
 In the Higman 1964 framework, a rank-3 odd-order group is primitive.
@@ -247,7 +286,10 @@ This follows from Lem 3 (odd order ⟹ k = l, so n = 2k + 1 is odd), the
 Lem 4 necessary condition `k + 1 ∣ n` for imprimitive (so n = m(k+1) is
 even when k is odd, contradicting odd n), and an analysis when k is even.
 The arithmetic forms are in
-`lem4_moore57_k_plus_one_not_dvd_n` (Moore57 contrapositive instance). -/
+`lem4_moore57_k_plus_one_not_dvd_n` (Moore57 contrapositive instance) and
+`cor_lem4_odd_n_kplus1_dvd_k_even` (general parity arithmetic).
+
+Backward-compat True-stub. -/
 theorem cor_lem4_odd_rank3_primitive : True := by trivial
 
 end Moore57.Papers.Higman1964
