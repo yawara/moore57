@@ -93,11 +93,26 @@ theorem prop5_arithmetic_excluded_via_lem24
   · exact h_i_4 ⟨hi, hj⟩
   · exact h_no_51 ⟨hi, hj⟩
 
+/-- **Proposition 5 (paper-faithful conditional, three-case dispatch).** [done]
+
+Proper-signature paper-faithful packaging: given the three case-
+exclusion hypotheses (i ≤ 3, (i = 4, j = 6), (i = 5, j = 1)) and the
+orbit-size equation 625·i + 125·j = 3250, conclude False.
+
+Re-export of `prop5_arithmetic_excluded_combined`. -/
+theorem prop5_orbit_size_125_paper
+    (i j : ℕ) (h_625 : 625 * i + 125 * j = 3250)
+    (h_i_le_3 : i ≤ 3 → False)
+    (h_i_4 : i = 4 ∧ j = 6 → False)
+    (h_i_5 : i = 5 ∧ j = 1 → False) :
+    False :=
+  prop5_arithmetic_excluded_combined i j h_625 h_i_le_3 h_i_4 h_i_5
+
 /-- **Proposition 5 (no `|X| = 625` with smallest orbit 125).** [deferred-heavy]
 
-Arithmetic backbone via `prop5_arithmetic_excluded_combined` (three-
-case dispatch over Lem 24's six configurations).  What remains is the
-paper's geometric content:
+Arithmetic backbone via `prop5_arithmetic_excluded_combined` /
+`prop5_orbit_size_125_paper` (above). What remains is the paper's
+geometric content:
 * Row constraint analysis for `i ≤ 3` (cases (0, 26), (1, 21), (2, 16),
   (3, 11) yield no solution to `Σⱼ b²_{k,j} + b_{k,k} = 181` with
   `Σⱼ b_{k,j} = 57`).
