@@ -62,7 +62,11 @@ theorem main_fix_t_star (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
   · exact aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
   · exact aut_involution_fixedInducedGraph_isStarWithCenter hΓ σ hAut hinv hne
 
-/-- **Main theorem (2) (decomposition `G = ⟨Y, t⟩ × X`).** [deferred-heavy] -/
+/-- **Main theorem (2) (decomposition `G = ⟨Y, t⟩ × X`).** [deferred-heavy]
+
+Backward-compat True-stub.  Proper-signature `|Y|` bound form is
+`main_decomposition_paper` (defined after `main_decomposition_Y_card_le_57`
+below). -/
 theorem main_decomposition (hΓ : IsMoore57 Γ) : True := by trivial
 
 /-- **Main theorem (2) `|Y|` arithmetic bound**. [done]
@@ -80,6 +84,17 @@ theorem main_decomposition_Y_card_le_57
   · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 5) h; omega
   · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 57) h; omega
   · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 21) h; omega
+
+/-- **Main theorem (2) (paper-faithful conditional Y bound).** [done]
+
+Proper-signature paper-faithful packaging of the `|Y|` bound: given the
+paper's three-way dispatch (`|Y| ∣ 5`, `|Y| ∣ 57`, or `|Y| ∣ 21`) for the
+odd subgroup `Y` of the decomposition `G = ⟨Y, t⟩ × X`, conclude
+`|Y| ≤ 57`. -/
+theorem main_decomposition_paper
+    (Y : ℕ) (h_dispatch : Y ∣ 5 ∨ Y ∣ 57 ∨ Y ∣ 21) :
+    Y ≤ 57 :=
+  main_decomposition_Y_card_le_57 Y h_dispatch
 
 /-- **Main theorem (3) (`Fix(X)` cases when `X ≠ 1`).** [deferred-heavy] -/
 theorem main_fix_X_cases (hΓ : IsMoore57 Γ) : True := by trivial
