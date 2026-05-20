@@ -116,4 +116,49 @@ theorem lem3_case1_empty_fix
   have hdvd : p ∣ 3250 := Nat.modEq_zero_iff_dvd.mp hmod.symm
   exact lem3_case1_arithmetic_core p Fact.out hp_odd hdvd
 
+/-- **Lemma 3, case (6) arithmetic core: odd prime divisors of `3200`.** [done]
+
+For `p` an odd prime dividing `3200 = 2^7 · 5^2`, conclude `p = 5`.
+Proof: factor `3200 = 2^7 · 5^2`, apply `Nat.Prime.dvd_mul` /
+`Nat.Prime.dvd_of_dvd_pow`; the 2-power branch gives `p ≤ 2` (excluded
+by `p > 2`), and the 5-power branch gives `p = 5`. -/
+theorem lem3_case6_arithmetic_core
+    (p : ℕ) (hp_prime : Nat.Prime p) (hp_odd : 2 < p)
+    (hdvd : p ∣ 3200) :
+    p = 5 := by
+  have h_eq : (3200 : ℕ) = 2^7 * 5^2 := by norm_num
+  rw [h_eq] at hdvd
+  have h1 : p ∣ 2^7 ∨ p ∣ 5^2 := (hp_prime.dvd_mul).mp hdvd
+  rcases h1 with h2pow | h5pow
+  · have hp_dvd_2 : p ∣ 2 := hp_prime.dvd_of_dvd_pow h2pow
+    have := Nat.le_of_dvd (by norm_num) hp_dvd_2
+    omega
+  · have hp_dvd_5 : p ∣ 5 := hp_prime.dvd_of_dvd_pow h5pow
+    have : p = 1 ∨ p = 5 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 5)) p hp_dvd_5
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · exact h
+
+/-- **Lemma 3, case (6) conditional: Hoffman-Singleton fix forces `p = 5`.** [done]
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` with
+`|Fix(σ)| = 50` (the Hoffman-Singleton case), conclude `p = 5`.
+
+Proof: the generic mod-`p` constraint gives `50 ≡ 3250 [MOD p]`, so
+`p ∣ 3200 = 3250 − 50`.  Apply `lem3_case6_arithmetic_core`. -/
+theorem lem3_case6_hs_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (h_fix_50 : fixedVertexCount σ = 50) :
+    p = 5 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_card_of_pow_prime σ p hpow
+  rw [hΓ.card, h_fix_50] at hmod
+  -- hmod : 50 ≡ 3250 [MOD p]; convert to p ∣ 3200 via modEq_iff_dvd'.
+  have hdvd : p ∣ 3200 := by
+    have h_dvd_diff : p ∣ 3250 - 50 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact lem3_case6_arithmetic_core p Fact.out hp_odd hdvd
+
 end Moore57.Papers.MakhnevPaduchikh2001
