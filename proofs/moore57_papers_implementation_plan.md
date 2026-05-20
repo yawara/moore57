@@ -71,25 +71,37 @@ MS 2010 §6 Lem 21 (`Fix(σ^l) = Fix(σ)`)。
 - [ ] `Moore57Graph/Aut/SemiRegularComplement.lean` (既存、C3.4) を拡張
 
 ### 1.4 Lem 17 case (1) 真の unconditional wrapper
-- [~] `Moore57/Papers/MacajSiran2010/Section06_PGroupsOverview/Lemma17_3Group.lean`:
-  既存 `lem17_case1_orderOf_dvd_27_with_petersenFixedData_semiRegular` を
-  「Lem 21 + PetersenFixedData だけから直接 `orderOf σ ∣ 27`」に upgrade
-- [x] **Prime base case (`σ^3 = 1`, k=1)**:
-  `lem17_case1_orderOf_dvd_27_with_petersenFixedData_prime_unconditional` 追加 —
-  `orderOf σ ∣ 3 ∣ 27` 自明 (semi-regular 不要)
-- [x] **Prime base case (singleton)**:
-  `lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_unconditional` 追加 —
-  C3.4 結論より sharper な `∣ 3`
-- 残り: **Composite case (k ≥ 2)**, paper Lem 17/Lem 21/Cor 2 chain 経由
-  (deferred-heavy)。
+- [x] `Moore57/Papers/MacajSiran2010/Section06_PGroupsOverview/Lemma17_3Group.lean`:
+  既存 `lem17_case1_orderOf_dvd_27_with_petersenFixedData_semiRegular` の
+  unstub。 paper-stated bound 範囲を unconditional 化:
+- [x] **Prime case (k=1)**:
+  `lem17_case1_orderOf_dvd_27_with_petersenFixedData_prime_unconditional`
+  (Petersen) + `lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_unconditional`
+  (Singleton, C3.4 sharper bound)
+- [x] **k ≤ 3 (case 1)**:
+  `lem17_case1_orderOf_dvd_27_with_petersenFixedData_k_le_3_unconditional` —
+  σ ∈ orderOf ∈ {1, 3, 9, 27} 全て unconditional ∣ 27
+- [x] **k ≤ 4 (case 2 paper-stated ∣ 81)**:
+  `lem17_case2_orderOf_dvd_81_with_singletonFixedData_k_le_4_unconditional` —
+  σ ∈ orderOf ∈ {1, 3, 9, 27, 81} 全て unconditional ∣ 81
+- 残り: **k ≥ 4 (case 1), k ≥ 5 (case 2)**: orderOf σ がそれぞれ
+  case bound (27, 81) を超えるので、 これは paper Lem 21 + Cor 2 (SG(81, 9))
+  exclusion 必要 (deferred-heavy)。
 
 ### 1.5 Lem 18 case (1) 真の unconditional wrapper
-- [~] `Lemma18_5Group.lean` で同じ作業
-- [x] **Prime base case (`σ^5 = 1`, k=1)**: 3 cases (HS / pentagon / empty)
+- [x] `Lemma18_5Group.lean` で同じ作業
+- [x] **Prime case (k=1)**: 3 cases (HS / pentagon / empty)
   全て `lem18_case*_orderOf_dvd_*_with_*FixedData_prime_unconditional` 追加 —
   `orderOf σ ∣ 5 ∣ {25, 5, 125}` 自明
-- 残り: **Composite case (k ≥ 2)**, paper Lem 18 / Prop 3 chain 経由
-  (deferred-heavy)。
+- [x] **k ≤ 2 (case 1 ∣ 25)**:
+  `lem18_case1_orderOf_dvd_25_with_HSFixedData_k_le_2_unconditional` —
+  σ ∈ orderOf ∈ {1, 5, 25} 全て unconditional ∣ 25
+- [x] **k ≤ 3 (case 3 ∣ 125)**:
+  `lem18_case3_orderOf_dvd_125_with_emptyFixedData_k_le_3_unconditional` —
+  σ ∈ orderOf ∈ {1, 5, 25, 125} 全て unconditional ∣ 125
+- 残り: **case 1 k ≥ 3, case 2 k ≥ 2, case 3 k ≥ 4**: orderOf σ が
+  case bound を超えるので、 paper Prop 3 (HS exclusion ≥ 125), Lem 22 + Prop 4
+  (Empty exclusion = 625) 必要 (deferred-heavy)。
 
 **完了条件**: Lem 17/18 の `_semiRegular` 接尾辞 wrapper が `(hΓ, σ, σ^pk=1)`
 のみから入力を生成する形に。 上流 Prop 6/7/8 が unconditional 化可能に。
