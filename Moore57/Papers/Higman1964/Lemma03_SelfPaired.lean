@@ -293,12 +293,37 @@ theorem lem3_subdegree_eq_of_odd_rank3
   lem3_subdegree_eq_of_odd_rank3_and_in_out_eq G Ω h_D_ne_O₁ h_cover
     h_O₁_nondiag h_odd (lem3_in_deg_eq_out_deg G Ω h_trans O₁ a)
 
+/-- **Lemma 3 (paper-faithful "k = l" under odd order).** [done]
+
+Proper-signature paper-faithful packaging: given odd `|G|` + rank-3
+transitive `G` action on `Ω` + the standard rank-3 orbital cover
+(`{diag, O₁, O₂}`), the two non-diagonal orbital subdegrees coincide:
+`|O₁(a)| = |O₂(a)|`.  This is Stage A + Stage B + parity combined.
+
+Re-export of `lem3_subdegree_eq_of_odd_rank3` for paper-faithful naming. -/
+theorem lem3_self_paired_paper
+    (G Ω : Type*) [Group G] [MulAction G Ω] [Fintype G]
+    [Fintype Ω] [Nonempty Ω]
+    {a₀ a : Ω}
+    {O₁ O₂ : Moore57.orbital G Ω}
+    (h_trans : ∀ a b : Ω, ∃ g : G, g • a = b)
+    (h_D_ne_O₁ : Moore57.diagonalOrbital G Ω a₀ ≠ O₁)
+    (h_cover : ∀ (O : Moore57.orbital G Ω),
+       O = Moore57.diagonalOrbital G Ω a₀ ∨ O = O₁ ∨ O = O₂)
+    (h_O₁_nondiag : ∃ a b : Ω,
+       (Quotient.mk'' (a, b) : Moore57.orbital G Ω) = O₁ ∧ a ≠ b)
+    (h_odd : ¬ 2 ∣ Fintype.card G) :
+    Nat.card (Moore57.orbitalNeighborhood G Ω O₁ a) =
+    Nat.card (Moore57.orbitalNeighborhood G Ω O₂ a) :=
+  lem3_subdegree_eq_of_odd_rank3 G Ω h_trans h_D_ne_O₁ h_cover h_O₁_nondiag h_odd
+
 /-- **Lemma 3 (self-paired structure under parity).** [deferred-heavy]
 
 Full iff packaging combining Stage A and Stage B with Lem 1's two
 directions.  Both Stage A (`lem3_swap_pairs_non_diagonal_orbitals`)
 and Stage B (`lem3_in_deg_eq_out_deg`) are proven; the unconditional
-"k = l" conclusion is `lem3_subdegree_eq_of_odd_rank3`. -/
+"k = l" conclusion is `lem3_subdegree_eq_of_odd_rank3` /
+`lem3_self_paired_paper` (above). -/
 theorem lem3_self_paired_iff_even : True := by trivial
 
 /-- **Corollary to Lemma 3** (symmetry of `Δ` under even order). [deferred-heavy] -/
