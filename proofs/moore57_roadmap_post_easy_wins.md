@@ -265,9 +265,14 @@ fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion
       `sup_ker_aeval_eq_ker_aeval_mul_of_coprime`)。
     - `sup_ker_aeval_cyclotomic_divisors_eq_top` — `f^n = 1` (n > 0)
       ⟹ `⨆_{d ∣ n} ker(aeval f Φ_d) = ⊤` (kernels span W)。
-  - **Step 3-6 (deferred)** 残り:
-    - Step 3: pairwise disjointness ⟹ internal direct sum
-      `W = ⨁_{d ∣ n} ker(aeval f Φ_d)`
+  - **Step 3 (partial done)** Pairwise-with-rest disjointness:
+    - `disjoint_ker_aeval_cyclotomic_iSup_of_not_mem` — `a ∉ s` ⟹
+      `Disjoint (ker(Φ_a)) (⨆ d ∈ s, ker(Φ_d))`
+      (Step 2 + Mathlib `disjoint_ker_aeval_of_isCoprime` +
+      `IsCoprime.prod_right`)。
+    - 残: `iSupIndep` への格上げ + `isInternal_submodule_iff_iSupIndep_and_iSup_eq_top`
+      で `DirectSum.IsInternal` の取得 (Step 3 full)。
+  - **Step 4-6 (deferred)** 残り:
     - Step 4: per-block trace formula = `μ(d) · γ_d`
     - Step 5: specialise to `n = 25` for Lem 13 p=5 starred rows
     - Step 6: apply via `Moore57Graph/Aut/TraceIntegrality.lean` and close
