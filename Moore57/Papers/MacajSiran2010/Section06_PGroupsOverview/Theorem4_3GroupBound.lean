@@ -113,11 +113,26 @@ theorem thm4_card_le_27_from_dispatch_and_cor2
   have := thm4_card_dvd_27_from_dispatch_and_cor2 n h_dispatch h_cor2
   exact Nat.le_of_dvd (by norm_num) this
 
+/-- **Theorem 4 (paper-faithful conditional bound).** [done]
+
+Proper-signature paper-faithful packaging: given Lem 17 dispatch
+(`n ∣ 27 ∨ n ∣ 81`) and Cor 2 SG(81,9) exclusion (`n ≠ 81`), conclude
+`n ∣ 27 ∧ n ≤ 27`.
+
+Re-export of `thm4_card_dvd_27_from_dispatch_and_cor2` +
+`thm4_card_le_27_from_dispatch_and_cor2` combined. -/
+theorem thm4_3group_bound_paper
+    (n : ℕ) (h_dispatch : n ∣ 27 ∨ n ∣ 81) (h_cor2 : n ≠ 81) :
+    n ∣ 27 ∧ n ≤ 27 :=
+  ⟨thm4_card_dvd_27_from_dispatch_and_cor2 n h_dispatch h_cor2,
+   thm4_card_le_27_from_dispatch_and_cor2 n h_dispatch h_cor2⟩
+
 /-- **Theorem 4 (3-group order ≤ 27).** [deferred-heavy]
 
 The arithmetic content (Lem 17 dispatch + Cor 2 SG(81, 9) exclusion ⟹
 `n ∣ 27` / `k ≤ 3`) is captured by `thm4_card_dvd_27_from_dispatch_and_cor2`,
-`thm4_3pow_le_3_from_dispatch`, and `thm4_card_le_27_from_dispatch_and_cor2`.
+`thm4_3pow_le_3_from_dispatch`, `thm4_card_le_27_from_dispatch_and_cor2`,
+and `thm4_3group_bound_paper` (above).
 What remains for the unconditional form is the Cor 2 geometric content. -/
 theorem thm4_3group_bound (hΓ : IsMoore57 Γ) : True := by trivial
 

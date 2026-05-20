@@ -88,14 +88,26 @@ theorem thm5_5group_not_625_from_dispatch
     Nat.pow_right_injective (by norm_num : 2 ≤ (5 : ℕ)) heq
   omega
 
+/-- **Theorem 5 (paper-faithful conditional bound).** [done]
+
+Proper-signature paper-faithful packaging: given the three-case
+Section 8 dispatch (`n ∣ 5 ∨ n ∣ 25 ∨ n ∣ 125`), conclude
+`n ∣ 125 ∧ n ≤ 125`. -/
+theorem thm5_5group_bound_paper
+    (n : ℕ) (h : n ∣ 5 ∨ n ∣ 25 ∨ n ∣ 125) :
+    n ∣ 125 ∧ n ≤ 125 :=
+  ⟨thm5_card_dvd_125_from_dispatch n h,
+   thm5_card_le_125_from_dispatch n h⟩
+
 /-- **Theorem 5 (5-group order bound).** [deferred-heavy]
 
 The arithmetic content (dispatch → `|X| ∣ 125` → `k ≤ 3` → exclude 625)
 is captured by `thm5_card_dvd_125_from_dispatch`,
-`thm5_card_le_125_from_dispatch`, `thm5_5pow_le_3_of_dvd_125`, and
-`thm5_5group_not_625_from_dispatch`. What remains for the unconditional
-form is the geometric/structural side: the three-case fix-shape
-dispatch via Section 8 (Prop 3 / Lem 22 / Prop 4 / Prop 5). -/
+`thm5_card_le_125_from_dispatch`, `thm5_5pow_le_3_of_dvd_125`,
+`thm5_5group_not_625_from_dispatch`, and `thm5_5group_bound_paper` (above).
+What remains for the unconditional form is the geometric/structural
+side: the three-case fix-shape dispatch via Section 8 (Prop 3 / Lem 22 /
+Prop 4 / Prop 5). -/
 theorem thm5_5group_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S6
