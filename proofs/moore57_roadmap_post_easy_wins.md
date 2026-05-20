@@ -252,13 +252,27 @@ fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion
     Theorem 3 を bypass できる事を確認。 composite-order や rational
     class identity の一般形は依然 Theorem 3 待ち、[B4.3] として deferred。
 
-* **[B4.3] (deferred-heavy)** Composite-order / general rational-class
-  Theorem 3 移植:
-  - `f^n = 1` (n 合成数) の trace ∈ ℤ。 cyclotomic_n は合成数では
-    既約因子分解 ∏_{d∣n} cyclotomic_d となるので、generalized eigenspace
-    decomp に Galois 理論 (Gal(ℚ(ζ_n)/ℚ) 作用での rational class)
-    が必要に。
-  - paper §4 Prop 2 の rational-class character integrality 全形。
+* **[B4.3] (partial done, 2026-05-21)** Composite-order / general
+  rational-class Theorem 3 移植。 `Foundations/LinearAlgebra/PowCompositeTrace.lean`
+  に段階的に build out 中:
+  - **Step 1 (done)** `aeval_X_pow_sub_one_eq_zero` / `aeval_prod_cyclotomic_eq_zero`:
+    `f^n = 1` ⟹ `aeval f (X^n - 1) = 0` および `aeval f (∏_{d∣n} Φ_d) = 0`。
+  - **Step 2 (done)** Kernel sum decomposition:
+    - `sup_ker_aeval_cyclotomic_eq_ker_aeval_prod` — 任意 `Finset ℕ` で
+      `⨆ d ∈ s, ker(aeval f Φ_d) = ker(aeval f (∏_{d ∈ s} Φ_d))`
+      (Finset 帰納法 + `IsCoprime.prod_right` +
+      `Polynomial.cyclotomic.isCoprime_rat` +
+      `sup_ker_aeval_eq_ker_aeval_mul_of_coprime`)。
+    - `sup_ker_aeval_cyclotomic_divisors_eq_top` — `f^n = 1` (n > 0)
+      ⟹ `⨆_{d ∣ n} ker(aeval f Φ_d) = ⊤` (kernels span W)。
+  - **Step 3-6 (deferred)** 残り:
+    - Step 3: pairwise disjointness ⟹ internal direct sum
+      `W = ⨁_{d ∣ n} ker(aeval f Φ_d)`
+    - Step 4: per-block trace formula = `μ(d) · γ_d`
+    - Step 5: specialise to `n = 25` for Lem 13 p=5 starred rows
+    - Step 6: apply via `Moore57Graph/Aut/TraceIntegrality.lean` and close
+      `lem13_starred_row_5_*_no_integer_trace`
+  - paper §4 Prop 2 の rational-class character integrality 全形は依然遠い。
   - 必要度: paper-faithful proof には欲しいが、Moore57 specific には
     prime-order だけで dispatch 可能な行が多く、優先度は低。
 
