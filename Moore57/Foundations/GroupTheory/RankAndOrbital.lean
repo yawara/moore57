@@ -18,12 +18,15 @@ file provides the minimal foundation:
 * `Moore57.orbital G Ω` — quotient of `Ω × Ω` by the diagonal G-action.
 * `Moore57.permRank G Ω` — the rank of the action = `|orbital G Ω|`.
 
-## Notes (D1-D2 scope)
+## Notes (D2 scope)
 
-This file provides D2.0 (`orbital` + `permRank` definitions).
-Subsequent pieces (paired orbital `Δ'(a)`, self-paired criterion,
-rank-3 specialisation) are not yet built — they are documented as
-future work in `proofs/moore57_roadmap_post_easy_wins.md` §D.
+* `orbital`, `permRank`, `SameOrbital` — D2.0 (basic definitions).
+* `swapOrbital`, `swapOrbital_involutive`, `IsSelfPaired`,
+  `isSelfPaired_diagonal` — D2.1 + D2.2 (paired-orbital / self-paired
+  criterion via `Prod.swap`).
+
+Higher-level Higman 1964 rank-3 lemmas (D3.0-D3.6) build on this
+foundation; see `Moore57/Papers/Higman1964/`.
 -/
 
 namespace Moore57
@@ -63,5 +66,71 @@ theorem sameOrbital_iff (a b : Ω × Ω) :
     SameOrbital G Ω a b ↔ ∃ g : G, g • b = a := by
   rw [sameOrbital_iff_mem_orbit]
   exact MulAction.mem_orbit_iff
+
+/-! ### Paired orbital via `Prod.swap` (D2.1)
+
+In Higman 1964 notation, for each `G_a`-orbit `Δ(a) ⊆ Ω \ {a}`, the
+**paired orbit** is `Δ'(a) = { a^g | a^(g⁻¹) ∈ Δ(a) }`.  Equivalently,
+in the orbital (= `G`-orbit on `Ω × Ω`) language: pair `(a, b)` with
+`(b, a)` via `Prod.swap`, then induce the swap on the orbital quotient.
+
+The key fact is that `Prod.swap` is `G`-equivariant for the diagonal
+action: `(g • (a, b)).swap = g • (a, b).swap` (= Mathlib `smul_swap`
+for the diagonal `Prod` Pow action). -/
+
+/-- The diagonal `G`-action commutes with `Prod.swap`. -/
+@[simp] theorem smul_swap_diagonal (g : G) (p : Ω × Ω) :
+    (g • p).swap = g • p.swap := by
+  -- Mathlib `smul_swap` (additive form of `pow_swap` on the diagonal `Pow` instance).
+  ext <;> rfl
+
+/-- The **paired orbital** map `swapOrbital : orbital G Ω → orbital G Ω`,
+induced by `Prod.swap` on the orbital quotient.
+
+For a transitive `G`-action and a vertex `a ∈ Ω`, the `G_a`-orbit `Δ(a)`
+corresponds to an orbital `O_Δ`, and `Δ'(a)` corresponds to
+`swapOrbital O_Δ`. -/
+def swapOrbital : orbital G Ω → orbital G Ω :=
+  Quotient.map' Prod.swap fun a b ⟨g, hg⟩ =>
+    ⟨g, by simpa [smul_swap_diagonal] using congrArg Prod.swap hg⟩
+
+@[simp] theorem swapOrbital_mk (p : Ω × Ω) :
+    swapOrbital G Ω (Quotient.mk'' p) = Quotient.mk'' p.swap :=
+  rfl
+
+/-- `swapOrbital` is an involution: pairing twice returns the original orbital. -/
+theorem swapOrbital_involutive :
+    Function.Involutive (swapOrbital G Ω) := by
+  intro O
+  induction O using Quotient.inductionOn' with
+  | _ p =>
+    change swapOrbital G Ω (Quotient.mk'' p.swap) = Quotient.mk'' p
+    rw [swapOrbital_mk, Prod.swap_swap]
+
+/-! ### Self-paired orbitals (D2.2) -/
+
+/-- An orbital `O` is **self-paired** if `swapOrbital O = O`.
+
+In Higman 1964 terms, this captures the symmetry of the underlying
+relation on `Ω`: `(a, b) ∈ O ⇔ (b, a) ∈ O`.  For Higman's rank-3
+group analysis, a non-trivial self-paired orbital exists iff `|G|` is
+even (Lem 1, 3). -/
+def IsSelfPaired (O : orbital G Ω) : Prop :=
+  swapOrbital G Ω O = O
+
+/-- The **diagonal orbital** containing pairs `(a, a)`.
+
+For a transitive action this is *the* diagonal orbital (the unique
+orbital containing the diagonal of `Ω × Ω`); for general actions it is
+one of possibly many orbitals supported on the diagonal. -/
+def diagonalOrbital (a : Ω) : orbital G Ω :=
+  Quotient.mk'' (a, a)
+
+/-- The diagonal orbital is self-paired: `swap (a, a) = (a, a)`. -/
+theorem isSelfPaired_diagonalOrbital (a : Ω) :
+    IsSelfPaired G Ω (diagonalOrbital G Ω a) := by
+  change swapOrbital G Ω (Quotient.mk'' (a, a)) = Quotient.mk'' (a, a)
+  rw [swapOrbital_mk]
+  rfl
 
 end Moore57

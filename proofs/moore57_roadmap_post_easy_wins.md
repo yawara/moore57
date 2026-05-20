@@ -400,12 +400,26 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
   `SameOrbital` 関係を `Foundations/GroupTheory/RankAndOrbital.lean`
   に追加。 `sameOrbital_iff`: `SameOrbital G Ω a b ↔ ∃ g, g • b = a`。
   Mathlib `Prod.mulAction` (diagonal action on Ω × Ω) を利用。
-* **[D2.1] (未)** Paired orbit `Δ'(a) = {a^g : a^{g⁻¹} ∈ Δ(a)}` 定義。
-* **[D2.2] (未)** Self-paired orbit 定義 + 「偶位数 ⇔ 自己paired」(Lem 1, 3)。
+* **[D2.1] (done, 2026-05-21)** Paired orbital `swapOrbital : orbital G Ω →
+  orbital G Ω` を `Prod.swap` (diagonal action と G-equivariant) で induce
+  (`Quotient.map'` 経由)。 `swapOrbital_involutive` (involution),
+  `swapOrbital_mk` (representative lift) も整備。
+* **[D2.2] (done, 2026-05-21)** `IsSelfPaired O := swapOrbital G Ω O = O`
+  定義 + `diagonalOrbital a := Quotient.mk'' (a, a)` (対角 orbital) +
+  `isSelfPaired_diagonalOrbital` (対角 orbital は常に自己paired)。
+  「偶位数 ⇔ 非対角の自己paired orbital が存在」(Lem 1 主形) は Cauchy
+  経由で重く、deferred (D3.0 参照)。
 
 ### D3. Higman 1964 Lems 1-7 抽象版
 
-* **[D3.0] (未)** Lem 1: paired orbit ⇔ even order。Cauchy + pairing。
+* **[D3.0] (partial done, 2026-05-21)** Lem 1: paired orbit ⇔ even order。
+  Cauchy + pairing。 `Lemma01_PairedOrbits.lean` に以下を追加:
+  - `lem1_self_paired_iff_swap_fixed`: `IsSelfPaired O ↔ swapOrbital O = O`
+    (定義の paper-faithful 言い換え)
+  - `lem1_diagonal_self_paired`: 対角 orbital は常に自己paired
+  - `lem1_swapOrbital_involutive`: pairing は involution
+  本体「偶位数 ⇔ 非対角自己paired orbital が存在」は Cauchy + counting
+  argument で重く、deferred。
 * **[D3.1] (未)** Lem 2: intersection numbers λ, μ, λ₁, μ₁ の定数性 (rank-3 仮定下)。
 * **[D3.2] (未)** Lem 3: odd order rank-3 ⟹ k = l, n = 2k+1, λ = μ。
 * **[D3.3] (未)** Lem 4: 不可約性 ⇔ G_a ≠ G_{Γ(a)} ⇔ Γ(a) = Γ(b) for some a ≠ b。
@@ -651,7 +665,9 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) papers+proofs: A1.1 orientation (negative) + E5.1 Sylow-SchurZassenhaus + D2.0 orbital
+* (HEAD) papers+proofs: D2.1/D2.2 paired orbital + D3.0 partial Lem 1 statements
+* `1f1e656` proofs+blogs: A1.1 orientation (negative) + E5.1 + D2.0
+* `5608b87` papers: E5.1 Sylow-SchurZassenhaus + D2.0 orbital structure
 * `c39c87c` proofs+blogs: Tier B B3.1+ done — chi0/chi1/chi2 spectral subreps
 * `3557431` papers: Tier B B3.1+ chi0 + chi2 spectral subreps + character identifications
 * `713613d` proofs+blogs: Tier B B3.1+ chi1 partial done — spectral subrep + character
