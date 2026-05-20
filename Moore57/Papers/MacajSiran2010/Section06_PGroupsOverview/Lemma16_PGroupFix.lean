@@ -187,6 +187,152 @@ theorem lem16_case4_11group_fix_pentagon_if_small
   rw [Nat.ModEq] at hmod
   omega
 
+/-! ### Prime-determination from local N(a) ∩ Fix count
+
+For a `p`-group element `σ` (`σ^(p^k) = 1`) fixing a vertex `a`, the
+local count `|N(a) ∩ Fix(σ)|` (= shape-degree at `a` in `Fix(σ)`)
+combined with the mod-`p` constraint `|N ∩ Fix| ≡ 57 [MOD p]` forces
+`p` to lie in a specific small set.  These complement the
+shape-from-prime lemmas: here we go the other direction
+(shape-degree determines prime).
+
+Cases (where shape-degree-at-`a` matches the listed value):
+* Singleton at the unique fixed point: count = 0 ⟹ p ∈ {3, 19}
+* Star leaf: count = 1 ⟹ p = 7
+* Pentagon vertex: count = 2 ⟹ p ∈ {5, 11}
+* Petersen vertex: count = 3 ⟹ p = 3
+* HS vertex: count = 7 ⟹ p = 5
+-/
+
+/-- **Lemma 16 prime from singleton-Fix N(a) = 0.** [done]
+
+For σ a p-group element (`σ^(p^k) = 1`) fixing a vertex `a` with no
+fixed neighbours (the singleton-Fix case), `p ∈ {3, 19}`. -/
+theorem lem16_prime_from_N_count_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_zero : (Moore57.autFixedNeighborFinset Γ σ a).card = 0) :
+    p = 3 ∨ p = 19 := by
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj p k pow_pk ha
+  rw [hΓ.regular.degree_eq a, h_N_zero] at hmod
+  have hdvd : p ∣ 57 := Nat.modEq_zero_iff_dvd.mp hmod.symm
+  -- 57 = 3 · 19, odd prime divisors {3, 19}.
+  have h_eq : (57 : ℕ) = 3 * 19 := by norm_num
+  rw [h_eq] at hdvd
+  have h1 : p ∣ 3 ∨ p ∣ 19 := ((Fact.out : Nat.Prime p).dvd_mul).mp hdvd
+  rcases h1 with h3 | h19
+  · have : p = 1 ∨ p = 3 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 3)) p h3
+    rcases this with h | h
+    · exact absurd h (Fact.out : Nat.Prime p).one_lt.ne'
+    · left; exact h
+  · have : p = 1 ∨ p = 19 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 19)) p h19
+    rcases this with h | h
+    · exact absurd h (Fact.out : Nat.Prime p).one_lt.ne'
+    · right; exact h
+
+/-- **Lemma 16 prime from star-leaf N(a) = 1.** [done]
+
+For σ a p-group element fixing a star-leaf vertex (one fixed neighbour),
+`p = 7`. -/
+theorem lem16_prime_from_N_count_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_one : (Moore57.autFixedNeighborFinset Γ σ a).card = 1) :
+    p = 7 := by
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj p k pow_pk ha
+  rw [hΓ.regular.degree_eq a, h_N_one] at hmod
+  have hdvd : p ∣ 56 := by
+    have h_dvd_diff : p ∣ 57 - 1 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact Moore57.Papers.MakhnevPaduchikh2001.lem3_case3_arithmetic_core p
+    Fact.out hp_odd hdvd
+
+/-- **Lemma 16 prime from pentagon N(a) = 2.** [done]
+
+For σ a p-group element fixing a pentagon-vertex, `p ∈ {5, 11}`. -/
+theorem lem16_prime_from_N_count_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_two : (Moore57.autFixedNeighborFinset Γ σ a).card = 2) :
+    p = 5 ∨ p = 11 := by
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj p k pow_pk ha
+  rw [hΓ.regular.degree_eq a, h_N_two] at hmod
+  have hdvd : p ∣ 55 := by
+    have h_dvd_diff : p ∣ 57 - 2 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact Moore57.Papers.MakhnevPaduchikh2001.lem3_case4_arithmetic_core p
+    Fact.out hp_odd hdvd
+
+/-- **Lemma 16 prime from Petersen N(a) = 3.** [done]
+
+For σ a p-group element fixing a Petersen-vertex, `p = 3`. -/
+theorem lem16_prime_from_N_count_three
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_three : (Moore57.autFixedNeighborFinset Γ σ a).card = 3) :
+    p = 3 := by
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj p k pow_pk ha
+  rw [hΓ.regular.degree_eq a, h_N_three] at hmod
+  have hdvd : p ∣ 54 := by
+    have h_dvd_diff : p ∣ 57 - 3 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact Moore57.Papers.MakhnevPaduchikh2001.lem3_case5_arithmetic_core p
+    Fact.out hp_odd hdvd
+
+/-- **Lemma 16 prime from HS N(a) = 7.** [done]
+
+For σ a p-group element fixing a HS-vertex, `p = 5`. -/
+theorem lem16_prime_from_N_count_seven
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_seven : (Moore57.autFixedNeighborFinset Γ σ a).card = 7) :
+    p = 5 := by
+  have hp_prime : Nat.Prime p := Fact.out
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime_pow
+    σ smul_adj p k pow_pk ha
+  rw [hΓ.regular.degree_eq a, h_N_seven] at hmod
+  have hdvd : p ∣ 50 := by
+    have h_dvd_diff : p ∣ 57 - 7 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  -- 50 = 2 · 5^2, odd prime divisor: 5.
+  have h_eq : (50 : ℕ) = 2 * 5^2 := by norm_num
+  rw [h_eq] at hdvd
+  have h1 : p ∣ 2 ∨ p ∣ 5^2 := hp_prime.dvd_mul.mp hdvd
+  rcases h1 with h2 | h5pow
+  · have := Nat.le_of_dvd (by norm_num) h2
+    omega
+  · have hp_dvd_5 : p ∣ 5 := hp_prime.dvd_of_dvd_pow h5pow
+    have : p = 1 ∨ p = 5 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 5)) p hp_dvd_5
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · exact h
+
 /-- **Lemma 16 (odd-prime `p`-group fix shape).** [deferred-heavy] -/
 theorem lem16_pgroup_fix_shape (hΓ : IsMoore57 Γ) : True := by trivial
 
