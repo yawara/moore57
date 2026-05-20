@@ -82,4 +82,15 @@ exclusion, GAP), Prop 5 (orbit-125 exclusion, arithmetic backbone
 already done). -/
 theorem thm5_final (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Theorem 5 (paper-faithful Section-8 conditional bound).** [done]
+
+Proper-signature paper-faithful packaging at the Section-8 level: given
+the three-case Section 8 dispatch (`n ∣ 5 ∨ n ∣ 25 ∨ n ∣ 125`), conclude
+`n ∣ 125 ∧ n ≤ 125`. -/
+theorem thm5_final_paper
+    (n : ℕ) (h : n ∣ 5 ∨ n ∣ 25 ∨ n ∣ 125) :
+    n ∣ 125 ∧ n ≤ 125 :=
+  ⟨thm5_final_dvd_125_from_section8_dispatch n h,
+   thm5_final_card_le_125_from_dispatch n h⟩
+
 end Moore57.Papers.MacajSiran2010.S8

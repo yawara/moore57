@@ -143,11 +143,23 @@ theorem thm4_final_card_le_27_from_dispatch_and_cor2
   Moore57.Papers.MacajSiran2010.S6.thm4_card_le_27_from_dispatch_and_cor2
     n h_dispatch h_cor2
 
+/-- **Theorem 4 (paper-faithful Section-7 conditional bound).** [done]
+
+Proper-signature paper-faithful packaging at the Section-7 level: given
+Section 7 Lem 17 dispatch (`n ∣ 27 ∨ n ∣ 81`) and Cor 2 SG(81,9)
+exclusion (`n ≠ 81`), conclude `n ∣ 27 ∧ n ≤ 27`. -/
+theorem thm4_final_paper
+    (n : ℕ) (h_dispatch : n ∣ 27 ∨ n ∣ 81) (h_cor2 : n ≠ 81) :
+    n ∣ 27 ∧ n ≤ 27 :=
+  ⟨thm4_final_dvd_27_from_dispatch_and_cor2 n h_dispatch h_cor2,
+   thm4_final_card_le_27_from_dispatch_and_cor2 n h_dispatch h_cor2⟩
+
 /-- **Theorem 4 (no 3-group of order > 27).** [deferred-heavy]
 
 Arithmetic backbone via `thm4_final_dvd_27_from_dispatch_and_cor2`,
 `thm4_final_3pow_le_3_from_dispatch`, and
-`thm4_final_card_le_27_from_dispatch_and_cor2`. What remains is the
+`thm4_final_card_le_27_from_dispatch_and_cor2` /
+`thm4_final_paper` (above). What remains is the
 Cor 2 geometric content (SG(81, 9) classification among 15 order-81
 groups, GAP-heavy). -/
 theorem thm4_final (_hΓ : IsMoore57 Γ) : True := by trivial
