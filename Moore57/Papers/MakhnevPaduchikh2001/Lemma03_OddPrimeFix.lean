@@ -357,4 +357,86 @@ theorem lem3_case4_pentagon_fix
     simpa using h_dvd_diff
   exact lem3_case4_arithmetic_core p Fact.out hp_odd hdvd
 
+/-- **Lemma 3 unified: any of the 5 shape-degree values forces `p` into
+the Moore57 odd-prime list `{3, 5, 7, 11, 13, 19}`.** [done]
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` fixing
+some vertex `a` whose σ-fixed-neighbour count `c` is one of the
+paper-cited Fix-shape degrees `c ∈ {0, 1, 2, 3, 7}` (matching
+singleton / star-leaf / pentagon / Petersen / HS), conclude
+`p ∈ {3, 5, 7, 11, 13, 19}`.
+
+This combines all five N(a)-based case bridges into a single unified
+statement.  The case `c = 0` covers both case (1) (empty fix) and
+case (2) (singleton fix at the unique fixed point `a`); the latter
+gives the more restrictive `p ∈ {3, 19}`. -/
+theorem lem3_unified_p_in_moore57_primes
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (hAut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    {a : V} (ha : σ a = a)
+    (h_count_in :
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 0 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 1 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 2 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 3 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 7) :
+    p = 3 ∨ p = 5 ∨ p = 7 ∨ p = 11 ∨ p = 13 ∨ p = 19 := by
+  -- Case (2) singleton uses the GLOBAL Fix count, not N(a); but here
+  -- N(a) ∩ Fix = 0 means a is the unique fixed vertex among N(a) ∪ {a},
+  -- consistent with the singleton case at `a`.  The arithmetic gives
+  -- p | 57 = 3 · 19, p ∈ {3, 19}.
+  rcases h_count_in with hc | hc | hc | hc | hc
+  · -- |N(a) ∩ Fix| = 0: p | 57, p ∈ {3, 19}
+    have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
+      σ hAut p hpow ha
+    rw [hΓ.regular.degree_eq a, hc] at hmod
+    have hdvd : p ∣ 57 := Nat.modEq_zero_iff_dvd.mp hmod.symm
+    have h_eq : (57 : ℕ) = 3 * 19 := by norm_num
+    rw [h_eq] at hdvd
+    have h1 : p ∣ 3 ∨ p ∣ 19 := ((Fact.out : Nat.Prime p).dvd_mul).mp hdvd
+    rcases h1 with h3 | h19
+    · have : p = 1 ∨ p = 3 :=
+        (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 3)) p h3
+      rcases this with h | h
+      · exact absurd h (Fact.out : Nat.Prime p).one_lt.ne'
+      · left; exact h
+    · have : p = 1 ∨ p = 19 :=
+        (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 19)) p h19
+      rcases this with h | h
+      · exact absurd h (Fact.out : Nat.Prime p).one_lt.ne'
+      · right; right; right; right; right; exact h
+  · -- |N(a) ∩ Fix| = 1: p = 7
+    have := lem3_case3_star_leaf_fix hΓ σ p hp_odd hpow hAut ha hc
+    right; right; left; exact this
+  · -- |N(a) ∩ Fix| = 2: p ∈ {5, 11}
+    rcases lem3_case4_pentagon_fix hΓ σ p hp_odd hpow hAut ha hc with h | h
+    · right; left; exact h
+    · right; right; right; left; exact h
+  · -- |N(a) ∩ Fix| = 3: p = 3
+    have := lem3_case5_petersen_fix hΓ σ p hp_odd hpow hAut ha hc
+    left; exact this
+  · -- |N(a) ∩ Fix| = 7: p = 5 (via 57 - 7 = 50 = 2 · 5²)
+    have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
+      σ hAut p hpow ha
+    rw [hΓ.regular.degree_eq a, hc] at hmod
+    have hdvd : p ∣ 50 := by
+      have h_dvd_diff : p ∣ 57 - 7 :=
+        (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+      simpa using h_dvd_diff
+    -- 50 = 2 · 5²; odd prime divisor: 5.
+    have h_eq : (50 : ℕ) = 2 * 5^2 := by norm_num
+    rw [h_eq] at hdvd
+    have h1 : p ∣ 2 ∨ p ∣ 5^2 :=
+      ((Fact.out : Nat.Prime p).dvd_mul).mp hdvd
+    rcases h1 with h2 | h5pow
+    · have := Nat.le_of_dvd (by norm_num) h2; omega
+    · have hp_dvd_5 : p ∣ 5 :=
+        (Fact.out : Nat.Prime p).dvd_of_dvd_pow h5pow
+      have : p = 1 ∨ p = 5 :=
+        (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 5)) p hp_dvd_5
+      rcases this with h | h
+      · exact absurd h (Fact.out : Nat.Prime p).one_lt.ne'
+      · right; left; exact h
+
 end Moore57.Papers.MakhnevPaduchikh2001
