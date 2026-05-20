@@ -78,7 +78,46 @@ theorem lem25_x_action_isGraphAut
         ((lem25_x_acts_on_fixedPoints X P hP_normal_in_X g hg y : V)) :=
   restrictToFixedPoints_isGraphAut (Γ := Γ) P (hP_normal_in_X hg) (hX_aut g hg) x y
 
-/-- **Lemma 25 (normal Sylow ⇒ action on `Fix(P)`).** [backwards-compat] -/
+/-- **Lemma 25 (Q acts on `Fix(P)` for `P ◁ X`, `Q ≤ X`).** [done]
+
+The paper-faithful "Q acts on Fix(P)" form: given any subgroup `Q ≤ X`
+with `P ◁ X` (encoded as `X ≤ N(P)`), each `q ∈ Q` restricts to a
+permutation of `MulAction.fixedPoints P V`.
+
+Direct specialization of `lem25_x_acts_on_fixedPoints` to the
+sub-subgroup `Q ≤ X` (where `Q ≤ X ≤ N(P)` gives `q ∈ N(P)` for
+each `q ∈ Q`). -/
+def lem25_q_acts_on_fixedPoints
+    (X P Q : Subgroup (Equiv.Perm V))
+    (hP_normal_in_X : X ≤ Subgroup.normalizer (P : Set (Equiv.Perm V)))
+    (hQ_le_X : Q ≤ X)
+    (q : Equiv.Perm V) (hq : q ∈ Q) :
+    Equiv (MulAction.fixedPoints P V) (MulAction.fixedPoints P V) :=
+  lem25_x_acts_on_fixedPoints X P hP_normal_in_X q (hQ_le_X hq)
+
+/-- **Lemma 25 (Q acts by graph automorphisms on `Fix(P)`).** [done]
+
+If every `g ∈ X` is a graph automorphism, and `Q ≤ X`, then each
+`q ∈ Q` restricts to a graph automorphism of the induced subgraph
+on `Fix(P)`. -/
+theorem lem25_q_action_isGraphAut
+    {Γ : SimpleGraph V}
+    (X P Q : Subgroup (Equiv.Perm V))
+    (hP_normal_in_X : X ≤ Subgroup.normalizer (P : Set (Equiv.Perm V)))
+    (hQ_le_X : Q ≤ X)
+    (hX_aut : ∀ g ∈ X, ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (g a) (g b))
+    (q : Equiv.Perm V) (hq : q ∈ Q)
+    (x y : MulAction.fixedPoints P V) :
+    Γ.Adj (x : V) (y : V) ↔
+      Γ.Adj
+        ((lem25_q_acts_on_fixedPoints X P Q hP_normal_in_X hQ_le_X q hq x : V))
+        ((lem25_q_acts_on_fixedPoints X P Q hP_normal_in_X hQ_le_X q hq y : V)) :=
+  lem25_x_action_isGraphAut (Γ := Γ) X P hP_normal_in_X hX_aut q (hQ_le_X hq) x y
+
+/-- **Lemma 25 (normal Sylow ⇒ action on `Fix(P)`).** [backwards-compat]
+
+The paper-faithful content "Q acts on Fix(P)" is captured by
+`lem25_q_acts_on_fixedPoints` + `lem25_q_action_isGraphAut`. -/
 theorem lem25_normal_sylow_action : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9
