@@ -165,6 +165,22 @@ theorem lem17_case1_orderOf_dvd_27_with_petersenFixedData
     orderOf σ ∣ 27 :=
   lem17_case1_orderOf_dvd_27_of_petersen_complement σ k pow_pk h_semi_regular
 
+/-- **Lemma 17 dispatch arithmetic: `orderOf σ ∣ 27 ∨ orderOf σ ∣ 81` ⟹
+`orderOf σ ∣ 81`.** [done]
+
+Paper-faithful packaging of the Lem 17 conclusion: both Petersen-fix
+(`|X| ∣ 27`) and singleton-fix (`|X| ∣ 81`) branches imply `|X| ∣ 81`. -/
+theorem lem17_orderOf_dvd_81_from_dispatch
+    (n : ℕ) (h : n ∣ 27 ∨ n ∣ 81) : n ∣ 81 := by
+  rcases h with h | h
+  · exact dvd_trans h (by decide)
+  · exact h
+
+/-- **Lemma 17 dispatch numeric bound: `|X| ≤ 81` from dispatch.** [done] -/
+theorem lem17_le_81_from_dispatch
+    (n : ℕ) (h : n ∣ 27 ∨ n ∣ 81) : n ≤ 81 :=
+  Nat.le_of_dvd (by norm_num) (lem17_orderOf_dvd_81_from_dispatch n h)
+
 /-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy] -/
 theorem lem17_3group_fix (hΓ : IsMoore57 Γ) : True := by trivial
 

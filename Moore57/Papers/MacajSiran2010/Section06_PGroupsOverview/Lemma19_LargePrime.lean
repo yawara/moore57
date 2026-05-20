@@ -227,6 +227,20 @@ theorem lem19_case3_orderOf_dvd_11_with_c5FixedData
     orderOf σ ∣ 11 :=
   lem19_case3_orderOf_dvd_11_of_pentagon_fix σ k pow_pk h_semi_regular
 
+/-- **Lemma 19 dispatch numeric bound: `n ≤ 19` from per-prime dispatch.**
+[done]
+
+Paper-faithful packaging: any of the four large-prime branches (`n ∣ 13`,
+`n ∣ 19`, `n ∣ 11`, `n ∣ 7`) gives `n ≤ 19`, the largest prime in the
+Lemma 4 list. -/
+theorem lem19_le_19_from_dispatch
+    (n : ℕ) (h : n ∣ 13 ∨ n ∣ 19 ∨ n ∣ 11 ∨ n ∣ 7) : n ≤ 19 := by
+  rcases h with h | h | h | h
+  · have h13 : n ≤ 13 := Nat.le_of_dvd (by norm_num) h; omega
+  · exact Nat.le_of_dvd (by norm_num) h
+  · have h11 : n ≤ 11 := Nat.le_of_dvd (by norm_num) h; omega
+  · have h7 : n ≤ 7 := Nat.le_of_dvd (by norm_num) h; omega
+
 /-- **Lemma 19 (large-prime `p`-group classification).** [deferred-heavy]
 
 The full 5-case classification.  Arithmetic cores for cases (1), (2),

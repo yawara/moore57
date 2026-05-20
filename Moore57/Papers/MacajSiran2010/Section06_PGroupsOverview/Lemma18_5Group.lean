@@ -230,4 +230,22 @@ theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData
     orderOf σ ∣ 125 :=
   lem18_case3_orderOf_dvd_125_of_empty_fix σ k pow_pk h_semi_regular
 
+/-- **Lemma 18 dispatch arithmetic: `n ∣ 25 ∨ n ∣ 5 ∨ n ∣ 125` ⟹ `n ∣ 125`.**
+[done]
+
+Paper-faithful packaging of the Lem 18 conclusion: each of the three
+fix-shape branches (HS, pentagon, empty) gives a divisibility bound,
+combined to `|X| ∣ 125`. -/
+theorem lem18_orderOf_dvd_125_from_dispatch
+    (n : ℕ) (h : n ∣ 25 ∨ n ∣ 5 ∨ n ∣ 125) : n ∣ 125 := by
+  rcases h with h | h | h
+  · exact dvd_trans h (by decide)
+  · exact dvd_trans h (by decide)
+  · exact h
+
+/-- **Lemma 18 dispatch numeric bound: `|X| ≤ 125` from dispatch.** [done] -/
+theorem lem18_le_125_from_dispatch
+    (n : ℕ) (h : n ∣ 25 ∨ n ∣ 5 ∨ n ∣ 125) : n ≤ 125 :=
+  Nat.le_of_dvd (by norm_num) (lem18_orderOf_dvd_125_from_dispatch n h)
+
 end Moore57.Papers.MacajSiran2010.S6
