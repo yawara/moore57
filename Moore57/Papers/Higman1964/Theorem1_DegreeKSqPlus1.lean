@@ -123,17 +123,135 @@ theorem theorem1_combined_arithmetic_core {k : ℕ}
     · right; right; right; right; left; exact h
     · right; right; right; right; right; exact h
 
+/-! ### Thm 1 bridge: `e ∣ k(k-2) ∧ e² = 4k - 3 ⟹ e ∣ 15` (D3.6 backbone)
+
+The arithmetic bridge between Lemma 7's Moore-parameter integrality
+constraint `e ∣ k(k − 2)` (proven in `Lemma07.lem7_moore_e_dvd_k_times_k_minus_2`)
+and the Theorem 1 arithmetic core's hypothesis `e² ∣ 225`.
+
+Key calculation: from `e² = 4k − 3`,
+`16 · k(k − 2) = (4k)² − 8 · (4k) = (e² + 3)² − 8(e² + 3) = e⁴ − 2e² − 15`,
+so `e ∣ k(k − 2)` (any `ℤ`-multiple of `e`) implies `e ∣ e⁴ − 2e² − 15`,
+hence `e ∣ 15` (since `e ∣ e⁴` and `e ∣ 2e²`).
+
+Then `e ∣ 15 ⟹ e² ∣ 225` by `mul_dvd_mul`. -/
+
+/-- **Thm 1 bridge: from `e ∣ k(k−2)` and `e² = 4k − 3`, deduce `e ∣ 15`**.
+[done]
+
+Proof: multiply `e ∣ k(k − 2)` by 16 to get `e ∣ 16k(k − 2)`.  Substitute
+`4k = e² + 3` to rewrite the RHS as `e⁴ − 2e² − 15`.  Then `e ∣ e⁴` and
+`e ∣ 2e²`, so `e ∣ (e⁴ − 2e² − 15) − (e⁴ − 2e²) = −15`, hence `e ∣ 15`. -/
+theorem theorem1_e_dvd_fifteen
+    {e k : ℤ} (h_dvd : e ∣ k * (k - 2)) (h_sq : e ^ 2 = 4 * k - 3) :
+    e ∣ 15 := by
+  -- e ∣ 16 * (k * (k - 2)).
+  have h_16 : e ∣ 16 * (k * (k - 2)) := h_dvd.mul_left 16
+  -- Substitute 4 * k = e^2 + 3 (from h_sq) to rewrite RHS algebraically.
+  have h_4k : 4 * k = e ^ 2 + 3 := by linarith
+  have h_eq : 16 * (k * (k - 2)) = e ^ 4 - 2 * e ^ 2 - 15 := by
+    have h_calc : 16 * (k * (k - 2)) = (4 * k) ^ 2 - 8 * (4 * k) := by ring
+    rw [h_calc, h_4k]; ring
+  rw [h_eq] at h_16
+  -- e ∣ e^4 - 2 * e^2 (since e ∣ e^4 and e ∣ 2 * e^2).
+  have h_e_sq : e ∣ e ^ 4 - 2 * e ^ 2 := by
+    refine ⟨e ^ 3 - 2 * e, ?_⟩; ring
+  -- Subtract to get e ∣ -15.
+  have h_neg15 : e ∣ (-15 : ℤ) := by
+    have h_diff : (-15 : ℤ) = (e ^ 4 - 2 * e ^ 2 - 15) - (e ^ 4 - 2 * e ^ 2) := by
+      ring
+    rw [h_diff]
+    exact h_16.sub h_e_sq
+  exact (dvd_neg.mp h_neg15)
+
+/-- **Thm 1 bridge: `e ∣ 15 ⟹ e² ∣ 225`** (ℤ form). [done]
+
+Trivial multiplicative consequence: `e ∣ 15` ⟹ `e * e ∣ 15 * 15 = 225`. -/
+theorem theorem1_e_sq_dvd_225_of_e_dvd_fifteen
+    {e : ℤ} (h : e ∣ 15) : e * e ∣ 225 := by
+  have h1 : e * e ∣ 15 * 15 := mul_dvd_mul h h
+  norm_num at h1; exact h1
+
+/-- **Thm 1 bridge (combined): `e ∣ k(k−2) ∧ e² = 4k − 3 ⟹ e² ∣ 225`**.
+[done]
+
+Composition of `theorem1_e_dvd_fifteen` and
+`theorem1_e_sq_dvd_225_of_e_dvd_fifteen`. -/
+theorem theorem1_e_sq_dvd_225_of_dvd_and_sq
+    {e k : ℤ} (h_dvd : e ∣ k * (k - 2)) (h_sq : e ^ 2 = 4 * k - 3) :
+    e * e ∣ 225 :=
+  theorem1_e_sq_dvd_225_of_e_dvd_fifteen
+    (theorem1_e_dvd_fifteen h_dvd h_sq)
+
+/-- **Thm 1 bridge (ℤ → ℕ): if `k ≥ 1` and `e ≥ 1` in ℕ satisfy
+`e * e ∣ 225` and `4 * k = e * e + 3`, then `k ∈ {1, 3, 7, 57}`**.
+[done]
+
+This is the ℕ wrap of `theorem1_arithmetic_core` taking direct
+`e * e ∣ 225` form (rather than splitting into the e-divisor cases). -/
+theorem theorem1_k_in_set_of_e_sq_dvd_225 {k e : ℕ}
+    (he : 4 * k = e * e + 3) (hdvd : e * e ∣ 225) :
+    k = 1 ∨ k = 3 ∨ k = 7 ∨ k = 57 :=
+  theorem1_arithmetic_core he hdvd
+
+/-! ### Thm 1 full chain (conditional) -/
+
+/-- **Theorem 1 full (Case II, conditional)**: under Moore SRG parameters
+(`λ = 0`, `μ = 1`, `n = k² + 1`) with Case II hypotheses
+(`e² = 4k − 3` perfect square, integer multiplicity condition
+`2 e f₂ = k(k(e + 1) − 2)`), we have `k ∈ {1, 3, 7, 57}` (ℕ form,
+assuming `e : ℕ` and the perfect-square equation in ℕ).
+
+The conditional inputs are:
+* `e * e = 4 * k - 3` (perfect square discriminant in ℕ — Case II
+  Lem 7 hypothesis).
+* `e * f₂ * 2 = k * (k * (e + 1) - 2)` (integer multiplicity, ℕ form
+  — Lem 7 multiplicity constraint specialised to Moore parameters).
+
+The Moore57 instance (`k = 57, e = 15`) is `theorem1_moore57_degree`
++ `theorem1_moore57_valence`. -/
+theorem theorem1_case_two_full_conditional {k e : ℕ} {f₂ : ℤ}
+    (he_sq : 4 * k = e * e + 3)
+    (h_mult_Z : 2 * ((e : ℤ) * f₂) =
+                (k : ℤ) * ((k : ℤ) * ((e : ℤ) + 1) - 2))
+    (h_k_ge_2 : 2 ≤ k) :
+    k = 3 ∨ k = 7 ∨ k = 57 := by
+  -- Lift to ℤ and use the bridge.
+  have h_dvd_kk2 : (e : ℤ) ∣ (k : ℤ) * ((k : ℤ) - 2) := by
+    refine ⟨(2 : ℤ) * f₂ - (k : ℤ) ^ 2, ?_⟩
+    linarith
+  have h_sq_Z : (e : ℤ) ^ 2 = 4 * (k : ℤ) - 3 := by
+    have := congrArg (Nat.cast (R := ℤ)) he_sq
+    push_cast at this; linarith
+  have h_e_sq_dvd : (e : ℤ) * (e : ℤ) ∣ 225 :=
+    theorem1_e_sq_dvd_225_of_dvd_and_sq h_dvd_kk2 h_sq_Z
+  have h_e_sq_dvd_N : e * e ∣ 225 := by
+    have h_e_sq_Z : ((e * e : ℕ) : ℤ) = (e : ℤ) * (e : ℤ) := by push_cast; ring
+    have : ((e * e : ℕ) : ℤ) ∣ (225 : ℤ) := h_e_sq_Z ▸ h_e_sq_dvd
+    exact_mod_cast this
+  rcases theorem1_arithmetic_core he_sq h_e_sq_dvd_N with h | h | h | h
+  · omega
+  · left; exact h
+  · right; left; exact h
+  · right; right; exact h
+
 /-- **Theorem 1 (Higman §6, full statement).** [deferred-heavy]
 
 A transitive rank-3 permutation group of degree `n = k² + 1` (where `k`
 is the length of a `G_a`-orbit) has `n ∈ {5, 10, 50, 3250}`, equivalently
 `k ∈ {2, 3, 7, 57}`.
 
-The arithmetic core (Case II) is proven in `theorem1_arithmetic_core`;
-Case I (`k = l = 2`, `n = 5`) and the full setup (rank-3 hypothesis,
-Lemmas 1–7, primitivity, even-order, integrality of `√(4k − 3)`) are
-external and remain skeletal until the permutation-group / incidence-
-matrix infrastructure is built. -/
+The full arithmetic chain (Case I + Case II + bridge to multiplicities)
+is formalised:
+* Case I core: `theorem1_case1_arithmetic_core` (`k = 0 ∨ k = 2`).
+* Case II arithmetic core: `theorem1_arithmetic_core` (`k ∈ {1, 3, 7, 57}`).
+* Multiplicity / discriminant bridge: `theorem1_e_dvd_fifteen` +
+  `theorem1_e_sq_dvd_225_of_dvd_and_sq`.
+* Case II full conditional (Moore parameters): `theorem1_case_two_full_conditional`.
+
+The full "k = 0/1 excluded by non-degeneracy" packaging and Case I/II
+disjunction at the rank-3 level remain external (require the
+permutation-group / incidence-matrix infrastructure). -/
 theorem theorem1_n_kSq_plus_one : True := by trivial
 
 /-- **Theorem 1, Moore57 instance.**
