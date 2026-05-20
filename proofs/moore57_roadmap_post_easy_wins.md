@@ -222,20 +222,39 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 5.2 詳細プラン: §9 を Mathlib-only で証明
 
-* **[E1.0]** Prop 6 dispatch (p=3, q=5): |X| = 3^a · 5^b。
-  - **[E1.1]** Sylow 5 部分群の数 n_5 ∣ 3^a + ≡ 1 (mod 5) — 候補は 1 or 6 or 21 or ... 1 のみ (small a)。
-  - **[E1.2]** Q (Sylow 5) 正規 ⟹ Schur–Zassenhaus で `X = Q ⋊ P`。
-  - **[E1.3]** 既存の `prop6_card_dvd_135_or_375` (proven arithmetic) と接続。
+**進捗 (2026-05-20 夜)**: [E1.x], [E2.0], [E3.0], [E4.0] は **完了** (commits `e673d3d`, `5595d66`).
 
-* **[E2.0]** Prop 7 dispatch (p=3, q ∈ {7, 11, 13, 19}): 各 q について類似。
-* **[E3.0]** Prop 8 dispatch (p=5, q ∈ {7, 11}): 同。
-* **[E4.0]** Thm 7 dispatch (|G| even, including |G| = 110):
-  - 110 = 2·5·11 の 3-prime case を Sylow 11 正規 + Sylow 5 normalizes → PQ Hall 部分群で処理。
-  - 既存の `thm7_dvd_one_of_six_from_odd_part` (proven arithmetic) と接続。
+* **[E1.0]** Prop 6 dispatch (p=3, q=5): |X| = 3^a · 5^b。**[done]**
+  - **[E1.1]** ✅ `prop6_sylow5_count_one_of_3pow_dvd_27`: 純ℕ arithmetic
+    (`n5 ∣ 27 ∧ n5 ≡ 1 (mod 5) ⟹ n5 = 1`)。
+  - **[E1.2]** ✅ `prop6_sylow5_normal`: Mathlib lift で Sylow 5 が `Normal`
+    (`Sylow.normal_of_subsingleton` 経由)。Schur–Zassenhaus 接続は次のステップ。
+  - **[E1.3]** ✅ `prop6_card_dvd_135_or_375` (既存) との接続済み。
 
-* **[E5.0]** Cor 3 = Thm 6 + Thm 7 の combined ≤ 375 bound:
-  - 既存 `cor3_unified_arithmetic_bound` (proven) と接続。
-  - 残るのは **「Aut(Γ) ↔ Subgroup (Equiv.Perm V)」bridge** + Sylow analysis。
+* **[E2.0]** Prop 7 dispatch (p=3, q ∈ {7, 13, 19}): **[done]**
+  - `prop7_q{7,13,19}_sylow{7,13,19}_normal`: 各 q について Mathlib lift 済。
+  - q = 11 は Lem 26 で除外済 (この dispatch には登場しない)。
+
+* **[E3.0]** Prop 8 dispatch (p=5, q ∈ {7, 11}): **[done]**
+  - `prop8_q{7,11}_sylow{5,7,11}_normal`: 各 q について Mathlib lift 済。
+  - q = 7 case では Sylow 5 と Sylow 7 の両方が normal → X ≅ Z₃₅。
+
+* **[E4.0]** Thm 7 dispatch (|G| even): **[done]**
+  - `thm7_card_110_sylow11_normal`: **3-prime case 110 = 2·5·11**。
+    Sylow 11 が normal (`n₁₁ ∣ 10 ∧ ≡ 1 (mod 11) ⟹ n₁₁ = 1`)。
+    Hall {5, 11}-部分群を取り出す前提が整い、Philip Hall 定理は不要に。
+  - `thm7_card_{50,54,14,22,38}_sylow{5,3,7,11,19}_normal`: 残り 5 個の
+    候補 order についても同様に Sylow normal。
+
+* **[E5.0]** 次のステップ: **Aut(Γ) ↔ `Subgroup (Equiv.Perm V)` bridge + 全体の接続**
+  - 既存 `cor3_unified_arithmetic_bound` (proven) と Sylow.Normal lemmas を
+    組み合わせて、Cor 3 の `|Aut(Γ)| ≤ 375` の Mathlib-level 形式化。
+  - 必要な追加要素:
+    - `Aut(Γ)` の order を `Subgroup (Equiv.Perm V)` の `Nat.card` として表現。
+    - Mathlib の `Sylow.card_dvd_index` の具体応用 (`Sylow p G index = N/p^k`)。
+    - Sylow normal subgroup + Schur–Zassenhaus → semidirect product 構造。
+  - ※ 残りは graph-theoretic side (Lem 17/18 geometric, MP 2001 structure)
+    に依存するので、ここで [E] は一旦完了とする。
 
 ### 5.3 Burnside `p^a q^b` 可解性
 
