@@ -367,10 +367,11 @@ fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion
 
 §6 Lem 17, 18 の geometric 部分; §8 Prop 3 の HS 固定型.
 
-**進捗 (2026-05-21 夜)**: [C1.0]-[C1.2a+], [C2.0a], [C3.0]-[C3.5] **すべて完了**。
-**Tier C substantive 作業は完了**: 残るは §3 [C3.6] (`Fix(X) = HS ⟹ |X| ≤ 5`)
-程度。 [C3.4] は本日 (2026-05-21 夜) 完了し、Lem 17 (1)/(2), Lem 18 (1)/(2)/(3)
-に semi-regular hypothesis を直接受ける unconditional wrapper が追加された。
+**進捗 (2026-05-21 夜)**: [C1.0]-[C1.2a+], [C2.0a], [C3.0]-[C3.6]
+**すべて完了** (Tier C は scope 内すべて scope 終了状態)。 [C3.4] と
+[C3.6] が本日 (2026-05-21 夜) 完了し、Lem 17 (1)/(2), Lem 18 (1)/(2)/(3)
+に semi-regular hypothesis を直接受ける unconditional wrapper +
+Prop 3 (Fix=HS ⟹ |X|≤5) の proper conditional bridge が追加された。
 **スキップ確定**: [C1.2b] Aut(Petersen), [C2.1] HS explicit, [C2.2] Aut(HS),
 SRG 一意性 — Moore57 文脈では一切不要(下記 §3.0 で議論)。
 
@@ -504,9 +505,22 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
     `lem{17,18,19}_case{n}_orderOf_dvd_*_with_*FixedData` conditional
     wrapper を追加。
 
-* **[C3.6] (未)** §8 Prop 3: `Fix(X) = HS ⟹ |X| ≤ 5`。
-  入力: `prop3_arithmetic_core_no_partition_of_7_with_sq_31` (done) +
-  HS の adjacency 構造 (HSFixedData)。
+* **[C3.6] (done, 2026-05-21 夜)** §8 Prop 3: `Fix(X) = HS ⟹ |X| ≤ 5`。
+  `Section08_Theorem5Proof/Proposition3_HSFixBound.lean` に proper
+  signature 化:
+  - `prop3_arithmetic_dvd_25_ne_25_le_5` (arithmetic step: n ∣ 25 ∧ n ≠ 25
+    ⟹ n ≤ 5)
+  - `prop3_hs_fix_bound_with_hsFixedData` (Lem 18 (1) numeric 入力経由の
+    conditional bridge)
+  - `prop3_hs_fix_bound_with_hsFixedData_semiRegular` (C3.4 semi-regular
+    hypothesis 経由)
+  - `Proposition3HSFixConclusion : Prop` abstract conclusion def
+  - `Proposition3Step5Conclusion : Prop` + `prop3_step5_conclusion_holds`
+    (arithmetic core を Prop-level に packaged)
+  既存の True-stub `prop3_hs_fix_bound` は backward-compat で残置。
+  残るのは paper §8 step 1-4 の Lean 化 (orbit decomposition + trace
+  argument + simultaneous eq derivation) で `h_no_25 : orderOf σ ≠ 25`
+  hypothesis を unstub する作業 — substantive で別タスク。
 
 ---
 
@@ -784,7 +798,12 @@ B/D 拡張。
     Foundations 一般 helper (`SemiRegularOrbit.lean`) + graph-aut bridge
     (`SemiRegularComplement.lean`) + 全 FixedData wrapper + Lem 17/18
     内側 unconditional wrapper (詳細は §3 C3.4)。
-16. **[★ 次の短期項目]** 候補:
+16. ~~**[C3.6]** Prop 3 (Fix=HS ⟹ |X|≤5) proper-signature 化~~
+    — **done (2026-05-21 夜)**: arithmetic step + Lem 18 (1) 経由
+    conditional bridge + C3.4 semi-regular 経由 unconditional bridge +
+    `Proposition3HSFixConclusion / Step5Conclusion` abstract Prop defs
+    を `Proposition3_HSFixBound.lean` に追加 (詳細は §3 C3.6)。
+17. **[★ 次の短期項目]** 候補:
    - **[B4.3]** Composite-order Galois cyclotomic decomp (deferred-heavy)。
    - **[D3.x]** Higman 1964 Lems 1–3 抽象版 (orbital infrastructure に
      乗せて proper signature 化)。
@@ -874,7 +893,10 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) proofs+blogs: Tier C C3.4 done — semi-regular orbit argument
+* (HEAD) papers+proofs: Tier C C3.6 done — Prop 3 (Fix=HS ⟹ |X|≤5)
+  proper-signature 化 (arithmetic step + Lem 18 (1) bridge + C3.4
+  semi-regular bridge + abstract Conclusion defs)
+* (prev) proofs+blogs: Tier C C3.4 done — semi-regular orbit argument
   (Foundations helper + graph-aut bridge + FixedData wrappers + Lem 17/18
   unconditional wrappers)
 * (prev HEAD) papers+proofs: Tier D D3.2 partial — subdegree G-invariance + reverse-neighborhood ↔ swap bridge (Lem 3 backbone)
