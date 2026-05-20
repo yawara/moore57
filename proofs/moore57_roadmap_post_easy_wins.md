@@ -123,21 +123,23 @@ unconditional に格上げ。 prime-order starred 行は実質的にすべて Th
   - `adjacentMovedCount_eq_chi_combination`: `a₁ = 57χ₀+7χ₁−8χ₂`
   - `chi0_conj`, `chi1_conj`, `chi2_conj`: graph-aut 共役不変性 (trace
     cyclic + projection commutation)
-* **[B3.1+] (partial done, 2026-05-21)** χⱼ を `Representation.character`
+* **[B3.1+] (done, 2026-05-21)** χⱼ を `Representation.character`
   of spectral subrepresentation として正式に identify (E_λ の range が
   subrepresentation, restrict した character)。
-  - **χ₁ done**: `Foundations/Representation/SpectralSubrepresentation.lean`
-    で `autSubgroupPermRep Γ : Representation ℚ (autSubgroup Γ) (V → ℚ)`
-    を構築 + `Representation.onCommutingRange` (既存
+  `Foundations/Representation/SpectralSubrepresentation.lean` で
+  全 3 character (χ₀, χ₁, χ₂) について以下を実装:
+  - `autSubgroupPermRep Γ : Representation ℚ (autSubgroup Γ) (V → ℚ)` を
+    `permMatrix.toLin'` で構築 (project-local `moore57_permMatrix_mul/one`
+    が true hom を保証)。
+  - `chi{0,1,2}Subrep Γ : Representation ℚ (autSubgroup Γ) (range E_λ.toLin')`
+    を `Representation.onCommutingRange` (既存
     `D19OnMoore57/E7Projection/ProjectionRepresentationSkeleton.lean`)
-    経由で `chi1Subrep Γ : Representation ℚ (autSubgroup Γ) (range E₇)`
-    を作り、`chi1_eq_chi1Subrep_character` (`chi1 Γ σ.val =
-    chi1Subrep.character σ`) を既存 trace_restrict bridge で証明。
-  - **χ₀, χ₂ 残り (follow-up)**: 同パターンで `E_57` (全 perm と可換、
-    autSubgroup 制限不要) と `EMinus8Matrix` (既存 `minus8Matrix` 形は
-    `D19OnMoore57/Misc/Minus8ProjectionRepresentation.lean` にあるが、
-    `EMinus8Matrix = minus8Matrix` の identity bridge + 各 toLin'
-    idempotent の public 化が必要)。
+    で構築。
+  - `chi{0,1,2}_eq_chi{0,1,2}Subrep_character`:
+    `chi_j Γ σ.val = chi_jSubrep.character σ` を各 E_λ の trace_restrict
+    bridge で証明 (χ₁ は既存 `ProjectionTraceBridge.lean` 再利用、
+    χ₀ と χ₂ は本ファイルで `IsIdempotentElem` + commute + trace_restrict
+    を新規構築)。
 
 ### B4. Lem 3 + Thm 1 ⟹ a₁, a₂ の rational coefficient 表示
 
@@ -535,17 +537,18 @@ uniqueness 着手) を検討。
      False 証明に格上げ。
    - `lem13_p3_row_1_1_no` (Lem 13 p=3 (?, 1) starred row): B4.1 経由で
      unconditional False。
-8. ~~**[B3.1+] χ₁ part**~~ — **done**: `chi1Subrep` +
-   `chi1_eq_chi1Subrep_character` を `SpectralSubrepresentation.lean`
-   に追加。χ₀, χ₂ への拡張は follow-up。
+8. ~~**[B3.1+]** χⱼ subrep + character identification (全 3 character)~~
+   — **done**: `chi{0,1,2}Subrep` + `chi{0,1,2}_eq_chi{j}Subrep_character`
+   を `SpectralSubrepresentation.lean` に追加。
 9. **[★ 次の短期項目]** 候補 — どれも独立で着手可:
-   - **[B3.1+ χ₀/χ₂ 拡張]** χ₀ (E_57) + χ₂ (EMinus8 ↔ minus8) subrep を
-     同パターンで追加。 ~50-100 LOC。
    - **[A1.1] (orientation only)** Mathlib の `IsPGroup` 分類で位数 81
      の群が 15 個ある事実が取れるか調査。 取れれば A1.2 へ。
    - **[E5.0] 補強** `cor3_unified_arithmetic_bound` (proven) と
      Sylow.Normal を組み合わせて `|Aut(Γ)| ≤ 375` の Mathlib-level
      形式化を強化。
+   - **[D1-D2 orientation]** Higman 1964 rank-3 perm group framework の
+     orbital structure (rank, paired orbits, intersection numbers)
+     の Mathlib 整備状況調査。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -625,7 +628,9 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) papers: Tier B B3.1+ χ₁ — spectral subrepresentation + character identification
+* (HEAD) papers: Tier B B3.1+ — chi0 + chi2 spectral subreps + character identifications
+* `713613d` proofs+blogs: Tier B B3.1+ chi1 partial done — spectral subrep + character
+* `10632df` papers: Tier B B3.1+ chi1 — spectral subrepresentation + character identification
 * `dfd3e1f` proofs+blogs: Tier B B4.2 done — Lem 12 p=7 + Lem 13 p=3 starred unconditional
 * `84ce471` papers: Tier B B4.2 — Lem 12 p=7 a₀=58 starred + Lem 13 p=3 (?, 1) unconditional via B4.1
 * `be8c0d7` proofs+blogs: Tier B B4.1 cyclotomic integer trace + Lem 12 p=3 unconditional
