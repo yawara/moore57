@@ -1,5 +1,6 @@
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Theorem6_OddOrder
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Theorem7_EvenOrder
+import Moore57.Foundations.GraphTheory.AutSubgroup
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -148,15 +149,44 @@ theorem cor3_bound_from_props_and_oddpart (n : ℕ)
     obtain ⟨m, hn, hm⟩ := h_even_oddpart he
     exact thm7_bound_110_from_odd_part n m hn hm
 
+/-- **Corollary 3 via `autSubgroup` (`|Aut(Γ)| ≤ 375`).** [done]
+
+Subgroup-level form of `aut_card_le_375_conditional`: given the Props
+6/7/8 dispatch for the odd branch and the Thm 7 odd-part dispatch for
+the even branch — *applied to the cardinality of `Moore57.autSubgroup Γ`* —
+conclude `Nat.card (Moore57.autSubgroup Γ) ≤ 375`, with the sharper
+`≤ 110` bound when the cardinality is even.
+
+This is the `Aut(Γ)` ↔ subgroup-of-Sym(V) bridge mentioned in the
+`cor3_375_bound` paper-stub: instantiated at
+`n := Nat.card (Moore57.autSubgroup Γ)`. -/
+theorem cor3_375_bound_via_autSubgroup
+    (h_odd_props : Odd (Nat.card (Moore57.autSubgroup Γ)) →
+      ((Nat.card (Moore57.autSubgroup Γ) ∣ 135 ∨
+        Nat.card (Moore57.autSubgroup Γ) ∣ 375) ∨
+       (Nat.card (Moore57.autSubgroup Γ) ∣ 147 ∨
+        Nat.card (Moore57.autSubgroup Γ) ∣ 39 ∨
+        Nat.card (Moore57.autSubgroup Γ) ∣ 171) ∨
+       (Nat.card (Moore57.autSubgroup Γ) ∣ 35 ∨
+        Nat.card (Moore57.autSubgroup Γ) ∣ 275)))
+    (h_even_oddpart : Even (Nat.card (Moore57.autSubgroup Γ)) →
+      ∃ m, Nat.card (Moore57.autSubgroup Γ) = 2 * m ∧
+        (m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19)) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 375 ∧
+    (Even (Nat.card (Moore57.autSubgroup Γ)) →
+      Nat.card (Moore57.autSubgroup Γ) ≤ 110) :=
+  cor3_bound_from_props_and_oddpart _ h_odd_props h_even_oddpart
+
 /-- **Corollary 3 (`|Aut(Γ)| ≤ 375`, and `≤ 110` if even).** [deferred-heavy]
 
 Full paper-faithful statement.  The arithmetic backbone (taking the
 maximum over Thm 6 / Thm 7 listed values) is proven in
 `cor3_odd_arithmetic_bound` / `cor3_even_arithmetic_bound` / the
 unified `cor3_unified_arithmetic_bound` / `cor3_bound_of_thm6_thm7` /
-the new Prop-level `cor3_bound_from_props_and_oddpart`;
-what remains is the `Aut(Γ)` ↔ subgroup-of-Sym(V) bridge and
-Theorems 6, 7 themselves. -/
+the new Prop-level `cor3_bound_from_props_and_oddpart`; the
+`Aut(Γ)` ↔ subgroup-of-Sym(V) bridge is in
+`cor3_375_bound_via_autSubgroup`.  What remains is Theorems 6, 7
+themselves (paper-deferred). -/
 theorem cor3_375_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9

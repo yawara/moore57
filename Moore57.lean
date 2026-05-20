@@ -30,6 +30,7 @@ import Moore57.Foundations.GroupAction.FixedPoints
 import Moore57.Foundations.GroupAction.InvolutionParity
 import Moore57.Foundations.GroupAction.FixedPointConjugacy
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
+import Moore57.Foundations.GraphTheory.AutSubgroup
 import Moore57.Foundations.GraphTheory.InducedTrace
 import Moore57.Foundations.GraphTheory.OrbitInducedTrace
 import Moore57.Foundations.Spectral.QuadraticIndicator
@@ -53,6 +54,7 @@ import Moore57.D19OnMoore57.Fixed.CommonNeighbors
 import Moore57.D19OnMoore57.Fixed.NeighborCounts
 import Moore57.Foundations.GraphTheory.StrongZeroOne
 import Moore57.Foundations.GroupTheory.D19LinearCharacter
+import Moore57.Foundations.GroupTheory.SmallGroup625_12
 import Moore57.Foundations.GroupTheory.SmallGroup819
 import Moore57.Foundations.GroupTheory.OrbitDecomposition
 import Moore57.D19OnMoore57.D19Core.Dihedral19CharacterValueReduction
