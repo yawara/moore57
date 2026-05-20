@@ -109,7 +109,47 @@ theorem thm4_conditional_arithmetic
   subst h_lem8
   exact thm4_trace_orbit_arithmetic_contradiction l _ k h_lem9 h_orbit_split
 
-/-- **Theorem 4 (no 3-group of order > 27).** [deferred-heavy] -/
+/-- **Theorem 4 (Section 7 full proof) arithmetic dispatch**. [done]
+
+Given the Section 7 dispatch (Lem 17 case 1: `|X| ∣ 27` from Petersen-fix;
+Lem 17 case 2 + Cor 2 sharpening: `|X| ∣ 81` with `|X| ≠ 81` from
+SG(81, 9) classification), conclude `|X| ∣ 27`. Directly delegates to
+the Section 6 `thm4_card_dvd_27_from_dispatch_and_cor2` arithmetic. -/
+theorem thm4_final_dvd_27_from_dispatch_and_cor2
+    (n : ℕ) (h_dispatch : n ∣ 27 ∨ n ∣ 81)
+    (h_cor2 : n ≠ 81) :
+    n ∣ 27 :=
+  Moore57.Papers.MacajSiran2010.S6.thm4_card_dvd_27_from_dispatch_and_cor2
+    n h_dispatch h_cor2
+
+/-- **Theorem 4 (Section 7) exponent bound**. [done]
+
+For a 3-group `|X| = 3^k`, the dispatch + Cor 2 exclusion forces `k ≤ 3`.
+Delegates to Section 6's `thm4_3pow_le_3_from_dispatch`. -/
+theorem thm4_final_3pow_le_3_from_dispatch
+    (k : ℕ) (h_dispatch : 3 ^ k ∣ 27 ∨ 3 ^ k ∣ 81)
+    (h_not_81 : 3 ^ k ≠ 81) :
+    k ≤ 3 :=
+  Moore57.Papers.MacajSiran2010.S6.thm4_3pow_le_3_from_dispatch
+    k h_dispatch h_not_81
+
+/-- **Theorem 4 (Section 7) numeric bound**. [done]
+
+The dispatch + Cor 2 exclusion gives `|X| ≤ 27`. -/
+theorem thm4_final_card_le_27_from_dispatch_and_cor2
+    (n : ℕ) (h_dispatch : n ∣ 27 ∨ n ∣ 81)
+    (h_cor2 : n ≠ 81) :
+    n ≤ 27 :=
+  Moore57.Papers.MacajSiran2010.S6.thm4_card_le_27_from_dispatch_and_cor2
+    n h_dispatch h_cor2
+
+/-- **Theorem 4 (no 3-group of order > 27).** [deferred-heavy]
+
+Arithmetic backbone via `thm4_final_dvd_27_from_dispatch_and_cor2`,
+`thm4_final_3pow_le_3_from_dispatch`, and
+`thm4_final_card_le_27_from_dispatch_and_cor2`. What remains is the
+Cor 2 geometric content (SG(81, 9) classification among 15 order-81
+groups, GAP-heavy). -/
 theorem thm4_final (_hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S7
