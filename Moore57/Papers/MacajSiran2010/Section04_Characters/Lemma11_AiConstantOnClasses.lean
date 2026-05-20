@@ -3,6 +3,7 @@ import Moore57.Foundations.GroupAction.FixedPoints
 import Moore57.Foundations.GroupAction.FixedPointConjugacy
 import Moore57.Foundations.GraphTheory.InducedTrace
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Moore57Graph.Characters
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -78,6 +79,36 @@ Wraps `Moore57.adjacentMovedCount_inv`. -/
 theorem lem11_a1_constant_under_inv (σ : Equiv.Perm V) :
     adjacentMovedCount Γ σ⁻¹ = adjacentMovedCount Γ σ :=
   adjacentMovedCount_inv σ
+
+/-! ### Character-theoretic conjugation invariance (Moore57)
+
+The spectral characters `χ₀, χ₁, χ₂` (defined in
+`Moore57.Moore57Graph.Characters`) are constant on conjugacy classes of
+`Aut(Γ)`.  This is a direct trace-cyclic-property argument and does
+*not* require Theorem 3 (Curtis–Reiner), which is only needed for the
+*rational class* (= coprime-power) invariance of `χⱼ`.
+-/
+
+/-- **Lemma 11 character conj-invariance for `χ₀`.** [done] -/
+theorem lem11_chi0_constant_under_conjugation
+    (σ τ : Equiv.Perm V) :
+    chi0 (V := V) (τ * σ * τ⁻¹) = chi0 (V := V) σ :=
+  chi0_conj σ τ
+
+/-- **Lemma 11 character conj-invariance for `χ₁`.** [done]
+Requires the conjugator `τ` to be a graph automorphism of `Γ`. -/
+theorem lem11_chi1_constant_under_graphAut_conjugation
+    (σ τ : Equiv.Perm V)
+    (hτ : ∀ v w, Γ.Adj v w ↔ Γ.Adj (τ v) (τ w)) :
+    chi1 Γ (τ * σ * τ⁻¹) = chi1 Γ σ :=
+  chi1_conj σ τ hτ
+
+/-- **Lemma 11 character conj-invariance for `χ₂`.** [done] -/
+theorem lem11_chi2_constant_under_graphAut_conjugation
+    (σ τ : Equiv.Perm V)
+    (hτ : ∀ v w, Γ.Adj v w ↔ Γ.Adj (τ v) (τ w)) :
+    chi2 Γ (τ * σ * τ⁻¹) = chi2 Γ σ :=
+  chi2_conj σ τ hτ
 
 /-- **Lemma 11 (`aᵢ` constant on rational classes).** [deferred-heavy]
 

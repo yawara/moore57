@@ -2,6 +2,7 @@ import Mathlib.RepresentationTheory.Character
 import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 import Mathlib.LinearAlgebra.Matrix.Permutation
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # Trace of a permutation representation
@@ -81,6 +82,24 @@ lemma character_permutationRepresentation_eq_ncard_setOf (g : G) :
       {x : X | g • x = x}.ncard := by
   rw [character_permutationRepresentation]
   congr 1
+
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+/-- **Bridge to `Moore57.fixedVertexCount`** (the project-native fixed-point
+counter on `Equiv.Perm`).  For a `G`-action on a finite type `X`, the
+permutation-representation character of `g : G` equals the fixed-vertex
+count of the induced permutation `MulAction.toPermHom G X g`. -/
+lemma character_permutationRepresentation_eq_fixedVertexCount (g : G) :
+    (permutationRepresentation (G := G) (X := X)).character g =
+      (Moore57.fixedVertexCount (MulAction.toPermHom G X g) : ℚ) := by
+  rw [character_permutationRepresentation_eq_ncard_setOf]
+  classical
+  unfold Moore57.fixedVertexCount
+  have hset : {x : X | g • x = x} =
+      ((Finset.univ.filter fun v : X => g • v = v : Finset X) : Set X) := by
+    ext x; simp
+  rw [hset, Set.ncard_coe_finset]
+  rfl
 
 end
 

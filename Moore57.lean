@@ -34,6 +34,7 @@ import Moore57.Foundations.GraphTheory.InducedTrace
 import Moore57.Foundations.GraphTheory.OrbitInducedTrace
 import Moore57.Foundations.Spectral.QuadraticIndicator
 import Moore57.Moore57Graph.E7Matrix.MoharBound
+import Moore57.Moore57Graph.Characters
 import Moore57.Moore57Graph.AdjMovedSet
 import Moore57.Foundations.LinearAlgebra.InvolutionTrace
 import Moore57.Foundations.LinearAlgebra.JordanMonotonicity
