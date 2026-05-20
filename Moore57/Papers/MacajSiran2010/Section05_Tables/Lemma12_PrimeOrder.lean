@@ -107,6 +107,26 @@ aut.  Combined with the character-theoretic table `a₁ ∈ {27 + 45k : k ∈ �
 pair and hence cannot occur. -/
 theorem lem12_no_p3_a0_one (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Lemma 12 (conditional, starred row `p = 3, a₀ = 1`): geometric step
+plus character constraint forces False.** [done]
+
+Conditional paper-faithful contradiction: given an order-3 graph
+automorphism `σ` and the (deferred) character-theoretic lower bound
+`a₁(σ) ≥ 27` for the case `a₀(σ) = 1`, combine with the geometric
+`lem12_p3_a1_eq_zero` (any order-3 aut has `a₁ = 0`) to derive False
+by omega.
+
+The character constraint `a₁ ∈ {27 + 45k}` (so `a₁ ≥ 27`) is the
+remaining deferred-heavy piece (depends on Proposition 2). -/
+theorem lem12_no_p3_a0_one_conditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 3 = 1)
+    (h_a1_ge : 27 ≤ adjacentMovedCount Γ σ) :
+    False := by
+  have h0 := lem12_p3_a1_eq_zero hΓ σ hAut hpow
+  omega
+
 /-- **Lemma 12 (p=7 starred row): if `Fix(σ)` contains the closed
 neighbourhood of some vertex, then `a₁(σ) = 0`.** [done]
 
@@ -188,5 +208,27 @@ The geometric `a₁ = 0` consequence is fully formalised in
 the character-theoretic `a₁ ∈ {21 + 105k : k ∈ ℕ}` (from
 Proposition 2, deferred) yields the contradiction. -/
 theorem lem12_no_p7_a0_58 (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Lemma 12 (conditional, starred row `p = 7, a₀ = 58`): closed
+neighbourhood geometric step plus character constraint forces False.** [done]
+
+Conditional paper-faithful contradiction: given a graph automorphism
+`σ` fixing some vertex `c` and all of its 57 neighbours (the geometric
+content of `a₀(σ) = 58 = 1 + 57`), and the (deferred) character-
+theoretic lower bound `a₁(σ) ≥ 21` for this row, combine with the
+geometric `lem12_a1_zero_of_closed_neighbourhood_fixed` (closed-nbhd
+fix ⟹ `a₁ = 0`) to derive False by omega.
+
+The character constraint `a₁ ∈ {21 + 105k}` (so `a₁ ≥ 21`) is the
+remaining deferred-heavy piece (depends on Proposition 2). -/
+theorem lem12_no_p7_a0_58_conditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (c : V) (hc : σ c = c)
+    (h_nbhd : ∀ v ∈ Γ.neighborSet c, σ v = v)
+    (h_a1_ge : 21 ≤ adjacentMovedCount Γ σ) :
+    False := by
+  have h0 := lem12_a1_zero_of_closed_neighbourhood_fixed hΓ σ hAut c hc h_nbhd
+  omega
 
 end Moore57.Papers.MacajSiran2010.S5
