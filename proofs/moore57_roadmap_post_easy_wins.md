@@ -124,9 +124,20 @@
 * **[B4.0+] (done)** Lemma11 に χⱼ conj-invariance wrappers
   (`lem11_chi{0,1,2}_constant_under_graphAut_conjugation`)
   ← `chi_j_conj` from Characters.lean。
-* **[B4.1] (未, deferred-heavy)** Theorem 3 (Curtis–Reiner) を仮定として
-  `lem11_ai_constant_on_rational_classes` の True-stub を埋める
-  (Mathlib に Theorem 3 なし、external 依存)。
+* **[B4.1] (部分 done, 2026-05-21 / commit `4b9a6b9`)** 
+  cyclotomic-based integer trace for order p prime を完成:
+  - `Foundations/LinearAlgebra/PowPrimeTrace.lean` 新規:
+    `exists_int_trace_of_pow_prime_eq_one (f^p = 1) ⟹ trace(f) ∈ ℤ`
+    (cyclicProjection 投影 + 既存 `trace_package_of_cyclotomic_prime_aeval_eq_zero`)
+  - `Moore57Graph/Aut/TraceIntegrality.lean` に `aut_pow_prime_E7_trace_int`
+    (`σ^p = 1` ⟹ `tr(E₇·P_σ) ∈ ℤ`) を `Matrix.toLin'_pow` 経由で接続
+  - `Lemma12_PrimeOrder.lean` の `lem12_no_p3_a0_one` を **完全 unconditional 化**:
+    `aut_pow_prime_E7_trace_int` (p=3) + `lem3_a1_mod_15` + `lem12_p3_a1_eq_zero` 
+    で `a₀ = 1` のとき `0 ≡ 12 (mod 15)` 矛盾。
+  - 残: Lem 12 p=7 starred (similar pattern), Lem 13 starred rows 等は
+    同じ枠組で個別撃破可能に。
+  - Theorem 3 (Curtis–Reiner) 全体は依然 Mathlib 未移植だが、
+    Moore57 の p-prime starred 行は cyclotomic 経由で unconditional 化可能。
 
 ### B5. Lem 13, Lem 14 paper-faithful 形
 
@@ -169,8 +180,34 @@
 
 §6 Lem 17, 18 の geometric 部分; §8 Prop 3 の HS 固定型.
 
-**進捗 (2026-05-20 夜)**: [C1.0]-[C1.2], [C3.0]-[C3.3] **完了**。
-残り: [C1.2 uniqueness], [C2.x explicit HS], [C3.2 §8 Prop 3 接続]、semi-regular orbit argument。
+**進捗 (2026-05-21)**: [C1.0]-[C1.2a+], [C2.0a], [C3.0]-[C3.3], [C3.5] **完了**。
+残り substantive: **[C3.4] semi-regular orbit argument** のみ。
+**スキップ確定**: [C1.2b] Aut(Petersen), [C2.1] HS explicit, [C2.2] Aut(HS),
+SRG 一意性 — Moore57 文脈では一切不要(下記 §3.0 で議論)。
+
+### 3.0 不要項目の整理 (2026-05-21 追記)
+
+`PetersenFixedData` / `HSFixedData` は **explicit isomorphism + 誘導次数** の
+データだけを持ち、Lem 17/18 もこれだけで通る(`lem17_case1_complement_count_eq_54`
+等は誘導次数 → `|N(a)\Fix(σ)|` の数値だけ使用)。`Aut(Petersen)` や `Aut(HS)` の
+order は実際の証明チェーンに**一切登場しない**。
+
+加えて `HSFixedData` は `induced_adj_iff` を explicit HS graph 経由でなく
+**SRG(50, 7, 0, 1) パラメータ条件** (`Set.ncard` ベース) で規定しているので、
+HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
+> "Moore57 non-existence does not depend on the existence
+>  of the Hoffman-Singleton graph; only on numerical constraints."
+と明記され `[out-of-scope]` タグ済。
+
+**スキップ確定リスト**:
+| 項目 | 当初想定 | 実際 |
+|---|---|---|
+| `Aut(Petersen) ≅ S₅` | C1.2b | ❌ 不要 — Lem 17/18 で order 参照なし |
+| SRG(10,3,0,1) ⟹ ≅ Petersen 一意性 | (暗黙) | ❌ 不要 — `induced_adj_iff` で explicit に紐付け済 |
+| HS explicit 50頂点構築 | C2.1 | ❌ 不要 — `HSFixedData` は SRG パラメータベース |
+| `Aut(HS) = 252,000` | C2.2 | ❌ 不要 — Lem 18 で order 参照なし |
+| SRG(50,7,0,1) 一意性 | (暗黙) | ❌ 不要 — 同上 |
+| Subgraph embedding `Petersen ↪ Moore57` | C1.3, C2.3 | △ FixedData で σ-依存版は済、抽象 embedding は不要 |
 
 ### C1. Petersen graph の Lean 化
 
@@ -188,24 +225,19 @@
 * **[C1.2a+] (done)** abstract edge count bridges:
   - `isPetersenLike_edgeFinset_card = 15`
   - `isHoffmanSingletonLike_edgeFinset_card = 175`
-* **[C1.2b] (未)** `Aut(Petersen) ≅ S₅` (|Aut| = 120) uniqueness/identification。
-  - 10! = 3,628,800 規模で `native_decide` 系も厳しい。後回し。
-* **[C1.3] (未)** Subgraph embedding: `Petersen ↪ Moore57` の condition 定式化
-  (これは `IsMoore57 Γ` の subgraph として induce する形)。
-  - 部分的には PetersenFixedData が σ-依存版を提供済み。general embedding
-    は `SimpleGraph.induce` + `IsPetersenLike` での命題化。
+* **[C1.2b] ~~Aut(Petersen) ≅ S₅~~ — skip** (Moore57 で使用箇所なし)。
+* **[C1.3] ~~General `Petersen ↪ Moore57` embedding~~ — skip**
+  (`PetersenFixedData` で σ-依存版は提供済。抽象 embedding 命題は使用箇所なし)。
 
 ### C2. Hoffman–Singleton graph の Lean 化
 
 * **[C2.0a] (done)** `IsHoffmanSingletonLike G ↔ G.IsSRGWith 50 7 0 1` 抽象 predicate。
   Existing `Foundations/GraphTheory/HoffmanSingleton.lean` は classification 側
   (k² + 1 形 SRG の k ∈ {0,1,2,3,7,57} を導く)。
-* **[C2.0b] (調査)** Mathlib に Hoffman–Singleton はあるか? (見込み: なし)。
-* **[C2.1] (未)** 50 頂点 SRG `IsSRGWith 50 7 0 1` の explicit construction
-  (e.g., via Kneser graph K(5, 2) 派生、Lev 構成 etc.)。
-* **[C2.2] (未)** Aut(HS) = 252,000 or similar `native_decide` 性能要検証
-  (50! は overflow するので分解必須)。
-* **[C2.3] (未)** Subgraph embedding into Moore57.
+* **[C2.1] ~~HS explicit 50-vertex construction~~ — skip**
+  (`HSFixedData` が SRG パラメータベースで Lem 18 を通す設計のため不要)。
+* **[C2.2] ~~Aut(HS) = 252,000~~ — skip** (Lem 18 で order 参照なし)。
+* **[C2.3] ~~HS ↪ Moore57 embedding~~ — skip** (`HSFixedData` で σ-依存版で十分)。
 
 ### C3. Lem 17, 18 geometric 部分の接続
 
@@ -233,11 +265,18 @@
   - `lem18_case1_complement_count_eq_50` (HS 経由 `|N(a) \ Fix(σ)| = 50`)。
   - `lem18_case1_orderOf_dvd_25_with_HSFixedData` (HS 版)。
 
-* **[C3.4] (未, deferred-heavy)** Semi-regular orbit argument:
+* **[C3.4] (未, deferred-heavy) ★ Tier C 残る唯一の substantive 項目 ★**
+  Semi-regular orbit argument:
   `⟨σ⟩` の `N(a) \ Fix(σ)` 上の作用が semi-regular (= stabilizer trivial)
   であることから `orderOf σ ∣ |N(a) \ Fix(σ)|`。これは MS 2010 §6 で
   semi-regular を separate に取得。Tier C の semi-regular bridge を
   unconditional 化するのに必要。
+  - 入力: `PetersenFixedData` (or `HSFixedData`) + `σ` のメイン特性 (`σ ^ p^k = 1`)
+  - 出力: 任意 `a ∈ Fix(σ)` について `orderOf σ ∣ (Γ.degree a - induced_degree)`
+  - 主な道具: `MulAction.stabilizer` + 「`stabilizer = ⊥ ⟹ orderOf σ ∣ orbit.card`」
+  - 既存 bridges (`lem17_case1_orderOf_dvd_27_with_petersenFixedData` 等) は
+    `h_semi_regular : orderOf σ ∣ 54` を**仮定として**受け取る形になっている。
+    この仮定を C3.4 で生成できれば、Lem 17/18 が完全 unconditional に。
 
 * **[C3.5-pre] (done)** PetersenFixedData / HSFixedData の girth bridges:
   - `induced_triangleFree`, `induced_no_C4` (各 FixedData)
@@ -410,11 +449,19 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 7.1 短期 (1 commit 単位、各 < 200 LOC)
 
-1. **[E1.1]** Prop 6 Sylow analysis (3-prime + 5-prime ⟹ Q normal) — Sylow + omega。
-2. **[E4.0]** Thm 7 Sylow analysis (110 = 2·5·11 dispatch) — 類似。
-3. **[E5.0]** Aut(Γ) ↔ Subgroup bridge in `Cor 3`。
-4. **[A2.0]** SG(625, 12) struct + group instance (Eisenstein 型相当)。
-5. **[A2.1]** SG625 GAP-quoted invariants via `native_decide`。
+**進捗 (2026-05-21)**: 全項目 **完了** (commits TBD)。
+
+1. ~~**[E1.1]** Prop 6 Sylow analysis~~ — **既に done** (§5.2 参照, commit `e673d3d`)。
+2. ~~**[E4.0]** Thm 7 Sylow analysis (110 = 2·5·11 dispatch)~~ — **既に done** (§5.2)。
+3. **[E5.0] done** — `Moore57.autSubgroup Γ : Subgroup (Equiv.Perm V)`
+   定義 (`Foundations/GraphTheory/AutSubgroup.lean`) + Cor 3 bridge
+   `cor3_375_bound_via_autSubgroup`。
+4. **[A2.0] done** — `SG625_12 = Heis(F₅) × Z₅` 構築
+   (`Foundations/GroupTheory/SmallGroup625_12.lean`)。Heisenberg cocycle で
+   exponent 5, 全演算は ZMod 5 上の polynomial identity (ring) で証明済。
+5. **[A2.1] done** — GAP-quoted 不変量を `native_decide` で検証:
+   `card_eq = 625`, `card_orderEq_five = 624`, `card_center = 25`,
+   `card_frattini = 5`, `frattini_is_commutator_image`。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -424,7 +471,8 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 7.3 長期 (substantive new infrastructure)
 
-9. **[C1, C2]** Petersen + Hoffman–Singleton explicit graphs。
+9. **[C3.4]** Semi-regular orbit argument
+   (Tier C 残る唯一の substantive 項目、Lem 17/18 を unconditional 化)。
 10. **[B4, B5]** Character-dependent Lemmas 11 (a₁/a₂), 13, 14 paper-faithful。
 11. **[D1-D4]** Rank-3 perm group framework + Higman 1964 全体。
 12. **[A3, A4]** Order-625 group classification (Lem 22, Prop 4)。
@@ -433,6 +481,9 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 13. **[F1, F2]** Lem 6 (4) corner cases (|O| ∈ [5, 63])。
     Mohar bound (|O| ≥ 64) があれば実用上問題なし。
+14. **[C1.2b, C1.3, C2.1, C2.2, C2.3]** Petersen/HS の Aut group, explicit
+    HS 構築, 一意性, 抽象 embedding ── Moore57 で**使用箇所が存在しない**
+    (§3.0 参照)。
 
 ---
 
@@ -450,7 +501,10 @@ paper を素直に読むと必要に見えるが、Moore57 specific には不要
 paper-level の本当のボトルネックは:
 - **GAP SmallGroup library**: Lean 等価物が無いため手構築必須 (Tier A)。
 - **Character theory** (Mathlib にあるが Moore57 spectral との bridge 必要)。
-- **Petersen / HS explicit graphs**: 小サイズだが手作業が必要。
+- ~~**Petersen / HS explicit graphs**~~: Petersen は decide 用に explicit 化済、
+  HS は SRG パラメータベースで `HSFixedData` を回せるので explicit 構築 **不要**
+  (§3.0 参照)。残る唯一の Tier C substantive 項目は [C3.4] semi-regular
+  orbit argument のみ。
 
 ---
 
