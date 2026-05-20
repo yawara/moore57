@@ -1,5 +1,6 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
 import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Aut.HSFixedData
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -157,5 +158,36 @@ theorem lem18_case3_orderOf_dvd_125_of_empty_fix
   rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 5)).mp h5k with ⟨j, _hj, hord⟩
   rw [hord] at h_dvd ⊢
   exact lem18_case3_arithmetic_5group_dvd_3250 j h_dvd
+
+/-- **Lemma 18 case (1) geometric: `|N(a) \ Fix(σ)| = 50` from
+`HSFixedData`.**  [done]
+
+For σ with `HSFixedData` on a Moore57 graph, the σ-moved neighbour count at
+any fixed vertex equals `50 = 57 − 7` (where `57` is the Moore57 degree and
+`7` is the Hoffman–Singleton induced degree).
+
+This is the §6 Lem 18 (1) semi-regular orbit input: σ acts on a 50-element
+set (without fixed points), and combined with the orbit-stabilizer argument
+(deferred — `orderOf σ ∣ 50`) yields the arithmetic core's input. -/
+theorem lem18_case1_complement_count_eq_50
+    [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (h : HSFixedData Γ σ) (i : Fin 50) :
+    ((Γ.neighborFinset (h.v i)).filter (fun w => σ w ≠ w)).card = 50 :=
+  Moore57.HSFixedData.hsFixedData_complement_neighbor_count hΓ h i
+
+/-- **Lemma 18 case (1) full bridge via `HSFixedData`**:
+combines the geometric data with a semi-regular orbit hypothesis to
+conclude `orderOf σ ∣ 25`.  [done]
+
+The hypothesis `h_semi_regular : orderOf σ ∣ 50` is the deferred geometric
+step (semi-regular action of `⟨σ⟩` on the 50-element set `N(a) \ Fix(σ)`);
+once it is in place, this becomes an unconditional bridge from `HSFixedData`
+to the Lem 18 (1) conclusion. -/
+theorem lem18_case1_orderOf_dvd_25_with_HSFixedData
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (_hsfd : HSFixedData Γ σ)
+    (h_semi_regular : orderOf σ ∣ 50) :
+    orderOf σ ∣ 25 :=
+  lem18_case1_orderOf_dvd_25_of_HS_complement σ k pow_pk h_semi_regular
 
 end Moore57.Papers.MacajSiran2010.S6

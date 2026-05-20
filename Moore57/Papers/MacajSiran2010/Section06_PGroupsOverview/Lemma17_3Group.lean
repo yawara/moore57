@@ -1,5 +1,6 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
 import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Aut.PetersenFixedData
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -132,6 +133,37 @@ theorem lem17_case2_orderOf_dvd_81_of_le_81
   rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 3)).mp h3k with ⟨j, _hj, hord⟩
   rw [hord] at h_le ⊢
   exact lem17_case2_arithmetic_3group_le_81_dvd_81 j h_le
+
+/-- **Lemma 17 case (1) geometric: `|N(a) \ Fix(σ)| = 54` from
+`PetersenFixedData`.**  [done]
+
+For σ with `PetersenFixedData` on a Moore57 graph, the σ-moved neighbour
+count at any fixed vertex equals `54 = 57 − 3` (where `57` is the Moore57
+degree and `3` is the Petersen induced degree).
+
+This is the §6 Lem 17 (1) semi-regular orbit input: σ acts on a 54-element
+set (without fixed points), and combined with the orbit-stabilizer argument
+(deferred — `orderOf σ ∣ 54`) yields the arithmetic core's input. -/
+theorem lem17_case1_complement_count_eq_54
+    [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (h : PetersenFixedData Γ σ) (i : Fin 10) :
+    ((Γ.neighborFinset (h.v i)).filter (fun w => σ w ≠ w)).card = 54 :=
+  Moore57.PetersenFixedData.petersenFixedData_complement_neighbor_count hΓ h i
+
+/-- **Lemma 17 case (1) full bridge via `PetersenFixedData`**:
+combines the geometric data with a semi-regular orbit hypothesis to
+conclude `orderOf σ ∣ 27`.  [done]
+
+The hypothesis `h_semi_regular : orderOf σ ∣ 54` is the deferred geometric
+step (semi-regular action of `⟨σ⟩` on the 54-element set `N(a) \ Fix(σ)`);
+once it is in place, this becomes an unconditional bridge from
+`PetersenFixedData` to the Lem 17 (1) conclusion. -/
+theorem lem17_case1_orderOf_dvd_27_with_petersenFixedData
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    (_pfd : PetersenFixedData Γ σ)
+    (h_semi_regular : orderOf σ ∣ 54) :
+    orderOf σ ∣ 27 :=
+  lem17_case1_orderOf_dvd_27_of_petersen_complement σ k pow_pk h_semi_regular
 
 /-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy] -/
 theorem lem17_3group_fix (hΓ : IsMoore57 Γ) : True := by trivial

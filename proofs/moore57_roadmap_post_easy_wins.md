@@ -118,17 +118,28 @@ Lem 13 fullテーブル, Lem 14 paper-faithful 形, Lem 18 一般。
 
 §6 Lem 17, 18 の geometric 部分; §8 Prop 3 の HS 固定型.
 
+**進捗 (2026-05-20 夜)**: [C1.0]-[C1.2], [C3.0]-[C3.3] **完了**。
+残り: [C1.2 uniqueness], [C2.x explicit HS], [C3.2 §8 Prop 3 接続]、semi-regular orbit argument。
+
 ### C1. Petersen graph の Lean 化
 
-* **[C1.0] (未)** `Moore57.PetersenGraph : SimpleGraph (Fin 10)` 定義。
-* **[C1.1] (未)** `IsSRGWith 10 3 0 1` の証明 (decide で済む見込み)。
-* **[C1.2] (未)** `Aut(Petersen) ≅ S₅` (or |Aut| = 120) を `native_decide` で。
+* **[C1.0] (done)** `Moore57.petersenGraph : SimpleGraph (Fin 10)` 構築
+  (GP(5,2) 形式: 5 outer pentagon + 5 inner pentagram + 5 spokes = 15 edges)。
+  `Foundations/GraphTheory/PetersenGraph.lean`.
+* **[C1.1] (done)** `petersenGraph_isSRG : petersenGraph.IsSRGWith 10 3 0 1`
+  by `decide` (fin_cases + decidable Adj)。
+* **[C1.2a] (done)** `IsPetersenLike G ↔ G.IsSRGWith 10 3 0 1` 抽象 predicate。
+  `Foundations/GraphTheory/SRGPredicates.lean`.
+* **[C1.2b] (未)** `Aut(Petersen) ≅ S₅` (|Aut| = 120) uniqueness/identification。
 * **[C1.3] (未)** Subgraph embedding: `Petersen ↪ Moore57` の condition 定式化
   (これは `IsMoore57 Γ` の subgraph として induce する形)。
 
 ### C2. Hoffman–Singleton graph の Lean 化
 
-* **[C2.0] (調査)** Mathlib に Hoffman–Singleton はあるか? (見込み: なし)。
+* **[C2.0a] (done)** `IsHoffmanSingletonLike G ↔ G.IsSRGWith 50 7 0 1` 抽象 predicate。
+  Existing `Foundations/GraphTheory/HoffmanSingleton.lean` は classification 側
+  (k² + 1 形 SRG の k ∈ {0,1,2,3,7,57} を導く)。
+* **[C2.0b] (調査)** Mathlib に Hoffman–Singleton はあるか? (見込み: なし)。
 * **[C2.1] (未)** 50 頂点 SRG `IsSRGWith 50 7 0 1` の explicit construction
   (e.g., via Kneser graph K(5, 2) 派生、Lev 構成 etc.)。
 * **[C2.2] (未)** Aut(HS) = 252,000 or similar `native_decide` 性能要検証
@@ -137,13 +148,42 @@ Lem 13 fullテーブル, Lem 14 paper-faithful 形, Lem 18 一般。
 
 ### C3. Lem 17, 18 geometric 部分の接続
 
-* **[C3.0] (未)** Lem 17: `Fix(X)` が 3-group の場合 → Petersen ∨ singleton。
-  入力: `lem17_neighbor_fix_mod_three` (done), `lem17_case1_arithmetic_*` (done)。
-  追加: Fix(X) の induced subgraph が SRG な事実 + Petersen identification。
-* **[C3.1] (未)** Lem 18: `Fix(X)` が 5-group → HS ∨ pentagon ∨ ∅。
-  類似構造。
-* **[C3.2] (未)** §8 Prop 3: `Fix(X) = HS ⟹ |X| ≤ 5`。
-  入力: `prop3_arithmetic_core_no_partition_of_7_with_sq_31` (done) + HS の adjacency 構造。
+* **[C3.0] (done)** `Moore57.PetersenFixedData Γ σ` structure
+  (`Moore57Graph/Aut/PetersenFixedData.lean`):
+  10 固定点 `v : Fin 10 → V` + injectivity + σ-fix + span + induced adj
+  iff matches `petersenGraph`. Plus bridges:
+  - `induced_degree_three`: 各 v(i) は 9 個の他指標頂点中 3 個に隣接。
+  - `autFixedNeighborFinset_card_eq_three`: `|N(a) ∩ Fix(σ)| = 3`。
+  - `petersenFixedData_complement_neighbor_count`: `|N(a) \ Fix(σ)| = 54`。
+
+* **[C3.1] (done)** `Moore57.HSFixedData Γ σ` structure
+  (`Moore57Graph/Aut/HSFixedData.lean`):
+  50 固定点 + injectivity + σ-fix + span + SRG(50, 7, 0, 1) induced
+  conditions (`induced_regular`, `induced_lambda`, `induced_mu` via
+  `Set.ncard`). Plus bridges:
+  - `induced_degree_seven`: 各 v(i) は 49 個の他指標頂点中 7 個に隣接。
+  - `autFixedNeighborFinset_card_eq_seven`: `|N(a) ∩ Fix(σ)| = 7`。
+  - `hsFixedData_complement_neighbor_count`: `|N(a) \ Fix(σ)| = 50`。
+
+* **[C3.3] (done)** `Lemma17_3Group.lean` / `Lemma18_5Group.lean` に bridge:
+  - `lem17_case1_complement_count_eq_54` (Petersen 経由 `|N(a) \ Fix(σ)| = 54`)。
+  - `lem17_case1_orderOf_dvd_27_with_petersenFixedData` (conditional bridge:
+    PetersenFixedData + `h_semi_regular : orderOf σ ∣ 54` ⟹ `orderOf σ ∣ 27`)。
+  - `lem18_case1_complement_count_eq_50` (HS 経由 `|N(a) \ Fix(σ)| = 50`)。
+  - `lem18_case1_orderOf_dvd_25_with_HSFixedData` (HS 版)。
+
+* **[C3.4] (未, deferred-heavy)** Semi-regular orbit argument:
+  `⟨σ⟩` の `N(a) \ Fix(σ)` 上の作用が semi-regular (= stabilizer trivial)
+  であることから `orderOf σ ∣ |N(a) \ Fix(σ)|`。これは MS 2010 §6 で
+  semi-regular を separate に取得。Tier C の semi-regular bridge を
+  unconditional 化するのに必要。
+
+* **[C3.5] (未)** Lem 17/18 case (2-3): pentagon / empty / singleton 接続。
+  C5FixedData (既存) + K155FixedData (既存) + 新規 EmptyFixedData (未)。
+
+* **[C3.6] (未)** §8 Prop 3: `Fix(X) = HS ⟹ |X| ≤ 5`。
+  入力: `prop3_arithmetic_core_no_partition_of_7_with_sq_31` (done) +
+  HS の adjacency 構造 (HSFixedData)。
 
 ---
 
