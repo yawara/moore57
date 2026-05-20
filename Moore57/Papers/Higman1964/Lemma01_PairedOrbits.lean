@@ -263,6 +263,32 @@ theorem lem1_no_non_diagonal_self_paired_of_odd_card
   intro h
   exact h_odd (lem1_even_card_of_exists_non_diagonal_self_paired G Ω h)
 
+/-- **Lemma 1 (paper-faithful iff, conditional on faithfulness).** [done — conditional]
+
+Proper-signature paper-faithful statement of Lemma 1:
+`(∃ non-diagonal self-paired orbital) ↔ 2 ∣ |G|`,
+conditional on the moved-point witness `h_moved`: every non-trivial
+element of `G` has a moved point in `Ω` (i.e., faithfulness of the
+`G`-action).  Composes the two directions:
+
+* `⟹`  `lem1_even_card_of_exists_non_diagonal_self_paired`.
+* `⟸`  Cauchy (`lem1_order_two_of_even_card`) produces τ ∈ G of order 2;
+        faithfulness extracts a moved point of τ;
+        `lem1_non_diagonal_self_paired_iff_order_two_moved` constructs
+        the orbital. -/
+theorem lem1_paired_orbit_iff_even_of_faithful [Fintype G]
+    (h_moved : ∀ τ : G, orderOf τ = 2 → ∃ a : Ω, τ • a ≠ a) :
+    (∃ (O : Moore57.orbital G Ω) (a b : Ω),
+       Moore57.IsSelfPaired G Ω O ∧
+       (Quotient.mk'' (a, b) : Moore57.orbital G Ω) = O ∧ a ≠ b) ↔
+    2 ∣ Fintype.card G := by
+  refine ⟨lem1_even_card_of_exists_non_diagonal_self_paired G Ω, ?_⟩
+  intro h_even
+  obtain ⟨τ, h_ord⟩ := lem1_order_two_of_even_card (G := G) h_even
+  obtain ⟨a, h_a_moved⟩ := h_moved τ h_ord
+  exact lem1_non_diagonal_self_paired_iff_order_two_moved G Ω
+    ⟨τ, h_ord, a, h_a_moved⟩
+
 /-- **Lemma 1 (deferred packaging, full iff).** [deferred-heavy]
 
 The full paper-faithful equivalence
@@ -274,7 +300,10 @@ or an explicit hypothesis `∀ τ ≠ 1, ∃ a, τ • a ≠ a`).
 Both directions are formalised separately:
 * `⟹`  `lem1_even_card_of_exists_non_diagonal_self_paired`
 * `⟸`  `lem1_non_diagonal_self_paired_iff_order_two_moved`
-  (using `lem1_order_two_of_even_card` for the Cauchy step). -/
+  (using `lem1_order_two_of_even_card` for the Cauchy step).
+
+Backward-compat True-stub; the proper-signature conditional form is
+`lem1_paired_orbit_iff_even_of_faithful`. -/
 theorem lem1_paired_orbit_iff_even : True := by trivial
 
 end Moore57.Papers.Higman1964

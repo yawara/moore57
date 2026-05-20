@@ -117,7 +117,9 @@ theorem lem6_central_inducedTrace_le_two
 
 Paper-stub kept for backwards compatibility; the proper-signature
 form for `|O| ≥ 64` is `lem6_inducedTrace_sq_lt_card_of_card_ge_64`.
-The corner case `|O| = 1` is `lem6_inducedTrace_sq_lt_card_of_card_eq_one`. -/
+The corner case `|O| = 1` is `lem6_inducedTrace_sq_lt_card_of_card_eq_one`.
+The dispatcher `lem6_inducedTrace_sq_lt_card_dispatch` (below) handles all
+currently-proven cases (`|O| ∈ {1, 2, 3, 4}` or `|O| ≥ 64`). -/
 theorem lem6_trace_sq_lt_size (hΓ : IsMoore57 Γ) : True := by trivial
 
 /-- **Singleton induced trace is zero.** [done]
@@ -402,5 +404,23 @@ theorem lem6_inducedTrace_sq_lt_card_of_card_ge_64
     (hO_nonempty : O.Nonempty) (hO_large : 64 ≤ O.card) :
     (inducedTrace Γ O) ^ 2 < (O.card : ℚ) :=
   Moore57.inducedTrace_sq_lt_card_of_card_ge_64 hΓ hO_nonempty hO_large
+
+/-- **Lemma 6 (4) (dispatcher: `Tr(O)² < |O|` for known cases).** [done]
+
+Paper-faithful proper-signature dispatcher: combines the four corner
+cases (`|O| ∈ {1, 2, 3, 4}`) and the Mohar bound `|O| ≥ 64` into one
+proper-signature wrapper.  Small orbits `5 ≤ |O| ≤ 63` are deferred. -/
+theorem lem6_inducedTrace_sq_lt_card_dispatch
+    (hΓ : IsMoore57 Γ) {O : Finset V}
+    (hO_size : O.card = 1 ∨ O.card = 2 ∨ O.card = 3 ∨
+               O.card = 4 ∨ 64 ≤ O.card)
+    (hO_nonempty : O.Nonempty) :
+    (inducedTrace Γ O) ^ 2 < (O.card : ℚ) := by
+  rcases hO_size with h1 | h2 | h3 | h4 | hge
+  · exact lem6_inducedTrace_sq_lt_card_of_card_eq_one (Γ := Γ) h1
+  · exact lem6_inducedTrace_sq_lt_card_of_card_eq_two (Γ := Γ) h2
+  · exact lem6_inducedTrace_sq_lt_card_of_card_eq_three hΓ h3
+  · exact lem6_inducedTrace_sq_lt_card_of_card_eq_four hΓ h4
+  · exact lem6_inducedTrace_sq_lt_card_of_card_ge_64 hΓ hO_nonempty hge
 
 end Moore57.Papers.MacajSiran2010.S3

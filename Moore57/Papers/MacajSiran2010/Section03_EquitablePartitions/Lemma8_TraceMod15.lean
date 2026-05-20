@@ -83,15 +83,29 @@ theorem lem8_trace_swap_diff (a k : ℤ) :
     ((65 + 15 * (a + 1) - 8 * k) - (65 + 15 * a - 8 * k) : ℤ) = 15 := by
   ring
 
+/-- **Lemma 8 (paper-faithful conditional form).** [done — conditional]
+
+Proper-signature form: given the spectrum equation `Tr = 65 + 15·a − 8·k`
+(the geometric/spectral input from the orbit-adjacency matrix), the
+paper's mod-15 statement `Tr ≡ −8·(k − 10) (mod 15)` holds.
+
+This is `lem8_trace_mod_fifteen_zmod` lifted to the Moore57 context;
+combined with the deferred spectrum bridge (`Tr(X) = 65 + 15·a − 8·k`
+from `IsMoore57 Γ` + X-acts-by-graph-autos + SRG eigenvalue theory),
+this becomes an unconditional paper-faithful bridge. -/
+theorem lem8_trace_mod_fifteen_paper (hΓ : IsMoore57 Γ)
+    (Tr a k : ℤ) (h_spectrum : Tr = 65 + 15 * a - 8 * k) :
+    Tr ≡ -8 * (k - 10) [ZMOD 15] :=
+  lem8_trace_mod_fifteen_zmod Tr a k h_spectrum
+
 /-- **Lemma 8 (`Tr(X) ≡ −8(k − 10) mod 15`).** [deferred-heavy]
 
 Paper-faithful Moore57-conditional statement.  The geometric content —
 deriving `Tr(X) = 65 + 15·a − 8·k` from `IsMoore57 Γ` plus the fact
 that the X-orbit adjacency matrix is `Γ`-spectrum-compatible — requires
 the SRG eigenvalue theory for the orbit-adjacency matrix and is left
-as a deferred-heavy skeleton.  Once that bridge is built, this should
-be replaced by a real statement and proved via
-`lem8_trace_mod_fifteen_arithmetic`. -/
+as a deferred-heavy skeleton.  Backward-compat True-stub; proper-
+signature form is `lem8_trace_mod_fifteen_paper`. -/
 theorem lem8_trace_mod_fifteen (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S3

@@ -66,11 +66,30 @@ def Lemma14SemiRegularConclusion
     (n : ℤ) (a1 b1_P b1_Q : ℤ) : Prop :=
   a1 ≡ b1_P + b1_Q [ZMOD n]
 
+/-- **Lemma 14 (proper-signature conditional form).** [done — conditional]
+
+Paper-faithful proper-signature wrapper: given the (deferred) semi-regular
+orbit congruence `a₁ ≡ b₁ [ZMOD n]` and the additive decomposition
+`b₁ = b₁_P + b₁_Q` from the `P × Q` factorization of a central element,
+the paper claim `a₁ ≡ b₁_P + b₁_Q [ZMOD n]` follows from
+`lem14_arithmetic_decomp`.
+
+The remaining (deferred-heavy) gap is the semi-regular orbit decomposition
+that produces the congruence `a₁ ≡ b₁ [ZMOD |X|]`. -/
+theorem lem14_semi_regular_congruence_paper
+    (hΓ : IsMoore57 Γ)
+    (a1 b1 b1_P b1_Q : ℤ) (n : ℤ)
+    (h_cong : a1 ≡ b1 [ZMOD n])
+    (h_decomp : b1 = b1_P + b1_Q) :
+    Lemma14SemiRegularConclusion n a1 b1_P b1_Q :=
+  lem14_arithmetic_decomp a1 b1 b1_P b1_Q n h_cong h_decomp
+
 /-- **Lemma 14 (`a₁ ≡ b₁ mod |X|` for semi-regular `P × Q`).** [deferred-heavy]
 
 Placeholder for the paper claim. The substantive conclusion is captured
 in `Lemma14SemiRegularConclusion`; the arithmetic core is already
-`lem14_arithmetic_decomp`. -/
+`lem14_arithmetic_decomp`. Proper-signature form is
+`lem14_semi_regular_congruence_paper`. -/
 theorem lem14_semi_regular_congruence (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S5
