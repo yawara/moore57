@@ -1,11 +1,22 @@
-# Moore57 Roadmap — Easy-wins 後の残務整理 (2026-05-21 更新)
+# Moore57 Roadmap — Easy-wins 後の残務整理 (2026-05-21 更新 (晩))
 
 このドキュメントは Moore57/Papers/ scaffold (commit `42e1662` 起点) で
 「簡単に潰せるもの」を一通り処理した時点での残務を **粒度の細かいタスク** に
-分解したものです。 直近の主要進捗: Tier B **B4.2 完了** — Lem 12 p=7 a₀=58
-starred + Lem 13 p=3 (?, 1) row を B4.1 (cyclotomic integer trace) で
-unconditional に格上げ。 prime-order starred 行は実質的にすべて Theorem 3
-不要で dispatch 可能であることが確認された。
+分解したものです。 直近の主要進捗: Tier B **finish (B-final, commit
+`40bb98a`)** — 残る全 True-stub に companion `XConclusion : Prop` def
+(Theorem 3, Prop 2, Lem 12/13/14/15 の paper claim を `Prop` 化) を
+追加 + `lem11_ai_constant_on_rational_classes` を True-stub から
+**proper conditional bridge** (`χⱼ` 定数性仮説 → `aᵢ` 定数性結論、
+Theorem 1 inverse formula 経由) に格上げ。 これで Tier B は「Lean-未移植
+external 依存 (Curtis–Reiner Theorem 3 全形 + semi-regular orbit
+decomposition + 一般 fix-shape classification) を **proper signature
+化された hypothesis として明示**」状態に。 下流補題は必要に応じて
+`Theorem3RationalClasses` 等を hypothesis として取って unconditional に
+進める形に整った。
+
+直前: B4.2 完了 — Lem 12 p=7 a₀=58 starred + Lem 13 p=3 (?, 1) row を
+B4.1 (cyclotomic integer trace) で unconditional 化。 prime-order
+starred 行は実質的にすべて Theorem 3 不要で dispatch 可能。
 
 ## 0. 現状の確定スコア
 
@@ -119,11 +130,21 @@ unconditional に格上げ。 prime-order starred 行は実質的にすべて Th
 
 ## 2. Tier B — 文字理論 (Macaj–Širáň §4)
 
-**進捗 (2026-05-21 / commit `be8c0d7`)**: [B1], [B2.0], [B2.1], [B3.0],
-[B3.1] (conj 部分), [B4.0], **[B4.1] (prime-order cyclotomic 経由)** 完了。
-残り: [B3.1+] subrep full bridge, [B4.2] starred p-prime row dispatch (B4.1
-の直接適用、low-hanging), [B5.0] / [B5.1] paper-faithful 全形, Theorem 3
-の composite-order extension。
+**進捗 (2026-05-21 晩 / commit `40bb98a`)**: Tier B **finish (B-final)**。
+[B1], [B2.0], [B2.1], [B3.0], [B3.1] (+ [B3.1+] subrep full bridge),
+[B4.0] (+ [B4.0+] Lemma 11 χⱼ conj wrappers), **[B4.1] (prime-order
+cyclotomic 経由)**, **[B4.2] (starred p-prime row dispatch)**, [B5.0]/[B5.1]
+(arithmetic core + FixedData bridges), そして **[B-final] (全 True-stub
+の `XConclusion : Prop` def 化 + Lem 11 conditional bridge)** 完了。
+残り **deferred-heavy** のみ:
+- [B4.3] composite-order Theorem 3 移植 (Galois 機構 + generalized
+  eigenspace)
+- [B5.0] full paper-faithful 6-row Lem 13 / 17-row Lem 12 表 (character
+  system 全形)
+- [B5.1] full semi-regular orbit decomposition for Lem 14
+これらは Lean-未移植 external (Curtis–Reiner Theorem 3 全形 + structural
+fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion`
+を hypothesis として取ることで unconditional に進められる状態に整った。
 
 ### B1. Mathlib `Mathlib.RepresentationTheory` の整備状況確認
 
@@ -275,6 +296,36 @@ unconditional に格上げ。 prime-order starred 行は実質的にすべて Th
   さらに `lem15_no_pq_14_a0_49_conditional` (Lem 15 pq=14 row, commit `b35143b`)
   + Lem 17/18/19 dispatch numeric bounds (commit `51a70a5`).
   full semi-regular 軌道分解は character + Prop 2 依存、deferred-heavy。
+
+* **[B-final] (done, 2026-05-21 晩 / commit `40bb98a`)** Tier B
+  True-stub finalization:
+  - **`lem11_ai_constant_on_rational_classes`** を True-stub から
+    proper conditional bridge に格上げ。 hypothesis として
+    "Theorem 3 → 各 χⱼ が rational class 上定数" を取り、Theorem 1
+    の inverse formulas (a₀ = χ₀+χ₁+χ₂, a₁ = 57χ₀+7χ₁−8χ₂) 経由で
+    a₀, a₁ の rational class invariance を導く形に書き換え。 これで
+    Curtis–Reiner Theorem 3 への依存を Lean 型レベルで明示。
+  - **`Theorem3RationalClasses : Prop`** def 新設
+    (`Section04_Characters/Theorem3_RationalClasses.lean`): 任意の
+    `ρ : Representation ℚ G V` で `ρ.character (σ^k) = ρ.character σ`
+    (k coprime to orderOf σ) を `Prop` として encode。 下流補題が
+    hypothesis として取れる。
+  - **`Proposition2CharacterSystem : Prop`** def 新設
+    (`Section04_Characters/Proposition2_CharacterSystem.lean`):
+    rational character system の non-negative integer 解 statement。
+  - 各 Lem 12/13/14/15 stub に **companion `XConclusion : Prop` def**:
+    `Lemma12PrimeTableConclusion`, `Lemma13PrimeSquaredConclusion`,
+    `Lemma14SemiRegularConclusion`, `Lemma15PQTableConclusion`,
+    `Lemma15NoOrder65Conclusion`, `Lemma15NoPQ14A049Conclusion`。
+    paper claim を Lean Prop として明示し、True-stub は backwards
+    compat 用 placeholder として残す。
+  - **設計上の意義**: Tier B の "残務" は Lean-未移植 external
+    (Theorem 3 + Prop 2 + semi-regular orbit) 待ちだが、各 external 依存は
+    今 proper `Prop` として記述済。 下流の paper-faithful proof は
+    `(h_thm3 : Theorem3RationalClasses ρ)` 等を hypothesis に取って
+    unconditional に進める形に整った。 これ以上の Tier B 内部進捗は
+    上記 external が Mathlib に入る (あるいは別途 hand-roll される)
+    のを待つ状態。
 
 ---
 
@@ -445,7 +496,23 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
   - `lem1_swapOrbital_involutive`: pairing は involution
   本体「偶位数 ⇔ 非対角自己paired orbital が存在」は Cauchy + counting
   argument で重く、deferred。
-* **[D3.1] (未)** Lem 2: intersection numbers λ, μ, λ₁, μ₁ の定数性 (rank-3 仮定下)。
+* **[D3.1] (done, 2026-05-21)** Lem 2: intersection numbers λ, μ, λ₁, μ₁
+  の定数性 (rank-3 仮定下)。 `RankAndOrbital.lean` に以下の構造を追加:
+  - `orbitalNeighborhood O a := { c | (a, c) ∈ O }` (orbital が定める
+    "近傍" 集合)
+  - `quotient_mk_smul`: orbital quotient は G-equivariant
+  - `mem_orbitalNeighborhood_smul_left`: membership form の
+    G-equivariance bridge
+  - `orbitalIntersectionCount O₁ O₂ a b := |N_{O₁}(a) ∩ N_{O₂}(b)|`
+    (`Nat.card` 経由)
+  - `orbitalIntersectionCount_smul`: G-invariance under diagonal action
+    (bijection `c ↦ g⁻¹ • c` 経由)
+  - `orbitalIntersectionCount_orbital_invariant`: 同じ orbital に属する
+    `(a, b)` / `(a', b')` では count が一致 — paper-faithful な constancy
+    主張
+  - `IsRank3 G Ω : Prop := permRank G Ω = 3` (rank-3 predicate)
+  - `Lemma02_IntersectionNumbers.lean` で
+    `lem2_intersection_count_orbital_invariant` として paper-faithful wrap。
 * **[D3.2] (未)** Lem 3: odd order rank-3 ⟹ k = l, n = 2k+1, λ = μ。
 * **[D3.3] (未)** Lem 4: 不可約性 ⇔ G_a ≠ G_{Γ(a)} ⇔ Γ(a) = Γ(b) for some a ≠ b。
 * **[D3.4] (未)** Lem 5: μl = k(k − λ − 1) (rank-3 perm group 形)。Moore57 SRG 形は既に proven。
@@ -580,9 +647,9 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 7.1 短期 (1 commit 単位、各 < 200 LOC)
 
-**進捗 (2026-05-21)**: 旧 1〜7 項目すべて **完了**。 B4.2 完了に伴い
-次の短期項目は B3.1+ (subrep formal identification) か A1.1 (SG(81,9)
-uniqueness 着手) を検討。
+**進捗 (2026-05-21 晩)**: 旧 1〜13 項目すべて **完了**。 加えて
+B-final (Tier B True-stub finalization, commit `40bb98a`) も done。
+次の短期項目候補は [C3.4] semi-regular または個別 Tier C/D 拡張。
 
 1. ~~**[E1.1]** Prop 6 Sylow analysis~~ — **done** (commit `e673d3d`)。
 2. ~~**[E4.0]** Thm 7 Sylow analysis (110 dispatch)~~ — **done**。
@@ -615,11 +682,18 @@ uniqueness 着手) を検討。
     / 共通根 ⊥ を `SmallGroup625_12.lean` に追加。
     **Tier A 全体の投資判断**: 重い uniqueness work (A1.2, A3, A4) は
     downstream consumer 無し (`grep` 確認済) のため現時点で着手非推奨。
-14. **[★ 次の短期項目]** 候補:
+14. ~~**[B-final]** Tier B True-stub finalization~~ — **done**
+    (commit `40bb98a`): `lem11_ai_constant_on_rational_classes` を
+    proper conditional bridge に + `Theorem3RationalClasses`,
+    `Proposition2CharacterSystem`, `Lemma{12,13,14,15...}Conclusion :
+    Prop` defs を全 §4–§5 True-stub に追加。 Tier B 内部進捗はこれ以上
+    external (Theorem 3 + Prop 2 + semi-regular) 待ち。
+15. **[★ 次の短期項目]** 候補:
    - **[B4.3]** Composite-order Galois cyclotomic decomp (deferred-heavy)。
-   - **[B5.0+]** 既存 paper-faithful row bridge の拡張 (semi-regular 待ち)。
    - **[C3.4]** Semi-regular orbit argument (Lem 17/18 を unconditional 化、
      downstream consumer あり)。
+   - **[D3.x]** Higman 1964 Lems 1–3 抽象版 (orbital infrastructure に
+     乗せて proper signature 化)。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -699,7 +773,9 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) papers+proofs: Tier A A2.2-minimal — heisSubgroup + z5DirectFactor for SG625_12
+* (HEAD) papers+proofs: Tier D D3.1 — orbital intersection count constancy (Lem 2 backbone)
+* `40bb98a` papers: Tier B finish — True-stub `Conclusion` defs + Lem 11 conditional
+* (prev HEAD) papers+proofs: Tier A A2.2-minimal — heisSubgroup + z5DirectFactor for SG625_12
 * `67c6e69` papers+proofs: D2.1/D2.2 paired orbital + D3.0 partial Lem 1 statements
 * `1f1e656` proofs+blogs: A1.1 orientation (negative) + E5.1 + D2.0
 * `5608b87` papers: E5.1 Sylow-SchurZassenhaus + D2.0 orbital structure
@@ -735,3 +811,25 @@ paper-level の本当のボトルネックは:
   `character_permutationRepresentation_eq_fixedVertexCount` bridge
 * `Foundations/GroupAction/FixedPoints.lean` — `fixedVertexSet_subset_pow`,
   `fixedVertexCount_le_pow` (monotonicity under powers)
+
+### Tier B finalization (B-final, 2026-05-21 晩 / commit `40bb98a`) — abstract `Conclusion` defs
+
+各 paper claim を Lean Prop として明示。 True-stub を companion abstract
+conclusion + (Lemma 11 は) proper conditional bridge で支える形に整備:
+* `Section04_Characters/Theorem3_RationalClasses.lean` — `Theorem3RationalClasses`
+  (Curtis–Reiner: `ρ.character (σ^k) = ρ.character σ`, k coprime to orderOf σ)
+* `Section04_Characters/Proposition2_CharacterSystem.lean` — `Proposition2CharacterSystem`
+  (rational character system の non-negative integer 解 statement)
+* `Section04_Characters/Lemma11_AiConstantOnClasses.lean` —
+  `lem11_ai_constant_on_rational_classes` を True-stub → proper conditional
+  bridge に格上げ (χⱼ 定数性仮説 → aᵢ 定数性結論、Theorem 1 inverse 経由)
+* `Section05_Tables/Lemma12_PrimeOrder.lean` — `Lemma12PrimeTableConclusion`
+* `Section05_Tables/Lemma13_PrimeSquared.lean` — `Lemma13PrimeSquaredConclusion`
+* `Section05_Tables/Lemma14_SemiRegularCongruence.lean` — `Lemma14SemiRegularConclusion`
+* `Section05_Tables/Lemma15_OrderPQ.lean` — `Lemma15PQTableConclusion`,
+  `Lemma15NoOrder65Conclusion`, `Lemma15NoPQ14A049Conclusion`
+
+これらは external 依存 (Theorem 3 全形 + semi-regular orbit decomposition +
+一般 fix-shape classification) が Lean に来るまで、下流 lemmas に
+hypothesis として渡されて unconditional な進捗を可能にする。 Tier B 内部
+進捗はこの finalization をもって完了状態。
