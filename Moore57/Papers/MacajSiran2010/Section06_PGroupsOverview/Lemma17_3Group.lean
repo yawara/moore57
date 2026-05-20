@@ -322,6 +322,29 @@ theorem lem17_case1_orderOf_dvd_27_with_petersenFixedData_k_le_3_unconditional
     rw [hl, pow_mul, pow_pk, one_pow]
   exact orderOf_dvd_of_pow_eq_one h_pow_27
 
+/-- **Lemma 17 case (2) paper-stated bound, `k ≤ 4` unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ^(3^k) = 1 (k ≤ 4) and
+`SingletonFixedData σ`, the paper-stated bound `orderOf σ ∣ 81` holds
+since `orderOf σ ∣ 3^k ∣ 81` for k ≤ 4.
+
+Covers σ of order ∈ {1, 3, 9, 27, 81} — i.e., all orderings up to the
+paper's case (2) maximum.  The `k ≥ 5` case (orderOf σ = 243+) requires
+paper Lem 21 + Cor 2 exclusion (deferred-heavy). -/
+theorem lem17_case2_orderOf_dvd_81_with_singletonFixedData_k_le_4_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (hk : k ≤ 4)
+    (pow_pk : σ ^ 3 ^ k = 1)
+    (_sfd : SingletonFixedData σ)
+    (_smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 81 := by
+  have h_dvd : (3 : ℕ) ^ k ∣ 81 := by
+    have : 3 ^ k ∣ 3 ^ 4 := pow_dvd_pow 3 hk
+    simpa using this
+  have h_pow : σ ^ 81 = 1 := by
+    obtain ⟨l, hl⟩ := h_dvd
+    rw [hl, pow_mul, pow_pk, one_pow]
+  exact orderOf_dvd_of_pow_eq_one h_pow
+
 /-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy]
 
 The full case classification (Fix shape ∈ {Petersen, singleton} for any
