@@ -1,6 +1,7 @@
 import Moore57.Foundations.GraphTheory.PetersenGraph
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # Petersen fixed subgraph data (Tier C / §6 Lem 17 geometric input)
@@ -68,6 +69,26 @@ variable {Γ : SimpleGraph V} {σ : Equiv.Perm V}
 theorem card_fixed_vertices [DecidableEq V] (h : PetersenFixedData Γ σ) :
     (Finset.univ.image h.v).card = 10 := by
   rw [Finset.card_image_of_injective _ h.v_injective, Finset.card_univ,
+      Fintype.card_fin]
+
+/-- **Petersen `fixedVertexCount = 10`**: the σ-fixed-vertex count
+equals `10`. -/
+theorem fixedVertexCount_eq_10
+    [Fintype V] [DecidableEq V] (h : PetersenFixedData Γ σ) :
+    fixedVertexCount σ = 10 := by
+  unfold fixedVertexCount
+  have heq :
+      ((Finset.univ : Finset V).filter (fun w => σ w = w))
+        = (Finset.univ : Finset (Fin 10)).image h.v := by
+    ext w
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image]
+    constructor
+    · intro hfix
+      obtain ⟨i, hi⟩ := h.span w hfix
+      exact ⟨i, hi.symm⟩
+    · rintro ⟨i, rfl⟩
+      exact h.v_fixed i
+  rw [heq, Finset.card_image_of_injective _ h.v_injective, Finset.card_univ,
       Fintype.card_fin]
 
 /-- **Petersen induced regularity**: each `v i` has exactly 3 neighbours

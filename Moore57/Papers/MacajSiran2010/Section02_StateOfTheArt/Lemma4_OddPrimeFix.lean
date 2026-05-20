@@ -1,5 +1,8 @@
 import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Moore57Graph.Aut.OrderElevenIsC5
+import Moore57.Moore57Graph.Aut.PetersenFixedData
+import Moore57.Moore57Graph.Aut.HSFixedData
+import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 import Moore57.Papers.MakhnevPaduchikh2001.Lemma03_OddPrimeFix
 
 set_option linter.unusedSectionVars false
@@ -177,5 +180,58 @@ theorem lem4_dispatched_p_in_moore57_primes
   · -- HS fix: p = 5
     have := lem4_case6_hs_fix hΓ σ p hp_odd hpow h50
     right; left; exact this
+
+/-! ## FixedData-parameterised wrappers (Tier C)
+
+These wrappers thread the `*FixedData` structures (from
+`Moore57.Moore57Graph.Aut.*FixedData`) into the case-specific lemmas by
+deriving the relevant `fixedVertexCount` / `autFixedNeighborFinset.card`
+hypotheses directly from the structure. -/
+
+/-- **Lem 4 case (1) via `EmptyFixedData`**: σ with no fixed points ⟹
+p ∈ {5, 13}. -/
+theorem lem4_case1_with_emptyFixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (h : EmptyFixedData σ) :
+    p = 5 ∨ p = 13 :=
+  lem4_case1_empty_fix hΓ σ p hp_odd hpow h.fixedVertexCount_eq_zero
+
+/-- **Lem 4 case (2) via `SingletonFixedData`**: σ with exactly one fixed
+vertex ⟹ p ∈ {3, 19}. -/
+theorem lem4_case2_with_singletonFixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (h : SingletonFixedData σ) :
+    p = 3 ∨ p = 19 :=
+  lem4_case2_singleton_fix hΓ σ p hp_odd hpow h.fixedVertexCount_eq_one
+
+/-- **Lem 4 case (4) via `C5FixedData`**: σ with Pentagon Fix ⟹ p ∈ {5, 11}. -/
+theorem lem4_case4_with_c5FixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (hAut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h : C5FixedData Γ σ) :
+    p = 5 ∨ p = 11 :=
+  lem4_case4_pentagon_fix hΓ σ p hp_odd hpow hAut
+    (h.v_fixed 0) (h.autFixedNeighborFinset_card_eq_two 0)
+
+/-- **Lem 4 case (5) via `PetersenFixedData`**: σ with Petersen Fix ⟹ p = 3. -/
+theorem lem4_case5_with_petersenFixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (hAut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h : PetersenFixedData Γ σ) :
+    p = 3 :=
+  lem4_case5_petersen_fix hΓ σ p hp_odd hpow hAut
+    (h.v_fixed 0) (h.autFixedNeighborFinset_card_eq_three 0)
+
+/-- **Lem 4 case (6) via `HSFixedData`**: σ with HS Fix ⟹ p = 5. -/
+theorem lem4_case6_with_HSFixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (h : HSFixedData Γ σ) :
+    p = 5 :=
+  lem4_case6_hs_fix hΓ σ p hp_odd hpow h.fixedVertexCount_eq_50
 
 end Moore57.Papers.MacajSiran2010.S2

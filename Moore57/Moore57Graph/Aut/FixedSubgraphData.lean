@@ -2,6 +2,7 @@ import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Logic.Equiv.Defs
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # 固定部分グラフのデータ構造 (Tier 2)
@@ -119,6 +120,25 @@ theorem autFixedNeighborFinset_card_eq_two
       exact ⟨hadj, h.v_fixed j⟩
   rw [heq, Finset.card_image_of_injective _ h.v_injective]
   exact h.induced_degree_two i
+
+/-- **C₅ `fixedVertexCount = 5`**: the σ-fixed-vertex count equals `5`. -/
+theorem fixedVertexCount_eq_5
+    [Fintype V] [DecidableEq V] (h : C5FixedData Γ σ) :
+    fixedVertexCount σ = 5 := by
+  unfold fixedVertexCount
+  have heq :
+      ((Finset.univ : Finset V).filter (fun w => σ w = w))
+        = (Finset.univ : Finset (Fin 5)).image h.v := by
+    ext w
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image]
+    constructor
+    · intro hfix
+      obtain ⟨i, hi⟩ := h.span w hfix
+      exact ⟨i, hi.symm⟩
+    · rintro ⟨i, rfl⟩
+      exact h.v_fixed i
+  rw [heq, Finset.card_image_of_injective _ h.v_injective, Finset.card_univ,
+      Fintype.card_fin]
 
 /-- **C₅ complement neighbour count**: for σ with `C5FixedData` on a
 Moore57 graph, the σ-moved neighbour count at any of the 5 fixed vertices
@@ -247,6 +267,36 @@ theorem k155FixedData_complement_center_count
     (p := fun w => τ w = w)
   change ((Γ.neighborFinset h.center).filter (fun w => ¬ τ w = w)).card = 2
   omega
+
+/-- **K_{1,55} `fixedVertexCount = 56`**: the τ-fixed-vertex count equals
+`56 = 1 + 55` (centre + leaves). -/
+theorem fixedVertexCount_eq_56
+    [Fintype V] [DecidableEq V] (h : K155FixedData Γ τ) :
+    fixedVertexCount τ = 56 := by
+  unfold fixedVertexCount
+  -- Fix(τ) = {center} ∪ image(leaf) (disjoint union by center_ne_leaf)
+  have hcenter_not_image :
+      h.center ∉ (Finset.univ : Finset (Fin 55)).image h.leaf := by
+    simp only [Finset.mem_image, Finset.mem_univ, true_and]
+    rintro ⟨i, hi⟩
+    exact h.center_ne_leaf i hi.symm
+  have heq :
+      ((Finset.univ : Finset V).filter (fun w => τ w = w))
+        = insert h.center ((Finset.univ : Finset (Fin 55)).image h.leaf) := by
+    ext w
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+               Finset.mem_image]
+    constructor
+    · intro hfix
+      rcases h.span w hfix with rfl | ⟨i, hi⟩
+      · left; rfl
+      · right; exact ⟨i, hi.symm⟩
+    · rintro (rfl | ⟨i, rfl⟩)
+      · exact h.center_fixed
+      · exact h.leaf_fixed i
+  rw [heq, Finset.card_insert_of_notMem hcenter_not_image,
+      Finset.card_image_of_injective _ h.leaf_injective, Finset.card_univ,
+      Fintype.card_fin]
 
 /-- **K_{1,55} leaf complement count**: for `τ` involution with `K155FixedData`
 on Moore57, `|N(leaf i) \ Fix(τ)| = 56 = 57 − 1`. -/

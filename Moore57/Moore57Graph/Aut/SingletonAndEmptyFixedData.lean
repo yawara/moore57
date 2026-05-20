@@ -1,5 +1,6 @@
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # Singleton + Empty fixed subgraph data (Tier C / §6 Lem 17-19 inputs)
@@ -56,6 +57,19 @@ theorem autFixedNeighborFinset_card_eq_zero
   rw [this] at hadj
   exact SimpleGraph.irrefl Γ hadj
 
+/-- **Singleton `fixedVertexCount = 1`**: the σ-fixed-vertex count is `1`
+(just `v`). -/
+theorem fixedVertexCount_eq_one
+    [Fintype V] [DecidableEq V] (h : SingletonFixedData σ) :
+    fixedVertexCount σ = 1 := by
+  unfold fixedVertexCount
+  have : (Finset.univ : Finset V).filter (fun w => σ w = w) = {h.v} := by
+    ext w
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    refine ⟨h.span w, ?_⟩
+    rintro rfl; exact h.v_fixed
+  rw [this, Finset.card_singleton]
+
 /-- **Singleton complement neighbour count**: at the unique fixed vertex
 on a Moore57 graph, `|N(v) \ Fix(σ)| = 57 = 57 − 0`.
 
@@ -103,6 +117,12 @@ theorem fixedVertex_finset_empty
   simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.notMem_empty,
              iff_false]
   exact h.no_fixed w
+
+/-- **Empty `fixedVertexCount = 0`**. -/
+theorem fixedVertexCount_eq_zero
+    [Fintype V] [DecidableEq V] (h : EmptyFixedData σ) :
+    fixedVertexCount σ = 0 :=
+  h.fixedVertex_finset_empty
 
 /-- **Empty complement = full**: for σ with `EmptyFixedData` on a Moore57
 graph, `|V \ Fix(σ)| = |V| = 3250`.

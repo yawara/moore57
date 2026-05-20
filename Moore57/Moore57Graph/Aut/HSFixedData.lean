@@ -3,6 +3,7 @@ import Mathlib.Data.Set.Card
 import Mathlib.Logic.Equiv.Defs
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Foundations.GroupAction.FixedPoints
 
 /-!
 # Hoffman–Singleton fixed subgraph data (Tier C / §6 Lem 18 geometric input)
@@ -86,6 +87,29 @@ variable {Γ : SimpleGraph V} {σ : Equiv.Perm V}
 theorem card_fixed_vertices [DecidableEq V] (h : HSFixedData Γ σ) :
     (Finset.univ.image h.v).card = 50 := by
   rw [Finset.card_image_of_injective _ h.v_injective, Finset.card_univ,
+      Fintype.card_fin]
+
+/-- **HS `fixedVertexCount = 50`**: the σ-fixed-vertex count equals `50`.
+
+Combines `span` (every σ-fixed vertex is in the image of `v`) with
+`v_injective` to identify the σ-fixed finset with the image of `Fin 50`
+under `v`. -/
+theorem fixedVertexCount_eq_50
+    [Fintype V] [DecidableEq V] (h : HSFixedData Γ σ) :
+    fixedVertexCount σ = 50 := by
+  unfold fixedVertexCount
+  have heq :
+      ((Finset.univ : Finset V).filter (fun w => σ w = w))
+        = (Finset.univ : Finset (Fin 50)).image h.v := by
+    ext w
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_image]
+    constructor
+    · intro hfix
+      obtain ⟨i, hi⟩ := h.span w hfix
+      exact ⟨i, hi.symm⟩
+    · rintro ⟨i, rfl⟩
+      exact h.v_fixed i
+  rw [heq, Finset.card_image_of_injective _ h.v_injective, Finset.card_univ,
       Fintype.card_fin]
 
 /-- **HS induced regularity in Finset form**: each `v i` has exactly 7
