@@ -94,6 +94,99 @@ theorem lem16_case1_13group_fix_empty_if_small
   rw [Nat.ModEq] at hmod
   omega
 
+/-- **Lemma 16 case (1) [p = 5]: small `Fix(σ)` ⇒ empty.** [done]
+
+For `σ^(5^k) = 1`, count ≡ 0 (mod 5).  If count ≤ 4 then count = 0.
+Used to rule out non-empty Fix sizes below the pentagon. -/
+theorem lem16_case1_5group_fix_empty_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 5 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 4) :
+    fixedVertexCount σ = 0 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_zero_of_pow_five_pow
+    hΓ σ k pow_pk
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **Lemma 16 case (2) [p = 3]: small `Fix(σ)` ⇒ singleton.** [done]
+
+For `σ^(3^k) = 1`, count ≡ 1 (mod 3) (since 3250 = 3·1083 + 1).
+If count ≤ 3 then count = 1.  Mod-3 narrowing of the §6 Lem 16 case
+(2) which says `Fix(σ)` is a singleton for `p ∈ {3, 19}`. -/
+theorem lem16_case2_3group_fix_singleton_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 3 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 3) :
+    fixedVertexCount σ = 1 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_one_of_pow_three_pow
+    hΓ σ k pow_pk
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **Lemma 16 case (2) [p = 19]: small `Fix(σ)` ⇒ singleton.** [done]
+
+For `σ^(19^k) = 1`, count ≡ 1 (mod 19) (since 3250 = 19·171 + 1).
+If count ≤ 19 then count = 1.  Mod-19 narrowing of the §6 Lem 16
+case (2) which says `Fix(σ)` is a singleton for `p ∈ {3, 19}`. -/
+theorem lem16_case2_19group_fix_singleton_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 19 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 19) :
+    fixedVertexCount σ = 1 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_one_of_pow_nineteen_pow
+    hΓ σ k pow_pk
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **Lemma 16 case (3) [p = 7]: small `Fix(σ)` ⇒ edge (`|Fix| = 2`).** [done]
+
+For `σ^(7^k) = 1`, count ≡ 2 (mod 7) (since 3250 = 7·464 + 2).
+If count ≤ 8 then count = 2.  Mod-7 narrowing of the §6 Lem 16
+case (3) which says `Fix(σ)` is a star `K_{1, 1+7l}` with
+`|Fix| = 2 + 7l` for `p = 7`. -/
+theorem lem16_case3_7group_fix_edge_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 7 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 8) :
+    fixedVertexCount σ = 2 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_two_of_pow_seven_pow
+    hΓ σ k pow_pk
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **Lemma 16 case (4) [p = 5]: non-empty small `Fix(σ)` ⇒ pentagon
+(`|Fix| = 5`).** [done]
+
+For `σ^(5^k) = 1`, count ≡ 0 (mod 5).  If `1 ≤ count ≤ 9` then
+`count = 5`.  Mod-5 narrowing of the §6 Lem 16 case (4) which says
+`Fix(σ)` is a pentagon for `p ∈ {5, 11}` (size 5). -/
+theorem lem16_case4_5group_fix_pentagon_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 5 ^ k = 1)
+    (h_nonempty : 1 ≤ fixedVertexCount σ)
+    (h_small : fixedVertexCount σ ≤ 9) :
+    fixedVertexCount σ = 5 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_zero_of_pow_five_pow
+    hΓ σ k pow_pk
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **Lemma 16 case (4) [p = 11]: small `Fix(σ)` ⇒ pentagon
+(`|Fix| = 5`).** [done]
+
+For `σ^(11^k) = 1`, count ≡ 5 (mod 11) (since 3250 = 11·295 + 5).
+If count ≤ 15 then count = 5.  Mod-11 narrowing of the §6 Lem 16
+case (4) which says `Fix(σ)` is a pentagon for `p ∈ {5, 11}`. -/
+theorem lem16_case4_11group_fix_pentagon_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 11 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 15) :
+    fixedVertexCount σ = 5 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_five_of_pow_eleven_pow
+    hΓ σ k pow_pk
+  rw [Nat.ModEq] at hmod
+  omega
+
 /-- **Lemma 16 (odd-prime `p`-group fix shape).** [deferred-heavy] -/
 theorem lem16_pgroup_fix_shape (hΓ : IsMoore57 Γ) : True := by trivial
 
