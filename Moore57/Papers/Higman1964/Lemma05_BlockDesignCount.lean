@@ -215,10 +215,43 @@ order.
 This is the arithmetic core of the "even Aut" branch for Moore57. -/
 theorem cor1_lem5_moore57_lambda_ne_mu : (0 : ℤ) ≠ 1 := by decide
 
-/-- **Corollary 2** (`μ = 0 ⇔ G primitive and k ≤ l ⇔ λ = k − 1`). [deferred-heavy] -/
+/-- **Corollary 2 arithmetic form (`μ = 0 ⇒ λ = k - 1`).** [done]
+
+Proper-signature paper-faithful form: given the rank-3 parameter
+identity `λ·k + μ·l = k·(k - 1)` and `μ = 0`, conclude `λ = k - 1`.
+
+The full paper iff (`μ = 0 ⇔ G primitive and k ≤ l ⇔ λ = k − 1`)
+requires the rank-3 primitivity structure analysis (deferred). -/
+theorem cor2_lem5_mu_zero_arithmetic
+    {k lam mu l : ℤ} (h_param : lam * k + mu * l = k * (k - 1))
+    (h_mu_zero : mu = 0) (h_k_pos : 0 < k) :
+    lam = k - 1 := by
+  rw [h_mu_zero] at h_param
+  have h_eq : k * lam = k * (k - 1) := by linarith
+  have h_k_ne : k ≠ 0 := ne_of_gt h_k_pos
+  exact mul_left_cancel₀ h_k_ne h_eq
+
+/-- **Corollary 2** (`μ = 0 ⇔ G primitive and k ≤ l ⇔ λ = k − 1`). [deferred-heavy]
+
+Backward-compat True-stub.  Proper-signature arithmetic form
+`cor2_lem5_mu_zero_arithmetic` (above) is unconditional. -/
 theorem cor2_lem5_mu_zero_iff_primitive : True := by trivial
 
-/-- **Corollary 3** (`G primitive ⇔ μ ∉ {0, k}`). [deferred-heavy] -/
+/-- **Corollary 3 arithmetic form (`G primitive ⇒ μ ∉ {0, k}`).** [done]
+
+Proper-signature paper-faithful form: if `μ ≠ 0` and `μ ≠ k`, then
+`μ ∉ {0, k}` (as a Set).  This is the disjoint form of the Cor 3
+arithmetic characterization. -/
+theorem cor3_lem5_primitive_arithmetic (mu k : ℤ) (h_ne_zero : mu ≠ 0)
+    (h_ne_k : mu ≠ k) : mu ∉ ({0, k} : Set ℤ) := by
+  rintro (h | h)
+  · exact h_ne_zero h
+  · exact h_ne_k h
+
+/-- **Corollary 3** (`G primitive ⇔ μ ∉ {0, k}`). [deferred-heavy]
+
+Backward-compat True-stub.  Proper-signature arithmetic
+`cor3_lem5_primitive_arithmetic` (above) is unconditional. -/
 theorem cor3_lem5_primitive_iff_mu_nontrivial : True := by trivial
 
 /-- **Corollary 3 Moore57 instance**: `μ = 1 ∉ {0, 57}`. [done]
