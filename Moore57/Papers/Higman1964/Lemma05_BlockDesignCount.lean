@@ -162,6 +162,20 @@ theorem lem5_intersection_number_constant
     orbitalIntersectionAt O₁ O₂ a b = orbitalIntersectionAt O₁ O₂ a' b' :=
   Moore57.orbitalIntersectionCount_orbital_invariant G Ω O₁ O₂ h
 
+/-- **Lemma 5 (paper-faithful conditional `μl = k(k - λ - 1)`).** [done]
+
+Proper-signature paper-faithful packaging: given an SRG `IsSRGWith n k λ μ`
+on `V` (the deferred orbital ↔ SRG bridge), the rank-3 paper claim
+`μ(n - k - 1) = k(k - λ - 1)` holds.
+
+Re-export of `lem5_block_design_count_conditional` for paper-faithful
+naming. -/
+theorem lem5_block_design_count_paper
+    {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {n k l m : ℕ} (h_srg : G.IsSRGWith n k l m) (hn : 0 < n) :
+    m * (n - k - 1) = k * (k - l - 1) :=
+  lem5_block_design_count_conditional G h_srg hn
+
 /-- **Lemma 5 (μl = k(k − λ − 1)).** [deferred-heavy]
 
 Paper-faithful rank-3 perm group statement.  Now both the SRG version
@@ -170,7 +184,8 @@ Paper-faithful rank-3 perm group statement.  Now both the SRG version
 give SRGs on the orbital adjacency structure, so the two forms are
 equivalent once the perm-group ↔ SRG bridge is built (the orbital
 intersection numbers are constant by
-`lem5_intersection_number_constant` (D3.1)). -/
+`lem5_intersection_number_constant` (D3.1)).  Paper-faithful conditional
+form is `lem5_block_design_count_paper` (above). -/
 theorem lem5_block_design_count : True := by trivial
 
 /-- **Moore57 instance of Lemma 5.** [done]
