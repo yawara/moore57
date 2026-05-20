@@ -70,6 +70,59 @@ theorem theorem1_arithmetic_core {k e : ℕ}
   -- non-divisor values `e ∈ {2, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14}`.
   interval_cases e <;> omega
 
+/-- **Theorem 1 Case I arithmetic core** (`k = l, n = k² + 1`, rank-3
+forces `k² = 2k`).
+
+In Case I of Higman §6, `λ + 1 = μ = k/2`, so the rank-3 identity
+`μ·l = k·(k − λ − 1)` collapses to `l = k`.  Combined with `n = k² + 1`
+and `n = 1 + k + l = 1 + 2k`, we get `k² + 1 = 1 + 2k`, i.e.
+`k² = 2k`, hence `k ∈ {0, 2}`.  The non-degenerate solution `k = 2`
+gives `n = 5`.
+
+This arithmetic core packages the pure ℕ identity:
+`k * k + 1 = 1 + 2 * k ⟹ k = 0 ∨ k = 2`. -/
+theorem theorem1_case1_arithmetic_core {k : ℕ}
+    (h : k * k + 1 = 1 + 2 * k) :
+    k = 0 ∨ k = 2 := by
+  have h_eq : k * k = 2 * k := by omega
+  -- Bound k: if k ≥ 3, then k*k ≥ 3*k > 2*k, contradiction.
+  have hk_le : k ≤ 2 := by
+    by_contra h_lt
+    have hk_ge_3 : 3 ≤ k := Nat.lt_of_not_le h_lt
+    have h_ge : 3 * k ≤ k * k := Nat.mul_le_mul_right k hk_ge_3
+    -- Substitute h_eq into h_ge to get linear: 3*k ≤ 2*k.
+    rw [h_eq] at h_ge
+    omega
+  interval_cases k
+  · left; rfl
+  · simp at h
+  · right; rfl
+
+/-- **Theorem 1 full arithmetic conclusion** (combining Case I and Case II).
+
+Given that one of the following holds:
+* Case I: `n = k² + 1 = 1 + 2k` (so `k = 0` or `k = 2`); or
+* Case II: `4k = e² + 3` and `e² ∣ 225` (so `k ∈ {1, 3, 7, 57}`),
+
+then `k ∈ {0, 1, 2, 3, 7, 57}`.  Combined with the non-degeneracy
+condition `k ≥ 2` (a transitive rank-3 group has subdegrees ≥ 2), this
+yields the four valences `k ∈ {2, 3, 7, 57}` of Higman's classification.
+
+Convenience packaging for downstream Moore57 instantiations (`k = 57`). -/
+theorem theorem1_combined_arithmetic_core {k : ℕ}
+    (h : (k * k + 1 = 1 + 2 * k) ∨
+         (∃ e : ℕ, 4 * k = e * e + 3 ∧ e * e ∣ 225)) :
+    k = 0 ∨ k = 1 ∨ k = 2 ∨ k = 3 ∨ k = 7 ∨ k = 57 := by
+  rcases h with h1 | ⟨e, he, hdvd⟩
+  · rcases theorem1_case1_arithmetic_core h1 with h | h
+    · left; exact h
+    · right; right; left; exact h
+  · rcases theorem1_arithmetic_core he hdvd with h | h | h | h
+    · right; left; exact h
+    · right; right; right; left; exact h
+    · right; right; right; right; left; exact h
+    · right; right; right; right; right; exact h
+
 /-- **Theorem 1 (Higman §6, full statement).** [deferred-heavy]
 
 A transitive rank-3 permutation group of degree `n = k² + 1` (where `k`
