@@ -248,13 +248,57 @@ theorem lem3_non_diagonal_orbitals_paired_of_odd_rank3
   rw [Moore57.swapOrbital_involutive G Ω O₁] at this
   exact this.symm
 
+/-- **Lemma 3 Stage B**: in-degree = out-degree under transitivity + finite Ω.
+[done]
+
+Paper-faithful wrap of `Moore57.orbitalNeighborhood_card_eq_orbitalReverseNeighborhood_card`:
+for a transitive `G`-action on `Fintype Ω` (with `Nonempty Ω`), any
+orbital `O` and any base point `a` satisfy
+`|N_O(a)| = |N⁻_O(a)|`.
+
+Combined with Stage A (`lem3_swap_pairs_non_diagonal_orbitals`), this
+discharges the in-deg = out-deg hypothesis of
+`lem3_subdegree_eq_of_odd_rank3_and_in_out_eq`, giving the
+unconditional `k = l` form (see `lem3_subdegree_eq_of_odd_rank3`). -/
+theorem lem3_in_deg_eq_out_deg
+    (G Ω : Type*) [Group G] [MulAction G Ω] [Fintype Ω] [Nonempty Ω]
+    (h_trans : ∀ a b : Ω, ∃ g : G, g • a = b)
+    (O : Moore57.orbital G Ω) (a : Ω) :
+    Nat.card (Moore57.orbitalNeighborhood G Ω O a) =
+    Nat.card (Moore57.orbitalReverseNeighborhood G Ω O a) :=
+  Moore57.orbitalNeighborhood_card_eq_orbitalReverseNeighborhood_card
+    G Ω h_trans O a
+
+/-- **Lemma 3 main form (unconditional)**: under transitive rank-3
+action on `Fintype Ω` (`Nonempty Ω`) with odd `|G|`, the two
+non-diagonal subdegrees coincide (`k = l` in the paper's notation).
+[done]
+
+Combines Stage A (swap pairs non-diagonal orbitals — Lem 1
+contrapositive) and Stage B (in-deg = out-deg double counting). -/
+theorem lem3_subdegree_eq_of_odd_rank3
+    (G Ω : Type*) [Group G] [MulAction G Ω] [Fintype G]
+    [Fintype Ω] [Nonempty Ω]
+    {a₀ a : Ω}
+    {O₁ O₂ : Moore57.orbital G Ω}
+    (h_trans : ∀ a b : Ω, ∃ g : G, g • a = b)
+    (h_D_ne_O₁ : Moore57.diagonalOrbital G Ω a₀ ≠ O₁)
+    (h_cover : ∀ (O : Moore57.orbital G Ω),
+       O = Moore57.diagonalOrbital G Ω a₀ ∨ O = O₁ ∨ O = O₂)
+    (h_O₁_nondiag : ∃ a b : Ω,
+       (Quotient.mk'' (a, b) : Moore57.orbital G Ω) = O₁ ∧ a ≠ b)
+    (h_odd : ¬ 2 ∣ Fintype.card G) :
+    Nat.card (Moore57.orbitalNeighborhood G Ω O₁ a) =
+    Nat.card (Moore57.orbitalNeighborhood G Ω O₂ a) :=
+  lem3_subdegree_eq_of_odd_rank3_and_in_out_eq G Ω h_D_ne_O₁ h_cover
+    h_O₁_nondiag h_odd (lem3_in_deg_eq_out_deg G Ω h_trans O₁ a)
+
 /-- **Lemma 3 (self-paired structure under parity).** [deferred-heavy]
 
-Full iff packaging combining Stage A above with Lem 1's two directions.
-The remaining Stage B (in-deg = out-deg double counting) is the
-deferred-heavy piece; with it, the full odd-order rank-3 ⟹ `k = l`
-conclusion follows from
-`lem3_subdegree_eq_of_odd_rank3_and_in_out_eq`. -/
+Full iff packaging combining Stage A and Stage B with Lem 1's two
+directions.  Both Stage A (`lem3_swap_pairs_non_diagonal_orbitals`)
+and Stage B (`lem3_in_deg_eq_out_deg`) are proven; the unconditional
+"k = l" conclusion is `lem3_subdegree_eq_of_odd_rank3`. -/
 theorem lem3_self_paired_iff_even : True := by trivial
 
 /-- **Corollary to Lemma 3** (symmetry of `Δ` under even order). [deferred-heavy] -/

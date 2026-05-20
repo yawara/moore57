@@ -1,6 +1,11 @@
 import Mathlib.GroupTheory.GroupAction.Basic
 import Mathlib.Algebra.Group.Action.Prod
 import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+
+set_option linter.unusedSectionVars false
+set_option linter.unusedDecidableInType false
+set_option linter.unusedFintypeInType false
 
 /-!
 # Rank and orbital structure for permutation groups
@@ -365,5 +370,105 @@ theorem lem3_subdegree_eq_of_paired_and_eq_in_out_deg
     Nat.card (orbitalNeighborhood G Ω O₁ a) =
     Nat.card (orbitalNeighborhood G Ω O₂ a) := by
   rw [h_in_out, lem3_reverseNeighborhood_eq_neighborhood_of_paired (G := G) (Ω := Ω) h_paired a]
+
+/-! ### Stage B: in-degree = out-degree double counting (D3.2 remaining)
+
+For a transitive `G`-action on `Fintype Ω`, the in-degree and out-degree
+of any orbital `O` at any base point `a` coincide:
+`|N_O(a)| = |N⁻_O(a)|`.
+
+Proof: both sums `∑_x |N_O(x)|` and `∑_x |N⁻_O(x)|` (over `x : Ω`)
+equal the cardinality of the preimage `{p : Ω × Ω | ⟦p⟧ = O}` via
+the Sigma bijections.  By G-invariance + transitivity each summand is
+constant in `x`, hence `|Ω| · |N_O(a)| = |Ω| · |N⁻_O(a)|`, and the
+nonempty hypothesis cancels `|Ω|`.
+
+This is the remaining piece of the Lem 3 "k = l" conclusion;
+combined with Stage A (`lem3_swap_pairs_non_diagonal_orbitals` in
+the paper file) it yields the unconditional rank-3 odd-order conclusion. -/
+
+/-- Bijection between the dependent-pair view of an orbital's preimage
+(indexed by the first coordinate) and the preimage as a subtype of
+`Ω × Ω`.  Used in Stage B double-counting. -/
+def orbitalPreimageFstEquiv (O : orbital G Ω) :
+    (Σ x : Ω, ↥(orbitalNeighborhood G Ω O x)) ≃
+    { p : Ω × Ω // (Quotient.mk'' p : orbital G Ω) = O } where
+  toFun := fun ⟨x, c, h⟩ => ⟨(x, c), h⟩
+  invFun := fun ⟨(x, c), h⟩ => ⟨x, c, h⟩
+  left_inv := fun ⟨_x, _c, _h⟩ => rfl
+  right_inv := fun ⟨(_x, _c), _h⟩ => rfl
+
+/-- Bijection between the dependent-pair view of an orbital's preimage
+(indexed by the second coordinate) and the preimage as a subtype of
+`Ω × Ω`.  Used in Stage B double-counting. -/
+def orbitalPreimageSndEquiv (O : orbital G Ω) :
+    (Σ x : Ω, ↥(orbitalReverseNeighborhood G Ω O x)) ≃
+    { p : Ω × Ω // (Quotient.mk'' p : orbital G Ω) = O } where
+  toFun := fun ⟨x, c, h⟩ => ⟨(c, x), h⟩
+  invFun := fun ⟨(c, x), h⟩ => ⟨x, c, h⟩
+  left_inv := fun ⟨_x, _c, _h⟩ => rfl
+  right_inv := fun ⟨(_c, _x), _h⟩ => rfl
+
+/-- **Higman 1964 Lem 3 Stage B**: under transitivity + finite `Ω`,
+in-degree equals out-degree for any orbital at any base point. -/
+theorem orbitalNeighborhood_card_eq_orbitalReverseNeighborhood_card
+    [Fintype Ω] [Nonempty Ω]
+    (h_trans : ∀ a b : Ω, ∃ g : G, g • a = b)
+    (O : orbital G Ω) (a : Ω) :
+    Nat.card (orbitalNeighborhood G Ω O a) =
+    Nat.card (orbitalReverseNeighborhood G Ω O a) := by
+  -- Constancy of |N_O(x)| in x.
+  have h_const_N : ∀ x : Ω,
+      Nat.card (orbitalNeighborhood G Ω O x) =
+      Nat.card (orbitalNeighborhood G Ω O a) := by
+    intro x
+    obtain ⟨g, hg⟩ := h_trans a x
+    rw [← hg, orbitalNeighborhood_card_smul]
+  -- Constancy of |N⁻_O(x)| in x (via N⁻_O = N_{swap O}, and G-inv of N).
+  have h_const_rev : ∀ x : Ω,
+      Nat.card (orbitalReverseNeighborhood G Ω O x) =
+      Nat.card (orbitalReverseNeighborhood G Ω O a) := by
+    intro x
+    rw [orbitalReverseNeighborhood_eq_orbitalNeighborhood_swap,
+        orbitalReverseNeighborhood_eq_orbitalNeighborhood_swap]
+    obtain ⟨g, hg⟩ := h_trans a x
+    rw [← hg, orbitalNeighborhood_card_smul]
+  -- Sum identity: ∑_x |N_O(x)| = |preimage of O|.
+  have h_sum_N_eq_preimage :
+      ∑ x : Ω, Nat.card (orbitalNeighborhood G Ω O x) =
+      Nat.card { p : Ω × Ω // (Quotient.mk'' p : orbital G Ω) = O } := by
+    rw [← Nat.card_sigma, Nat.card_congr (orbitalPreimageFstEquiv G Ω O)]
+  -- Same for reverse.
+  have h_sum_rev_eq_preimage :
+      ∑ x : Ω, Nat.card (orbitalReverseNeighborhood G Ω O x) =
+      Nat.card { p : Ω × Ω // (Quotient.mk'' p : orbital G Ω) = O } := by
+    rw [← Nat.card_sigma, Nat.card_congr (orbitalPreimageSndEquiv G Ω O)]
+  -- Combine: ∑_x |N_O(x)| = ∑_x |N⁻_O(x)|.
+  have h_sums_eq : ∑ x : Ω, Nat.card (orbitalNeighborhood G Ω O x) =
+                   ∑ x : Ω, Nat.card (orbitalReverseNeighborhood G Ω O x) := by
+    rw [h_sum_N_eq_preimage, h_sum_rev_eq_preimage]
+  -- Each side rewrites to |Ω| · (constant).
+  have h_card_pos : 0 < Fintype.card Ω := Fintype.card_pos
+  have h_sum_N_const :
+      ∑ x : Ω, Nat.card (orbitalNeighborhood G Ω O x) =
+      Fintype.card Ω * Nat.card (orbitalNeighborhood G Ω O a) := by
+    have : ∀ x ∈ (Finset.univ : Finset Ω),
+        Nat.card (orbitalNeighborhood G Ω O x) =
+        Nat.card (orbitalNeighborhood G Ω O a) := fun x _ => h_const_N x
+    rw [Finset.sum_congr rfl this, Finset.sum_const, Finset.card_univ,
+        Nat.nsmul_eq_mul]
+  have h_sum_rev_const :
+      ∑ x : Ω, Nat.card (orbitalReverseNeighborhood G Ω O x) =
+      Fintype.card Ω * Nat.card (orbitalReverseNeighborhood G Ω O a) := by
+    have : ∀ x ∈ (Finset.univ : Finset Ω),
+        Nat.card (orbitalReverseNeighborhood G Ω O x) =
+        Nat.card (orbitalReverseNeighborhood G Ω O a) := fun x _ => h_const_rev x
+    rw [Finset.sum_congr rfl this, Finset.sum_const, Finset.card_univ,
+        Nat.nsmul_eq_mul]
+  -- |Ω| · |N_O(a)| = |Ω| · |N⁻_O(a)|, cancel |Ω| > 0.
+  have h_mul_eq : Fintype.card Ω * Nat.card (orbitalNeighborhood G Ω O a) =
+                  Fintype.card Ω * Nat.card (orbitalReverseNeighborhood G Ω O a) := by
+    rw [← h_sum_N_const, ← h_sum_rev_const, h_sums_eq]
+  exact Nat.eq_of_mul_eq_mul_left h_card_pos h_mul_eq
 
 end Moore57
