@@ -1,3 +1,4 @@
+import Mathlib.GroupTheory.Sylow
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Lemma26_SmallPrime
 
 set_option linter.unusedSectionVars false
@@ -133,6 +134,54 @@ theorem prop8_sylow_q_count_one
       rw [h25] at this
       exact this
     exact h_dvd.trans this
+
+/-- **Proposition 8 Sylow-level: `Sylow q X` normal for q ∈ {7, 11}**. [done]
+
+Lifts of `prop8_q*_sylow*_count_one` to Mathlib `Sylow.Normal`.
+- q = 7: `n₇ ∣ 5 ⟹ n₇ = 1 ⟹ Subsingleton ⟹ Normal`.
+- q = 11: `n₁₁ ∣ 25 ⟹ n₁₁ = 1 ⟹ Subsingleton ⟹ Normal`.
+- q = 7 (P-side): `n₅ ∣ 7 ⟹ n₅ = 1 ⟹ Subsingleton ⟹ Normal` (so X ≅ Z₃₅). -/
+theorem prop8_q7_sylow7_normal
+    (X : Type*) [Group X] [Finite X] [Fact (Nat.Prime 7)]
+    (h_dvd : Nat.card (Sylow 7 X) ∣ 5)
+    (P : Sylow 7 X) :
+    (P : Subgroup X).Normal := by
+  haveI : Subsingleton (Sylow 7 X) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 7 X) = 1 := by
+      refine prop8_q7_sylow7_count_one (Nat.card (Sylow 7 X)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 7 X
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
+
+theorem prop8_q7_sylow5_normal
+    (X : Type*) [Group X] [Finite X] [Fact (Nat.Prime 5)]
+    (h_dvd : Nat.card (Sylow 5 X) ∣ 7)
+    (P : Sylow 5 X) :
+    (P : Subgroup X).Normal := by
+  haveI : Subsingleton (Sylow 5 X) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 5 X) = 1 := by
+      refine prop8_q7_sylow5_count_one (Nat.card (Sylow 5 X)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 5 X
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
+
+theorem prop8_q11_sylow11_normal
+    (X : Type*) [Group X] [Finite X] [Fact (Nat.Prime 11)]
+    (h_dvd : Nat.card (Sylow 11 X) ∣ 25)
+    (P : Sylow 11 X) :
+    (P : Subgroup X).Normal := by
+  haveI : Subsingleton (Sylow 11 X) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 11 X) = 1 := by
+      refine prop8_q11_sylow11_count_one (Nat.card (Sylow 11 X)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 11 X
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
 
 /-- **Proposition 8 (`(p, q) = (5, large)` classification).** [deferred-heavy]
 

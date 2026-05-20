@@ -1,3 +1,4 @@
+import Mathlib.GroupTheory.Sylow
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Lemma26_SmallPrime
 
 set_option linter.unusedSectionVars false
@@ -151,6 +152,64 @@ theorem prop6_sylow5_count_one_of_card_3pow_a_5pow_b
   unfold Nat.ModEq at h_mod
   -- h_mod : n5 % 5 = 1 % 5 = 1
   simpa using h_mod
+
+/-- **Proposition 6 Sylow-level: `Nat.card (Sylow 5 X) = 1` from arithmetic
+hypothesis**.  [done]
+
+The Mathlib-level lift of `prop6_sylow5_count_one_of_3pow_a_le_three`:
+given a finite group `X` whose Sylow 5-subgroup count divides `3^a` for
+some `a ≤ 3` (which holds whenever `|X| = 3^a · 5^b` with `a ≤ 3`), the
+number of Sylow 5-subgroups is exactly `1`.
+
+Inputs:
+- `Nat.card (Sylow 5 X) ∣ 3^a`: this is the Sylow's-third part
+  `Sylow.card_dvd_index` instantiated at the Sylow 5-subgroup with
+  `index = |X|/|Sylow 5| = 3^a` (when |X| = 3^a · 5^b).
+- `card_sylow_modEq_one 5 X`: Sylow's third's "mod p ≡ 1" half. -/
+theorem prop6_sylow5_card_eq_one
+    (X : Type*) [Group X] [Finite (Sylow 5 X)] [Fact (Nat.Prime 5)]
+    (a : ℕ) (h_a_le : a ≤ 3)
+    (h_dvd : Nat.card (Sylow 5 X) ∣ 3 ^ a) :
+    Nat.card (Sylow 5 X) = 1 := by
+  refine prop6_sylow5_count_one_of_3pow_a_le_three a (Nat.card (Sylow 5 X))
+    h_a_le h_dvd ?_
+  have h_mod := card_sylow_modEq_one 5 X
+  unfold Nat.ModEq at h_mod
+  simpa using h_mod
+
+/-- **Proposition 6 Sylow-level: `Subsingleton (Sylow 5 X)`** from arithmetic.
+[done]
+
+The Subsingleton version of `prop6_sylow5_card_eq_one`, which serves as
+the immediate input to `Sylow.normal_of_subsingleton`.  Together they
+give the paper's "`Q ◁ X`" conclusion of Prop 6 from Sylow's third
+theorem alone — **no Feit–Thompson, no Philip Hall**. -/
+theorem prop6_sylow5_subsingleton
+    (X : Type*) [Group X] [Finite X] [Fact (Nat.Prime 5)]
+    (a : ℕ) (h_a_le : a ≤ 3)
+    (h_dvd : Nat.card (Sylow 5 X) ∣ 3 ^ a) :
+    Subsingleton (Sylow 5 X) := by
+  rw [← Finite.card_le_one_iff_subsingleton]
+  exact (prop6_sylow5_card_eq_one X a h_a_le h_dvd).le
+
+/-- **Proposition 6 Sylow-level: `Sylow 5 X` is normal** (the paper's `Q ◁ X`).
+[done]
+
+The full chain: arithmetic hypothesis `n₅ ∣ 3^a, a ≤ 3` ⟹
+`Subsingleton (Sylow 5 X)` ⟹ Sylow 5-subgroup is normal in `X`.
+
+This is the **Feit–Thompson-free** proof of the paper's "`Q ◁ X`"
+claim for Prop 6.  Combined with Mathlib `SchurZassenhaus`
+(if needed for the split form), it produces the semidirect
+decomposition without invoking solvability. -/
+theorem prop6_sylow5_normal
+    (X : Type*) [Group X] [Finite X] [Fact (Nat.Prime 5)]
+    (a : ℕ) (h_a_le : a ≤ 3)
+    (h_dvd : Nat.card (Sylow 5 X) ∣ 3 ^ a)
+    (P : Sylow 5 X) :
+    (P : Subgroup X).Normal := by
+  haveI := prop6_sylow5_subsingleton X a h_a_le h_dvd
+  exact Sylow.normal_of_subsingleton P
 
 /-- **Proposition 6 (`(p, q) = (3, 5)` classification).** [deferred-heavy]
 

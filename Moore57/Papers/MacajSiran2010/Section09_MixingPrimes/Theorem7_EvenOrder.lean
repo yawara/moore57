@@ -1,3 +1,4 @@
+import Mathlib.GroupTheory.Sylow
 import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Theorem2_MakhnevPaduchikh
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Theorem5_5GroupBound
 import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma15_OrderPQ
@@ -189,6 +190,104 @@ theorem thm7_sylow_q_count_one_dispatch
   · exact thm7_card_54_sylow3_count_one n_q hd hm
   · exact thm7_card_14_sylow7_count_one n_q hd hm
   · exact thm7_card_38_sylow19_count_one n_q hd hm
+
+/-- **Theorem 7 Sylow-level: Sylow q is normal for each even-order candidate**.
+[done]
+
+Mathlib lifts of `thm7_card_*_sylow*_count_one`. For each candidate
+even order, the Sylow subgroup of the "large prime" q is normal. -/
+theorem thm7_card_110_sylow11_normal
+    (G : Type*) [Group G] [Finite G] [Fact (Nat.Prime 11)]
+    (h_dvd : Nat.card (Sylow 11 G) ∣ 10)
+    (P : Sylow 11 G) :
+    (P : Subgroup G).Normal := by
+  haveI : Subsingleton (Sylow 11 G) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 11 G) = 1 := by
+      refine thm7_card_110_sylow11_count_one (Nat.card (Sylow 11 G)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 11 G
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
+
+/-- **Theorem 7 Sylow-level: `Sylow 5 G` normal for `|G| = 50 = 2·5²`**.
+[done] -/
+theorem thm7_card_50_sylow5_normal
+    (G : Type*) [Group G] [Finite G] [Fact (Nat.Prime 5)]
+    (h_dvd : Nat.card (Sylow 5 G) ∣ 2)
+    (P : Sylow 5 G) :
+    (P : Subgroup G).Normal := by
+  haveI : Subsingleton (Sylow 5 G) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 5 G) = 1 := by
+      refine thm7_card_50_sylow5_count_one (Nat.card (Sylow 5 G)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 5 G
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
+
+/-- **Theorem 7 Sylow-level: `Sylow 3 G` normal for `|G| = 54 = 2·3³`**.
+[done] -/
+theorem thm7_card_54_sylow3_normal
+    (G : Type*) [Group G] [Finite G] [Fact (Nat.Prime 3)]
+    (h_dvd : Nat.card (Sylow 3 G) ∣ 2)
+    (P : Sylow 3 G) :
+    (P : Subgroup G).Normal := by
+  haveI : Subsingleton (Sylow 3 G) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 3 G) = 1 := by
+      refine thm7_card_54_sylow3_count_one (Nat.card (Sylow 3 G)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 3 G
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
+
+/-- **Theorem 7 Sylow-level: `Sylow 7 G` normal for `|G| = 14 = 2·7`**. [done] -/
+theorem thm7_card_14_sylow7_normal
+    (G : Type*) [Group G] [Finite G] [Fact (Nat.Prime 7)]
+    (h_dvd : Nat.card (Sylow 7 G) ∣ 2)
+    (P : Sylow 7 G) :
+    (P : Subgroup G).Normal := by
+  haveI : Subsingleton (Sylow 7 G) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 7 G) = 1 := by
+      refine thm7_card_14_sylow7_count_one (Nat.card (Sylow 7 G)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 7 G
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
+
+/-- **Theorem 7 Sylow-level: `Sylow 11 G` normal for `|G| = 22 = 2·11`**.
+[done] -/
+theorem thm7_card_22_sylow11_normal
+    (G : Type*) [Group G] [Finite G] [Fact (Nat.Prime 11)]
+    (h_dvd : Nat.card (Sylow 11 G) ∣ 2)
+    (P : Sylow 11 G) :
+    (P : Subgroup G).Normal := by
+  haveI : Subsingleton (Sylow 11 G) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 11 G) = 1 := by
+      refine thm7_card_22_sylow11_count_one (Nat.card (Sylow 11 G)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 11 G
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
+
+/-- **Theorem 7 Sylow-level: `Sylow 19 G` normal for `|G| = 38 = 2·19`**.
+[done] -/
+theorem thm7_card_38_sylow19_normal
+    (G : Type*) [Group G] [Finite G] [Fact (Nat.Prime 19)]
+    (h_dvd : Nat.card (Sylow 19 G) ∣ 2)
+    (P : Sylow 19 G) :
+    (P : Subgroup G).Normal := by
+  haveI : Subsingleton (Sylow 19 G) := by
+    rw [← Finite.card_le_one_iff_subsingleton]
+    have h_count : Nat.card (Sylow 19 G) = 1 := by
+      refine thm7_card_38_sylow19_count_one (Nat.card (Sylow 19 G)) h_dvd ?_
+      have h_mod := card_sylow_modEq_one 19 G
+      unfold Nat.ModEq at h_mod; simpa using h_mod
+    exact h_count.le
+  exact Sylow.normal_of_subsingleton P
 
 /-- **Theorem 7 (even `|Aut(Γ)|` divides one of six values).** [deferred-heavy]
 
