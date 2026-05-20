@@ -209,4 +209,56 @@ theorem lem3_case2_singleton_fix
     simpa using h_dvd_diff
   exact lem3_case2_arithmetic_core p Fact.out hp_odd hdvd
 
+/-- **Lemma 3, case (5) arithmetic core: odd prime divisors of `54`.** [done]
+
+For `p` an odd prime dividing `54 = 2 · 3^3`, conclude `p = 3`.
+Proof: factor `54 = 2 · 3^3`; the 2-branch is excluded by `p > 2`,
+and the 3-power branch gives `p = 3`. -/
+theorem lem3_case5_arithmetic_core
+    (p : ℕ) (hp_prime : Nat.Prime p) (hp_odd : 2 < p)
+    (hdvd : p ∣ 54) :
+    p = 3 := by
+  have h_eq : (54 : ℕ) = 2 * 3^3 := by norm_num
+  rw [h_eq] at hdvd
+  have h1 : p ∣ 2 ∨ p ∣ 3^3 := (hp_prime.dvd_mul).mp hdvd
+  rcases h1 with h2 | h3pow
+  · have := Nat.le_of_dvd (by norm_num) h2
+    omega
+  · have hp_dvd_3 : p ∣ 3 := hp_prime.dvd_of_dvd_pow h3pow
+    have : p = 1 ∨ p = 3 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 3)) p hp_dvd_3
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · exact h
+
+/-- **Lemma 3, case (5) conditional: Petersen fix forces `p = 3`.** [done]
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` fixing a
+vertex `a` whose σ-fixed-neighbour count is 3 (the Petersen-degree
+restriction: in Fix(σ) ≅ Petersen, every vertex has 3 neighbours in
+Fix), conclude `p = 3`.
+
+This is the paper-tight restriction (`|X| ∣ 3`) for case (5).
+
+Proof: the local mod-`p` constraint
+`(autFixedNeighborFinset).card ≡ deg = 57 [MOD p]` with the
+Petersen-degree value 3 gives `p ∣ 54 = 57 − 3`.  Apply the
+arithmetic core. -/
+theorem lem3_case5_petersen_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (hAut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    {a : V} (ha : σ a = a)
+    (h_N_fix_petersen : (Moore57.autFixedNeighborFinset Γ σ a).card = 3) :
+    p = 3 := by
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
+    σ hAut p hpow ha
+  rw [hΓ.regular.degree_eq a, h_N_fix_petersen] at hmod
+  -- hmod : 3 ≡ 57 [MOD p]
+  have hdvd : p ∣ 54 := by
+    have h_dvd_diff : p ∣ 57 - 3 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact lem3_case5_arithmetic_core p Fact.out hp_odd hdvd
+
 end Moore57.Papers.MakhnevPaduchikh2001
