@@ -620,14 +620,41 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
   - `orbitalIntersectionAt`: paper notation alias for D3.1
     intersection number。 `lem5_intersection_number_constant`: constancy
     の wrap。
-* **[D3.5] (未)** Lem 6, 7: incidence matrix の eigenvalue 解析。
-* **[D3.6] (未)** Thm 1 full: n = k² + 1 ⟹ k ∈ {2, 3, 7, 57}。算術 core は既に proven。
+* **[D3.5] (done, 2026-05-21)** Lem 6, 7: incidence matrix の eigenvalue 解析。
+  Lem 7 multiplicity formula を `Lemma07_IntegralityCases.lean` に追加:
+  - `lem7_multiplicity_formula`: `(s − t) · f₂ = −k − (n − 1) · t` (ℤ 形)。
+    Derived from `f₂ + f₃ = n − 1` + `f₂ s + f₃ t = −k`.
+  - `lem7_multiplicity_formula_sym` (f₃ 対称形)。
+  - `lem7_case_two_divisibility_f2`/`_f3`: Case II divisibility 帰結。
+  - `lem7_moore_e_dvd_k_times_k_minus_2`: Moore 特化 `2 e f₂ = k(k(e+1) − 2)`
+    ⟹ `e ∣ k(k − 2)` (Thm 1 への integrality bridge)。
+  Lem 6 discriminant 形 (`lem6_secondary_eigenvalues_via_discriminant`) は既存。
+* **[D3.6] (done, 2026-05-21)** Thm 1 full: n = k² + 1 ⟹ k ∈ {2, 3, 7, 57}。
+  `Theorem1_DegreeKSqPlus1.lean` に bridge を追加:
+  - `theorem1_e_dvd_fifteen`: `e ∣ k(k−2) ∧ e² = 4k − 3` ⟹ `e ∣ 15`.
+    Proof: `e ∣ 16 · k(k−2) = e⁴ − 2e² − 15` (4k = e² + 3 substitution),
+    `e ∣ e⁴ − 2e²` so `e ∣ -15`.
+  - `theorem1_e_sq_dvd_225_of_e_dvd_fifteen`: `e ∣ 15 ⟹ e² ∣ 225`.
+  - `theorem1_e_sq_dvd_225_of_dvd_and_sq`: 合成 bridge。
+  - `theorem1_case_two_full_conditional`: Moore parameter Case II full
+    chain (ℕ form) — `e² = 4k − 3 + multiplicity + k ≥ 2 ⟹ k ∈ {3, 7, 57}`。
+  既存 `theorem1_arithmetic_core` + 新 bridge で full chain 完成。
 
 ### D4. Aschbacher 1.4 一般版
 
-* **[D4.0] (未)** `f = k ± 1` 二者択一 (involution 不動点星型分類)。
-  既存: Moore57 instance (`f = 56 = k − 1`) は proven。
-* **[D4.1] (未)** SRG eigenvalue + multiplicity → integer 制約 → 二者択一 (Cor 形)。
+* **[D4.0] (done, 2026-05-21)** `f = k ± 1` 二者択一 (involution 不動点星型分類)。
+  `Lemma1_4_InvolutionFix.lean` に algebraic core を追加:
+  - `asc1_4_arithmetic_core`: `(f - k - 1)(f - k + 1) = 0 ⟹ f = k ± 1`。
+  - `asc1_4_arithmetic_core_sq`: 等価な square form `(f - k)² = 1 ⟹ f = k ± 1`。
+  - `asc1_4_arithmetic_core_iff`: 双方向 packaging。
+  - `asc1_4_moore57_arithmetic_instance`: Moore57 (k=57, f=56) instance。
+  既存: 完全 Moore57 instance (`f = 56 = k − 1`) は既 proven (Phase 1-3)。
+* **[D4.1] (done, 2026-05-21)** SRG eigenvalue + multiplicity → integer 制約 →
+  二者択一 (Cor 形)。 `Aschbacher1971.MainTheorem.lean` に combined Cor を追加:
+  - `asc_cor_combined_classification`: D3.5 + D3.6 (Case II Moore chain) +
+    D4.0 (involution dichotomy) を組み合わせて、(k, f) pair classification:
+    `k ∈ {3, 7, 57} ∧ f ∈ {k − 1, k + 1}`。
+  - `asc_cor_moore57_instance`: (57, 56) instance。
 
 ---
 
