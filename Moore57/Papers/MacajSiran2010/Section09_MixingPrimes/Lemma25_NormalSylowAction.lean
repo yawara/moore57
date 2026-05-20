@@ -114,10 +114,32 @@ theorem lem25_q_action_isGraphAut
         ((lem25_q_acts_on_fixedPoints X P Q hP_normal_in_X hQ_le_X q hq y : V)) :=
   lem25_x_action_isGraphAut (Γ := Γ) X P hP_normal_in_X hX_aut q (hQ_le_X hq) x y
 
+/-- **Lemma 25 (paper-faithful, conditional Q-action on `Fix(P)`).** [done]
+
+Proper-signature paper-faithful packaging: given a P-normalizing X ⊆ G
+and a subgroup Q ≤ X, the Q-action on `Fix(P)` (via `lem25_q_acts_on_fixedPoints`)
+is by graph automorphisms.
+
+Re-export of `lem25_q_action_isGraphAut` for paper-faithful naming. -/
+theorem lem25_normal_sylow_action_paper
+    {V : Type*} {Γ : SimpleGraph V}
+    (X P Q : Subgroup (Equiv.Perm V))
+    (hP_normal_in_X : X ≤ Subgroup.normalizer (P : Set (Equiv.Perm V)))
+    (hQ_le_X : Q ≤ X)
+    (hX_aut : ∀ g ∈ X, ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (g a) (g b))
+    (q : Equiv.Perm V) (hq : q ∈ Q)
+    (x y : MulAction.fixedPoints P V) :
+    Γ.Adj (x : V) (y : V) ↔
+      Γ.Adj
+        ((lem25_q_acts_on_fixedPoints X P Q hP_normal_in_X hQ_le_X q hq x : V))
+        ((lem25_q_acts_on_fixedPoints X P Q hP_normal_in_X hQ_le_X q hq y : V)) :=
+  lem25_q_action_isGraphAut (Γ := Γ) X P Q hP_normal_in_X hQ_le_X hX_aut q hq x y
+
 /-- **Lemma 25 (normal Sylow ⇒ action on `Fix(P)`).** [backwards-compat]
 
 The paper-faithful content "Q acts on Fix(P)" is captured by
-`lem25_q_acts_on_fixedPoints` + `lem25_q_action_isGraphAut`. -/
+`lem25_q_acts_on_fixedPoints` + `lem25_q_action_isGraphAut` /
+`lem25_normal_sylow_action_paper` (above). -/
 theorem lem25_normal_sylow_action : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9
