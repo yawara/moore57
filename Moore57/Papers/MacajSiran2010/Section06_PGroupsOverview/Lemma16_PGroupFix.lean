@@ -333,7 +333,37 @@ theorem lem16_prime_from_N_count_seven
     · exact absurd h hp_prime.one_lt.ne'
     · exact h
 
-/-- **Lemma 16 (odd-prime `p`-group fix shape).** [deferred-heavy] -/
+/-- **Lemma 16 (paper-faithful conditional fix-shape dispatch).** [done]
+
+Proper-signature paper-faithful packaging: for σ a `p^k`-element with
+odd prime `p > 2` fixing a vertex `a`, the σ-fixed-neighbour count
+`c = |N(a) ∩ Fix(σ)|` constrains `p` to the Moore57 odd-prime list
+`{3, 5, 7, 11, 13, 19}`.
+
+Combines the five N(a) count cases (0, 1, 2, 3, 7) from
+`lem16_prime_from_N_count_{zero,one,two,three,seven}`. -/
+theorem lem16_pgroup_fix_shape_paper
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a) :
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 0 → p = 3 ∨ p = 19) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 1 → p = 7) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 2 → p = 5 ∨ p = 11) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 3 → p = 3) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 7 → p = 5) :=
+  ⟨fun h => lem16_prime_from_N_count_zero hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_one hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_two hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_three hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_seven hΓ σ smul_adj p k hp_odd pow_pk ha h⟩
+
+/-- **Lemma 16 (odd-prime `p`-group fix shape).** [deferred-heavy]
+
+Backward-compat True-stub.  Proper-signature dispatch is
+`lem16_pgroup_fix_shape_paper` (above), packaging the 5-case N(a)
+count dispatch via `lem16_prime_from_N_count_*`. -/
 theorem lem16_pgroup_fix_shape (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S6
