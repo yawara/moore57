@@ -2,16 +2,18 @@
 
 このドキュメントは Moore57/Papers/ scaffold (commit `42e1662` 起点) で
 「簡単に潰せるもの」を一通り処理した時点での残務を **粒度の細かいタスク** に
-分解したものです。 直近の主要進捗: Tier B B4.1 (cyclotomic integer trace for
-prime order p) 完了 + Lem 12 p=3 starred 完全 unconditional 化 (commit `be8c0d7`)。
+分解したものです。 直近の主要進捗: Tier B **B4.2 完了** — Lem 12 p=7 a₀=58
+starred + Lem 13 p=3 (?, 1) row を B4.1 (cyclotomic integer trace) で
+unconditional に格上げ。 prime-order starred 行は実質的にすべて Theorem 3
+不要で dispatch 可能であることが確認された。
 
 ## 0. 現状の確定スコア
 
 * `lake build` clean, CI ratchet sorry-free (`grep` で proof-position `sorry`/`admit` ゼロ)。
-* True-stub の数: 約 79 (B4.1 で `lem12_no_p3_a0_one` が True-stub → fully
-  unconditional に格上げ → 1 件減少)。 残りの 30 件程度は意図的な
-  backwards-compat shell で、paper-faithful side theorem はその後ろに
-  proven 版がある状態。
+* True-stub の数: 約 78 (B4.2 で `lem12_no_p7_a0_58` が True-stub →
+  fully unconditional に格上げ → 1 件減少。 累計 B4.1+B4.2 で 2 件減)。
+  残りの 30 件程度は意図的な backwards-compat shell で、paper-faithful
+  side theorem はその後ろに proven 版がある状態。
 * 主要な依存外部 (Lean 未移植) 定理 — 更新版:
   1. **Feit–Thompson 奇数位数定理** — Mathlib 未移植。**Moore57 では不要**
      (詳細は §5 で議論)。
@@ -160,21 +162,30 @@ prime order p) 完了 + Lem 12 p=3 starred 完全 unconditional 化 (commit `be8
     pattern (`aut_pow_prime_E7_trace_int` + 既存 mod-arithmetic) で
     片付くので、Theorem 3 の Lean 移植を待たずに進められる。
 
-* **[B4.2] (next-up, low-hanging)** Starred p-prime row dispatch
+* **[B4.2] (done, 2026-05-21)** Starred p-prime row dispatch
   (B4.1 の直接適用):
-  - `lem12_no_p7_a0_*` (Lem 12 p=7 starred rows): `aut_pow_prime_E7_trace_int`
-    (p=7) + lem3_a1_mod_? (要 mod 計算; 7-cycle なら trace ∈ ℤ から
-    a₀ ≡ 0 mod 7 + trace 整数性) で同様に dispatch。
-  - Lem 13 の prime-order starred 行: 同じ pattern で個別 unstub。
-    既に `lem13_p3_a0_le_*_via_*FixedData_pow3` 系の conditional row は
-    用意済 (B5.0 参照) なので、B4.1 を上に乗せれば unconditional 化できる
-    ものを順次格上げ。
-  - 見積もり: 各 starred row につき ~50-100 LOC, 1-2 commit 程度。
+  - **[B4.2-1] (done)** `lem12_no_p7_a0_58`
+    (`Lemma12_PrimeOrder.lean:312`):
+    `aut_pow_prime_E7_trace_int` (p=7) + `lem3_a1_mod_15`
+    (`a₁ ≡ 7·58+5 = 411 ≡ 6 (mod 15)`) +
+    `lem12_a1_zero_of_closed_neighbourhood_fixed` (`a₁ = 0`) で
+    `0 ≡ 6 (mod 15)` 矛盾。 True-stub → False 証明に格上げ。
+    **発見**: paper の character lower bound `a₁ ∈ {21 + 105k}`
+    (Prop 2 依存) は不要 — mod-15 congruence だけで p=3 と同じ
+    構造で済む。
+  - **[B4.2-2] (done)** `lem13_p3_row_1_1_no`
+    (`Lemma13_PrimeSquared.lean`): Lem 13 p=3 starred row `(?, 1)` を
+    `lem12_no_p3_a0_one` (B4.1 経由) を `σ³` に適用して False。
+    `a₀(σ) ≤ a₀(σ³)` propagation で `(?, 1)` 列全体を排除。
+  - **残り (B4.3 待ち)**: Lem 13 p=5 starred rows `5*(0, 5)` と
+    `5*(5, 5)` は order-25 σ の Tr(σ) 整数性を要求するため
+    composite-order trace (B4.3) 待ち。 既存の
+    `lem13_starred_row_5_*_no_integer_trace` は Tr を hypothesis に
+    取る arithmetic core 形のまま (Tr 整数性は B4.3 で供給予定)。
   - **Theorem 3 不要**: paper の "by Curtis–Reiner Theorem 3" を持つ
     starred 行のうち、order が **prime** のものは全て B4.1 経由で
-    Theorem 3 を bypass できる。 composite-order (e.g., σ^6 = 1 with
-    σ^2 ≠ 1 ∧ σ^3 ≠ 1) や rational class identity の一般形は依然
-    Theorem 3 待ち、別途 [B4.3] として deferred。
+    Theorem 3 を bypass できる事を確認。 composite-order や rational
+    class identity の一般形は依然 Theorem 3 待ち、[B4.3] として deferred。
 
 * **[B4.3] (deferred-heavy)** Composite-order / general rational-class
   Theorem 3 移植:
@@ -496,8 +507,9 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 7.1 短期 (1 commit 単位、各 < 200 LOC)
 
-**進捗 (2026-05-21)**: 旧 1〜5 項目はすべて **完了**。 B4.1 完了に伴い
-B4.2 を新規短期項目に追加。
+**進捗 (2026-05-21)**: 旧 1〜7 項目すべて **完了**。 B4.2 完了に伴い
+次の短期項目は B3.1+ (subrep formal identification) か A1.1 (SG(81,9)
+uniqueness 着手) を検討。
 
 1. ~~**[E1.1]** Prop 6 Sylow analysis~~ — **done** (commit `e673d3d`)。
 2. ~~**[E4.0]** Thm 7 Sylow analysis (110 dispatch)~~ — **done**。
@@ -506,12 +518,20 @@ B4.2 を新規短期項目に追加。
 5. ~~**[A2.1]** SG(625, 12) GAP 不変量検証~~ — **done**。
 6. ~~**[B4.1]** Cyclotomic integer trace for prime order p~~ — **done**
    (commit `be8c0d7`)。
-7. **[B4.2] (★ 次の短期項目)** Starred p-prime row dispatch using B4.1:
-   - `lem12_no_p7_a0_*` (Lem 12 p=7 starred): `aut_pow_prime_E7_trace_int`
-     (p=7) + mod arithmetic で True-stub → False 証明に格上げ。
-   - Lem 13 prime-order starred 行: 既存 `lem13_*_via_*FixedData_pow3` 系
-     conditional row に B4.1 を被せて unconditional 化。
-   - 見積もり: 各 row ~50-100 LOC, 1-2 commit。
+7. ~~**[B4.2]** Starred p-prime row dispatch using B4.1~~ — **done**:
+   - `lem12_no_p7_a0_58` (Lem 12 p=7 starred row): True-stub →
+     False 証明に格上げ。
+   - `lem13_p3_row_1_1_no` (Lem 13 p=3 (?, 1) starred row): B4.1 経由で
+     unconditional False。
+8. **[★ 次の短期項目]** 候補 — どれも独立で着手可:
+   - **[B3.1+]** χⱼ を `Representation.character` of spectral subrep
+     として formally identify (現状は trace 関数定義だけ。 subrep 同型
+     までは未)。 ~100-200 LOC 想定。
+   - **[A1.1] (orientation only)** Mathlib の `IsPGroup` 分類で位数 81
+     の群が 15 個ある事実が取れるか調査。 取れれば A1.2 へ。
+   - **[E5.0] 補強** `cor3_unified_arithmetic_bound` (proven) と
+     Sylow.Normal を組み合わせて `|Aut(Γ)| ≤ 375` の Mathlib-level
+     形式化を強化。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -591,6 +611,7 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
+* (HEAD) papers: Tier B B4.2 — Lem 12 p=7 a₀=58 starred + Lem 13 p=3 (?, 1) unconditional via B4.1
 * `be8c0d7` proofs+blogs: Tier B B4.1 cyclotomic integer trace + Lem 12 p=3 unconditional
 * `4b9a6b9` papers: Tier B - cyclotomic integer trace for order p + Lem 12 p=3 unstubbed
 * `0b0aaf5` proofs+blogs: Tier B Section 3 unstub + Lem 11 a2 char chain
