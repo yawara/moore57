@@ -53,19 +53,17 @@ prime order p) 完了 + Lem 12 p=3 starred 完全 unconditional 化 (commit `be8
 
 ### A2. `SG(625, 12)` 構築
 
-* **[A2.0] (未)** struct + group instance for `SG(625, 12)`.
-  - 4-generator polycyclic presentation `⟨f₁, f₂, f₃, f₄⟩`.
-  - 全元位数 5、中心 `⟨f₃, f₄⟩` (位数 25), Frattini `⟨f₄⟩` (位数 5)。
-  - 構築方法: SG819 を踏襲し、struct `{a b c d : ZMod 5}` + Eisenstein 型作用。
-  - 性能懸念: `mul_assoc` は 625³ ≈ 2.4 × 10⁸ ケース。`native_decide` で borderline。
-    分割 `decide` で逃げる方針を準備。
-* **[A2.1] (未)** GAP-quoted 不変量の検証 (`native_decide`):
-  - `card_eq : |SG625_12| = 625`
-  - `card_orderEq_five : 624` (全非単位元)
-  - `card_center : 25`
-  - `card_frattini : 5`
-  - `card_classes_25_non_normal : 30` (非正規位数25部分群の共役類数)
+* **[A2.0] (done)** `Foundations/GroupTheory/SmallGroup625_12.lean`:
+  Heisenberg cocycle 経由 `SG625_12 ≅ Heis(F₅) × Z₅` (struct
+  `{a b c d : ZMod 5}`, 全元位数 5)。 `mul_assoc` は ZMod 5 上の
+  polynomial identity (`ring`) で軽量に証明済 (native_decide 不要)。
+* **[A2.1] (done)** GAP-quoted 不変量検証 (`native_decide` ベース):
+  `card_eq = 625`, `card_orderEq_five = 624`, `card_center = 25`,
+  `card_frattini = 5`, `frattini_is_commutator_image` まで完了。
 * **[A2.2] (未)** 代表系 `U × V` 構造の検証 (Lem 22 の主要前提)。
+  - 必要なのは「位数 25 の Abel 部分群 U と位数 25 の非 Abel 部分群 V の
+    集合論的代表系での積分解」を Lean object として取り出すこと。
+  - 現状の `SG625_12.lean` の `center = ⟨f₃, f₄⟩` 構造から派生できそう。
 
 ### A3. SG(625, 12) uniqueness — 位数 625 群分類
 
@@ -590,3 +588,32 @@ paper-level の本当のボトルネックは:
 * [[project-papers-scaffold]] — Papers/ scaffold 全体状態
 * [[reference-moore57-papers]] — paper 出典 + Lean 進捗
 * [[project-moore57-state]] — implementation 側 D19 + Order22 + HS の済み状態
+
+## 10. 直近の主要 commit (2026-05-21)
+
+* `be8c0d7` proofs+blogs: Tier B B4.1 cyclotomic integer trace + Lem 12 p=3 unconditional
+* `4b9a6b9` papers: Tier B - cyclotomic integer trace for order p + Lem 12 p=3 unstubbed
+* `0b0aaf5` proofs+blogs: Tier B Section 3 unstub + Lem 11 a2 char chain
+* `f167ac0` papers: Tier B Section 3 unstub - Lem 6 (3) / Lem 9 (1) / Lem 10
+* `79cf986` papers: Tier B Cor 1 unstub + Lem 11 a2 conj via characters
+* `fa95482` proofs+blogs: Tier B continuation - Lem 11 chain + Lem 12/13 wrappers
+* `9ab7eca` papers: Tier B Lem 13 - FixedData-parameterised row bridges
+* `f17f4df` papers: Tier B Lem 11 char chain + Lem 12 paper-faithful wrappers
+* `4a73602` proofs+blogs: Tier B B5 partial - Lem 13/15/17/18/19 conditional rows
+* `51a70a5` papers: Tier B Lem 17/18/19 - dispatch numeric bounds
+* `b35143b` papers: Tier B Lem 13/15 - fix-set monotonicity + conditional rows
+* `734e884` papers: Tier B - spectral characters χ₀/χ₁/χ₂ + conj invariance + a₁/a₂ inverse formulas
+
+### 主要新規 infrastructure (今期)
+
+* `Foundations/LinearAlgebra/PowPrimeTrace.lean` — cyclicSum + cyclicProjection +
+  `exists_int_trace_of_pow_prime_eq_one` (任意 ℚ-線形 `f^p = 1` で
+  `trace(f) ∈ ℤ`, p prime)
+* `Moore57Graph/Aut/TraceIntegrality.lean` — `aut_pow_prime_E7_trace_int`
+  (`σ^p = 1` ⟹ `tr(E₇·P_σ) ∈ ℤ`, 既存 involution 版 p=2 の真の一般化)
+* `Moore57Graph/Characters.lean` — `chi0/chi1/chi2 : Equiv.Perm V → ℚ`
+  + conjugation invariance (`chi_j_conj`)
+* `Foundations/Representation/PermutationRepresentationCharacter.lean` —
+  `character_permutationRepresentation_eq_fixedVertexCount` bridge
+* `Foundations/GroupAction/FixedPoints.lean` — `fixedVertexSet_subset_pow`,
+  `fixedVertexCount_le_pow` (monotonicity under powers)
