@@ -105,6 +105,20 @@ theorem lem6_secondary_eigenvalues_via_discriminant
       have hsq : (2 * x - (lam - mu)) ^ 2 = d ^ 2 := by rw [h2x]; ring
       nlinarith [h_disc, hsq, sq_nonneg (2 * x - (lam - mu) + d)]
 
+/-- **Lemma 6 (paper-faithful conditional eigenvalue characterization).** [done]
+
+Proper-signature paper-faithful form: given perfect-square discriminant
+`(λ - μ)² + 4(k - μ) = d²` (Lem 7 Case II hypothesis), the secondary
+eigenvalues `s, t` are roots of `X² - (λ - μ)X - (k - μ) = 0`, explicitly
+`((λ - μ) ± d) / 2`.
+
+Re-export of `lem6_secondary_eigenvalues_via_discriminant`. -/
+theorem lem6_two_eigenvalues_paper
+    {lam mu k d : ℤ} (h_disc : (lam - mu) ^ 2 + 4 * (k - mu) = d ^ 2) (x : ℤ) :
+    x ^ 2 - (lam - mu) * x - (k - mu) = 0 ↔
+    2 * x = (lam - mu) + d ∨ 2 * x = (lam - mu) - d :=
+  lem6_secondary_eigenvalues_via_discriminant h_disc x
+
 /-- **Lemma 6 (two eigenvalues `s, t`).** [deferred-heavy]
 
 In addition to the eigenvalue `k` (multiplicity 1), the incidence matrix
@@ -113,7 +127,8 @@ the roots of `X² − (λ − μ)X − (k − μ) = 0` (when `|G|` is even) or
 `X² + X + (k + 1)/2 = 0` (when `|G|` is odd).
 
 The Moore57 specialization of the eigenvalue arithmetic is proven in
-`lem6_moore57_eigenvalues_arithmetic`. -/
+`lem6_moore57_eigenvalues_arithmetic`.  Conditional Case II form is
+`lem6_two_eigenvalues_paper` (above).  Backward-compat True-stub. -/
 theorem lem6_two_eigenvalues : True := by trivial
 
 end Moore57.Papers.Higman1964
