@@ -77,40 +77,65 @@
 
 ## 2. Tier B — 文字理論 (Macaj–Širáň §4)
 
-Theorem 3 (rational characters 不変) と Proposition 2 (character system) が
-ボトルネック。これらに依存する: Lem 11 (a₁, a₂ rational class 不変),
-Lem 13 fullテーブル, Lem 14 paper-faithful 形, Lem 18 一般。
+**進捗 (2026-05-20 夜 / commit `734e884`)**: [B1], [B2.0], [B2.1],
+[B3.0], [B3.1] (conj 部分), [B4.0] **完了**。 残り: [B4.1] (Theorem 3
+依存), [B3.1] subrep full bridge, [B5.0] / [B5.1] paper-faithful 全形。
 
 ### B1. Mathlib `Mathlib.RepresentationTheory` の整備状況確認
 
-* **[B1.0] (調査)** Mathlib に有限群の既約表現 / 指標表の何があるか正確に把握。
-  - `Mathlib.RepresentationTheory.Character` (基礎指標)
-  - `Mathlib.RepresentationTheory.Maschke` (Maschke)
-  - 有理指標 (rational class) 定式化があるか?
+* **[B1.0] (done)** Mathlib `RepresentationTheory.Character` に
+  `Representation.character g := LinearMap.trace k V (ρ g)` あり。
+  **rational class 概念は Mathlib になし** (Curtis–Reiner Theorem 3 も
+  Mathlib になし)。
 
 ### B2. Permutation representation character の Lean 化
 
-* **[B2.0] (未)** `Moore57.permutationRepresentation σ : Representation ℚ G V` の定義
-  (既存の `permMatrix σ` をベースに)。
-* **[B2.1] (未)** χ(σ) = `trace (permMatrix σ)` = `fixedVertexCount σ` の bridge。
+* **[B2.0] (done)** `Moore57.permutationRepresentation : Representation ℚ G (X →₀ ℚ)`
+  を `Representation.ofMulAction ℚ G X` で wrap 済
+  (`Foundations/Representation/PermutationRepresentationCharacter.lean`)。
+* **[B2.1] (done)** `character_permutationRepresentation_eq_fixedVertexCount`:
+  `(permutationRepresentation).character g = Moore57.fixedVertexCount (toPermHom g)`
+  bridge。
 
 ### B3. Moore57 spectral decomposition の character 接続
 
-* **[B3.0] (部分済)** `E57Matrix, E7Matrix, EMinus8Matrix` のスペクトル分解
-  + `Higman trace identity` は既に proven (`thm1_chi1_formula`).
-* **[B3.1] (未)** これらの projection を character として再解釈
-  (`χ₀(σ) = trace(E_57 · P_σ)` 等)。
+* **[B3.0] (done)** spectral 分解 (`adjMatrix = 57 E_57 + 7 E_7 - 8 E_-8`),
+  Higman trace identity (`thm1_chi1_formula`), trace decomp
+  (`trace_decomp_via_spectral`) 完了。
+* **[B3.1] (done)** `Moore57Graph/Characters.lean` で
+  `chi0/chi1/chi2 : Equiv.Perm V → ℚ` 関数定義 + 性質:
+  - `chi0_eq_one`: `χ₀(σ) = 1`
+  - `chi_sum_eq_fixedVertexCount`: `χ₀+χ₁+χ₂ = a₀`
+  - `adjacentMovedCount_eq_chi_combination`: `a₁ = 57χ₀+7χ₁−8χ₂`
+  - `chi0_conj`, `chi1_conj`, `chi2_conj`: graph-aut 共役不変性 (trace
+    cyclic + projection commutation)
+* **[B3.1+] (未, deferred)** χⱼ を `Representation.character` of
+  spectral subrepresentation として正式に identify (E_λ の range が
+  subrepresentation, restrict した character)。
 
 ### B4. Lem 3 + Thm 1 ⟹ a₁, a₂ の rational coefficient 表示
 
-* **[B4.0] (未)** `a₁(σ) = α₁·χ₀ + α₂·χ₁ + α₃·χ₂` の係数導出。
-* **[B4.1] (未)** Theorem 3 (有理指標は rational class 上で定数) を仮定として
-  Lem 11 a₁/a₂ を導出 (`lem11_ai_constant_on_rational_classes` の True-stub を埋める)。
+* **[B4.0] (done)** Section02_StateOfTheArt/Theorem1_Higman.lean に
+  inverse formulas を追加:
+  - `thm1_a0_eq_chi_sum`: `a₀ = χ₀ + χ₁ + χ₂`
+  - `thm1_a1_eq_chi_combination`: `a₁ = 57χ₀ + 7χ₁ - 8χ₂`
+  - `thm1_a2_eq_chi_combination`: `a₂ = 3192χ₀ - 8χ₁ + 7χ₂`
+  (matrix `P` の paper 形)。
+* **[B4.0+] (done)** Lemma11 に χⱼ conj-invariance wrappers
+  (`lem11_chi{0,1,2}_constant_under_graphAut_conjugation`)
+  ← `chi_j_conj` from Characters.lean。
+* **[B4.1] (未, deferred-heavy)** Theorem 3 (Curtis–Reiner) を仮定として
+  `lem11_ai_constant_on_rational_classes` の True-stub を埋める
+  (Mathlib に Theorem 3 なし、external 依存)。
 
 ### B5. Lem 13, Lem 14 paper-faithful 形
 
-* **[B5.0] (未)** Lem 13 full 6-row table (starred row 含む) を char-theoretic に。
-* **[B5.1] (未)** Lem 14 `a₁(x) ≡ b₁(x) (mod |X|)` の semi-regular 軌道分解 + 文字版。
+* **[B5.0] (部分 done)** Lem 13 starred rows は arithmetic core で
+  処理済 (commit `f12e30e`)。 full 6-row table を char-theoretic に
+  ⟶ Theorem 3 / Prop 2 待ち、deferred。
+* **[B5.1] (部分 done)** `lem14_arithmetic_decomp` (`a₁ ≡ b₁_P + b₁_Q
+  (mod n)` ℤ-arithmetic packaging) 既に done。 full semi-regular
+  軌道分解は character + Prop 2 依存、deferred-heavy。
 
 ---
 
