@@ -265,13 +265,19 @@ fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion
       `sup_ker_aeval_eq_ker_aeval_mul_of_coprime`)。
     - `sup_ker_aeval_cyclotomic_divisors_eq_top` — `f^n = 1` (n > 0)
       ⟹ `⨆_{d ∣ n} ker(aeval f Φ_d) = ⊤` (kernels span W)。
-  - **Step 3 (partial done)** Pairwise-with-rest disjointness:
+  - **Step 3 (done)** Pairwise disjointness ⟹ internal direct sum:
     - `disjoint_ker_aeval_cyclotomic_iSup_of_not_mem` — `a ∉ s` ⟹
       `Disjoint (ker(Φ_a)) (⨆ d ∈ s, ker(Φ_d))`
-      (Step 2 + Mathlib `disjoint_ker_aeval_of_isCoprime` +
-      `IsCoprime.prod_right`)。
-    - 残: `iSupIndep` への格上げ + `isInternal_submodule_iff_iSupIndep_and_iSup_eq_top`
-      で `DirectSum.IsInternal` の取得 (Step 3 full)。
+      (Step 2 + Mathlib `disjoint_ker_aeval_of_isCoprime`)。
+    - `supIndep_ker_aeval_cyclotomic` — `s.SupIndep (fun d => ker(Φ_d))`
+      (`Finset.supIndep_iff_disjoint_erase` 経由)。
+    - `iSupIndep_ker_aeval_cyclotomic_divisors` — `iSupIndep` form
+      (subtype-indexed by `↑(Nat.divisors n)`, `Finset.SupIndep.independent`
+      alias 経由)。
+    - `isInternal_ker_aeval_cyclotomic_divisors` — `f^n = 1` (n > 0) ⟹
+      `DirectSum.IsInternal` for `(ker(aeval f Φ_d))_{d ∣ n}`
+      (`isInternal_submodule_iff_iSupIndep_and_iSup_eq_top` + Step 2 +
+      `iSup_subtype`)。 Step 4 (trace 公式) の直接入力。
   - **Step 4-6 (deferred)** 残り:
     - Step 4: per-block trace formula = `μ(d) · γ_d`
     - Step 5: specialise to `n = 25` for Lem 13 p=5 starred rows

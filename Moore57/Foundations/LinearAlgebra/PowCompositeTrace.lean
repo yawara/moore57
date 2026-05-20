@@ -3,9 +3,11 @@ import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 import Mathlib.RingTheory.Polynomial.Basic
 import Mathlib.RingTheory.Coprime.Lemmas
+import Mathlib.Algebra.DirectSum.Module
+import Mathlib.Order.SupIndep
 
 /-!
-# Trace of a finite-order linear endomorphism (composite order, Steps 1-3)
+# Trace of a finite-order linear endomorphism (composite order, Steps 1-3 done)
 
 **Roadmap [B4.3] composite-order Galois cyclotomic decomp** — gradual
 build-out.  This module generalizes `Foundations/LinearAlgebra/PowPrimeTrace.lean`
@@ -38,20 +40,22 @@ trace.  The strategy follows the classical Galois–Möbius argument:
 * `sup_ker_aeval_cyclotomic_divisors_eq_top` — `f^n = 1` (n > 0) ⟹
   `⨆_{d ∣ n} ker(aeval f Φ_d) = ⊤` (kernels span `W`).
 
-## Step 3 (partial): pairwise disjointness helper
+## Step 3: pairwise disjointness ⟹ internal direct sum
 
 * `disjoint_ker_aeval_cyclotomic_iSup_of_not_mem` — for `a ∉ s`,
   `Disjoint (ker(aeval f Φ_a)) (⨆ d ∈ s, ker(aeval f Φ_d))` (Step 2
-  + Mathlib's `disjoint_ker_aeval_of_isCoprime`).  Combined with Step 2
-  this gives the lattice-independence input toward `iSupIndep` and
-  ultimately `DirectSum.IsInternal`.
+  + Mathlib's `disjoint_ker_aeval_of_isCoprime`).
+* `supIndep_ker_aeval_cyclotomic` — `s.SupIndep (fun d => ker(aeval f Φ_d))`
+  for any `s : Finset ℕ` (the disjoint helper packaged as a
+  `Finset.SupIndep`).
+* `iSupIndep_ker_aeval_cyclotomic_divisors` — `iSupIndep` form of the
+  cyclotomic-kernel family, indexed by `↑(Nat.divisors n)`.
+* `isInternal_ker_aeval_cyclotomic_divisors` — `f^n = 1` (n > 0) ⟹
+  `DirectSum.IsInternal` for the family `(ker(aeval f Φ_d))_{d ∣ n}`
+  (Mathlib's `isInternal_submodule_iff_iSupIndep_and_iSup_eq_top`).
 
 ## Future steps (deferred)
 
-* Step 3 (full): upgrade the disjoint helper to `iSupIndep` and combine
-  with Step 2's "kernels span" to get `DirectSum.IsInternal` for the
-  family `(ker(aeval f Φ_d))_{d ∣ n}` (Mathlib's
-  `isInternal_submodule_iff_iSupIndep_and_iSup_eq_top`).
 * Step 4: per-block trace formula = `μ(d) · γ_d`.
 * Step 5: specialise to `n = 25` for the Lemma 13 `p = 5` starred rows.
 * Step 6: apply via `Moore57Graph/Aut/TraceIntegrality.lean` and close
@@ -131,14 +135,10 @@ theorem sup_ker_aeval_cyclotomic_divisors_eq_top
       Polynomial.prod_cyclotomic_eq_X_pow_sub_one hn ℚ,
       aeval_X_pow_sub_one_eq_zero f hf, LinearMap.ker_zero]
 
-/-! ### Step 3 (partial): pairwise-with-rest disjointness -/
+/-! ### Step 3: pairwise disjointness ⟹ internal direct sum -/
 
 /-- **B4.3 Step 3 helper**: For `a ∉ s`, the kernel of `aeval f Φ_a` is
-disjoint from the supremum of the kernels of `aeval f Φ_d` for `d ∈ s`.
-
-This is the "pairwise disjoint from the rest" form that, paired with
-Step 2's "kernels span", will yield `iSupIndep` and ultimately
-`DirectSum.IsInternal` for the family `(ker(aeval f Φ_d))_{d ∣ n}`. -/
+disjoint from the supremum of the kernels of `aeval f Φ_d` for `d ∈ s`. -/
 theorem disjoint_ker_aeval_cyclotomic_iSup_of_not_mem
     (f : W →ₗ[ℚ] W) {a : ℕ} {s : Finset ℕ} (ha : a ∉ s) :
     Disjoint (LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic a ℚ)))
@@ -148,6 +148,45 @@ theorem disjoint_ker_aeval_cyclotomic_iSup_of_not_mem
   refine IsCoprime.prod_right ?_
   intro d hd
   exact Polynomial.cyclotomic.isCoprime_rat (fun heq => ha (heq ▸ hd))
+
+/-- **Finset-`SupIndep` packaging**: for any `Finset ℕ`, the family
+`(ker(aeval f Φ_d))_{d ∈ s}` is independent in the Finset sense. -/
+theorem supIndep_ker_aeval_cyclotomic
+    (f : W →ₗ[ℚ] W) (s : Finset ℕ) :
+    s.SupIndep
+      (fun d : ℕ => LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d ℚ))) := by
+  classical
+  rw [Finset.supIndep_iff_disjoint_erase]
+  intro d _hd
+  rw [Finset.sup_eq_iSup]
+  exact disjoint_ker_aeval_cyclotomic_iSup_of_not_mem f (Finset.notMem_erase _ _)
+
+/-- **B4.3 Step 3 (iSupIndep form)**: the cyclotomic-kernel family
+`(ker(aeval f Φ_d))_{d ∣ n}` is independent in the complete-lattice
+sense, indexed by the subtype `↑(Nat.divisors n)`. -/
+theorem iSupIndep_ker_aeval_cyclotomic_divisors
+    (f : W →ₗ[ℚ] W) (n : ℕ) :
+    iSupIndep (fun d : (Nat.divisors n : Finset ℕ) =>
+      LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d.val ℚ))) := by
+  classical
+  exact (supIndep_ker_aeval_cyclotomic f (Nat.divisors n)).independent
+
+/-- **B4.3 Step 3 main**: `f^n = 1` (n > 0) ⟹ the cyclotomic-kernel
+family `(ker(aeval f Φ_d))_{d ∣ n}` forms an internal direct sum
+decomposition of `W`. -/
+theorem isInternal_ker_aeval_cyclotomic_divisors
+    (f : W →ₗ[ℚ] W) {n : ℕ} (hn : 0 < n) (hf : f ^ n = 1) :
+    DirectSum.IsInternal
+      (fun d : (Nat.divisors n : Finset ℕ) =>
+        LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d.val ℚ))) := by
+  rw [DirectSum.isInternal_submodule_iff_iSupIndep_and_iSup_eq_top]
+  refine ⟨iSupIndep_ker_aeval_cyclotomic_divisors f n, ?_⟩
+  rw [show (⨆ d : (Nat.divisors n : Finset ℕ),
+        LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d.val ℚ))) =
+        (⨆ d ∈ Nat.divisors n,
+          LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d ℚ))) from
+      iSup_subtype]
+  exact sup_ker_aeval_cyclotomic_divisors_eq_top f hn hf
 
 end
 
