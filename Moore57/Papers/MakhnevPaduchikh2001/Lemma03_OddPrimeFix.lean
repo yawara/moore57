@@ -59,4 +59,61 @@ theorem lem3_order11_case4 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
     fixedVertexCount σ = 5 :=
   aut_order_eleven_fixedVertexCount_eq_five hΓ σ hAut hpow hne
 
+/-- **Lemma 3, case (1) arithmetic core: odd prime divisors of `3250`.** [done]
+
+For `p` an odd prime dividing `3250`, conclude `p ∈ {5, 13}`.  Proof:
+factor `3250 = 2 · 5^3 · 13` and apply `Nat.Prime.dvd_mul` /
+`Nat.Prime.dvd_of_dvd_pow` plus `Nat.Prime.eq_one_or_self_of_dvd` for
+the prime factors. -/
+theorem lem3_case1_arithmetic_core
+    (p : ℕ) (hp_prime : Nat.Prime p) (hp_odd : 2 < p)
+    (hdvd : p ∣ 3250) :
+    p = 5 ∨ p = 13 := by
+  have h1 : p ∣ 2 ∨ p ∣ 5 * 5 * 5 * 13 := by
+    have h_eq : (3250 : ℕ) = 2 * (5 * 5 * 5 * 13) := by norm_num
+    rw [h_eq] at hdvd
+    exact (hp_prime.dvd_mul).mp hdvd
+  rcases h1 with h2 | h_rest
+  · have := Nat.le_of_dvd (by norm_num) h2
+    omega
+  have h2 : p ∣ 5 * 5 * 5 ∨ p ∣ 13 := by
+    have h_eq : (5 * 5 * 5 * 13 : ℕ) = (5 * 5 * 5) * 13 := by norm_num
+    rw [h_eq] at h_rest
+    exact (hp_prime.dvd_mul).mp h_rest
+  rcases h2 with h_5pow | h13
+  · have hp5 : p ∣ 5 := by
+      have h_pow : (5 * 5 * 5 : ℕ) = 5 ^ 3 := by norm_num
+      rw [h_pow] at h_5pow
+      exact hp_prime.dvd_of_dvd_pow h_5pow
+    have : p = 1 ∨ p = 5 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 5)) p hp5
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · left; exact h
+  · have : p = 1 ∨ p = 13 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 13)) p h13
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · right; exact h
+
+/-- **Lemma 3, case (1) conditional: empty fix odd-prime is in `{5, 13}`.** [done]
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` with
+`Fix(σ) = ∅`, conclude `p ∈ {5, 13}`.
+
+Proof: combine the generic mod-`p` constraint
+`fixedVertexCount σ ≡ |V| [MOD p]` (= `3250` for Moore57) with
+`fixedVertexCount σ = 0` to get `p ∣ 3250`, then apply the arithmetic
+core `lem3_case1_arithmetic_core`. -/
+theorem lem3_case1_empty_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (h_fix_empty : fixedVertexCount σ = 0) :
+    p = 5 ∨ p = 13 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_card_of_pow_prime σ p hpow
+  rw [hΓ.card, h_fix_empty] at hmod
+  -- hmod : 0 ≡ 3250 [MOD p]; flip to get 3250 ≡ 0 [MOD p], hence p ∣ 3250.
+  have hdvd : p ∣ 3250 := Nat.modEq_zero_iff_dvd.mp hmod.symm
+  exact lem3_case1_arithmetic_core p Fact.out hp_odd hdvd
+
 end Moore57.Papers.MakhnevPaduchikh2001
