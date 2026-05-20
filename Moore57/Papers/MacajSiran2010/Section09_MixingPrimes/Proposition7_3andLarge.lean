@@ -208,13 +208,32 @@ theorem prop7_q19_sylow19_normal
     exact h_count.le
   exact Sylow.normal_of_subsingleton P
 
+/-- **Proposition 7 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature wrapper for the paper's per-`q` `|X| ∣ {147, 39, 171}`
+classification.  Given the case dispatch (q ∈ {7, 13, 19} with
+appropriate (a, b) constraints) as input, conclude
+`|X| ∈ {divisors of 147 ∨ 39 ∨ 171}`.
+
+The geometric content (which case applies based on the Sylow structure)
+is deferred-heavy (paper's `q ≠ 11`, `P ⋪ X`, per-`q` bounds). -/
+theorem prop7_3_and_large_paper
+    (a b : ℕ) (q : ℕ)
+    (h_a_pos : 1 ≤ a) (h_b_pos : 1 ≤ b)
+    (h_case_dispatch : ((q = 7 ∧ a = 1 ∧ b ≤ 2) ∨
+                        (q = 13 ∧ a = 1 ∧ b = 1) ∨
+                        (q = 19 ∧ a ≤ 2 ∧ b = 1))) :
+    (3^a * q^b) ∣ 147 ∨ (3^a * q^b) ∣ 39 ∨ (3^a * q^b) ∣ 171 :=
+  prop7_card_dvd_147_39_or_171 a b q h_a_pos h_b_pos h_case_dispatch
+
 /-- **Proposition 7 (`(p, q) = (3, large)` classification).** [deferred-heavy]
 
 The arithmetic content of the case-by-case `|X|` enumeration is captured
 by `prop7_card_enumeration` and the Cor 3 bridge by
-`prop7_card_dvd_147_39_or_171`.  The Feit–Thompson-free Sylow dispatch
-giving `Q ◁ X` is captured by `prop7_q*_sylow*_count_one` lemmas (one
-per q ∈ {7, 13, 19}) and unified in `prop7_sylow_q_count_one`.
+`prop7_card_dvd_147_39_or_171` / `prop7_3_and_large_paper` (above).
+The Feit–Thompson-free Sylow dispatch giving `Q ◁ X` is captured by
+`prop7_q*_sylow*_count_one` lemmas (one per q ∈ {7, 13, 19}) and
+unified in `prop7_sylow_q_count_one`.
 
 What remains for the unconditional statement is the geometric/structural
 side: showing `q ≠ 11`, `P ⋪ X`, and the per-`q` bounds on `|P|` and

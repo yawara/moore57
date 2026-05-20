@@ -183,14 +183,30 @@ theorem prop8_q11_sylow11_normal
     exact h_count.le
   exact Sylow.normal_of_subsingleton P
 
+/-- **Proposition 8 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature wrapper for the paper's two-`q` `|X| ∣ {35, 275}`
+classification.  Given the case dispatch (q ∈ {7, 11} with appropriate
+(a, b)) as input, conclude `|X| ∈ {divisors of 35 ∨ 275}`.
+
+The geometric content (which case applies + ruling out q ∈ {13, 19})
+is deferred-heavy. -/
+theorem prop8_5_and_large_paper
+    (a b : ℕ) (q : ℕ)
+    (h_a_pos : 1 ≤ a) (h_b_pos : 1 ≤ b)
+    (h_case_dispatch : ((q = 7 ∧ a = 1 ∧ b = 1) ∨
+                        (q = 11 ∧ a ≤ 2 ∧ b = 1))) :
+    (5^a * q^b) ∣ 35 ∨ (5^a * q^b) ∣ 275 :=
+  prop8_card_dvd_35_or_275 a b q h_a_pos h_b_pos h_case_dispatch
+
 /-- **Proposition 8 (`(p, q) = (5, large)` classification).** [deferred-heavy]
 
 The arithmetic backbone for both cases is captured by
 `prop8_q7_card_eq_35` / `prop8_q11_card_dvd_275` /
-`prop8_card_dvd_35_or_275`.  The Feit–Thompson-free Sylow dispatch
-giving `Q ◁ X` (and `P ◁ X` when q = 7) is captured by
-`prop8_q*_sylow*_count_one` lemmas and unified in
-`prop8_sylow_q_count_one`.
+`prop8_card_dvd_35_or_275` / `prop8_5_and_large_paper` (above).
+The Feit–Thompson-free Sylow dispatch giving `Q ◁ X` (and `P ◁ X`
+when q = 7) is captured by `prop8_q*_sylow*_count_one` lemmas and
+unified in `prop8_sylow_q_count_one`.
 
 What remains for the unconditional statement is the geometric/structural
 side: showing `q ∈ {7, 11}` (excluding `q ∈ {13, 19}` via Lem 18
