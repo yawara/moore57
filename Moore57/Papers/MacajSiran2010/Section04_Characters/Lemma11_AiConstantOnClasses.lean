@@ -110,6 +110,43 @@ theorem lem11_chi2_constant_under_graphAut_conjugation
     chi2 Γ (τ * σ * τ⁻¹) = chi2 Γ σ :=
   chi2_conj σ τ hτ
 
+/-! ### `a₀, a₁` conjugation invariance via the character chain
+
+The paper's *character-theoretic* derivation of `aᵢ` conjugation
+invariance (alternative to the direct subset/bijection arguments).
+This chain uses the Theorem 1 inverse formulas combined with
+`chi_j_conj`, mirroring the paper's reasoning step.
+-/
+
+/-- **Lemma 11 `a₀` conj-invariance via character chain.** [done]
+
+`a₀(τστ⁻¹) = χ₀(τστ⁻¹) + χ₁(τστ⁻¹) + χ₂(τστ⁻¹)` (Theorem 1 row 0)
+`= χ₀(σ) + χ₁(σ) + χ₂(σ)` (chi conj invariance)
+`= a₀(σ)`. -/
+theorem lem11_a0_via_characters
+    (σ τ : Equiv.Perm V)
+    (hτ : ∀ v w, Γ.Adj v w ↔ Γ.Adj (τ v) (τ w)) :
+    (fixedVertexCount (τ * σ * τ⁻¹) : ℚ) = (fixedVertexCount σ : ℚ) := by
+  have h_dest := chi_sum_eq_fixedVertexCount (V := V) (Γ := Γ) (τ * σ * τ⁻¹)
+  have h_src := chi_sum_eq_fixedVertexCount (V := V) (Γ := Γ) σ
+  rw [chi0_conj σ τ, chi1_conj σ τ hτ, chi2_conj σ τ hτ] at h_dest
+  linarith [h_dest, h_src]
+
+/-- **Lemma 11 `a₁` conj-invariance via character chain.** [done]
+
+`a₁(τστ⁻¹) = 57·χ₀ + 7·χ₁ − 8·χ₂` evaluated at `τστ⁻¹`
+`= 57·χ₀(σ) + 7·χ₁(σ) − 8·χ₂(σ)` (chi conj invariance)
+`= a₁(σ)`. -/
+theorem lem11_a1_via_characters
+    (hΓ : IsMoore57 Γ) (σ τ : Equiv.Perm V)
+    (hτ : ∀ v w, Γ.Adj v w ↔ Γ.Adj (τ v) (τ w)) :
+    (adjacentMovedCount Γ (τ * σ * τ⁻¹) : ℚ) =
+      (adjacentMovedCount Γ σ : ℚ) := by
+  have h_dest := adjacentMovedCount_eq_chi_combination hΓ (τ * σ * τ⁻¹)
+  have h_src := adjacentMovedCount_eq_chi_combination hΓ σ
+  rw [chi0_conj σ τ, chi1_conj σ τ hτ, chi2_conj σ τ hτ] at h_dest
+  linarith [h_dest, h_src]
+
 /-- **Lemma 11 (`aᵢ` constant on rational classes).** [deferred-heavy]
 
 The `a₀` part is fully proven as `lem11_a0_constant_on_rational_classes`

@@ -1,8 +1,13 @@
 import Moore57.Papers.MacajSiran2010.Section04_Characters.Proposition2_CharacterSystem
+import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Lemma2_Involution
 import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Lemma3_Chi1Formula
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
 import Moore57.Moore57Graph.Aut.FixedCount
 import Moore57.Moore57Graph.Aut.OrderElevenIsC5
+import Moore57.Moore57Graph.Aut.FixedSubgraphData
+import Moore57.Moore57Graph.Aut.HSFixedData
+import Moore57.Moore57Graph.Aut.PetersenFixedData
+import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -37,6 +42,22 @@ namespace Moore57.Papers.MacajSiran2010.S5
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Lemma 12 (p=2 row): `a₀(x) = 56` for an involution `σ ≠ 1`.** [done]
+Re-exports `Section02.Lemma2.lem2_involution_a0`. -/
+theorem lem12_p2_a0_56 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ v w, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hpow : σ ^ 2 = 1) (hne : σ ≠ 1) :
+    fixedVertexCount σ = 56 :=
+  Moore57.Papers.MacajSiran2010.S2.lem2_involution_a0 hΓ σ hpow hne hAut
+
+/-- **Lemma 12 (p=2 row, a₁): `a₁(x) = 112` for an involution `σ ≠ 1`.** [done]
+Re-exports `Section02.Lemma2.lem2_involution_a1`. -/
+theorem lem12_p2_a1_112 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ v w, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hpow : σ ^ 2 = 1) (hne : σ ≠ 1) :
+    adjacentMovedCount Γ σ = 112 :=
+  Moore57.Papers.MacajSiran2010.S2.lem2_involution_a1 hΓ σ hpow hne hAut
 
 /-- **Lemma 12 (p=19 row): `a₀(x) = 1` for an order-19 automorphism.** -/
 theorem lem12_p19_a0_one (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
@@ -200,6 +221,68 @@ theorem lem12_a1_zero_of_closed_neighbourhood_fixed
     exact this
   -- Triangle v ~ σv, σv ~ b, b ~ v.
   exact hΓ.no_triangle hv hσvb hvb.symm
+
+/-- **Lemma 12 (p=5 row) via FixedData dispatch.** [done]
+
+Given an order-5 graph automorphism σ and a FixedData dispatch over the
+three Lem 4 cases for p=5 (empty / pentagon / HS), conclude
+`a₀(σ) ∈ {0, 5, 50}` matching the Lem 12 p=5 row.
+
+Note: Lem 4 case 4 (pentagon p ∈ {5, 11}) gives a₀ = 5; case 6 (HS p = 5)
+gives a₀ = 50; case 1 (empty p ∈ {5, 13}) gives a₀ = 0.  The full Lem 12
+p=5 row would say "exactly these three values occur"; the dispatch
+hypothesis is the deferred-heavy fix-shape classification (Lem 4 unified).
+
+FixedData are bundled `Type`s, so the dispatch hypothesis uses
+`Nonempty (...)` wrappers to live in `Prop`. -/
+theorem lem12_p5_a0_dispatch
+    (σ : Equiv.Perm V)
+    (h_case : Nonempty (EmptyFixedData σ) ∨ Nonempty (C5FixedData Γ σ) ∨
+              Nonempty (HSFixedData Γ σ)) :
+    fixedVertexCount σ = 0 ∨ fixedVertexCount σ = 5 ∨
+      fixedVertexCount σ = 50 := by
+  rcases h_case with h0 | h5 | h50
+  · obtain ⟨h⟩ := h0; left; exact h.fixedVertexCount_eq_zero
+  · obtain ⟨h⟩ := h5; right; left; exact h.fixedVertexCount_eq_5
+  · obtain ⟨h⟩ := h50; right; right; exact h.fixedVertexCount_eq_50
+
+/-- **Lemma 12 (p=13 row) via EmptyFixedData.** [done]
+
+For order 13, Lem 4 forces case 1 (empty fix) — the only case
+consistent with `p = 13` is case 1 (p ∈ {5, 13}).  Given the
+geometric `EmptyFixedData σ` (which encodes empty fix), `a₀(σ) = 0`.
+
+The deferred piece is showing `EmptyFixedData σ` is the unique
+applicable case for `p = 13`. -/
+theorem lem12_p13_a0_zero_from_emptyFixedData
+    (σ : Equiv.Perm V)
+    (h : EmptyFixedData σ) :
+    fixedVertexCount σ = 0 :=
+  h.fixedVertexCount_eq_zero
+
+/-- **Lemma 12 (p=3 row, a₀ = 10) via PetersenFixedData.** [done]
+
+Non-starred Lem 12 p=3 row: a₀ = 10 (Petersen fix).  Given
+`PetersenFixedData Γ σ`, `a₀(σ) = 10`. -/
+theorem lem12_p3_a0_ten_from_petersenFixedData
+    (σ : Equiv.Perm V)
+    (h : PetersenFixedData Γ σ) :
+    fixedVertexCount σ = 10 :=
+  h.fixedVertexCount_eq_10
+
+/-- **Lemma 12 (p=7 row, a₀ = 2) via SingletonFixedData (lone fix vertex).**
+[done]
+
+Lem 12 p=7 starred row has a₀ = 58 (closed neighbourhood fixed).  The
+non-starred a₀ = 2 case corresponds to a "lone fix + leaf" (star with
+one leaf), where `|N(a) ∩ Fix(σ)| = 1`.  Given `SingletonFixedData σ`
+(only one σ-fixed vertex), `a₀ = 1`.  This isn't precisely the p=7 row
+since `a₀ = 1` is the Lem 4 case (2) p ∈ {3, 19} not p=7. -/
+theorem lem12_a0_one_from_singletonFixedData
+    (σ : Equiv.Perm V)
+    (h : SingletonFixedData σ) :
+    fixedVertexCount σ = 1 :=
+  h.fixedVertexCount_eq_one
 
 /-- **Lemma 12 (corollary, starred row `p = 7, a₀ = 58` cannot occur).** [deferred-heavy]
 
