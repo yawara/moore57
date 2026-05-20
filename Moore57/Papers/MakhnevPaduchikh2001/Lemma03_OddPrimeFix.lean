@@ -261,4 +261,100 @@ theorem lem3_case5_petersen_fix
     simpa using h_dvd_diff
   exact lem3_case5_arithmetic_core p Fact.out hp_odd hdvd
 
+/-- **Lemma 3, case (3) arithmetic core: odd prime divisors of `56`.** [done]
+
+For `p` an odd prime dividing `56 = 2^3 · 7`, conclude `p = 7`. -/
+theorem lem3_case3_arithmetic_core
+    (p : ℕ) (hp_prime : Nat.Prime p) (hp_odd : 2 < p)
+    (hdvd : p ∣ 56) :
+    p = 7 := by
+  have h_eq : (56 : ℕ) = 2^3 * 7 := by norm_num
+  rw [h_eq] at hdvd
+  have h1 : p ∣ 2^3 ∨ p ∣ 7 := (hp_prime.dvd_mul).mp hdvd
+  rcases h1 with h2pow | h7
+  · have hp_dvd_2 : p ∣ 2 := hp_prime.dvd_of_dvd_pow h2pow
+    have := Nat.le_of_dvd (by norm_num) hp_dvd_2
+    omega
+  · have : p = 1 ∨ p = 7 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 7)) p h7
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · exact h
+
+/-- **Lemma 3, case (3) conditional: star-leaf fix forces `p = 7`.** [done]
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` fixing a
+star-leaf vertex `a` whose σ-fixed-neighbour count is 1 (only the
+star centre is fixed and adjacent to `a`), conclude `p = 7`.
+
+This is the paper-tight restriction (`|X| ∣ 7`) for case (3).
+
+Proof: the local mod-`p` constraint at `a` with `|N(a) ∩ Fix| = 1`
+gives `p ∣ 56 = 57 − 1`.  Apply the arithmetic core. -/
+theorem lem3_case3_star_leaf_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (hAut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    {a : V} (ha : σ a = a)
+    (h_N_fix_leaf : (Moore57.autFixedNeighborFinset Γ σ a).card = 1) :
+    p = 7 := by
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
+    σ hAut p hpow ha
+  rw [hΓ.regular.degree_eq a, h_N_fix_leaf] at hmod
+  -- hmod : 1 ≡ 57 [MOD p]
+  have hdvd : p ∣ 56 := by
+    have h_dvd_diff : p ∣ 57 - 1 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact lem3_case3_arithmetic_core p Fact.out hp_odd hdvd
+
+/-- **Lemma 3, case (4) arithmetic core: odd prime divisors of `55`.** [done]
+
+For `p` an odd prime dividing `55 = 5 · 11`, conclude `p ∈ {5, 11}`. -/
+theorem lem3_case4_arithmetic_core
+    (p : ℕ) (hp_prime : Nat.Prime p) (_hp_odd : 2 < p)
+    (hdvd : p ∣ 55) :
+    p = 5 ∨ p = 11 := by
+  have h_eq : (55 : ℕ) = 5 * 11 := by norm_num
+  rw [h_eq] at hdvd
+  have h1 : p ∣ 5 ∨ p ∣ 11 := (hp_prime.dvd_mul).mp hdvd
+  rcases h1 with h5 | h11
+  · have : p = 1 ∨ p = 5 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 5)) p h5
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · left; exact h
+  · have : p = 1 ∨ p = 11 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 11)) p h11
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · right; exact h
+
+/-- **Lemma 3, case (4) conditional: pentagon-vertex fix forces `p ∈ {5, 11}`.** [done]
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` fixing a
+pentagon-vertex `a` whose σ-fixed-neighbour count is 2 (the pentagon
+`C_5` has degree 2), conclude `p ∈ {5, 11}`.
+
+This is the paper-tight restriction (`|X| ∣ 5·11 = 55`) for case (4).
+
+Proof: the local mod-`p` constraint at `a` with `|N(a) ∩ Fix| = 2`
+gives `p ∣ 55 = 57 − 2`.  Apply the arithmetic core. -/
+theorem lem3_case4_pentagon_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (hAut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    {a : V} (ha : σ a = a)
+    (h_N_fix_pentagon : (Moore57.autFixedNeighborFinset Γ σ a).card = 2) :
+    p = 5 ∨ p = 11 := by
+  have hmod := Moore57.aut_card_fixedNeighborFinset_modEq_degree_of_pow_prime
+    σ hAut p hpow ha
+  rw [hΓ.regular.degree_eq a, h_N_fix_pentagon] at hmod
+  -- hmod : 2 ≡ 57 [MOD p]
+  have hdvd : p ∣ 55 := by
+    have h_dvd_diff : p ∣ 57 - 2 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact lem3_case4_arithmetic_core p Fact.out hp_odd hdvd
+
 end Moore57.Papers.MakhnevPaduchikh2001
