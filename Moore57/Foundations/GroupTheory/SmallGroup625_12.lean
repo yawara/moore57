@@ -1,5 +1,7 @@
 import Mathlib.Data.ZMod.Basic
 import Mathlib.GroupTheory.OrderOfElement
+import Mathlib.Algebra.Group.Subgroup.Defs
+import Mathlib.GroupTheory.Subgroup.Center
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.Ring
 
@@ -191,6 +193,107 @@ theorem frattini_is_commutator_image :
     ∀ k : ZMod 5,
       ∃ g h : SG625_12, g⁻¹ * h⁻¹ * g * h = ⟨0, 0, k, 0⟩ := by
   native_decide
+
+/-! ### Heisenberg × Z₅ explicit subgroup decomposition (A2.2)
+
+Mačaj–Širáň 2010 §8 Lem 22 uses the structural decomposition
+`SG625_12 ≅ Heis(F₅) × Z₅` where `Heis(F₅)` is the order-125 Heisenberg
+subgroup and `Z₅` is a direct factor.  We make this decomposition
+explicit at the `Subgroup SG625_12` level. -/
+
+/-- The Heisenberg subgroup `Heis(F₅) = {(a, b, c, 0) : a, b, c ∈ Z₅}`,
+an order-125 non-abelian subgroup of `SG625_12`. -/
+def heisSubgroup : Subgroup SG625_12 where
+  carrier := {g | g.d = 0}
+  mul_mem' {a b} ha hb := by
+    change (a * b).d = 0
+    rw [mul_d, show a.d = 0 from ha, show b.d = 0 from hb, add_zero]
+  one_mem' := rfl
+  inv_mem' {a} ha := by
+    change a⁻¹.d = 0
+    rw [inv_d, show a.d = 0 from ha, neg_zero]
+
+/-- The `Z₅` direct factor `{(0, 0, 0, d) : d ∈ Z₅}`, an order-5 cyclic
+central subgroup of `SG625_12`. -/
+def z5DirectFactor : Subgroup SG625_12 where
+  carrier := {g | g.a = 0 ∧ g.b = 0 ∧ g.c = 0}
+  mul_mem' {a b} ha hb := by
+    obtain ⟨ha_a, ha_b, ha_c⟩ := ha
+    obtain ⟨hb_a, hb_b, hb_c⟩ := hb
+    refine ⟨?_, ?_, ?_⟩
+    · change (a * b).a = 0
+      rw [mul_a, ha_a, hb_a, add_zero]
+    · change (a * b).b = 0
+      rw [mul_b, ha_b, hb_b, add_zero]
+    · change (a * b).c = 0
+      rw [mul_c, ha_c, hb_c, ha_a, hb_b, ha_b]
+      ring
+  one_mem' := ⟨rfl, rfl, rfl⟩
+  inv_mem' {a} ha := by
+    obtain ⟨ha_a, ha_b, ha_c⟩ := ha
+    refine ⟨?_, ?_, ?_⟩
+    · change a⁻¹.a = 0; rw [inv_a, ha_a, neg_zero]
+    · change a⁻¹.b = 0; rw [inv_b, ha_b, neg_zero]
+    · change a⁻¹.c = 0; rw [inv_c, ha_c, neg_zero]
+
+@[simp] theorem mem_heisSubgroup_iff (g : SG625_12) :
+    g ∈ heisSubgroup ↔ g.d = 0 := Iff.rfl
+
+@[simp] theorem mem_z5DirectFactor_iff (g : SG625_12) :
+    g ∈ z5DirectFactor ↔ g.a = 0 ∧ g.b = 0 ∧ g.c = 0 := Iff.rfl
+
+instance : DecidablePred (· ∈ heisSubgroup) :=
+  fun g => decidable_of_iff (g.d = 0) (mem_heisSubgroup_iff g).symm
+
+instance : DecidablePred (· ∈ z5DirectFactor) :=
+  fun g => decidable_of_iff (g.a = 0 ∧ g.b = 0 ∧ g.c = 0)
+    (mem_z5DirectFactor_iff g).symm
+
+/-- `|Heis(F₅)| = 125`. -/
+theorem heisSubgroup_card :
+    Fintype.card heisSubgroup = 125 := by native_decide
+
+/-- `|Z₅| = 5`. -/
+theorem z5DirectFactor_card :
+    Fintype.card z5DirectFactor = 5 := by native_decide
+
+/-- The Heisenberg subgroup is normal in `SG625_12` (it's the kernel of
+the projection `d : SG625_12 → Z₅` to the abelian quotient). -/
+theorem heisSubgroup_normal : heisSubgroup.Normal where
+  conj_mem g hg c := by
+    change (c * g * c⁻¹).d = 0
+    rw [mul_d, mul_d, inv_d, show g.d = 0 from hg, add_zero, add_neg_cancel]
+
+/-- The `Z₅` direct factor is contained in the center
+(every `(0, 0, 0, d)` commutes with every element of `SG625_12`). -/
+theorem z5DirectFactor_le_center :
+    z5DirectFactor ≤ Subgroup.center SG625_12 := by
+  intro g hg
+  obtain ⟨ha, hb, hc⟩ := hg
+  rw [Subgroup.mem_center_iff]
+  intro h
+  apply SG625_12.ext
+  · change (h * g).a = (g * h).a; simp [mul_a, ha]
+  · change (h * g).b = (g * h).b; simp [mul_b, hb]
+  · change (h * g).c = (g * h).c
+    simp only [mul_c, ha, hb, hc]
+    ring
+  · change (h * g).d = (g * h).d
+    simp only [mul_d]
+    ring
+
+/-- `Heis(F₅) ∩ Z₅ = {1}` (intersection trivial, witnessing the direct
+product structure `SG625_12 ≅ Heis × Z₅`). -/
+theorem heisSubgroup_inf_z5DirectFactor_eq_bot :
+    heisSubgroup ⊓ z5DirectFactor = ⊥ := by
+  ext g
+  simp only [Subgroup.mem_inf, mem_heisSubgroup_iff, mem_z5DirectFactor_iff,
+    Subgroup.mem_bot]
+  constructor
+  · rintro ⟨hd, ha, hb, hc⟩
+    apply SG625_12.ext <;> simp [ha, hb, hc, hd]
+  · intro h; subst h
+    exact ⟨rfl, rfl, rfl, rfl⟩
 
 end SG625_12
 
