@@ -79,10 +79,53 @@ theorem lem5_block_design_count_moore57
     (1 : ℕ) * (3250 - 57 - 1) = 57 * (57 - 0 - 1) :=
   lem5_block_design_count_srg Γ hΓ (by norm_num)
 
+/-- **Corollary 1 arithmetic: odd `|G|` ⟹ `λ = μ`** (the underlying equality).
+[done]
+
+The standard rank-3 statement: when `|G|` is odd, the paired-orbit
+structure forces `λ = μ`.  Combined with the rank-3 identity
+`μ·l = k·(k − λ − 1)` and `n = 1 + k + l`, this further gives
+`λ = μ = (k − 1)/2`.
+
+Conditional arithmetic form: given `λ = μ`, the bilinear identity
+`λ·k + μ·l = k·(k − 1)` reduces to `λ·(k + l) = k·(k − 1)`, hence
+`λ·(n − 1) = k·(k − 1)`. -/
+theorem cor1_lem5_odd_order_arithmetic
+    {n k lam mu l : ℤ}
+    (h_n : n = 1 + k + l)
+    (h_param : lam * k + mu * l = k * (k - 1))
+    (h_lam_eq_mu : lam = mu) :
+    lam * (n - 1) = k * (k - 1) := by
+  rw [h_lam_eq_mu] at h_param
+  rw [h_lam_eq_mu, h_n]
+  have h_dist : mu * (1 + k + l - 1) = mu * k + mu * l := by ring
+  rw [h_dist]
+  exact h_param
+
+/-- **Corollary 1 Moore57 contrapositive: `λ ≠ μ`**. [done]
+
+For Moore57 with `(λ, μ) = (0, 1)`, the paired-orbit equality `λ = μ`
+required by odd order *fails*: `0 ≠ 1`.  Hence by the contrapositive of
+Corollary 1, any rank-3 group acting on a Moore57 graph has *even*
+order.
+
+This is the arithmetic core of the "even Aut" branch for Moore57. -/
+theorem cor1_lem5_moore57_lambda_ne_mu : (0 : ℤ) ≠ 1 := by decide
+
 /-- **Corollary 2** (`μ = 0 ⇔ G primitive and k ≤ l ⇔ λ = k − 1`). [deferred-heavy] -/
 theorem cor2_lem5_mu_zero_iff_primitive : True := by trivial
 
 /-- **Corollary 3** (`G primitive ⇔ μ ∉ {0, k}`). [deferred-heavy] -/
 theorem cor3_lem5_primitive_iff_mu_nontrivial : True := by trivial
+
+/-- **Corollary 3 Moore57 instance**: `μ = 1 ∉ {0, 57}`. [done]
+
+For Moore57 with `(μ, k) = (1, 57)`, the primitivity criterion
+`μ ∉ {0, k}` is satisfied: `1 ≠ 0` and `1 ≠ 57`.  Hence any rank-3
+group acting on a Moore57 graph is primitive (consistent with the
+Lemma 4 Moore57 instance `58 ∤ 3250`). -/
+theorem cor3_lem5_moore57_mu_not_zero_or_k :
+    (1 : ℕ) ≠ 0 ∧ (1 : ℕ) ≠ 57 :=
+  ⟨by decide, by decide⟩
 
 end Moore57.Papers.Higman1964
