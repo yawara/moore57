@@ -1,5 +1,7 @@
 import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Logic.Equiv.Defs
+import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Moore57Definition
 
 /-!
 # 固定部分グラフのデータ構造 (Tier 2)
@@ -69,6 +71,77 @@ def c (h : C5FixedData Γ σ) : V := h.v 3
 /-- 自然言語証明の `d` に対応する頂点. -/
 def d (h : C5FixedData Γ σ) : V := h.v 4
 
+/-- **Pentagon induced degree**: each `v i` has exactly 2 neighbours among
+the 4 other indexed fixed vertices (namely `v (i+1)` and `v (i-1)`).
+
+This is the C₅ induced-degree fact: pentagon is 2-regular. -/
+theorem induced_degree_two [DecidableRel Γ.Adj] (h : C5FixedData Γ σ)
+    (i : Fin 5) :
+    ((Finset.univ : Finset (Fin 5)).filter (fun j => Γ.Adj (h.v i) (h.v j))).card
+      = 2 := by
+  have hset :
+      ((Finset.univ : Finset (Fin 5)).filter (fun j => Γ.Adj (h.v i) (h.v j)))
+        = {i + 1, i - 1} := by
+    ext j
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+               Finset.mem_singleton]
+    constructor
+    · intro hadj
+      exact h.cycle_only i j hadj
+    · rintro (rfl | rfl)
+      · exact h.cycle_adj i
+      · have := h.cycle_adj (i - 1)
+        rw [sub_add_cancel] at this
+        exact this.symm
+  rw [hset]
+  have hne : (i + 1 : Fin 5) ≠ i - 1 := by
+    fin_cases i <;> decide
+  rw [Finset.card_insert_of_notMem (by simp [hne]), Finset.card_singleton]
+
+/-- **C₅ bridge to `autFixedNeighborFinset`**: for σ with `C5FixedData`,
+the σ-fixed neighbour count at any of the 5 fixed vertices equals `2`. -/
+theorem autFixedNeighborFinset_card_eq_two
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (h : C5FixedData Γ σ) (i : Fin 5) :
+    (autFixedNeighborFinset Γ σ (h.v i)).card = 2 := by
+  have heq :
+      autFixedNeighborFinset Γ σ (h.v i)
+        = ((Finset.univ : Finset (Fin 5)).filter
+            (fun j => Γ.Adj (h.v i) (h.v j))).image h.v := by
+    ext w
+    simp only [mem_autFixedNeighborFinset, Finset.mem_image, Finset.mem_filter,
+               Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨hadj, hfix⟩
+      obtain ⟨j, hj⟩ := h.span w hfix
+      exact ⟨j, hj ▸ hadj, hj.symm⟩
+    · rintro ⟨j, hadj, rfl⟩
+      exact ⟨hadj, h.v_fixed j⟩
+  rw [heq, Finset.card_image_of_injective _ h.v_injective]
+  exact h.induced_degree_two i
+
+/-- **C₅ complement neighbour count**: for σ with `C5FixedData` on a
+Moore57 graph, the σ-moved neighbour count at any of the 5 fixed vertices
+equals `55 = 57 − 2`.
+
+This is the §6 Lem 18 case (2) (Pentagon) semi-regular orbit input:
+σ acts on a 55-element set, and the orbit-stabilizer argument gives
+`orderOf σ ∣ 55`, which combined with `orderOf σ = 5^k` gives
+`orderOf σ ∣ 5`. -/
+theorem c5FixedData_complement_neighbor_count
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : C5FixedData Γ σ) (i : Fin 5) :
+    ((Γ.neighborFinset (h.v i)).filter (fun w => σ w ≠ w)).card = 55 := by
+  have h57 : (Γ.neighborFinset (h.v i)).card = 57 := by
+    have := hΓ.regular.degree_eq (h.v i)
+    rwa [SimpleGraph.degree] at this
+  have h2 : ((Γ.neighborFinset (h.v i)).filter (fun w => σ w = w)).card = 2 :=
+    h.autFixedNeighborFinset_card_eq_two i
+  have hsum := Finset.card_filter_add_card_filter_not (s := Γ.neighborFinset (h.v i))
+    (p := fun w => σ w = w)
+  change ((Γ.neighborFinset (h.v i)).filter (fun w => ¬ σ w = w)).card = 55
+  omega
+
 end C5FixedData
 
 /-! ## K_{1,55} fixed subgraph data -/
@@ -105,5 +178,92 @@ structure K155FixedData (Γ : SimpleGraph V) (τ : Equiv.Perm V) where
   adj_center : ∀ i : Fin 55, Γ.Adj center (leaf i)
   /-- 葉同士は非隣接 (= star の特性). -/
   no_leaf_leaf : ∀ i j : Fin 55, ¬ Γ.Adj (leaf i) (leaf j)
+
+namespace K155FixedData
+
+variable {Γ : SimpleGraph V} {τ : Equiv.Perm V}
+
+/-- **K_{1,55} center bridge**: at the centre vertex, the τ-fixed neighbour
+count equals `55` (= number of leaves).
+
+The 55 leaves are exactly the fixed neighbours of the centre. -/
+theorem autFixedNeighborFinset_card_center_eq_55
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (h : K155FixedData Γ τ) :
+    (autFixedNeighborFinset Γ τ h.center).card = 55 := by
+  have heq :
+      autFixedNeighborFinset Γ τ h.center
+        = (Finset.univ : Finset (Fin 55)).image h.leaf := by
+    ext w
+    simp only [mem_autFixedNeighborFinset, Finset.mem_image, Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨hadj, hfix⟩
+      rcases h.span w hfix with rfl | ⟨i, rfl⟩
+      · exact absurd hadj (SimpleGraph.irrefl Γ)
+      · exact ⟨i, rfl⟩
+    · rintro ⟨i, rfl⟩
+      exact ⟨h.adj_center i, h.leaf_fixed i⟩
+  rw [heq, Finset.card_image_of_injective _ h.leaf_injective, Finset.card_univ,
+      Fintype.card_fin]
+
+/-- **K_{1,55} leaf bridge**: at each leaf vertex, the τ-fixed neighbour
+count equals `1` (= just the centre).
+
+Other leaves are non-adjacent (`no_leaf_leaf`), so the centre is the unique
+fixed neighbour of any leaf. -/
+theorem autFixedNeighborFinset_card_leaf_eq_one
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (h : K155FixedData Γ τ) (i : Fin 55) :
+    (autFixedNeighborFinset Γ τ (h.leaf i)).card = 1 := by
+  have heq :
+      autFixedNeighborFinset Γ τ (h.leaf i) = {h.center} := by
+    ext w
+    simp only [mem_autFixedNeighborFinset, Finset.mem_singleton]
+    constructor
+    · rintro ⟨hadj, hfix⟩
+      rcases h.span w hfix with rfl | ⟨j, rfl⟩
+      · rfl
+      · exact absurd hadj (h.no_leaf_leaf i j)
+    · rintro rfl
+      exact ⟨(h.adj_center i).symm, h.center_fixed⟩
+  rw [heq]
+  exact Finset.card_singleton h.center
+
+/-- **K_{1,55} centre complement count**: for `τ` involution with
+`K155FixedData` on Moore57, `|N(centre) \ Fix(τ)| = 2 = 57 − 55`.
+
+Combined with τ being a τ²=1 involution acting semi-regularly on the
+2-element complement, gives orbit size 2 ⟹ orderOf τ ∣ 2. -/
+theorem k155FixedData_complement_center_count
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : K155FixedData Γ τ) :
+    ((Γ.neighborFinset h.center).filter (fun w => τ w ≠ w)).card = 2 := by
+  have h57 : (Γ.neighborFinset h.center).card = 57 := by
+    have := hΓ.regular.degree_eq h.center
+    rwa [SimpleGraph.degree] at this
+  have h55 : ((Γ.neighborFinset h.center).filter (fun w => τ w = w)).card = 55 :=
+    h.autFixedNeighborFinset_card_center_eq_55
+  have hsum := Finset.card_filter_add_card_filter_not (s := Γ.neighborFinset h.center)
+    (p := fun w => τ w = w)
+  change ((Γ.neighborFinset h.center).filter (fun w => ¬ τ w = w)).card = 2
+  omega
+
+/-- **K_{1,55} leaf complement count**: for `τ` involution with `K155FixedData`
+on Moore57, `|N(leaf i) \ Fix(τ)| = 56 = 57 − 1`. -/
+theorem k155FixedData_complement_leaf_count
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : K155FixedData Γ τ) (i : Fin 55) :
+    ((Γ.neighborFinset (h.leaf i)).filter (fun w => τ w ≠ w)).card = 56 := by
+  have h57 : (Γ.neighborFinset (h.leaf i)).card = 57 := by
+    have := hΓ.regular.degree_eq (h.leaf i)
+    rwa [SimpleGraph.degree] at this
+  have h1 : ((Γ.neighborFinset (h.leaf i)).filter (fun w => τ w = w)).card = 1 :=
+    h.autFixedNeighborFinset_card_leaf_eq_one i
+  have hsum := Finset.card_filter_add_card_filter_not (s := Γ.neighborFinset (h.leaf i))
+    (p := fun w => τ w = w)
+  change ((Γ.neighborFinset (h.leaf i)).filter (fun w => ¬ τ w = w)).card = 56
+  omega
+
+end K155FixedData
 
 end Moore57

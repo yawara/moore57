@@ -1,6 +1,8 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.HSFixedData
+import Moore57.Moore57Graph.Aut.FixedSubgraphData
+import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -189,5 +191,43 @@ theorem lem18_case1_orderOf_dvd_25_with_HSFixedData
     (h_semi_regular : orderOf σ ∣ 50) :
     orderOf σ ∣ 25 :=
   lem18_case1_orderOf_dvd_25_of_HS_complement σ k pow_pk h_semi_regular
+
+/-- **Lemma 18 case (2) geometric: `|N(a) \ Fix(σ)| = 55` from `C5FixedData`.**
+[done]
+
+For σ with Pentagon (`C5FixedData`) on a Moore57 graph, the σ-moved neighbour
+count at any of the 5 fixed pentagon vertices equals `55 = 57 − 2`. -/
+theorem lem18_case2_complement_count_eq_55
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (h : C5FixedData Γ σ) (i : Fin 5) :
+    ((Γ.neighborFinset (h.v i)).filter (fun w => σ w ≠ w)).card = 55 :=
+  Moore57.C5FixedData.c5FixedData_complement_neighbor_count hΓ h i
+
+/-- **Lemma 18 case (2) full bridge via `C5FixedData`**: conditional
+`PentagonFixedData + orderOf σ ∣ 55 ⟹ orderOf σ ∣ 5`. -/
+theorem lem18_case2_orderOf_dvd_5_with_c5FixedData
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (_c5 : C5FixedData Γ σ)
+    (h_semi_regular : orderOf σ ∣ 55) :
+    orderOf σ ∣ 5 :=
+  lem18_case2_orderOf_dvd_5_of_pentagon_complement σ k pow_pk h_semi_regular
+
+/-- **Lemma 18 case (3) geometric: `|V \ Fix(σ)| = 3250` from `EmptyFixedData`.**
+[done]
+
+For σ with empty fix on a Moore57 graph, the σ-moved vertex count equals
+`3250 = |V|`. -/
+theorem lem18_case3_complement_count_eq_3250
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (h : EmptyFixedData σ) :
+    ((Finset.univ : Finset V).filter (fun w => σ w ≠ w)).card = 3250 :=
+  Moore57.EmptyFixedData.emptyFixedData_complement_vertex_count hΓ h
+
+/-- **Lemma 18 case (3) full bridge via `EmptyFixedData`**: conditional
+`EmptyFixedData + orderOf σ ∣ 3250 ⟹ orderOf σ ∣ 125`. -/
+theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (_efd : EmptyFixedData σ)
+    (h_semi_regular : orderOf σ ∣ 3250) :
+    orderOf σ ∣ 125 :=
+  lem18_case3_orderOf_dvd_125_of_empty_fix σ k pow_pk h_semi_regular
 
 end Moore57.Papers.MacajSiran2010.S6
