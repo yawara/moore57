@@ -180,7 +180,8 @@ Higman 1964:
 - Lem 2 `_paper` (intersection number identity)
 - Lem 3 `_paper` (k = l under odd order)
 - Lem 4 `_paper_contrapositive` (imprimitivity)
-- Lem 5 Cor 2 `_arithmetic`, Cor 3 `_arithmetic`
+- Lem 4 Cor `_moore57_primitive_arith` + `_odd_n_kplus1_dvd_k_even`
+- Lem 5 `_paper` (SRG `μ(n-k-1) = k(k-λ-1)`), Cor 2 `_arithmetic`, Cor 3 `_arithmetic`
 - Lem 6 `_paper` (eigenvalue characterization)
 - Lem 7 `_paper` (Moore parameter divisibility)
 - Theorem 1 `_paper` (Case I/II disjunction)
@@ -193,12 +194,19 @@ Mačaj-Širáň 2010:
 - Lem 8 `_paper` (spectrum→mod 15)
 - Lem 6 dispatch (size 1-4 ∨ ≥64)
 - Lem 14 `_paper` (semi-regular congruence)
+- Lem 23 `_paper` (stabilizer order)
+- Lem 24 `_paper` (j ≥ 2)
+- Lem 25 `_paper_normal_sylow_action` (Q-action on Fix(P))
+- Lem 26 `_paper` (p ≤ 5 ∨ q ≤ 5)
 - Prop 3 `_prime_unconditional`
+- Prop 5 `_paper` (three-case dispatch)
 - Prop 6/7/8 `_paper` (mixing primes dispatch)
 - Thm 6/7 `_paper` (odd/even order dispatch)
+- Cor 3 `_paper` (375 bound dispatch)
 
 Makhnev-Paduchikh 2001:
 - Lem 3 `_paper` (global Fix dispatch)
+- Main `_decomposition_paper` (|Y| ≤ 57 dispatch)
 
 加えて B4.3 composite trace + Moore57 wire-up (Phase 2.1) と
 `aut_pow_E7_trace_int_composite` の追加で **paper §5 Lem 13 starred
