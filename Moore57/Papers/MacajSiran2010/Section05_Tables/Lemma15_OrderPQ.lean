@@ -99,6 +99,15 @@ Placeholder for the paper claim. The conditional version
 arithmetic dispatch given the Lem 12 p=7 row enumeration. -/
 theorem lem15_no_pq_14_a0_49 (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Lemma 15 starred row `pq = 35` paper-faithful arithmetic.** [done]
+
+Proper-signature paper-faithful: given the character-system input
+`Tr(x) = 206` and the orbit-trace upper bound `Tr(x) ≤ 186`, derive
+contradiction.  Re-export of `lem15_starred_row_pq35_trace_above_bound`. -/
+theorem lem15_starred_row_pq35_paper
+    (Tr : ℤ) (h_eq : Tr = 206) (h_bd : Tr ≤ 186) : False :=
+  lem15_starred_row_pq35_trace_above_bound Tr h_eq h_bd
+
 /-- **Lemma 15 (`pq = 14, a₀ = 49`) conditional contradiction.** [done]
 
 For an order-14 graph automorphism `σ` with `a₀(σ) = 49`, the
