@@ -1,3 +1,5 @@
+import Mathlib.GroupTheory.OrderOfElement
+import Mathlib.Tactic.IntervalCases
 import Moore57.Papers.MacajSiran2010.Section08_Theorem5Proof.Proposition3_HSFixBound
 
 set_option linter.unusedSectionVars false
@@ -63,13 +65,67 @@ theorem lem22_arithmetic_orbit_decomp_smallest_25
     i + 5 * j + 25 * k = 130 := by
   omega
 
+/-- **Lemma 22 arithmetic: `5^k = 625 ↔ k = 4`.** [done]
+
+The order-625 hypothesis pins the 5-group exponent uniquely as `5^4`. -/
+theorem lem22_arithmetic_5group_eq_625_pow_four (k : ℕ) :
+    5 ^ k = 625 ↔ k = 4 := by
+  refine ⟨?_, fun h => h ▸ rfl⟩
+  intro h
+  have h_le : 5 ^ k ≤ 625 := h.le
+  have h_ge : 625 ≤ 5 ^ k := h.ge
+  have h_k_le : k ≤ 4 := by
+    by_contra h_lt
+    have h5 : 5 ≤ k := Nat.lt_of_not_le h_lt
+    have : 5 ^ 5 ≤ 5 ^ k := Nat.pow_le_pow_right (by norm_num) h5
+    omega
+  interval_cases k <;> omega
+
+/-- **Lemma 22 arithmetic: 5-group with `|X| ∣ 625` enumeration.** [done]
+
+For a 5-group `X` (`|X| = 5^k`), `|X| ∣ 625 = 5^4` forces
+`|X| ∈ {1, 5, 25, 125, 625}`. -/
+theorem lem22_arithmetic_5group_dvd_625_enumeration
+    (k : ℕ) (h_dvd : 5 ^ k ∣ 625) :
+    5 ^ k = 1 ∨ 5 ^ k = 5 ∨ 5 ^ k = 25 ∨ 5 ^ k = 125 ∨ 5 ^ k = 625 := by
+  have h_le : 5 ^ k ≤ 625 := Nat.le_of_dvd (by norm_num) h_dvd
+  have h_k_le : k ≤ 4 := by
+    by_contra h
+    have h5 : 5 ≤ k := Nat.lt_of_not_le h
+    have : 5 ^ 5 ≤ 5 ^ k := Nat.pow_le_pow_right (by norm_num) h5
+    omega
+  interval_cases k
+  · left; rfl
+  · right; left; rfl
+  · right; right; left; rfl
+  · right; right; right; left; rfl
+  · right; right; right; right; rfl
+
+/-- **Lemma 22 conditional + arithmetic (5-group, order 625).** [done]
+
+If a single graph-automorphism σ has order a power of 5 (`σ^(5^k) = 1`)
+and `orderOf σ ∣ 625`, then `orderOf σ ∈ {1, 5, 25, 125, 625}`. -/
+theorem lem22_orderOf_in_625_divisors
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (h_dvd : orderOf σ ∣ 625) :
+    orderOf σ = 1 ∨ orderOf σ = 5 ∨ orderOf σ = 25 ∨
+    orderOf σ = 125 ∨ orderOf σ = 625 := by
+  have h5k : orderOf σ ∣ 5 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 5)).mp h5k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd ⊢
+  exact lem22_arithmetic_5group_dvd_625_enumeration j h_dvd
+
 /-- **Lemma 22 (`|X| = 625, smallest orbit 25` ⇒ `X = SmallGroup(625, 12)`).**
 [GAP, skeleton]
 
 Arithmetic backbone: orbit-stabilizer arithmetic
 (`lem22_arithmetic_stabilizer_25`), divisibility helper
-(`lem22_arithmetic_orbit_25_dvd_625`), and orbit-decomposition
-arithmetic (`lem22_arithmetic_orbit_decomp_smallest_25`).
+(`lem22_arithmetic_orbit_25_dvd_625`), orbit-decomposition
+arithmetic (`lem22_arithmetic_orbit_decomp_smallest_25`), and the
+5-group exponent / divisor enumeration
+(`lem22_arithmetic_5group_eq_625_pow_four`,
+`lem22_arithmetic_5group_dvd_625_enumeration`,
+`lem22_orderOf_in_625_divisors`).
 
 What remains is the GAP-dependent classification: among the groups
 of order 625 (= 5^4), the unique one acting with smallest orbit

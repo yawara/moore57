@@ -126,6 +126,47 @@ theorem adjacentMovedCount_inv (σ : Equiv.Perm V) :
     rw [h_apply_inv]
     exact (SimpleGraph.adj_comm Γ w (σ w)).mp hw
 
+/-- **`a₁` is invariant under conjugation by a graph automorphism**:
+`a₁(τ * σ * τ⁻¹) = a₁(σ)` provided `τ` is itself a graph automorphism
+of `Γ`.
+
+Bijection `v ↦ τ⁻¹ v` from `{v : Γ.Adj v ((τστ⁻¹) v)}` onto
+`{v : Γ.Adj v (σ v)}`: `(τστ⁻¹) v = τ (σ (τ⁻¹ v))`, and by `τ` being
+a graph aut, `Γ.Adj v (τ σ τ⁻¹ v) ↔ Γ.Adj (τ⁻¹ v) (σ (τ⁻¹ v))`. -/
+theorem adjacentMovedCount_conj
+    (τ σ : Equiv.Perm V)
+    (hτ : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (τ a) (τ b)) :
+    adjacentMovedCount Γ (τ * σ * τ⁻¹) = adjacentMovedCount Γ σ := by
+  classical
+  unfold adjacentMovedCount
+  have h_inv_apply : ∀ v : V, τ (τ⁻¹ v) = v := fun v => by
+    change (τ * τ⁻¹) v = v; rw [mul_inv_cancel]; rfl
+  have h_apply_inv : ∀ v : V, τ⁻¹ (τ v) = v := fun v => by
+    change (τ⁻¹ * τ) v = v; rw [inv_mul_cancel]; rfl
+  apply Finset.card_bij (fun (v : V) (_ : v ∈ _) => τ⁻¹ v)
+  · -- Image in target.
+    intro v hv
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
+    -- hv : Γ.Adj v ((τστ⁻¹) v); goal: Γ.Adj (τ⁻¹ v) (σ (τ⁻¹ v))
+    have happ : (τ * σ * τ⁻¹) v = τ (σ (τ⁻¹ v)) := by
+      simp [Equiv.Perm.mul_apply]
+    rw [happ] at hv
+    refine (hτ (τ⁻¹ v) (σ (τ⁻¹ v))).mpr ?_
+    rw [h_inv_apply]
+    exact hv
+  · -- Injective.
+    intro v _ w _ hvw
+    exact τ⁻¹.injective hvw
+  · -- Surjective.
+    intro w hw
+    refine ⟨τ w, ?_, h_apply_inv w⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hw ⊢
+    -- hw : Γ.Adj w (σ w); goal: Γ.Adj (τ w) ((τστ⁻¹) (τ w))
+    have happ : (τ * σ * τ⁻¹) (τ w) = τ (σ w) := by
+      simp [Equiv.Perm.mul_apply, h_apply_inv]
+    rw [happ]
+    exact (hτ w (σ w)).mp hw
+
 /-- **Pairing parity**: for a subgroup `X ≤ Equiv.Perm V` of odd order,
 `∑_{x ∈ X} a₁(x)` is even.
 

@@ -79,6 +79,60 @@ theorem lem17_case1_orderOf_dvd_27_of_petersen_complement
   rw [hord] at h_dvd ⊢
   exact lem17_case1_arithmetic_3group_dvd_54_implies_27 j h_dvd
 
+/-- **Lemma 17 case (2) arithmetic core: 3-group with `|X| ≤ 81` gives
+`|X| ∣ 81`.** [done]
+
+For a 3-group `X` (`|X| = 3^k`), `|X| ≤ 81 = 3^4` forces `k ≤ 4`,
+so `|X| ∈ {1, 3, 9, 27, 81}`, all dividing `81`.
+
+This is the §6 Lem 17 (case (2)) arithmetic step: combined with the
+paper's deeper analysis (Lem 21 + Cor 2) showing `|X| ≤ 81` for the
+singleton-fix case, gives the stated bound. -/
+theorem lem17_case2_arithmetic_3group_le_81_dvd_81
+    (k : ℕ) (h_le : 3 ^ k ≤ 81) :
+    3 ^ k ∣ 81 := by
+  have h_k_le : k ≤ 4 := by
+    by_contra h
+    have h5 : 5 ≤ k := Nat.lt_of_not_le h
+    have : 3 ^ 5 ≤ 3 ^ k := Nat.pow_le_pow_right (by norm_num) h5
+    omega
+  interval_cases k <;> decide
+
+/-- **Lemma 17 case (2) arithmetic enumeration: 3-group with `|X| ≤ 81`.**
+[done]
+
+Enumeration form of `lem17_case2_arithmetic_3group_le_81_dvd_81`:
+the possible orders are exactly `{1, 3, 9, 27, 81}`. -/
+theorem lem17_case2_arithmetic_3group_le_81_enumeration
+    (k : ℕ) (h_le : 3 ^ k ≤ 81) :
+    3 ^ k = 1 ∨ 3 ^ k = 3 ∨ 3 ^ k = 9 ∨ 3 ^ k = 27 ∨ 3 ^ k = 81 := by
+  have h_k_le : k ≤ 4 := by
+    by_contra h
+    have h5 : 5 ≤ k := Nat.lt_of_not_le h
+    have : 3 ^ 5 ≤ 3 ^ k := Nat.pow_le_pow_right (by norm_num) h5
+    omega
+  interval_cases k
+  · left; rfl
+  · right; left; rfl
+  · right; right; left; rfl
+  · right; right; right; left; rfl
+  · right; right; right; right; rfl
+
+/-- **Lemma 17 case (2) conditional + arithmetic (3-group, singleton fix).**
+[done]
+
+If a single graph-automorphism σ has order a power of 3 (`σ^(3^k) = 1`)
+and `orderOf σ ≤ 81` (the paper's deeper bound for the singleton-fix
+case), then `orderOf σ ∣ 81`. -/
+theorem lem17_case2_orderOf_dvd_81_of_le_81
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    (h_le : orderOf σ ≤ 81) :
+    orderOf σ ∣ 81 := by
+  have h3k : orderOf σ ∣ 3 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 3)).mp h3k with ⟨j, _hj, hord⟩
+  rw [hord] at h_le ⊢
+  exact lem17_case2_arithmetic_3group_le_81_dvd_81 j h_le
+
 /-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy] -/
 theorem lem17_3group_fix (hΓ : IsMoore57 Γ) : True := by trivial
 

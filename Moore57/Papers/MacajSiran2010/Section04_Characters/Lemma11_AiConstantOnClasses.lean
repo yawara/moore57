@@ -1,6 +1,7 @@
 import Moore57.Papers.MacajSiran2010.Section04_Characters.Theorem3_RationalClasses
 import Moore57.Foundations.GroupAction.FixedPoints
 import Moore57.Foundations.GroupAction.FixedPointConjugacy
+import Moore57.Foundations.GraphTheory.InducedTrace
 import Moore57.Moore57Graph.Moore57Definition
 
 set_option linter.unusedSectionVars false
@@ -51,6 +52,32 @@ theorem lem11_a0_constant_on_rational_classes
     (hk : Nat.Coprime k (orderOf σ)) :
     fixedVertexCount (τ * σ ^ k * τ⁻¹) = fixedVertexCount σ := by
   rw [fixedVertexCount_conj, fixedVertexCount_pow_coprime σ hk]
+
+/-- **Lemma 11 for `a₁`, conjugation part (no power)** [done]
+
+If `τ` is a graph automorphism of `Γ` and `σ` any permutation, then
+`adjacentMovedCount Γ (τ · σ · τ⁻¹) = adjacentMovedCount Γ σ`.
+
+Wraps `Moore57.adjacentMovedCount_conj`.  This is the conjugation-
+invariance half of Lemma 11 for `a₁`; the coprime-power half
+`a₁(σ^k) = a₁(σ)` requires character-theoretic input (Theorem 3) and
+remains in `lem11_ai_constant_on_rational_classes`. -/
+theorem lem11_a1_constant_under_graphAut_conjugation
+    (σ τ : Equiv.Perm V)
+    (hτ : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (τ a) (τ b)) :
+    adjacentMovedCount Γ (τ * σ * τ⁻¹) = adjacentMovedCount Γ σ :=
+  adjacentMovedCount_conj τ σ hτ
+
+/-- **Lemma 11 for `a₁`, inverse symmetry** [done]
+
+`a₁(σ⁻¹) = a₁(σ)` for any permutation `σ`.  This is the `k = -1`
+(equivalently `k = orderOf σ - 1`) coprime-power instance; the only
+coprime-power case that does NOT require character theory.
+
+Wraps `Moore57.adjacentMovedCount_inv`. -/
+theorem lem11_a1_constant_under_inv (σ : Equiv.Perm V) :
+    adjacentMovedCount Γ σ⁻¹ = adjacentMovedCount Γ σ :=
+  adjacentMovedCount_inv σ
 
 /-- **Lemma 11 (`aᵢ` constant on rational classes).** [deferred-heavy]
 
