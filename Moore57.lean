@@ -185,6 +185,8 @@ import Moore57.Moore57Graph.E7Matrix.MatrixLinearMapBridge
 import Moore57.D19OnMoore57.Misc.Minus8ProjectionRepresentation
 import Moore57.Foundations.Representation.PermutationRepresentationCharacter
 import Moore57.Foundations.Representation.SpectralSubrepresentation
+import Moore57.Foundations.GroupTheory.SylowSchurZassenhaus
+import Moore57.Foundations.GroupTheory.RankAndOrbital
 import Moore57.Foundations.LinearAlgebra.ProjectionTrace
 import Moore57.D19OnMoore57.D19Core.VertexPermutationRepresentation
 import Moore57.D19OnMoore57.Final.TraceRotationOne
