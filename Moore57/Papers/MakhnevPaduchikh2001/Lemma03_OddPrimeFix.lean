@@ -39,7 +39,11 @@ namespace Moore57.Papers.MakhnevPaduchikh2001
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 3 (general 6-way classification).** [deferred-heavy] -/
+/-- **Lemma 3 (general 6-way classification).** [deferred-heavy]
+
+Backward-compat True-stub.  Proper-signature dispatch is
+`lem3_odd_prime_fix_paper` (below, global Fix dispatch) and
+`lem3_unified_p_in_moore57_primes` (local N(a) dispatch). -/
 theorem lem3_odd_prime_fix (hΓ : IsMoore57 Γ) : True := by trivial
 
 /-- **Lemma 3, case (2): order 19, `|Fix| = 1`.**
@@ -438,5 +442,27 @@ theorem lem3_unified_p_in_moore57_primes
       rcases this with h | h
       · exact absurd h (Fact.out : Nat.Prime p).one_lt.ne'
       · right; left; exact h
+
+/-- **Lemma 3 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature paper-faithful packaging of three cases of the
+classification: for σ an odd-prime-order graph automorphism of Moore57,
+the global fixed-vertex count `fixedVertexCount σ ∈ {0, 1, 50}` determines
+`p` to within a short list, via cases (1) (empty), (2) (singleton),
+(6) (Hoffman-Singleton).
+
+Cases (3) star, (4) pentagon, (5) Petersen are dispatched separately
+via local `N(a)` constraints (see `lem3_case3_*`, `lem3_case4_*`,
+`lem3_case5_*`) and the unified `lem3_unified_p_in_moore57_primes`. -/
+theorem lem3_odd_prime_fix_paper
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1) :
+    (fixedVertexCount σ = 0 → p = 5 ∨ p = 13) ∧
+    (fixedVertexCount σ = 1 → p = 3 ∨ p = 19) ∧
+    (fixedVertexCount σ = 50 → p = 5) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro h; exact lem3_case1_empty_fix hΓ σ p hp_odd hpow h
+  · intro h; exact lem3_case2_singleton_fix hΓ σ p hp_odd hpow h
+  · intro h; exact lem3_case6_hs_fix hΓ σ p hp_odd hpow h
 
 end Moore57.Papers.MakhnevPaduchikh2001
