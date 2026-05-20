@@ -66,6 +66,23 @@ theorem prop3_arithmetic_core_no_partition_of_7_with_sq_31
   interval_cases x5 <;> interval_cases x4 <;>
     interval_cases x3 <;> interval_cases x2 <;> omega
 
+/-- **Proposition 3 prime-case unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ⁵ = 1 (prime base case k = 1)
+and `HSFixedData Γ σ`, the bound `orderOf σ ≤ 5` holds trivially since
+`orderOf σ ∣ 5`.  This is the `k = 1` base case of Proposition 3.
+
+The composite case (`σ^{5^k} = 1` with `k ≥ 2`) requires the paper §8
+step 1-5 (excluding `|X| = 25` via arithmetic core
+`prop3_arithmetic_core_no_partition_of_7_with_sq_31`) and is deferred-
+heavy. -/
+theorem prop3_hs_fix_bound_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (_hsfd : HSFixedData Γ σ) :
+    orderOf σ ≤ 5 := by
+  have h : orderOf σ ∣ 5 := orderOf_dvd_of_pow_eq_one pow_5
+  exact Nat.le_of_dvd (by norm_num) h
+
 /-- **Proposition 3 (Hoffman–Singleton-fix 5-group `|X| ≤ 5`).** [deferred-heavy] -/
 theorem prop3_hs_fix_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
