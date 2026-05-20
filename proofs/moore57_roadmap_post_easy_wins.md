@@ -367,8 +367,10 @@ fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion
 
 §6 Lem 17, 18 の geometric 部分; §8 Prop 3 の HS 固定型.
 
-**進捗 (2026-05-21)**: [C1.0]-[C1.2a+], [C2.0a], [C3.0]-[C3.3], [C3.5] **完了**。
-残り substantive: **[C3.4] semi-regular orbit argument** のみ。
+**進捗 (2026-05-21 夜)**: [C1.0]-[C1.2a+], [C2.0a], [C3.0]-[C3.5] **すべて完了**。
+**Tier C substantive 作業は完了**: 残るは §3 [C3.6] (`Fix(X) = HS ⟹ |X| ≤ 5`)
+程度。 [C3.4] は本日 (2026-05-21 夜) 完了し、Lem 17 (1)/(2), Lem 18 (1)/(2)/(3)
+に semi-regular hypothesis を直接受ける unconditional wrapper が追加された。
 **スキップ確定**: [C1.2b] Aut(Petersen), [C2.1] HS explicit, [C2.2] Aut(HS),
 SRG 一意性 — Moore57 文脈では一切不要(下記 §3.0 で議論)。
 
@@ -452,18 +454,33 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
   - `lem18_case1_complement_count_eq_50` (HS 経由 `|N(a) \ Fix(σ)| = 50`)。
   - `lem18_case1_orderOf_dvd_25_with_HSFixedData` (HS 版)。
 
-* **[C3.4] (未, deferred-heavy) ★ Tier C 残る唯一の substantive 項目 ★**
-  Semi-regular orbit argument:
+* **[C3.4] (done, 2026-05-21)** Semi-regular orbit argument.
   `⟨σ⟩` の `N(a) \ Fix(σ)` 上の作用が semi-regular (= stabilizer trivial)
-  であることから `orderOf σ ∣ |N(a) \ Fix(σ)|`。これは MS 2010 §6 で
-  semi-regular を separate に取得。Tier C の semi-regular bridge を
-  unconditional 化するのに必要。
-  - 入力: `PetersenFixedData` (or `HSFixedData`) + `σ` のメイン特性 (`σ ^ p^k = 1`)
-  - 出力: 任意 `a ∈ Fix(σ)` について `orderOf σ ∣ (Γ.degree a - induced_degree)`
-  - 主な道具: `MulAction.stabilizer` + 「`stabilizer = ⊥ ⟹ orderOf σ ∣ orbit.card`」
-  - 既存 bridges (`lem17_case1_orderOf_dvd_27_with_petersenFixedData` 等) は
-    `h_semi_regular : orderOf σ ∣ 54` を**仮定として**受け取る形になっている。
-    この仮定を C3.4 で生成できれば、Lem 17/18 が完全 unconditional に。
+  であることから `orderOf σ ∣ |N(a) \ Fix(σ)|` を出す Foundations 一般
+  helper + graph-aut bridge + 各 FixedData wrapper + Lem 17/18 内側
+  unconditional wrapper を全 5 ステップで整備:
+  - `Foundations/GroupAction/SemiRegularOrbit.lean` (新規) — 一般
+    `Moore57.orderOf_dvd_card_of_semiRegular`. Orbit partition 帰納法。
+    補題 `cyclicOrbitFinset.card_eq_orderOf` (semi-regular orbit のサイズ),
+    `cyclicOrbitFinset.subset_of_invariant` (σ-invariant Finset への
+    orbit 帰属) も同時に。
+  - `Moore57Graph/Aut/SemiRegularComplement.lean` (新規) —
+    `autMovedNeighborFinset Γ σ v := N(v).filter (σ w ≠ w)` の σ-invariance
+    と `orderOf_dvd_card_movedNeighbour_of_semiRegular` bridge。
+  - 各 FixedData (`Petersen / HS / C5 / K155 / Singleton / Empty`) に
+    `*_orderOf_dvd_N_of_semiRegular` wrapper を追加 (Petersen 54, HS 50,
+    C5 55, K155 center 2 / leaf 56, Singleton 57, Empty 3250)。
+  - `Lemma17_3Group.lean`, `Lemma18_5Group.lean` に `*_semiRegular`
+    接尾辞の wrapper 5 個:
+    `lem17_case{1,2}_orderOf_dvd_{27,3}_with_{petersen,singleton}FixedData_semiRegular`,
+    `lem18_case{1,2,3}_orderOf_dvd_{25,5,125}_with_{HS,c5,empty}FixedData_semiRegular`。
+  - **Lem 17 case (2) sharpening**: paper の `|X| ∣ 81` より厳しい
+    `|X| ∣ 3` を C3.4 から直接得る (57 = 3·19 と 3-group の互いに素性)。
+  - 既存の conditional 版 (`_with_*FixedData`、`h_semi_regular : orderOf σ ∣ N`
+    を hypothesis に取る) は backward-compat で残置。
+  - 「semi-regular 自体」は依然 separate な hypothesis として残置
+    (MS 2010 §6 では Lem 21 = `Fix(σ^l) = Fix(σ)` で establish,
+    paper-faithful Lem 21 整備は別タスク)。
 
 * **[C3.5-pre] (done)** PetersenFixedData / HSFixedData の girth bridges:
   - `induced_triangleFree`, `induced_no_C4` (各 FixedData)
@@ -720,9 +737,11 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 7.1 短期 (1 commit 単位、各 < 200 LOC)
 
-**進捗 (2026-05-21 晩)**: 旧 1〜13 項目すべて **完了**。 加えて
-B-final (Tier B True-stub finalization, commit `40bb98a`) も done。
-次の短期項目候補は [C3.4] semi-regular または個別 Tier C/D 拡張。
+**進捗 (2026-05-21 夜)**: 旧 1〜13 項目すべて **完了**。 加えて
+B-final (Tier B True-stub finalization, commit `40bb98a`) と
+[C3.4] Semi-regular orbit argument (本日夜 commit) も done。
+次の短期項目候補は [D3.x] Higman 1964 Lems 1-3 拡張、または個別 Tier
+B/D 拡張。
 
 1. ~~**[E1.1]** Prop 6 Sylow analysis~~ — **done** (commit `e673d3d`)。
 2. ~~**[E4.0]** Thm 7 Sylow analysis (110 dispatch)~~ — **done**。
@@ -761,12 +780,17 @@ B-final (Tier B True-stub finalization, commit `40bb98a`) も done。
     `Proposition2CharacterSystem`, `Lemma{12,13,14,15...}Conclusion :
     Prop` defs を全 §4–§5 True-stub に追加。 Tier B 内部進捗はこれ以上
     external (Theorem 3 + Prop 2 + semi-regular) 待ち。
-15. **[★ 次の短期項目]** 候補:
+15. ~~**[C3.4]** Semi-regular orbit argument~~ — **done (2026-05-21 夜)**:
+    Foundations 一般 helper (`SemiRegularOrbit.lean`) + graph-aut bridge
+    (`SemiRegularComplement.lean`) + 全 FixedData wrapper + Lem 17/18
+    内側 unconditional wrapper (詳細は §3 C3.4)。
+16. **[★ 次の短期項目]** 候補:
    - **[B4.3]** Composite-order Galois cyclotomic decomp (deferred-heavy)。
-   - **[C3.4]** Semi-regular orbit argument (Lem 17/18 を unconditional 化、
-     downstream consumer あり)。
    - **[D3.x]** Higman 1964 Lems 1–3 抽象版 (orbital infrastructure に
      乗せて proper signature 化)。
+   - **[B5.0+] / Lem 21**: `Fix(σ^l) = Fix(σ)` の paper-faithful 整備
+     (C3.4 で残った "semi-regular 自体" hypothesis を unstub するための
+     paper-faithful 前提)。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -779,13 +803,15 @@ B-final (Tier B True-stub finalization, commit `40bb98a`) も done。
 
 ### 7.3 長期 (substantive new infrastructure)
 
-12. **[C3.4]** Semi-regular orbit argument
-    (Tier C 残る唯一の substantive 項目、Lem 17/18 を unconditional 化)。
+12. ~~**[C3.4]** Semi-regular orbit argument~~ — **done (2026-05-21 夜)**:
+    詳細は §3 C3.4 / §7.1 #15。
 13. **[B4.3]** Composite-order / general rational-class Theorem 3 移植
     (Galois 理論 + generalized eigenspace decomp)。 prime-order は B4.1
     で代替済なので優先度低。
 14. **[D1-D4]** Rank-3 perm group framework + Higman 1964 全体。
 15. **[A3, A4]** Order-625 group classification (Lem 22, Prop 4)。
+16. **Lem 21**: `Fix(σ^l) = Fix(σ)` paper-faithful 整備 — C3.4 で残った
+    "semi-regular 自体" hypothesis を unstub する paper-faithful 前提。
 
 ### 7.4 見送り推奨
 
@@ -818,8 +844,10 @@ paper-level の本当のボトルネックは:
   まで揃ったので、prime-order starred 行は順次 unstub できる状態 (B4.2)。
 - ~~**Petersen / HS explicit graphs**~~: Petersen は decide 用に explicit 化済、
   HS は SRG パラメータベースで `HSFixedData` を回せるので explicit 構築 **不要**
-  (§3.0 参照)。残る唯一の Tier C substantive 項目は [C3.4] semi-regular
-  orbit argument のみ。
+  (§3.0 参照)。 ~~残る唯一の Tier C substantive 項目は [C3.4] semi-regular
+  orbit argument~~ — **本日 (2026-05-21 夜) 完了**。 Tier C は §3 C3.4
+  まで完全に組み上がり、Lem 17/18 の paper-faithful な semi-regular
+  hypothesis 受領 wrapper が利用可能。
 
 ### 8.1 知見の累積による状態変化 (2026-05-21 時点)
 
@@ -846,7 +874,10 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) papers+proofs: Tier D D3.2 partial — subdegree G-invariance + reverse-neighborhood ↔ swap bridge (Lem 3 backbone)
+* (HEAD) proofs+blogs: Tier C C3.4 done — semi-regular orbit argument
+  (Foundations helper + graph-aut bridge + FixedData wrappers + Lem 17/18
+  unconditional wrappers)
+* (prev HEAD) papers+proofs: Tier D D3.2 partial — subdegree G-invariance + reverse-neighborhood ↔ swap bridge (Lem 3 backbone)
 * `a75e397` proofs+blogs: Tier D D3.1 done — Lem 2 orbital constancy backbone
 * `86f5be0` papers: Tier D D3.1 — orbital intersection count constancy (Lem 2 backbone)
 * `40bb98a` papers: Tier B finish — True-stub `Conclusion` defs + Lem 11 conditional
@@ -886,6 +917,11 @@ paper-level の本当のボトルネックは:
   `character_permutationRepresentation_eq_fixedVertexCount` bridge
 * `Foundations/GroupAction/FixedPoints.lean` — `fixedVertexSet_subset_pow`,
   `fixedVertexCount_le_pow` (monotonicity under powers)
+* `Foundations/GroupAction/SemiRegularOrbit.lean` — **(2026-05-21 夜
+  C3.4)** 一般 `orderOf_dvd_card_of_semiRegular` + `cyclicOrbitFinset` 補題。
+* `Moore57Graph/Aut/SemiRegularComplement.lean` — **(2026-05-21 夜 C3.4)**
+  graph-aut bridge: `autMovedNeighborFinset` + σ-invariance +
+  `orderOf_dvd_card_movedNeighbour_of_semiRegular`。
 
 ### Tier B finalization (B-final, 2026-05-21 晩 / commit `40bb98a`) — abstract `Conclusion` defs
 
