@@ -95,4 +95,24 @@ theorem fixedVertexCount_pow_coprime
       fixedVertexCount_eq_card_supportCompl,
       Equiv.Perm.support_pow_coprime hk]
 
+/-- **Fixed-set inclusion under powers.**  Any fixed point of `σ` is
+also fixed by `σ^n`. -/
+theorem fixedVertexSet_subset_pow
+    (σ : Equiv.Perm V) (n : ℕ) :
+    fixedVertexSet σ ⊆ fixedVertexSet (σ ^ n) := by
+  intro v hv
+  -- `hv : σ v = v`, want: `(σ^n) v = v`
+  have : Function.IsFixedPt (⇑σ) v := hv
+  exact this.perm_pow n
+
+/-- **Monotonicity of `fixedVertexCount` under powers.**
+`a₀(σ) ≤ a₀(σ^n)` for any `n : ℕ`. -/
+theorem fixedVertexCount_le_pow
+    [Fintype V] [DecidableEq V] (σ : Equiv.Perm V) (n : ℕ) :
+    fixedVertexCount σ ≤ fixedVertexCount (σ ^ n) := by
+  classical
+  rw [fixedVertexCount_eq_card_fixedVertexSet,
+      fixedVertexCount_eq_card_fixedVertexSet]
+  exact Set.card_le_card (fixedVertexSet_subset_pow σ n)
+
 end Moore57

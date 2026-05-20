@@ -55,4 +55,25 @@ theorem lem15_no_order_65 (hΓ : IsMoore57 Γ) : True := by trivial
 /-- **Lemma 15 (no `pq = 14, a₀ = 49`).** [deferred-heavy] -/
 theorem lem15_no_pq_14_a0_49 (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Lemma 15 (`pq = 14, a₀ = 49`) conditional contradiction.** [done]
+
+For an order-14 graph automorphism `σ` with `a₀(σ) = 49`, the
+fixed-set inclusion `Fix(σ) ⊆ Fix(σ²)` gives `a₀(σ) ≤ a₀(σ²)`.
+Combined with the Lemma 12 `p = 7` table (non-starred rows
+`a₀ ∈ {2, 9}`, with `a₀ = 58` excluded as starred), we get
+`a₀(σ²) ≤ 9 < 49`, contradicting the above inequality.
+
+Conditional input: `h_lem12_p7_table : fixedVertexCount (σ²) ∈ {2, 9}`
+(the proven enumeration of Lemma 12 `p = 7` non-starred rows, which
+remains deferred-heavy as a top-level paper result). -/
+theorem lem15_no_pq_14_a0_49_conditional
+    (σ : Equiv.Perm V)
+    (h_a0 : fixedVertexCount σ = 49)
+    (h_lem12_p7_table : fixedVertexCount (σ ^ 2) = 2 ∨
+                         fixedVertexCount (σ ^ 2) = 9) :
+    False := by
+  have h_le : fixedVertexCount σ ≤ fixedVertexCount (σ ^ 2) :=
+    fixedVertexCount_le_pow σ 2
+  rcases h_lem12_p7_table with h | h <;> omega
+
 end Moore57.Papers.MacajSiran2010.S5
