@@ -1,6 +1,7 @@
 import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Logic.Equiv.Defs
 import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Aut.SemiRegularComplement
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Foundations.GroupAction.FixedPoints
 
@@ -162,6 +163,21 @@ theorem c5FixedData_complement_neighbor_count
   change ((Γ.neighborFinset (h.v i)).filter (fun w => ¬ σ w = w)).card = 55
   omega
 
+/-- **Pentagon semi-regular orbit bridge**: for σ with `C5FixedData` on a
+Moore57 graph and σ acting semi-regularly on `N(a) \ Fix(σ)`,
+`orderOf σ ∣ 55`.  [C3.4] Lem 18 case (2) input. -/
+theorem c5_orderOf_dvd_55_of_semiRegular
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : C5FixedData Γ σ) (i : Fin 5)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ autMovedNeighborFinset Γ σ (h.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 55 := by
+  have hcard : (autMovedNeighborFinset Γ σ (h.v i)).card = 55 :=
+    h.c5FixedData_complement_neighbor_count hΓ i
+  exact hcard ▸ orderOf_dvd_card_movedNeighbour_of_semiRegular
+    σ smul_adj (h.v_fixed i) hsemi
+
 end C5FixedData
 
 /-! ## K_{1,55} fixed subgraph data -/
@@ -313,6 +329,36 @@ theorem k155FixedData_complement_leaf_count
     (p := fun w => τ w = w)
   change ((Γ.neighborFinset (h.leaf i)).filter (fun w => ¬ τ w = w)).card = 56
   omega
+
+/-- **K_{1,55} center semi-regular orbit bridge**: for τ with
+`K155FixedData` on a Moore57 graph and τ acting semi-regularly on
+`N(center) \ Fix(τ)`, `orderOf τ ∣ 2`. -/
+theorem k155_center_orderOf_dvd_2_of_semiRegular
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : K155FixedData Γ τ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (τ v) (τ w))
+    (hsemi : ∀ w ∈ autMovedNeighborFinset Γ τ h.center,
+             ∀ k : ℕ, (τ^k) w = w → orderOf τ ∣ k) :
+    orderOf τ ∣ 2 := by
+  have hcard : (autMovedNeighborFinset Γ τ h.center).card = 2 :=
+    h.k155FixedData_complement_center_count hΓ
+  exact hcard ▸ orderOf_dvd_card_movedNeighbour_of_semiRegular
+    τ smul_adj h.center_fixed hsemi
+
+/-- **K_{1,55} leaf semi-regular orbit bridge**: for τ with `K155FixedData`
+on a Moore57 graph and τ acting semi-regularly on `N(leaf i) \ Fix(τ)`,
+`orderOf τ ∣ 56`. -/
+theorem k155_leaf_orderOf_dvd_56_of_semiRegular
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : K155FixedData Γ τ) (i : Fin 55)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (τ v) (τ w))
+    (hsemi : ∀ w ∈ autMovedNeighborFinset Γ τ (h.leaf i),
+             ∀ k : ℕ, (τ^k) w = w → orderOf τ ∣ k) :
+    orderOf τ ∣ 56 := by
+  have hcard : (autMovedNeighborFinset Γ τ (h.leaf i)).card = 56 :=
+    h.k155FixedData_complement_leaf_count hΓ i
+  exact hcard ▸ orderOf_dvd_card_movedNeighbour_of_semiRegular
+    τ smul_adj (h.leaf_fixed i) hsemi
 
 end K155FixedData
 

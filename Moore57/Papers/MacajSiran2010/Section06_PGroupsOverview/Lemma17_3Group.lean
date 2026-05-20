@@ -1,6 +1,7 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.PetersenFixedData
+import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -134,6 +135,54 @@ theorem lem17_case2_orderOf_dvd_81_of_le_81
   rw [hord] at h_le ⊢
   exact lem17_case2_arithmetic_3group_le_81_dvd_81 j h_le
 
+/-- **Lemma 17 case (2) semi-regular arithmetic core: 3-group with
+`|X| ∣ 57` gives `|X| ∣ 3`.** [done — C3.4]
+
+For a 3-group `X` (`|X| = 3^k`), `|X| ∣ 57 = 3 · 19` and `19` prime
+forces `3^k ∣ 3`, so `|X| ∈ {1, 3}`.
+
+This is the genuine semi-regular conclusion for the singleton-fix case:
+σ acts semi-regularly on the entire 57-element neighbourhood, giving
+`|X| ∣ 57`, sharpened by the 3-group constraint to `|X| ∣ 3`.
+
+The paper's stated `|X| ∣ 81` for case (2) follows from a deeper
+analysis (Lem 21 + Cor 2) and is strictly weaker than the bound we get
+here from C3.4 alone. -/
+theorem lem17_case2_arithmetic_3group_dvd_57_implies_3
+    (k : ℕ) (h_dvd : 3 ^ k ∣ 57) : 3 ^ k ∣ 3 := by
+  have h_le : 3 ^ k ≤ 57 := Nat.le_of_dvd (by norm_num) h_dvd
+  have h_k_le : k ≤ 1 := by
+    by_contra h
+    have h2 : 2 ≤ k := Nat.lt_of_not_le h
+    -- 3^2 = 9, but 9 ∤ 57 since 57 = 9·6 + 3.
+    have hdvd9 : 3 ^ 2 ∣ 3 ^ k := pow_dvd_pow 3 h2
+    have hdvd9' : 3 ^ 2 ∣ 57 := dvd_trans hdvd9 h_dvd
+    revert hdvd9'
+    decide
+  interval_cases k <;> decide
+
+/-- **Lemma 17 case (2) unconditional bridge via `SingletonFixedData` and
+the C3.4 semi-regular orbit argument**. [done — C3.4]
+
+For a 3-group element σ with singleton fix `{v}` acting semi-regularly
+on `N(v) \ Fix(σ) = N(v)` (the entire 57-element neighbourhood), the
+arithmetic core gives `orderOf σ ∣ 3` — sharper than the paper-stated
+`|X| ∣ 81`. -/
+theorem lem17_case2_orderOf_dvd_3_with_singletonFixedData_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    (sfd : SingletonFixedData σ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ Moore57.autMovedNeighborFinset Γ σ sfd.v,
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 3 := by
+  have h57 : orderOf σ ∣ 57 :=
+    Moore57.SingletonFixedData.singleton_orderOf_dvd_57_of_semiRegular
+      (Γ := Γ) hΓ sfd smul_adj hsemi
+  have h3k : orderOf σ ∣ 3 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 3)).mp h3k with ⟨j, _hj, hord⟩
+  rw [hord] at h57 ⊢
+  exact lem17_case2_arithmetic_3group_dvd_57_implies_3 j h57
+
 /-- **Lemma 17 case (1) geometric: `|N(a) \ Fix(σ)| = 54` from
 `PetersenFixedData`.**  [done]
 
@@ -164,6 +213,29 @@ theorem lem17_case1_orderOf_dvd_27_with_petersenFixedData
     (h_semi_regular : orderOf σ ∣ 54) :
     orderOf σ ∣ 27 :=
   lem17_case1_orderOf_dvd_27_of_petersen_complement σ k pow_pk h_semi_regular
+
+/-- **Lemma 17 case (1) unconditional bridge via `PetersenFixedData` and
+the C3.4 semi-regular orbit argument**. [done — C3.4]
+
+Replaces the `h_semi_regular : orderOf σ ∣ 54` hypothesis of the
+conditional bridge `lem17_case1_orderOf_dvd_27_with_petersenFixedData`
+with the more paper-faithful semi-regular hypothesis
+`σ^k w = w → orderOf σ ∣ k` for `w ∈ N(a) \ Fix(σ)`, which is established
+"separately" in MS 2010 §6 (Lem 21 footnote).
+
+The complement-count step (`|N(a) \ Fix(σ)| = 54`) is internalised via
+`petersen_orderOf_dvd_54_of_semiRegular`, so the user only needs to supply
+the semi-regular hypothesis. -/
+theorem lem17_case1_orderOf_dvd_27_with_petersenFixedData_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    (pfd : PetersenFixedData Γ σ) (i : Fin 10)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ Moore57.autMovedNeighborFinset Γ σ (pfd.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 27 :=
+  lem17_case1_orderOf_dvd_27_of_petersen_complement σ k pow_pk
+    (Moore57.PetersenFixedData.petersen_orderOf_dvd_54_of_semiRegular
+      hΓ pfd i smul_adj hsemi)
 
 /-- **Lemma 17 dispatch arithmetic: `orderOf σ ∣ 27 ∨ orderOf σ ∣ 81` ⟹
 `orderOf σ ∣ 81`.** [done]

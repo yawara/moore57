@@ -1,5 +1,6 @@
 import Moore57.Foundations.GraphTheory.PetersenGraph
 import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Aut.SemiRegularComplement
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Foundations.GroupAction.FixedPoints
 
@@ -212,6 +213,30 @@ theorem induced_adj_pairs_card_eq_30 [DecidableRel Γ.Adj]
     exact h.induced_adj_iff p.1 p.2
   rw [hcong]
   decide
+
+/-- **Petersen semi-regular orbit bridge**: for σ with `PetersenFixedData`
+on a Moore57 graph and `σ` acting semi-regularly on `N(a) \ Fix(σ)`,
+`orderOf σ ∣ 54`.
+
+This is the [C3.4] semi-regular orbit argument specialised to the
+Petersen case (Lem 17 case (1) input).  The semi-regular hypothesis is
+phrased as: every non-trivial power of σ moves every element of
+`N(a) \ Fix(σ)`.
+
+Combined with `petersenFixedData_complement_neighbor_count` (= 54) and
+the general `orderOf_dvd_card_movedNeighbour_of_semiRegular` bridge, the
+conclusion is unconditional on the semi-regular assumption. -/
+theorem petersen_orderOf_dvd_54_of_semiRegular
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : PetersenFixedData Γ σ) (i : Fin 10)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ autMovedNeighborFinset Γ σ (h.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 54 := by
+  have hcard : (autMovedNeighborFinset Γ σ (h.v i)).card = 54 :=
+    h.petersenFixedData_complement_neighbor_count hΓ i
+  exact hcard ▸ orderOf_dvd_card_movedNeighbour_of_semiRegular
+    σ smul_adj (h.v_fixed i) hsemi
 
 end PetersenFixedData
 

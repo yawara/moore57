@@ -192,6 +192,23 @@ theorem lem18_case1_orderOf_dvd_25_with_HSFixedData
     orderOf σ ∣ 25 :=
   lem18_case1_orderOf_dvd_25_of_HS_complement σ k pow_pk h_semi_regular
 
+/-- **Lemma 18 case (1) unconditional bridge via `HSFixedData` and the
+C3.4 semi-regular orbit argument**. [done — C3.4]
+
+Replaces `h_semi_regular : orderOf σ ∣ 50` with the paper-faithful
+semi-regular hypothesis on `N(a) \ Fix(σ)`.  The complement-count is
+internalised via `hs_orderOf_dvd_50_of_semiRegular`. -/
+theorem lem18_case1_orderOf_dvd_25_with_HSFixedData_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (hsfd : HSFixedData Γ σ) (i : Fin 50)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ Moore57.autMovedNeighborFinset Γ σ (hsfd.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 25 :=
+  lem18_case1_orderOf_dvd_25_of_HS_complement σ k pow_pk
+    (Moore57.HSFixedData.hs_orderOf_dvd_50_of_semiRegular
+      hΓ hsfd i smul_adj hsemi)
+
 /-- **Lemma 18 case (2) geometric: `|N(a) \ Fix(σ)| = 55` from `C5FixedData`.**
 [done]
 
@@ -211,6 +228,19 @@ theorem lem18_case2_orderOf_dvd_5_with_c5FixedData
     orderOf σ ∣ 5 :=
   lem18_case2_orderOf_dvd_5_of_pentagon_complement σ k pow_pk h_semi_regular
 
+/-- **Lemma 18 case (2) unconditional bridge via `C5FixedData` and the
+C3.4 semi-regular orbit argument**. [done — C3.4] -/
+theorem lem18_case2_orderOf_dvd_5_with_c5FixedData_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (c5 : C5FixedData Γ σ) (i : Fin 5)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ Moore57.autMovedNeighborFinset Γ σ (c5.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 5 :=
+  lem18_case2_orderOf_dvd_5_of_pentagon_complement σ k pow_pk
+    (Moore57.C5FixedData.c5_orderOf_dvd_55_of_semiRegular
+      hΓ c5 i smul_adj hsemi)
+
 /-- **Lemma 18 case (3) geometric: `|V \ Fix(σ)| = 3250` from `EmptyFixedData`.**
 [done]
 
@@ -229,6 +259,20 @@ theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData
     (h_semi_regular : orderOf σ ∣ 3250) :
     orderOf σ ∣ 125 :=
   lem18_case3_orderOf_dvd_125_of_empty_fix σ k pow_pk h_semi_regular
+
+/-- **Lemma 18 case (3) unconditional bridge via `EmptyFixedData` and the
+C3.4 semi-regular orbit argument**. [done — C3.4]
+
+The empty-fix case treats σ as acting semi-regularly on the entire
+vertex set, giving `orderOf σ ∣ 3250`. -/
+theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (efd : EmptyFixedData σ)
+    (hsemi : ∀ v : V, ∀ k : ℕ, (σ^k) v = v → orderOf σ ∣ k) :
+    orderOf σ ∣ 125 :=
+  lem18_case3_orderOf_dvd_125_of_empty_fix σ k pow_pk
+    (Moore57.EmptyFixedData.empty_orderOf_dvd_3250_of_semiRegular
+      (Γ := Γ) hΓ efd hsemi)
 
 /-- **Lemma 18 dispatch arithmetic: `n ∣ 25 ∨ n ∣ 5 ∨ n ∣ 125` ⟹ `n ∣ 125`.**
 [done]

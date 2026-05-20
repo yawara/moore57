@@ -2,6 +2,7 @@ import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Logic.Equiv.Defs
 import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Aut.SemiRegularComplement
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Foundations.GroupAction.FixedPoints
 
@@ -225,6 +226,23 @@ theorem induced_no_C4 (h : HSFixedData Γ σ) :
     have hge2 := Set.ncard_le_ncard hsub hfin
     rw [hpair] at hge2
     omega
+
+/-- **HS semi-regular orbit bridge**: for σ with `HSFixedData` on a Moore57
+graph and σ acting semi-regularly on `N(a) \ Fix(σ)`, `orderOf σ ∣ 50`.
+
+This is the [C3.4] semi-regular orbit argument specialised to the
+Hoffman–Singleton case (Lem 18 case (1) input). -/
+theorem hs_orderOf_dvd_50_of_semiRegular
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : HSFixedData Γ σ) (i : Fin 50)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ autMovedNeighborFinset Γ σ (h.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 50 := by
+  have hcard : (autMovedNeighborFinset Γ σ (h.v i)).card = 50 :=
+    h.hsFixedData_complement_neighbor_count hΓ i
+  exact hcard ▸ orderOf_dvd_card_movedNeighbour_of_semiRegular
+    σ smul_adj (h.v_fixed i) hsemi
 
 end HSFixedData
 

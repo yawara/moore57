@@ -1,4 +1,5 @@
 import Moore57.Moore57Graph.Aut.NeighborMod
+import Moore57.Moore57Graph.Aut.SemiRegularComplement
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Foundations.GroupAction.FixedPoints
 
@@ -91,6 +92,21 @@ theorem singletonFixedData_complement_neighbor_count
   change ((Γ.neighborFinset h.v).filter (fun w => ¬ σ w = w)).card = 57
   omega
 
+/-- **Singleton semi-regular orbit bridge**: for σ with `SingletonFixedData`
+on a Moore57 graph and σ acting semi-regularly on `N(v) \ Fix(σ)`,
+`orderOf σ ∣ 57`.  [C3.4] Lem 17 case (2) input. -/
+theorem singleton_orderOf_dvd_57_of_semiRegular
+    [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (h : SingletonFixedData σ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ autMovedNeighborFinset Γ σ h.v,
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 57 := by
+  have hcard : (autMovedNeighborFinset Γ σ h.v).card = 57 :=
+    h.singletonFixedData_complement_neighbor_count (Γ := Γ) hΓ
+  exact hcard ▸ orderOf_dvd_card_movedNeighbour_of_semiRegular
+    σ smul_adj h.v_fixed hsemi
+
 end SingletonFixedData
 
 /-! ## Empty fixed subgraph data -/
@@ -142,6 +158,24 @@ theorem emptyFixedData_complement_vertex_count
   rw [Finset.card_univ, hcard] at hsum
   change ((Finset.univ : Finset V).filter (fun w => ¬ σ w = w)).card = 3250
   omega
+
+/-- **Empty semi-regular orbit bridge**: for σ with `EmptyFixedData` on a
+Moore57 graph and σ acting semi-regularly on `V` (no fixed points),
+`orderOf σ ∣ 3250`.  [C3.4] Lem 18 case (3) / Lem 19 input.
+
+Since `Fix(σ) = ∅`, the relevant set is the entire vertex set, and
+σ-invariance is automatic. -/
+theorem empty_orderOf_dvd_3250_of_semiRegular
+    {Γ : SimpleGraph V} [Fintype V] [DecidableEq V] [DecidableRel Γ.Adj]
+    (hΓ : IsMoore57 Γ) (_h : EmptyFixedData σ)
+    (hsemi : ∀ v : V, ∀ k : ℕ, (σ^k) v = v → orderOf σ ∣ k) :
+    orderOf σ ∣ 3250 := by
+  have hcard : (Finset.univ : Finset V).card = 3250 := by
+    rw [Finset.card_univ]; exact hΓ.card
+  rw [← hcard]
+  apply orderOf_dvd_card_of_semiRegular σ Finset.univ
+  · intros; exact Finset.mem_univ _
+  · intros v _ k hkv; exact hsemi v k hkv
 
 end EmptyFixedData
 
