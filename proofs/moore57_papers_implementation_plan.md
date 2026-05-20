@@ -42,18 +42,24 @@ C3.4 で残した "semi-regular 自体" hypothesis を消す catalyst。 Paper
 MS 2010 §6 Lem 21 (`Fix(σ^l) = Fix(σ)`)。
 
 ### 1.1 Mathlib 調査: `Fix(σ^l) = Fix(σ)` 周辺
-- [ ] `MulAction.fixedPoints` の `σ^l` 形と `σ` の関係を Mathlib で確認
-- [ ] `Equiv.Perm.support_pow_coprime` (既存使用) が l, orderOf σ coprime case
-- [ ] composite l (= 自明でない divisor) の paper-faithful form を要確認
+- [x] `MulAction.fixedPoints` の `σ^l` 形と `σ` の関係を Mathlib で確認
+- [x] `Equiv.Perm.support_pow_coprime` (既存使用) が l, orderOf σ coprime case
+- [x] composite l (= 自明でない divisor) の paper-faithful form を要確認
 - 入力: existing `Foundations/GroupAction/FixedPoints.lean` の `fixedVertexSet_subset_pow`
   (commit 既存) があるので、これと逆向き bridge が必要かを精査
+- **結論**: 一般 `l` で `Fix(σ^l) = Fix(σ)` は **真でない** (`Fix(σ^l) ⊇ Fix(σ)`
+  のみ)。 coprime case は Mathlib に存在、composite case は Lem 17 自体が必要
+  になり循環。 → Phase 1.4/1.5 で別アプローチ要。 詳細は blogs/20260521.md。
 
 ### 1.2 Lem 21 (1): `Fix(σ^l) = Fix(σ)` for σ aut + l small
-- [ ] `Moore57/Papers/MacajSiran2010/Section07_Theorem4Proof/Lemma21_3GroupSingleFix.lean`
-  (現在 True-stub) を proper-signature 化
-- [ ] 主形: σ^p^k = 1 + Fix(σ) singleton ⟹ Fix(σ^l) も singleton (l | p^k)
-- [ ] Paper-faithful な 3 cases (paper §6, p=3): Lem 21 (1), (2), (3)
-- [ ] backward-compat True-stub も保持
+- [x] `Moore57/Papers/MacajSiran2010/Section07_Theorem4Proof/Lemma21_3GroupSingleFix.lean`
+  (現在 True-stub) を proper-signature 化 — **`lem21_part1_subgroup_paper`,
+  `lem21_part2_subgroup_paper` 追加** (Mathlib `Subgroup.index_mul_card` 経由)
+- [~] 主形: σ^p^k = 1 + Fix(σ) singleton ⟹ Fix(σ^l) も singleton (l | p^k)
+  → cyclic specialization は degenerate (cyclic group では任意 divisor で
+  unique subgroup) のため、subgroup 形が paper-faithful。
+- [x] Paper-faithful な 2 cases (paper §6, p=3): Lem 21 (1), (2)
+- [x] backward-compat True-stub も保持
 
 ### 1.3 Semi-regular hypothesis generator
 - [ ] Lem 21 を入力に、Lem 17/18 wrapper の `h_semi_regular : orderOf σ ∣ 54`
