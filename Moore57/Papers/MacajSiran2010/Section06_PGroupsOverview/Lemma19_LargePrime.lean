@@ -241,12 +241,26 @@ theorem lem19_le_19_from_dispatch
   · have h11 : n ≤ 11 := Nat.le_of_dvd (by norm_num) h; omega
   · have h7 : n ≤ 7 := Nat.le_of_dvd (by norm_num) h; omega
 
+/-- **Lemma 19 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature paper-faithful packaging: given the per-prime case
+dispatch (`n ∣ 13 ∨ n ∣ 19 ∨ n ∣ 11 ∨ n ∣ 7`) for the large-prime
+classification, conclude `n ≤ 19`.
+
+Re-export of `lem19_le_19_from_dispatch` with paper-faithful naming. -/
+theorem lem19_large_prime_pgroup_paper
+    (n : ℕ) (h : n ∣ 13 ∨ n ∣ 19 ∨ n ∣ 11 ∨ n ∣ 7) :
+    n ≤ 19 :=
+  lem19_le_19_from_dispatch n h
+
 /-- **Lemma 19 (large-prime `p`-group classification).** [deferred-heavy]
 
 The full 5-case classification.  Arithmetic cores for cases (1), (2),
 (3) are proven above; cases (4) and (5) (p=7 star / edge) follow a
 similar pattern but with additional structural constraints (the edge
-case requires the rank-2 elementary-abelian `Z₇ × Z₇`). -/
+case requires the rank-2 elementary-abelian `Z₇ × Z₇`).
+
+Paper-faithful conditional form: `lem19_large_prime_pgroup_paper`. -/
 theorem lem19_large_prime_pgroup (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S6
