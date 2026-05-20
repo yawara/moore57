@@ -44,14 +44,19 @@ unconditional に格上げ。 prime-order starred 行は実質的にすべて Th
 * **[A1.0] (done)** `Foundations/GroupTheory/SmallGroup819.lean`:
   `SG819 = (Z₉ × Z₃) ⋊ Z₃` (Eisenstein 型作用), GAP-quoted 不変量を
   `native_decide` で検証済 (`card_eq`, `card_orderEq_three`, etc.)
-* **[A1.1] (未)** 位数 81 の群が **15 個** ある事実。
+* **[A1.1] (orientation done, 2026-05-21)** 位数 81 の群が **15 個** ある事実。
+  **Mathlib 調査結論**: `Mathlib.GroupTheory.PGroup` には IsPGroup の card/orderOf
+  特性, Sylow 系, p-group center 非自明性, `card = p²` 群の abelian 性
+  (`commutative_of_card_eq_prime_sq`) 等しかなく、**位数 `p⁴` の 15
+  isomorphism classes 分類は無い**。
   方針候補:
-  - (a) 直接構築 (15 個の struct + group instance) — 重い
-  - (b) Mathlib `IsPGroup` の分類定理で済むか調査 (`Mathlib.GroupTheory.PGroup`)
-  - (c) 圏論的 / cohomological な特徴づけ (`Group.exists_classification`?) — 見込み低
+  - (a) 直接構築 (15 個の struct + group instance) — 重い、各 ~100-200 LOC + uniqueness 用 `native_decide` 検証
+  - (b) ~~Mathlib `IsPGroup` の分類定理で済む~~ — **不可** (Mathlib に classification 無し)
+  - (c) 圏論的 / cohomological な特徴づけ — 見込み低
 * **[A1.2] (未)** 15 個のうち SG(81, 9) が「2つの size-9 共役類」を満たす唯一を示す。
   入力: `SG819.two_classes_size_9 : 2 ≤ ...` (done)。
-  方針: 残り 14 群のそれぞれで共役類サイズを計算して反例とする。
+  方針: 残り 14 群のそれぞれで共役類サイズを計算して反例とする
+  (A1.1 直接構築前提)。
 
 ### A2. `SG(625, 12)` 構築
 
@@ -390,7 +395,11 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
 
 ### D2. Orbital structure infrastructure
 
-* **[D2.0] (未)** `MulAction.orbital G Ω` (Ω × Ω の G-軌道) 定義。
+* **[D2.0] (done, 2026-05-21)** `Moore57.orbital G Ω` (Ω × Ω の G-軌道
+  quotient) + `permRank G Ω : ℕ` (rank = orbital 数) +
+  `SameOrbital` 関係を `Foundations/GroupTheory/RankAndOrbital.lean`
+  に追加。 `sameOrbital_iff`: `SameOrbital G Ω a b ↔ ∃ g, g • b = a`。
+  Mathlib `Prod.mulAction` (diagonal action on Ω × Ω) を利用。
 * **[D2.1] (未)** Paired orbit `Δ'(a) = {a^g : a^{g⁻¹} ∈ Δ(a)}` 定義。
 * **[D2.2] (未)** Self-paired orbit 定義 + 「偶位数 ⇔ 自己paired」(Lem 1, 3)。
 
@@ -487,6 +496,17 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
   - ※ 残りは graph-theoretic side (Lem 17/18 geometric, MP 2001 structure)
     に依存するので、ここで [E] は一旦完了とする。
 
+* **[E5.1] (done, 2026-05-21)** Sylow + Schur-Zassenhaus bridge
+  (`Foundations/GroupTheory/SylowSchurZassenhaus.lean`):
+  `Sylow.exists_complement_of_normal` — 正規 Sylow p-subgroup は必ず
+  complement を持つ (Mathlib `Subgroup.exists_right_complement'_of_coprime`
+  + `Sylow.card_coprime_index`)。 これで proven `prop6_sylow5_normal` /
+  `prop7_q*_sylow*_normal` / `prop8_q*_sylow*_normal` / `thm7_card_*_sylow*_normal`
+  の各成果を「semidirect product 構造」に格上げできる generic helper が
+  揃った (Mathlib level)。 Feit-Thompson / Philip Hall 経由せず Sylow
+  だけで Hall {p}-subgroup を取り出す paper のロジック (§5.1) が Lean で
+  支えられる形に。
+
 ### 5.3 Burnside `p^a q^b` 可解性
 
 これも **必要なし**。理由: 我々は具体的に小さい order の case を Sylow + 算術で処理するため、抽象的に「solvable」を経由する必要がない。
@@ -540,15 +560,18 @@ uniqueness 着手) を検討。
 8. ~~**[B3.1+]** χⱼ subrep + character identification (全 3 character)~~
    — **done**: `chi{0,1,2}Subrep` + `chi{0,1,2}_eq_chi{j}Subrep_character`
    を `SpectralSubrepresentation.lean` に追加。
-9. **[★ 次の短期項目]** 候補 — どれも独立で着手可:
-   - **[A1.1] (orientation only)** Mathlib の `IsPGroup` 分類で位数 81
-     の群が 15 個ある事実が取れるか調査。 取れれば A1.2 へ。
-   - **[E5.0] 補強** `cor3_unified_arithmetic_bound` (proven) と
-     Sylow.Normal を組み合わせて `|Aut(Γ)| ≤ 375` の Mathlib-level
-     形式化を強化。
-   - **[D1-D2 orientation]** Higman 1964 rank-3 perm group framework の
-     orbital structure (rank, paired orbits, intersection numbers)
-     の Mathlib 整備状況調査。
+9. ~~**[A1.1]** Mathlib IsPGroup 分類調査~~ — **done (orientation, negative)**:
+   Mathlib には位数 `p⁴` 群の分類は無い。15 群直接構築が必要 (重い)。
+10. ~~**[E5.1]** Sylow + Schur-Zassenhaus bridge~~ — **done**:
+    `Sylow.exists_complement_of_normal` を `SylowSchurZassenhaus.lean`
+    に追加。
+11. ~~**[D2.0]** orbital structure 定義~~ — **done**:
+    `orbital G Ω`, `permRank G Ω`, `SameOrbital` を
+    `RankAndOrbital.lean` に追加。
+12. **[★ 次の短期項目]** 候補:
+   - **[D2.1, D2.2]** Paired orbital + self-paired criterion (D2.0 後続)。
+   - **[A1.1 → A1.2]** 位数 81 の 15 群の直接構築 (重い、各 100-200 LOC)。
+   - **[B4.3]** Composite-order Galois cyclotomic decomp (deferred-heavy)。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -628,7 +651,9 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) papers: Tier B B3.1+ — chi0 + chi2 spectral subreps + character identifications
+* (HEAD) papers+proofs: A1.1 orientation (negative) + E5.1 Sylow-SchurZassenhaus + D2.0 orbital
+* `c39c87c` proofs+blogs: Tier B B3.1+ done — chi0/chi1/chi2 spectral subreps
+* `3557431` papers: Tier B B3.1+ chi0 + chi2 spectral subreps + character identifications
 * `713613d` proofs+blogs: Tier B B3.1+ chi1 partial done — spectral subrep + character
 * `10632df` papers: Tier B B3.1+ chi1 — spectral subrepresentation + character identification
 * `dfd3e1f` proofs+blogs: Tier B B4.2 done — Lem 12 p=7 + Lem 13 p=3 starred unconditional
