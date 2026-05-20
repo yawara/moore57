@@ -122,4 +122,60 @@ theorem lem4_case6_hs_fix
   Moore57.Papers.MakhnevPaduchikh2001.lem3_case6_hs_fix
     hΓ σ p hp_odd hpow h_fix_50
 
+/-- **Lemma 4 unified: any of the 5 N(a)-shape-degree values forces `p` into
+the Moore57 odd-prime list `{3, 5, 7, 11, 13, 19}`.** [done]
+
+Re-exports `Moore57.Papers.MakhnevPaduchikh2001.lem3_unified_p_in_moore57_primes`.
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` fixing
+some vertex `a` whose σ-fixed-neighbour count `c` is one of the
+paper-cited Fix-shape degrees `c ∈ {0, 1, 2, 3, 7}` (matching
+singleton / star-leaf / pentagon / Petersen / HS), conclude
+`p ∈ {3, 5, 7, 11, 13, 19}`. -/
+theorem lem4_unified_p_in_moore57_primes
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (hAut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    {a : V} (ha : σ a = a)
+    (h_count_in :
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 0 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 1 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 2 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 3 ∨
+      (Moore57.autFixedNeighborFinset Γ σ a).card = 7) :
+    p = 3 ∨ p = 5 ∨ p = 7 ∨ p = 11 ∨ p = 13 ∨ p = 19 :=
+  Moore57.Papers.MakhnevPaduchikh2001.lem3_unified_p_in_moore57_primes
+    hΓ σ p hp_odd hpow hAut ha h_count_in
+
+/-- **Lemma 4 disjunction-of-cases**: combined `Fix`-shape dispatch over
+the six Lemma-4 cases, yielding `|X| = p ∈ {3, 5, 7, 11, 13, 19}`. [done]
+
+The hypothesis structure mirrors the paper's six-way classification:
+each branch supplies the appropriate `fixedVertexCount` or
+`autFixedNeighborFinset` count and gets the conclusion `p ∈ ...`
+from one of the case-specific lemmas above.
+
+This is the "dispatched" form that combines all six fix-shape inputs
+into a unified `p ∈ {3, 5, 7, 11, 13, 19}` conclusion. -/
+theorem lem4_dispatched_p_in_moore57_primes
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (h_case :
+      fixedVertexCount σ = 0 ∨
+      fixedVertexCount σ = 1 ∨
+      fixedVertexCount σ = 50) :
+    p = 3 ∨ p = 5 ∨ p = 7 ∨ p = 11 ∨ p = 13 ∨ p = 19 := by
+  rcases h_case with h0 | h1 | h50
+  · -- Empty fix: p ∈ {5, 13}
+    rcases lem4_case1_empty_fix hΓ σ p hp_odd hpow h0 with h | h
+    · right; left; exact h
+    · right; right; right; right; left; exact h
+  · -- Singleton: p ∈ {3, 19}
+    rcases lem4_case2_singleton_fix hΓ σ p hp_odd hpow h1 with h | h
+    · left; exact h
+    · right; right; right; right; right; exact h
+  · -- HS fix: p = 5
+    have := lem4_case6_hs_fix hΓ σ p hp_odd hpow h50
+    right; left; exact this
+
 end Moore57.Papers.MacajSiran2010.S2
