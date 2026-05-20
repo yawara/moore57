@@ -177,15 +177,32 @@ theorem cor3_375_bound_via_autSubgroup
       Nat.card (Moore57.autSubgroup Γ) ≤ 110) :=
   cor3_bound_from_props_and_oddpart _ h_odd_props h_even_oddpart
 
+/-- **Corollary 3 (paper-faithful conditional bound).** [done]
+
+Proper-signature paper-faithful packaging of the headline `|G| ≤ 375` /
+`Even → ≤ 110` bound, taking the Theorem 6/7 Prop-level dispatch as
+explicit input.  Re-export of `cor3_bound_from_props_and_oddpart` with
+paper-faithful naming. -/
+theorem cor3_375_bound_paper
+    (n : ℕ)
+    (h_odd_props : Odd n →
+      ((n ∣ 135 ∨ n ∣ 375) ∨
+       (n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171) ∨
+       (n ∣ 35 ∨ n ∣ 275)))
+    (h_even_oddpart : Even n →
+      ∃ m, n = 2 * m ∧ (m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19)) :
+    n ≤ 375 ∧ (Even n → n ≤ 110) :=
+  cor3_bound_from_props_and_oddpart n h_odd_props h_even_oddpart
+
 /-- **Corollary 3 (`|Aut(Γ)| ≤ 375`, and `≤ 110` if even).** [deferred-heavy]
 
 Full paper-faithful statement.  The arithmetic backbone (taking the
 maximum over Thm 6 / Thm 7 listed values) is proven in
 `cor3_odd_arithmetic_bound` / `cor3_even_arithmetic_bound` / the
 unified `cor3_unified_arithmetic_bound` / `cor3_bound_of_thm6_thm7` /
-the new Prop-level `cor3_bound_from_props_and_oddpart`; the
-`Aut(Γ)` ↔ subgroup-of-Sym(V) bridge is in
-`cor3_375_bound_via_autSubgroup`.  What remains is Theorems 6, 7
+the new Prop-level `cor3_bound_from_props_and_oddpart` /
+`cor3_375_bound_paper` (above); the `Aut(Γ)` ↔ subgroup-of-Sym(V) bridge
+is in `cor3_375_bound_via_autSubgroup`.  What remains is Theorems 6, 7
 themselves (paper-deferred). -/
 theorem cor3_375_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
