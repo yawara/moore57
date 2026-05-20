@@ -1,4 +1,5 @@
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Foundations.GroupTheory.RankAndOrbital
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -27,7 +28,13 @@ formalisation needs `MulAction G Ω` set up and the rank-3 hypothesis.
 [deferred-heavy]
 
 Status:
-* `lem2_intersection_numbers`: paper-stub, deferred-heavy (rank-3).
+* `lem2_intersection_numbers`: paper-stub, deferred-heavy (rank-3
+  setup + connection to graph structure).
+* `lem2_intersection_count_orbital_invariant`: **proven** (D3.1) — the
+  structural backbone: orbital intersection counts depend only on the
+  orbital containing `(a, b)`.  This is the precise paper-faithful
+  constancy statement for `λ, μ, λ₁, μ₁` once one identifies the
+  paper's `Δ, Γ` orbits with the corresponding orbitals.
 * `lem2_lambda1_mu1_identities`: **proven** — pure ℤ identities
   `λ₁ = l − k + μ − 1`, `μ₁ = l − k + λ + 1` as packaged hypotheses.
 * `lem2_moore57_lambda1_eq_3135`, `lem2_moore57_mu1_eq_3136`: **proven**
@@ -35,6 +42,25 @@ Status:
 -/
 
 namespace Moore57.Papers.Higman1964
+
+/-- **Lemma 2 structural backbone: orbital intersection count constancy**. [done]
+
+For any group `G` acting on `Ω`, the orbital intersection count
+`|N_{O₁}(a) ∩ N_{O₂}(b)|` (where `N_O(a) = {c : (a, c) ∈ O}`) depends
+only on the orbital containing `(a, b)`, not on the specific representative.
+
+This is the precise paper-faithful structural reason the intersection
+numbers `λ, μ, λ₁, μ₁` (defined as such counts at representatives) are
+well-defined: they depend only on the orbital "type" of `(a, b)`.
+
+Wraps `Moore57.orbitalIntersectionCount_orbital_invariant`. -/
+theorem lem2_intersection_count_orbital_invariant
+    {G Ω : Type*} [Group G] [MulAction G Ω]
+    (O₁ O₂ : Moore57.orbital G Ω) {a b a' b' : Ω}
+    (h : Moore57.SameOrbital G Ω (a, b) (a', b')) :
+    Moore57.orbitalIntersectionCount G Ω O₁ O₂ a b =
+    Moore57.orbitalIntersectionCount G Ω O₁ O₂ a' b' :=
+  Moore57.orbitalIntersectionCount_orbital_invariant G Ω O₁ O₂ h
 
 /-- **Lemma 2 arithmetic: `λ₁`, `μ₁` complement identities packaged**. [done]
 
