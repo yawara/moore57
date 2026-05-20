@@ -112,12 +112,49 @@ theorem cor3_bound_of_thm6_thm7 (n : ℕ)
   · have := cor3_even_arithmetic_bound n (h_even he); omega
   · exact cor3_odd_arithmetic_bound n (h_odd ho)
 
+/-- **Corollary 3 conditional from Prop-level dispatch.** [done]
+
+A stronger conditional form taking the inputs at the Propositions
+6/7/8 and Thm-7-odd-part level (one step earlier than
+`cor3_bound_of_thm6_thm7`). For each parity:
+
+* `h_odd_props`: if `n` is odd, then the Props 6/7/8 dispatch holds.
+  (`n` divides one of 135/375 (Prop 6) or 147/39/171 (Prop 7) or
+  35/275 (Prop 8).)
+* `h_even_oddpart`: if `n` is even, then `n = 2·m` with `m` dividing
+  one of 55/25/27/7/11/19 (Thm 7 odd-part input).
+
+Conclusion: `n ≤ 375` and `Even n → n ≤ 110`.
+
+This conditional sits above the Thm 6 / Thm 7 dispatches and just
+below the paper's `Aut(Γ)` interpretation. -/
+theorem cor3_bound_from_props_and_oddpart (n : ℕ)
+    (h_odd_props : Odd n →
+      ((n ∣ 135 ∨ n ∣ 375) ∨
+       (n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171) ∨
+       (n ∣ 35 ∨ n ∣ 275)))
+    (h_even_oddpart : Even n →
+      ∃ m, n = 2 * m ∧ (m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19)) :
+    n ≤ 375 ∧ (Even n → n ≤ 110) := by
+  refine ⟨?_, ?_⟩
+  · -- n ≤ 375
+    rcases Nat.even_or_odd n with he | ho
+    · obtain ⟨m, hn, hm⟩ := h_even_oddpart he
+      have := thm7_bound_110_from_odd_part n m hn hm
+      omega
+    · exact thm6_bound_375_from_props n (h_odd_props ho)
+  · -- Even n → n ≤ 110
+    intro he
+    obtain ⟨m, hn, hm⟩ := h_even_oddpart he
+    exact thm7_bound_110_from_odd_part n m hn hm
+
 /-- **Corollary 3 (`|Aut(Γ)| ≤ 375`, and `≤ 110` if even).** [deferred-heavy]
 
 Full paper-faithful statement.  The arithmetic backbone (taking the
 maximum over Thm 6 / Thm 7 listed values) is proven in
-`cor3_odd_arithmetic_bound` / `cor3_even_arithmetic_bound` / the new
-unified `cor3_unified_arithmetic_bound` and `cor3_bound_of_thm6_thm7`;
+`cor3_odd_arithmetic_bound` / `cor3_even_arithmetic_bound` / the
+unified `cor3_unified_arithmetic_bound` / `cor3_bound_of_thm6_thm7` /
+the new Prop-level `cor3_bound_from_props_and_oddpart`;
 what remains is the `Aut(Γ)` ↔ subgroup-of-Sym(V) bridge and
 Theorems 6, 7 themselves. -/
 theorem cor3_375_bound (hΓ : IsMoore57 Γ) : True := by trivial
