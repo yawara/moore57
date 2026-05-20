@@ -188,12 +188,15 @@ Higman 1964:
 
 Mačaj-Širáň 2010:
 - Lem 21 part 1/2 `_subgroup_paper`
+- Lem 16 `_pgroup_fix_shape_paper` (5-case N(a) dispatch)
 - Lem 17 case 1/2 `_prime_unconditional`, case 1 `_k_le_3`, case 2 `_k_le_4`
 - Lem 18 case 1/2/3 `_prime_unconditional`, case 1 `_k_le_2`, case 3 `_k_le_3`
+- Lem 19 `_large_prime_pgroup_paper` (4-case dispatch)
 - Lem 13 starred row 5_0_5, 5_5_5 `_no_aut_conditional`
 - Lem 8 `_paper` (spectrum→mod 15)
 - Lem 6 dispatch (size 1-4 ∨ ≥64)
 - Lem 14 `_paper` (semi-regular congruence)
+- Lem 15 starred row pq=35 `_paper` (trace contradiction)
 - Lem 23 `_paper` (stabilizer order)
 - Lem 24 `_paper` (j ≥ 2)
 - Lem 25 `_paper_normal_sylow_action` (Q-action on Fix(P))
@@ -201,8 +204,11 @@ Mačaj-Širáň 2010:
 - Prop 3 `_prime_unconditional`
 - Prop 5 `_paper` (three-case dispatch)
 - Prop 6/7/8 `_paper` (mixing primes dispatch)
+- Thm 4 + Thm 5 `_paper` (Section 6 group bounds)
+- Thm 4 Final + Thm 5 Final `_paper` (Section 7/8 wrappers)
 - Thm 6/7 `_paper` (odd/even order dispatch)
 - Cor 3 `_paper` (375 bound dispatch)
+- Main `aut_card_le_375_paper` (top-level headline)
 
 Makhnev-Paduchikh 2001:
 - Lem 3 `_paper` (global Fix dispatch)
