@@ -128,11 +128,21 @@ Lem 13 fullテーブル, Lem 14 paper-faithful 形, Lem 18 一般。
   `Foundations/GraphTheory/PetersenGraph.lean`.
 * **[C1.1] (done)** `petersenGraph_isSRG : petersenGraph.IsSRGWith 10 3 0 1`
   by `decide` (fin_cases + decidable Adj)。
+* **[C1.1+] (done)** Petersen 追加性質:
+  - `petersenGraph_edgeFinset_card = 15` (handshaking)
+  - `petersenGraph_triangleFree` (λ = 0 から)
+  - `petersenGraph_no_C4` (girth ≥ 5: case 分けで)
 * **[C1.2a] (done)** `IsPetersenLike G ↔ G.IsSRGWith 10 3 0 1` 抽象 predicate。
   `Foundations/GraphTheory/SRGPredicates.lean`.
+* **[C1.2a+] (done)** abstract edge count bridges:
+  - `isPetersenLike_edgeFinset_card = 15`
+  - `isHoffmanSingletonLike_edgeFinset_card = 175`
 * **[C1.2b] (未)** `Aut(Petersen) ≅ S₅` (|Aut| = 120) uniqueness/identification。
+  - 10! = 3,628,800 規模で `native_decide` 系も厳しい。後回し。
 * **[C1.3] (未)** Subgraph embedding: `Petersen ↪ Moore57` の condition 定式化
   (これは `IsMoore57 Γ` の subgraph として induce する形)。
+  - 部分的には PetersenFixedData が σ-依存版を提供済み。general embedding
+    は `SimpleGraph.induce` + `IsPetersenLike` での命題化。
 
 ### C2. Hoffman–Singleton graph の Lean 化
 
@@ -177,6 +187,11 @@ Lem 13 fullテーブル, Lem 14 paper-faithful 形, Lem 18 一般。
   であることから `orderOf σ ∣ |N(a) \ Fix(σ)|`。これは MS 2010 §6 で
   semi-regular を separate に取得。Tier C の semi-regular bridge を
   unconditional 化するのに必要。
+
+* **[C3.5-pre] (done)** PetersenFixedData / HSFixedData の girth bridges:
+  - `induced_triangleFree`, `induced_no_C4` (各 FixedData)
+  - `induced_adj_pairs_card_eq_30` (PetersenFixedData の Fin 10 × Fin 10
+    ordered edge count, `decide` で Petersen.Adj に reduce)
 
 * **[C3.5] (done)** Lem 17/18/19 case (2-3): pentagon / empty / singleton
   接続。`SingletonFixedData` + `EmptyFixedData` 新規作成
