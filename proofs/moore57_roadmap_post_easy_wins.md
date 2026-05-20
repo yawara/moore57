@@ -278,8 +278,17 @@ fix-shape classification) 待ち。 ただし downstream lemmas は `XConclusion
       `DirectSum.IsInternal` for `(ker(aeval f Φ_d))_{d ∣ n}`
       (`isInternal_submodule_iff_iSupIndep_and_iSup_eq_top` + Step 2 +
       `iSup_subtype`)。 Step 4 (trace 公式) の直接入力。
-  - **Step 4-6 (deferred)** 残り:
-    - Step 4: per-block trace formula = `μ(d) · γ_d`
+  - **Step 4 (partial done)** Trace decomposition over direct sum:
+    - `aeval_apply_comm_f` — `aeval f p (f v) = f (aeval f p v)`
+      (任意 `p : ℚ[X]` で `aeval f p` は `f` と可換)
+    - `mapsTo_f_ker_aeval_cyclotomic` — `f` は `ker(aeval f Φ_d)` を保つ
+    - `trace_eq_sum_trace_restrict_ker_aeval_cyclotomic_divisors`
+      (`[FiniteDimensional ℚ W]`) — `f^n = 1` (n > 0) ⟹
+      `trace f = ∑_{d ∣ n} trace(f.restrict ker(Φ_d))`
+      (Mathlib `LinearMap.trace_eq_sum_trace_restrict` を Step 3 main に適用)
+    - 残: per-block trace = `μ(d) · γ_d` (`γ_d = dim(ker Φ_d) / φ(d)`)
+      は Step 4 full へ deferred (ℚ(ζ_d)-module 構造の確立必要)
+  - **Step 5-6 (deferred)** 残り:
     - Step 5: specialise to `n = 25` for Lem 13 p=5 starred rows
     - Step 6: apply via `Moore57Graph/Aut/TraceIntegrality.lean` and close
       `lem13_starred_row_5_*_no_integer_trace`

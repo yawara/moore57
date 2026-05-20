@@ -7,7 +7,7 @@ import Mathlib.Algebra.DirectSum.Module
 import Mathlib.Order.SupIndep
 
 /-!
-# Trace of a finite-order linear endomorphism (composite order, Steps 1-3 done)
+# Trace of a finite-order linear endomorphism (composite order, Steps 1-4 partial)
 
 **Roadmap [B4.3] composite-order Galois cyclotomic decomp** — gradual
 build-out.  This module generalizes `Foundations/LinearAlgebra/PowPrimeTrace.lean`
@@ -54,9 +54,23 @@ trace.  The strategy follows the classical Galois–Möbius argument:
   `DirectSum.IsInternal` for the family `(ker(aeval f Φ_d))_{d ∣ n}`
   (Mathlib's `isInternal_submodule_iff_iSupIndep_and_iSup_eq_top`).
 
+## Step 4 (partial): trace decomposition over the direct sum
+
+* `aeval_apply_comm_f` — `aeval f p (f v) = f (aeval f p v)` (any
+  polynomial in `f` commutes with `f`, since the image of `ℚ[X]` in
+  `Module.End ℚ W` is a commutative subring).
+* `mapsTo_f_ker_aeval_cyclotomic` — `f` preserves each `ker(aeval f Φ_d)`.
+* `trace_eq_sum_trace_restrict_ker_aeval_cyclotomic_divisors`
+  (`[FiniteDimensional ℚ W]`) — `f^n = 1` (n > 0) ⟹
+  `trace f = ∑_{d ∣ n} trace(f.restrict (ker(aeval f Φ_d)))`
+  (Mathlib's `DirectSum.IsInternal.trace_eq_sum_trace_restrict`
+  applied to Step 3 main).
+
 ## Future steps (deferred)
 
-* Step 4: per-block trace formula = `μ(d) · γ_d`.
+* Step 4 (full): per-block trace formula
+  `trace(f.restrict ker(Φ_d)) = (dim(ker Φ_d) / φ(d)) · μ(d)`
+  via ℚ(ζ_d)-module structure on each block.
 * Step 5: specialise to `n = 25` for the Lemma 13 `p = 5` starred rows.
 * Step 6: apply via `Moore57Graph/Aut/TraceIntegrality.lean` and close
   `lem13_starred_row_5_*_no_integer_trace`.
@@ -187,6 +201,51 @@ theorem isInternal_ker_aeval_cyclotomic_divisors
           LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d ℚ))) from
       iSup_subtype]
   exact sup_ker_aeval_cyclotomic_divisors_eq_top f hn hf
+
+/-! ### Step 4 (partial): trace decomposition over the direct sum -/
+
+/-- **Polynomial-in-`f` commutes with `f`**: for any `p : ℚ[X]`,
+`aeval f p` commutes with `f` (both are polynomials in `f`, and the
+image of `ℚ[X]` in `Module.End ℚ W` is a commutative subring). -/
+lemma aeval_apply_comm_f (f : W →ₗ[ℚ] W) (p : ℚ[X]) (v : W) :
+    Polynomial.aeval f p (f v) = f (Polynomial.aeval f p v) := by
+  have h1 :
+      Polynomial.aeval f p (f v)
+        = Polynomial.aeval f (p * Polynomial.X) v := by
+    rw [map_mul, Polynomial.aeval_X]
+    rfl
+  have h2 :
+      Polynomial.aeval f (Polynomial.X * p) v = f (Polynomial.aeval f p v) := by
+    rw [map_mul, Polynomial.aeval_X]
+    rfl
+  rw [h1, mul_comm, h2]
+
+/-- **B4.3 Step 4 helper**: `f` preserves the kernel of `aeval f Φ_d`. -/
+lemma mapsTo_f_ker_aeval_cyclotomic (f : W →ₗ[ℚ] W) (d : ℕ) :
+    Set.MapsTo f
+      (LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d ℚ)) : Set W)
+      (LinearMap.ker (Polynomial.aeval f (Polynomial.cyclotomic d ℚ)) : Set W) := by
+  intro x hx
+  simp only [SetLike.mem_coe, LinearMap.mem_ker] at hx ⊢
+  rw [aeval_apply_comm_f, hx, map_zero]
+
+/-- **B4.3 Step 4 main**: `f^n = 1` (n > 0) ⟹ the trace of `f`
+decomposes as a sum over divisors `d ∣ n` of the per-block traces of
+the restrictions `f|_{ker(aeval f Φ_d)}`.
+
+This is the structural input for the Möbius-weighted trace formula
+(Step 4 full): each per-block trace will turn out to equal
+`(dim(ker Φ_d) / φ(d)) · μ(d) ∈ ℤ`. -/
+theorem trace_eq_sum_trace_restrict_ker_aeval_cyclotomic_divisors
+    [FiniteDimensional ℚ W]
+    (f : W →ₗ[ℚ] W) {n : ℕ} (hn : 0 < n) (hf : f ^ n = 1) :
+    LinearMap.trace ℚ W f =
+      ∑ d : (Nat.divisors n : Finset ℕ),
+        LinearMap.trace ℚ _
+          (f.restrict (mapsTo_f_ker_aeval_cyclotomic f d.val)) := by
+  exact _root_.LinearMap.trace_eq_sum_trace_restrict
+    (isInternal_ker_aeval_cyclotomic_divisors f hn hf)
+    (fun d => mapsTo_f_ker_aeval_cyclotomic f d.val)
 
 end
 
