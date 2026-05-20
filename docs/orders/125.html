@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 125 = 5³</h1>
-    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 5 paper-excluded</span> <span class="badge open">0 / 5 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,15 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 18 / Theorem 5: a 5-group of order 125 has Fix(X) either a pentagon or empty. Propositions 4–5 exclude specific cases.</p>
+  <p>
+    Lemma 18 / Theorem 5 (5-group classification): a 5-group of order
+    125 has <code>Fix(X)</code> either a pentagon
+    (<code>|X| ∣ 125</code> achieved with equality) or empty
+    (<code>|X| ∣ 5⁶</code>); the Hoffman–Singleton branch is excluded
+    here (Proposition 3 caps it at <code>|X| ≤ 5</code>). Propositions
+    4–5 add structural constraints but do not single out any of the 5
+    isomorphism types. <strong>All 5 groups paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,14 +50,14 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(125, 1)</code></td><td><code>ℤ₁₂₅</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(125, 2)</code></td><td><code>ℤ₂₅ × ℤ₅</code></td><td>Abelian, rank 2.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(125, 3)</code></td><td><code>(non-abelian)</code></td><td>Heisenberg (exponent 5).</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(125, 4)</code></td><td><code>(non-abelian)</code></td><td>Exponent 25.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(125, 5)</code></td><td><code>(ℤ₅)³</code></td><td>Elementary abelian.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 1)</code></td><td><code>ℤ₁₂₅</code></td><td>Cyclic.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 2)</code></td><td><code>ℤ₂₅ × ℤ₅</code></td><td>Abelian, rank 2.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 3)</code></td><td><code>(non-abelian)</code></td><td>Heisenberg (exponent 5).</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 4)</code></td><td><code>(non-abelian)</code></td><td>Exponent 25.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(125, 5)</code></td><td><code>(ℤ₅)³</code></td><td>Elementary abelian.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

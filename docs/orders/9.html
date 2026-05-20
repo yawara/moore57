@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 9 = 3²</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,15 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 17: a 3-group of order 9 has Fix(X) either the Petersen graph or a singleton. Lemma 13 provides trace constraints for order-9 elements.</p>
+  <p>
+    Lemma 17 (3-group classification): a 3-group <code>X</code> has
+    <code>Fix(X)</code> either the Petersen graph (<code>|X| ∣ 27</code>)
+    or a singleton (<code>|X| ∣ 81</code>). Both branches allow
+    <code>|X| = 9</code>, so the paper does not single out either
+    order-9 group as excluded. Lemma 13 provides further trace
+    constraints for order-9 elements. <strong>Both groups
+    paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,11 +50,23 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(9, 1)</code></td><td><code>ℤ₉</code></td><td>Cyclic group of order 9.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(9, 2)</code></td><td><code>ℤ₃ × ℤ₃</code></td><td>Elementary abelian.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(9, 1)</code></td>
+        <td><code>ℤ₉</code></td>
+        <td>Cyclic; 3-group, Lem 17 allows <code>|X|=9</code> in either Fix branch.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+      <tr>
+        <td><code>(9, 2)</code></td>
+        <td><code>ℤ₃ × ℤ₃</code></td>
+        <td>Elementary abelian; 3-group, Lem 17 allows.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 25 = 5²</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,17 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 13 (p=5) gives trace constraints for order-25 elements. Lemma 18 / Proposition 3: if Fix(X) is Hoffman–Singleton then |X| ≤ 5 (so non-trivial 5²-subgroup needs other Fix).</p>
+  <p>
+    Lemma 18 (5-group classification): a 5-group <code>X</code> has
+    <code>Fix(X)</code> either Hoffman–Singleton (<code>|X| ∣ 25</code>,
+    with Proposition 3 tightening to <code>|X| ≤ 5</code>), a pentagon
+    (<code>|X| ∣ 125</code>), or empty (<code>|X| ∣ 5⁶</code>). A
+    non-trivial 5² subgroup needs pentagon or empty Fix; both branches
+    allow <code>|X| = 25</code>. Lemma 13 (<code>p = 5</code>) provides
+    further trace constraints. <strong>Both groups paper-allowed</strong>
+    — unlike the <code>p = 7</code> case at order 49, Lemma 18 does not
+    exclude the cyclic <code>ℤ₂₅</code>.
+  </p>
 </section>
 
 <section>
@@ -42,11 +52,23 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(25, 1)</code></td><td><code>ℤ₂₅</code></td><td>Cyclic group of order 25.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(25, 2)</code></td><td><code>ℤ₅ × ℤ₅</code></td><td>Elementary abelian.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(25, 1)</code></td>
+        <td><code>ℤ₂₅</code></td>
+        <td>Cyclic; 5-group, Lem 18 allows <code>|X|=25</code> in pentagon or empty Fix branch.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
+      <tr>
+        <td><code>(25, 2)</code></td>
+        <td><code>ℤ₅ × ℤ₅</code></td>
+        <td>Elementary abelian; 5-group, Lem 18 allows.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

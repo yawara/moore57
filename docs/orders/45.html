@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 45 = 3² · 5</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,14 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Combines a 3²-subgroup (Lemma 17) and a 5-subgroup (Lemma 4 / 18). Proposition 6 (p=3, q=5) constrains 3·5 structure.</p>
+  <p>
+    Combines a 3²-Sylow (Lemma 17: <code>Fix ∈ {singleton, Petersen}</code>,
+    <code>|X| ∣ 81</code> or <code>27</code>) and a 5-Sylow (Lemma 18 /
+    Lem 3(1/4/6): <code>Fix(ℤ₅) ∈ {empty, pentagon, HS}</code>).
+    Proposition 6 (<code>p = 3, q = 5</code>) constrains the
+    <code>3 · 5</code> structure. Neither of the two order-45 groups is
+    individually excluded — <strong>both paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,11 +49,11 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(45, 1)</code></td><td><code>ℤ₄₅</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(45, 2)</code></td><td><code>(ℤ₃)² × ℤ₅</code></td><td>Abelian, rank 2.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(45, 1)</code></td><td><code>ℤ₄₅</code></td><td>Cyclic; 3-Sylow <code>ℤ₉</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(45, 2)</code></td><td><code>(ℤ₃)² × ℤ₅</code></td><td>Abelian, rank 2; 3-Sylow <code>ℤ₃²</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

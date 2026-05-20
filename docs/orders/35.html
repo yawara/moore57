@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 35 = 5 · 7</h1>
-    <p class="sub status"><span class="badge open">0 / 1 group excluded</span></p>
+    <p class="sub status"><span class="badge open">0 / 1 paper-excluded</span> <span class="badge open">0 / 1 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -33,6 +33,16 @@
     (impossible) rows — so the strongest <em>orbit-shape</em> for an
     order-35 element is already excluded by the paper, but the
     <strong>group-order exclusion is still open</strong>.
+  </p>
+  <p>
+    Per-prime: Lem 18 / Lem 3(1/4/6) gives
+    <code>Fix(ℤ₅) ∈ {empty, pentagon, HS}</code>; Lem 19(4) gives
+    <code>Fix(ℤ₇) = star</code>. The single group <code>ℤ₃₅</code>
+    is not individually excluded — <strong>paper-allowed</strong>.
+    (Note: Theorem 7 proof remark "<code>G</code> cannot contain
+    <code>ℤ₁₀</code> and <code>ℤ₃₅</code> with a common
+    <code>ℤ₅</code>" is a joint constraint that does not apply here in
+    isolation.)
   </p>
 </section>
 
@@ -56,7 +66,7 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
       <tr>
@@ -67,6 +77,7 @@
           <code>p &lt; q</code> Sylow analysis only the cyclic group
           exists.
         </td>
+        <td><span class="badge open">allowed</span></td>
         <td><span class="badge open">open</span></td>
       </tr>
     </tbody>

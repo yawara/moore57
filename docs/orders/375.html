@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 375 = 3 · 5³</h1>
-    <p class="sub status"><span class="badge open">0 / 4 groups excluded</span></p>
+    <p class="sub status"><span class="badge open">0 / 4 paper-excluded</span> <span class="badge open">0 / 4 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -32,13 +32,16 @@
     overall (Corollary 3: <code>|G| ≤ 375</code>). Theorem 5 restricts
     the Sylow-5 of order 125 to two abelian types
     (<code>ℤ₁₂₅</code> or <code>ℤ₂₅ × ℤ₅</code>) once
-    <code>SmallGroup(625, 12)</code> is ruled out (Proposition 4). The
-    paper notes that even after Lemma 5's equitable-partition check,
-    <em>hundreds</em> of candidate adjacency matrices for groups of
-    order 375 with 10 orbits survive.
+    <code>SmallGroup(625, 12)</code> is ruled out (Proposition 4).
+    Per-prime: Lem 17 / Lem 3(2/5) gives
+    <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>; Lem 18 / Theorem 5
+    constrain the 5³-Sylow. The paper notes that even after Lemma 5's
+    equitable-partition check, <em>hundreds</em> of candidate adjacency
+    matrices for groups of order 375 with 10 orbits survive.
   </p>
   <p>
-    <strong>The paper does not exclude group order 375.</strong>
+    <strong>The paper does not exclude group order 375</strong> — no
+    individual family is ruled out.
   </p>
 </section>
 
@@ -72,12 +75,12 @@
   <figure>
   <table>
     <thead>
-      <tr><th>Family</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>Family</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>ℤ₃₇₅</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>ℤ₃ × P</code></td><td>Direct product with abelian <code>P</code> of order 125.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>P ⋊ ℤ₃</code></td><td>Frobenius / semidirect when <code>3</code> divides the order of <code>Aut(P)</code>.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>ℤ₃₇₅</code></td><td>Cyclic.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>ℤ₃ × P</code></td><td>Direct product with abelian <code>P</code> of order 125.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>P ⋊ ℤ₃</code></td><td>Frobenius / semidirect when <code>3</code> divides the order of <code>Aut(P)</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

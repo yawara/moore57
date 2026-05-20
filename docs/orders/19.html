@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 19 = 19</h1>
-    <p class="sub status"><span class="badge open">0 / 1 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 1 paper-excluded</span> <span class="badge open">0 / 1 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,16 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 4 (case 2): a subgroup of order 19 has Fix(X) a singleton. Lemma 19 forces 19-Sylow ≅ ℤ₁₉.</p>
+  <p>
+    MP 2001 Lemma 3 case (2) for <code>p = 19</code> forces
+    <code>|Fix(ℤ₁₉)| = 1</code> (a singleton) — = Lemma 4 case 2 /
+    Lemma 16 case 2. Lemma 19 case (2) further forces the 19-Sylow to
+    be cyclic: <code>X ≅ ℤ₁₉</code>, no <code>ℤ₁₉²</code>. This is the
+    same restriction the project uses for the order-38 case (formalized
+    as <code>order19_aut_fixedVertexCount_eq_one</code>). No direct
+    exclusion at order 19 — the single group <code>ℤ₁₉</code> is
+    <strong>paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,10 +51,16 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(19, 1)</code></td><td><code>ℤ₁₉</code></td><td>Cyclic group of order 19.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(19, 1)</code></td>
+        <td><code>ℤ₁₉</code></td>
+        <td>Cyclic; <code>|Fix(ℤ₁₉)| = 1</code> (Lem 3(2)); 19-Sylow forced cyclic (Lem 19(2)).</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

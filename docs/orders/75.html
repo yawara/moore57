@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 75 = 3 · 5²</h1>
-    <p class="sub status"><span class="badge open">0 / 3 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 3 paper-excluded</span> <span class="badge open">0 / 3 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,12 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Combines order-3 and order-25 constraints. Proposition 6 (3·5²) restricts 75-order group structure.</p>
+  <p>
+    Combines order-3 (Lem 17 / Lem 3(2/5)) and order-25 / 5² Sylow
+    (Lem 18) constraints. Proposition 6 (<code>3 · 5²</code>) restricts
+    the 75-order group structure. None of the three order-75 groups is
+    individually excluded — <strong>all 3 paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,12 +47,12 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(75, 1)</code></td><td><code>(ℤ₅ × ℤ₅) ⋊ ℤ₃</code></td><td>Non-abelian (3 acts on ℤ₅²).</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(75, 2)</code></td><td><code>ℤ₇₅</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(75, 3)</code></td><td><code>ℤ₁₅ × ℤ₅</code></td><td>Abelian, rank 2.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(75, 1)</code></td><td><code>(ℤ₅ × ℤ₅) ⋊ ℤ₃</code></td><td>Non-abelian (3 acts on <code>ℤ₅²</code>).</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(75, 2)</code></td><td><code>ℤ₇₅</code></td><td>Cyclic; 5-Sylow <code>ℤ₂₅</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(75, 3)</code></td><td><code>ℤ₁₅ × ℤ₅</code></td><td>Abelian, rank 2; 5-Sylow <code>ℤ₅²</code>.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

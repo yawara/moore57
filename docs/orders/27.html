@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 27 = 3³</h1>
-    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 5 paper-excluded</span> <span class="badge open">0 / 5 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,15 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 17: a 3-group of order 27 has Fix(X) the Petersen graph. Theorem 4: 3-groups have |X| ≤ 27 (so this is the maximum).</p>
+  <p>
+    Lemma 17 (3-group classification): a 3-group of order 27 has
+    <code>Fix(X)</code> the Petersen graph (Petersen branch's bound
+    <code>|X| ∣ 27</code> is met with equality; the singleton branch
+    <code>|X| ∣ 81</code> also allows 27). Theorem 4 caps 3-group
+    Aut(Γ)-subgroups at order 27. The paper does not single out any of
+    the 5 isomorphism types as excluded. <strong>All 5 groups
+    paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,14 +50,14 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(27, 1)</code></td><td><code>ℤ₂₇</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(27, 2)</code></td><td><code>ℤ₉ × ℤ₃</code></td><td>Abelian, rank 2.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(27, 3)</code></td><td><code>Heisenberg</code></td><td>Non-abelian, exponent 3.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(27, 4)</code></td><td><code>ℤ₉ ⋊ ℤ₃</code></td><td>Non-abelian, exponent 9.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(27, 5)</code></td><td><code>(ℤ₃)³</code></td><td>Elementary abelian.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(27, 1)</code></td><td><code>ℤ₂₇</code></td><td>Cyclic.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(27, 2)</code></td><td><code>ℤ₉ × ℤ₃</code></td><td>Abelian, rank 2.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(27, 3)</code></td><td><code>Heisenberg</code></td><td>Non-abelian, exponent 3.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(27, 4)</code></td><td><code>ℤ₉ ⋊ ℤ₃</code></td><td>Non-abelian, exponent 9.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(27, 5)</code></td><td><code>(ℤ₃)³</code></td><td>Elementary abelian.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

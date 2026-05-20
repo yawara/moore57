@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 135 = 3³ · 5</h1>
-    <p class="sub status"><span class="badge open">0 / 5 groups excluded</span></p>
+    <p class="sub status"><span class="badge open">0 / 5 paper-excluded</span> <span class="badge open">0 / 5 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -30,10 +30,13 @@
   <p>
     Theorem 6 lists 135 as a surviving odd-order maximum. Theorem 4
     bounds <code>|3-part of G| ≤ 27</code>; Theorem 5 restricts the
-    Sylow-5 piece (a single <code>ℤ₅</code> here).
+    Sylow-5 piece (a single <code>ℤ₅</code> here). Per-prime: Lem 17 /
+    Lem 3(2/5) gives <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>;
+    Lem 18 / Lem 3(1/4/6) gives <code>Fix(ℤ₅) ∈ {empty, pentagon, HS}</code>.
   </p>
   <p>
-    <strong>The paper does not exclude group order 135.</strong>
+    <strong>The paper does not exclude group order 135</strong> — none
+    of the 5 isomorphism types is individually ruled out.
   </p>
 </section>
 
@@ -62,14 +65,14 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(135, 1)</code></td><td><code>ℤ₅ ⋊ ℤ₂₇</code></td>          <td>Non-trivial semidirect (<code>5 ∣ 27·… </code>; in fact only trivial action since <code>gcd(27, 4) = 1</code>, so this entry is actually <code>ℤ₁₃₅</code>; see GAP for the exact ordering).</td>             <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(135, 2)</code></td><td><code>ℤ₂₇ × ℤ₅</code></td>          <td>Cyclic (<code>ℤ₁₃₅</code>).</td>            <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(135, 3)</code></td><td><code>ℤ₉ × ℤ₁₅</code></td>          <td>Abelian, non-cyclic.</td>                    <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(135, 4)</code></td><td><code>ℤ₃ × (ℤ₉ ⋊ ℤ₅)</code></td>    <td>Non-abelian extension.</td>                  <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(135, 5)</code></td><td><code>ℤ₃³ × ℤ₅</code></td>          <td>Elementary 3-group times ℤ₅.</td>            <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 1)</code></td><td><code>ℤ₅ ⋊ ℤ₂₇</code></td>          <td>Non-trivial semidirect (<code>5 ∣ 27·… </code>; in fact only trivial action since <code>gcd(27, 4) = 1</code>, so this entry is actually <code>ℤ₁₃₅</code>; see GAP for the exact ordering).</td>             <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 2)</code></td><td><code>ℤ₂₇ × ℤ₅</code></td>          <td>Cyclic (<code>ℤ₁₃₅</code>).</td>            <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 3)</code></td><td><code>ℤ₉ × ℤ₁₅</code></td>          <td>Abelian, non-cyclic.</td>                    <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 4)</code></td><td><code>ℤ₃ × (ℤ₉ ⋊ ℤ₅)</code></td>    <td>Non-abelian extension.</td>                  <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(135, 5)</code></td><td><code>ℤ₃³ × ℤ₅</code></td>          <td>Elementary 3-group times ℤ₅.</td>            <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

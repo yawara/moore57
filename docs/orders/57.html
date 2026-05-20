@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 57 = 3 · 19</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,18 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 15 covers element of order 57 = 3·19. Proposition 7 (q=19) handles 3·19 structure.</p>
+  <p>
+    Lemma 15 covers an element of order <code>57 = 3 · 19</code>.
+    Proposition 7 (<code>q = 19</code>) handles the <code>3 · 19</code>
+    structure.
+  </p>
+  <p>
+    Per-prime: Lem 17 / Lem 3(2/5) gives
+    <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>; Lem 19(2) forces
+    <code>|Fix(ℤ₁₉)| = 1</code> and the 19-Sylow cyclic. Neither of the
+    two order-57 groups is excluded individually — <strong>both
+    paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,11 +53,11 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(57, 1)</code></td><td><code>ℤ₁₉ ⋊ ℤ₃</code></td><td>Non-abelian (3 | 19−1).</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(57, 2)</code></td><td><code>ℤ₅₇</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(57, 1)</code></td><td><code>ℤ₁₉ ⋊ ℤ₃</code></td><td>Non-abelian (<code>3 ∣ 19 − 1</code>); Frobenius group.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(57, 2)</code></td><td><code>ℤ₅₇</code></td><td>Cyclic.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 15 = 3 · 5</h1>
-    <p class="sub status"><span class="badge open">0 / 1 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 1 paper-excluded</span> <span class="badge open">0 / 1 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,15 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 15 row pq=15 gives a₀, a₁ constraints. No element of order 15 is starred (no contradiction directly).</p>
+  <p>
+    Lemma 15 row <code>pq = 15</code> gives <code>a₀, a₁</code>
+    constraints; no row is starred, so order-15 elements may exist.
+    Per-prime: Lemma 17 / MP 2001 Lem 3(2/5) for the 3-part gives
+    <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>; Lemma 18 /
+    Lem 3(1/4/6) for the 5-part gives
+    <code>Fix(ℤ₅) ∈ {empty, pentagon, HS}</code>. The single
+    cyclic group <code>ℤ₁₅</code> is <strong>paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,10 +50,16 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(15, 1)</code></td><td><code>ℤ₁₅</code></td><td>Cyclic group of order 15 (3 ∤ 5−1, so abelian only).</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(15, 1)</code></td>
+        <td><code>ℤ₁₅</code></td>
+        <td>Cyclic (<code>3 ∤ 5 − 1</code>, so only the abelian group exists).</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 275 = 5² · 11</h1>
-    <p class="sub status"><span class="badge open">0 / 4 groups excluded</span></p>
+    <p class="sub status"><span class="badge open">0 / 4 paper-excluded</span> <span class="badge open">0 / 4 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -32,10 +32,15 @@
     Proposition 8 (<code>p = 5, q = 11</code>) constrains the Sylow
     structure: <code>P₁₁</code> is normal and <code>|P₅|</code> divides
     25. Lemma 12 row <code>p = 11, a₀ = 5</code>:
-    <code>a₁(σ) ∈ {55, 220, 385}</code>.
+    <code>a₁(σ) ∈ {55, 220, 385}</code>. Per-prime: Lem 19(3) forces
+    <code>Fix(ℤ₁₁) = pentagon</code> and the 11-Sylow cyclic; Lem 18
+    allows the 5²-Sylow as <code>ℤ₂₅</code> or <code>ℤ₅²</code>
+    (unlike <code>p = 7</code> at order 49, no cyclic exclusion at
+    <code>p = 5</code>).
   </p>
   <p>
-    <strong>The paper does not exclude group order 275.</strong>
+    <strong>The paper does not exclude group order 275</strong> — none
+    of the 4 isomorphism types is individually ruled out.
   </p>
 </section>
 
@@ -66,13 +71,13 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(275, 1)</code></td><td><code>ℤ₁₁ ⋊ ℤ₂₅</code></td>           <td>Non-trivial action; exists because <code>25 ∣ 11 − 1 = 10</code>? No: <code>25 ∤ 10</code>, so only the cyclic-25 action through its <code>ℤ₅</code>-quotient is non-trivial.</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(275, 2)</code></td><td><code>ℤ₂₇₅</code></td>                 <td>Cyclic.</td>                                <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(275, 3)</code></td><td><code>ℤ₁₁ × (ℤ₅ × ℤ₅)</code></td>     <td>Abelian, non-cyclic Sylow-5.</td>           <td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(275, 4)</code></td><td><code>(ℤ₁₁ ⋊ ℤ₅) × ℤ₅</code></td>     <td>Frobenius <code>F₅₅</code> times ℤ₅.</td>   <td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(275, 1)</code></td><td><code>ℤ₁₁ ⋊ ℤ₂₅</code></td>           <td>Non-trivial action; exists because <code>25 ∣ 11 − 1 = 10</code>? No: <code>25 ∤ 10</code>, so only the cyclic-25 action through its <code>ℤ₅</code>-quotient is non-trivial.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(275, 2)</code></td><td><code>ℤ₂₇₅</code></td>                 <td>Cyclic.</td>                                <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(275, 3)</code></td><td><code>ℤ₁₁ × (ℤ₅ × ℤ₅)</code></td>     <td>Abelian, non-cyclic Sylow-5.</td>           <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(275, 4)</code></td><td><code>(ℤ₁₁ ⋊ ℤ₅) × ℤ₅</code></td>     <td>Frobenius <code>F₅₅</code> times ℤ₅.</td>   <td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

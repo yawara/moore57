@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 21 = 3 · 7</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,15 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 15 has no entry for pq=21 directly; Proposition 7 handles p=3, q=7 in the p^a q^b structure analysis.</p>
+  <p>
+    Lemma 15 has no entry for <code>pq = 21</code> directly;
+    Proposition 7 handles the <code>p = 3, q = 7</code> case in the
+    <code>p^a q^b</code> structural analysis. Per-prime: Lem 17 /
+    Lem 3(2/5) gives <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>;
+    Lem 19(4) gives <code>Fix(ℤ₇) = star</code>. Neither of the two
+    order-21 groups is excluded individually — <strong>both
+    paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,11 +50,11 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(21, 1)</code></td><td><code>ℤ₇ ⋊ ℤ₃</code></td><td>Non-abelian (3 | 7−1).</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(21, 2)</code></td><td><code>ℤ₂₁</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(21, 1)</code></td><td><code>ℤ₇ ⋊ ℤ₃</code></td><td>Non-abelian (<code>3 ∣ 7 − 1</code>); Frobenius group.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(21, 2)</code></td><td><code>ℤ₂₁</code></td><td>Cyclic.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

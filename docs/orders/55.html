@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 55 = 5 · 11</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,18 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 15 row pq=55 (a₀=5, a₀(x_p)=5, a₀(x_q)=5): no starred row, so order-55 elements may exist. Proposition 8 handles 5·11 structure.</p>
+  <p>
+    Lemma 15 row <code>pq = 55</code> (<code>a₀ = 5, a₀(x_p) = 5,
+    a₀(x_q) = 5</code>) has no starred row, so order-55 elements may
+    exist. Proposition 8 handles the <code>5 · 11</code> structure.
+  </p>
+  <p>
+    Per-prime: Lem 18 / Lem 3(1/4/6) gives
+    <code>Fix(ℤ₅) ∈ {empty, pentagon, HS}</code>; Lem 19(3) forces
+    <code>Fix(ℤ₁₁) = pentagon</code> and the 11-Sylow cyclic. Neither
+    of the two order-55 groups is excluded individually — <strong>both
+    paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,11 +53,11 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(55, 1)</code></td><td><code>ℤ₁₁ ⋊ ℤ₅</code></td><td>Non-abelian (5 | 11−1).</td><td><span class="badge open">open</span></td></tr>
-      <tr><td><code>(55, 2)</code></td><td><code>ℤ₅₅</code></td><td>Cyclic.</td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(55, 1)</code></td><td><code>ℤ₁₁ ⋊ ℤ₅</code></td><td>Non-abelian (<code>5 ∣ 11 − 1</code>); Frobenius group.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
+      <tr><td><code>(55, 2)</code></td><td><code>ℤ₅₅</code></td><td>Cyclic.</td><td><span class="badge open">allowed</span></td><td><span class="badge open">open</span></td></tr>
     </tbody>
   </table>
   </figure>

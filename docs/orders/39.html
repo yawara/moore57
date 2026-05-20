@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 39 = 3 · 13</h1>
-    <p class="sub status"><span class="badge open">0 / 2 groups excluded</span></p>
+    <p class="sub status"><span class="badge open">0 / 2 paper-excluded</span> <span class="badge open">0 / 2 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -35,7 +35,11 @@
     <code>pq = 39</code>.
   </p>
   <p>
-    <strong>The paper does not exclude group order 39.</strong>
+    Per-prime: Lem 19(1) forces <code>Fix(ℤ₁₃) = ∅</code> and the
+    13-Sylow cyclic; Lem 17 / Lem 3(2/5) gives
+    <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>. Neither of the two
+    order-39 groups is excluded individually — <strong>both
+    paper-allowed</strong>.
   </p>
 </section>
 
@@ -60,7 +64,7 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
       <tr>
@@ -70,12 +74,14 @@
           The unique non-abelian group of order 39. Exists because
           <code>3 ∣ 13 − 1 = 12</code>.
         </td>
+        <td><span class="badge open">allowed</span></td>
         <td><span class="badge open">open</span></td>
       </tr>
       <tr>
         <td><code>(39, 2)</code></td>
         <td><code>ℤ₃₉</code></td>
         <td>Cyclic.</td>
+        <td><span class="badge open">allowed</span></td>
         <td><span class="badge open">open</span></td>
       </tr>
     </tbody>

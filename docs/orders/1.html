@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 1 = 1</h1>
-    <p class="sub status"><span class="badge open">0 / 1 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 1 paper-excluded</span> <span class="badge open">0 / 1 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,11 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Order 1 is the trivial automorphism group: Γ would be an asymmetric graph. The paper does not address this case (it is implicit; not ruled out).</p>
+  <p>
+    Order 1 is the trivial automorphism group: Γ would be an asymmetric
+    graph. The paper does not address this case (it is implicit; not
+    ruled out by any lemma). <strong>Paper-allowed</strong> (vacuously).
+  </p>
 </section>
 
 <section>
@@ -42,10 +46,16 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(1, 1)</code></td><td><code>1</code></td><td>Trivial group.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(1, 1)</code></td>
+        <td><code>1</code></td>
+        <td>Trivial group; vacuously satisfies every paper hypothesis.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

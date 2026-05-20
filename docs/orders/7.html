@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 7 = 7</h1>
-    <p class="sub status"><span class="badge open">0 / 1 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 1 paper-excluded</span> <span class="badge open">0 / 1 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,16 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 4 (case 3) / Lemma 16: a subgroup of order 7 has Fix(X) a star on 2 + 7l vertices.</p>
+  <p>
+    MP 2001 Lemma 3 case (3) for <code>p = 7</code> forces
+    <code>Fix(ℤ₇)</code> to be a star on <code>2 + 7l</code> vertices
+    (= Lemma 4 case 3 / Lemma 16 case 3). Lemma 19 then bounds the
+    7-Sylow: either <code>|X| = 7</code> (star Fix) or
+    <code>|X| = 49</code> only as <code>ℤ₇ × ℤ₇</code> with edge Fix
+    (the cyclic <code>ℤ₄₉</code> is excluded). No direct exclusion at
+    order 7 — the single group <code>ℤ₇</code> is
+    <strong>paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,10 +51,16 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(7, 1)</code></td><td><code>ℤ₇</code></td><td>Cyclic group of order 7.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(7, 1)</code></td>
+        <td><code>ℤ₇</code></td>
+        <td>Cyclic; <code>Fix(ℤ₇) = star</code> on <code>2 + 7l</code> vertices (Lem 3(3)).</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>

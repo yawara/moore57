@@ -13,7 +13,7 @@
 <header class="site">
   <hgroup>
     <h1>Order 3 = 3</h1>
-    <p class="sub status"><span class="badge open">0 / 1 groups excluded</span> <span class="muted">odd candidate</span></p>
+    <p class="sub status"><span class="badge open">0 / 1 paper-excluded</span> <span class="badge open">0 / 1 Lean-excluded</span> <span class="muted">odd candidate</span></p>
   </hgroup>
   <nav>
     <ul>
@@ -34,7 +34,16 @@
 
 <section>
   <h2>From the paper (Macaj–Siran 2010)</h2>
-  <p>Lemma 4 (case 5) and Lemma 16 (case 5): a subgroup of order 3 must have Fix(X) equal to the Petersen graph. Lemma 12 row p=3 (a₀(x)=1) is starred and excluded.</p>
+  <p>
+    MP 2001 Lemma 3 cases (2) / (5) for <code>p = 3</code> give
+    <code>Fix(ℤ₃) ∈ {singleton, Petersen}</code>; Lemma 12 row
+    <code>p = 3, a₀(x) = 1</code> is starred and excluded, so the
+    Petersen-Fix branch is the live one (Lemma 4 case 5 / Lemma 16
+    case 2). Lemma 17 then bounds any 3-group: <code>|X| ∣ 27</code>
+    (Petersen-Fix) or <code>|X| ∣ 81</code> (singleton-Fix). No
+    direct exclusion at order 3 — the single group <code>ℤ₃</code>
+    is <strong>paper-allowed</strong>.
+  </p>
 </section>
 
 <section>
@@ -42,10 +51,16 @@
   <figure>
   <table>
     <thead>
-      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Lean status</th></tr>
+      <tr><th>SmallGroup</th><th>Group</th><th>Description</th><th>Paper</th><th>Lean</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>(3, 1)</code></td><td><code>ℤ₃</code></td><td>Cyclic group of order 3.</td><td><span class="badge open">open</span></td></tr>
+      <tr>
+        <td><code>(3, 1)</code></td>
+        <td><code>ℤ₃</code></td>
+        <td>Cyclic; <code>Fix(ℤ₃) = Petersen</code> (Lem 3(5)) — singleton ruled out by Lemma 12 starred row.</td>
+        <td><span class="badge open">allowed</span></td>
+        <td><span class="badge open">open</span></td>
+      </tr>
     </tbody>
   </table>
   </figure>
