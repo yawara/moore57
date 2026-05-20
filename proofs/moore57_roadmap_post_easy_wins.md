@@ -1,23 +1,35 @@
-# Moore57 Roadmap — Easy-wins 後の残務整理 (2026-05-20)
+# Moore57 Roadmap — Easy-wins 後の残務整理 (2026-05-21 更新)
 
 このドキュメントは Moore57/Papers/ scaffold (commit `42e1662` 起点) で
-「簡単に潰せるもの」を一通り処理した時点 (commit `4805b0f` まで) での残務
-を **粒度の細かいタスク** に分解したものです。
+「簡単に潰せるもの」を一通り処理した時点での残務を **粒度の細かいタスク** に
+分解したものです。 直近の主要進捗: Tier B B4.1 (cyclotomic integer trace for
+prime order p) 完了 + Lem 12 p=3 starred 完全 unconditional 化 (commit `be8c0d7`)。
 
 ## 0. 現状の確定スコア
 
-* `lake build` clean (4037 jobs), CI ratchet sorry-free.
-* True-stub の数: 約 80 (うち 30 程度は意図的な backwards-compat shell;
-  paper-faithful side theorem はその後ろに proven 版がある).
-* 主要な依存外部 (Lean 未移植) 定理:
-  1. **Feit–Thompson 奇数位数定理** — Mathlib 未移植。**実は Moore57 では不要**
+* `lake build` clean, CI ratchet sorry-free (`grep` で proof-position `sorry`/`admit` ゼロ)。
+* True-stub の数: 約 79 (B4.1 で `lem12_no_p3_a0_one` が True-stub → fully
+  unconditional に格上げ → 1 件減少)。 残りの 30 件程度は意図的な
+  backwards-compat shell で、paper-faithful side theorem はその後ろに
+  proven 版がある状態。
+* 主要な依存外部 (Lean 未移植) 定理 — 更新版:
+  1. **Feit–Thompson 奇数位数定理** — Mathlib 未移植。**Moore57 では不要**
      (詳細は §5 で議論)。
   2. **Philip Hall (可解群の Hall π-部分群存在)** — Mathlib 未移植。**Moore57 では不要**。
   3. **Burnside `p^a q^b` 可解性** — Mathlib 未移植。**Moore57 では不要**。
-  4. **GAP SmallGroup library** — Lean に同等品なし。SG(81,9) は手構築済 (`SmallGroup819.lean`)、
-     SG(625,12) は未着手。
-* 既に proven な arithmetic / SRG-spectral core が大量にあり、上に置けば
-  unconditional version になる「橋」が幾つも待っている状態。
+  4. **Curtis–Reiner Theorem 3 (rational class character integrality, full form)**
+     — Mathlib 未移植。 **Moore57 では prime order p のみで十分** で、
+     `Foundations/LinearAlgebra/PowPrimeTrace.lean` (B4.1) が cyclotomic 経由で
+     unconditional に処理する形に置き換え可能。 全 rational class への
+     一般化は依然 Theorem 3 待ち (paper では §4 Prop 2 や Lem 13 の
+     composite-order な数論的同値類で使用)。
+  5. **GAP SmallGroup library** — Lean に同等品なし。SG(81,9) は手構築済
+     (`SmallGroup819.lean`)、SG(625,12) も Heis(F₅) × Z₅ で手構築済
+     (`SmallGroup625_12.lean`, commit ~`e673d3d`)。 uniqueness はまだ。
+* 既に proven な arithmetic / SRG-spectral / **cyclotomic-trace** core が
+  大量にあり、上に置けば unconditional version になる「橋」が幾つも
+  待っている状態。 特に B4.1 で得た `aut_pow_prime_E7_trace_int` は
+  Lem 12 や Lem 13 の prime-order starred row 全てに直接適用可能。
 
 ---
 
@@ -77,9 +89,11 @@
 
 ## 2. Tier B — 文字理論 (Macaj–Širáň §4)
 
-**進捗 (2026-05-20 夜 / commit `734e884`)**: [B1], [B2.0], [B2.1],
-[B3.0], [B3.1] (conj 部分), [B4.0] **完了**。 残り: [B4.1] (Theorem 3
-依存), [B3.1] subrep full bridge, [B5.0] / [B5.1] paper-faithful 全形。
+**進捗 (2026-05-21 / commit `be8c0d7`)**: [B1], [B2.0], [B2.1], [B3.0],
+[B3.1] (conj 部分), [B4.0], **[B4.1] (prime-order cyclotomic 経由)** 完了。
+残り: [B3.1+] subrep full bridge, [B4.2] starred p-prime row dispatch (B4.1
+の直接適用、low-hanging), [B5.0] / [B5.1] paper-faithful 全形, Theorem 3
+の composite-order extension。
 
 ### B1. Mathlib `Mathlib.RepresentationTheory` の整備状況確認
 
@@ -124,20 +138,55 @@
 * **[B4.0+] (done)** Lemma11 に χⱼ conj-invariance wrappers
   (`lem11_chi{0,1,2}_constant_under_graphAut_conjugation`)
   ← `chi_j_conj` from Characters.lean。
-* **[B4.1] (部分 done, 2026-05-21 / commit `4b9a6b9`)** 
-  cyclotomic-based integer trace for order p prime を完成:
+* **[B4.1] (done, 2026-05-21 / commits `4b9a6b9`, `be8c0d7`)**
+  cyclotomic-based integer trace for prime order p:
   - `Foundations/LinearAlgebra/PowPrimeTrace.lean` 新規:
-    `exists_int_trace_of_pow_prime_eq_one (f^p = 1) ⟹ trace(f) ∈ ℤ`
-    (cyclicProjection 投影 + 既存 `trace_package_of_cyclotomic_prime_aeval_eq_zero`)
+    `exists_int_trace_of_pow_prime_eq_one (f^p = 1) ⟹ trace(f) ∈ ℤ`。
+    戦略: `cyclicProjection f p := (1/p)·(1 + f + ... + f^(p-1))` を冪等
+    にして `IsInternal` (W = range ⊕ ker) で trace 分解。 range 上は id
+    (trace = dim), ker 上は `aeval f cyclotomic_p = 0` ⟹ 既存
+    `trace_package_of_cyclotomic_prime_aeval_eq_zero` で trace = -γ ∈ ℤ。
   - `Moore57Graph/Aut/TraceIntegrality.lean` に `aut_pow_prime_E7_trace_int`
-    (`σ^p = 1` ⟹ `tr(E₇·P_σ) ∈ ℤ`) を `Matrix.toLin'_pow` 経由で接続
-  - `Lemma12_PrimeOrder.lean` の `lem12_no_p3_a0_one` を **完全 unconditional 化**:
-    `aut_pow_prime_E7_trace_int` (p=3) + `lem3_a1_mod_15` + `lem12_p3_a1_eq_zero` 
-    で `a₀ = 1` のとき `0 ≡ 12 (mod 15)` 矛盾。
-  - 残: Lem 12 p=7 starred (similar pattern), Lem 13 starred rows 等は
-    同じ枠組で個別撃破可能に。
-  - Theorem 3 (Curtis–Reiner) 全体は依然 Mathlib 未移植だが、
-    Moore57 の p-prime starred 行は cyclotomic 経由で unconditional 化可能。
+    (`σ^p = 1` ⟹ `tr(E₇·P_σ) ∈ ℤ`) を `Matrix.toLin'_pow` + 新規
+    `restrict_pow_apply` 経由で接続。 既存 `aut_involution_E7_trace_int`
+    (p=2 特化) を真に一般化。
+  - `Lemma12_PrimeOrder.lean` の `lem12_no_p3_a0_one` を **完全 unconditional 化**
+    (True-stub → 本物の False 証明):
+    `aut_pow_prime_E7_trace_int` (p=3) + `lem3_a1_mod_15` (a₁ ≡ 7a₀+5 mod 15)
+    + `lem12_p3_a1_eq_zero` (no-triangle) で `a₀ = 1` のとき
+    `0 ≡ 12 (mod 15)` 矛盾。
+  - **設計上の意義**: Theorem 3 (Curtis–Reiner) の全 rational class 版は
+    依然 Mathlib 未移植だが、**Moore57 の prime-order starred 行は
+    cyclotomic 経由で個別に unconditional 化可能** という事が確立した。
+    Lem 12 p=7 starred, Lem 13 の p=3/5/7 starred 行などはすべて同じ
+    pattern (`aut_pow_prime_E7_trace_int` + 既存 mod-arithmetic) で
+    片付くので、Theorem 3 の Lean 移植を待たずに進められる。
+
+* **[B4.2] (next-up, low-hanging)** Starred p-prime row dispatch
+  (B4.1 の直接適用):
+  - `lem12_no_p7_a0_*` (Lem 12 p=7 starred rows): `aut_pow_prime_E7_trace_int`
+    (p=7) + lem3_a1_mod_? (要 mod 計算; 7-cycle なら trace ∈ ℤ から
+    a₀ ≡ 0 mod 7 + trace 整数性) で同様に dispatch。
+  - Lem 13 の prime-order starred 行: 同じ pattern で個別 unstub。
+    既に `lem13_p3_a0_le_*_via_*FixedData_pow3` 系の conditional row は
+    用意済 (B5.0 参照) なので、B4.1 を上に乗せれば unconditional 化できる
+    ものを順次格上げ。
+  - 見積もり: 各 starred row につき ~50-100 LOC, 1-2 commit 程度。
+  - **Theorem 3 不要**: paper の "by Curtis–Reiner Theorem 3" を持つ
+    starred 行のうち、order が **prime** のものは全て B4.1 経由で
+    Theorem 3 を bypass できる。 composite-order (e.g., σ^6 = 1 with
+    σ^2 ≠ 1 ∧ σ^3 ≠ 1) や rational class identity の一般形は依然
+    Theorem 3 待ち、別途 [B4.3] として deferred。
+
+* **[B4.3] (deferred-heavy)** Composite-order / general rational-class
+  Theorem 3 移植:
+  - `f^n = 1` (n 合成数) の trace ∈ ℤ。 cyclotomic_n は合成数では
+    既約因子分解 ∏_{d∣n} cyclotomic_d となるので、generalized eigenspace
+    decomp に Galois 理論 (Gal(ℚ(ζ_n)/ℚ) 作用での rational class)
+    が必要に。
+  - paper §4 Prop 2 の rational-class character integrality 全形。
+  - 必要度: paper-faithful proof には欲しいが、Moore57 specific には
+    prime-order だけで dispatch 可能な行が多く、優先度は低。
 
 ### B5. Lem 13, Lem 14 paper-faithful 形
 
@@ -449,39 +498,47 @@ Paper の「`G` is solvable」の使い方を再点検すると、実は **Hall 
 
 ### 7.1 短期 (1 commit 単位、各 < 200 LOC)
 
-**進捗 (2026-05-21)**: 全項目 **完了** (commits TBD)。
+**進捗 (2026-05-21)**: 旧 1〜5 項目はすべて **完了**。 B4.1 完了に伴い
+B4.2 を新規短期項目に追加。
 
-1. ~~**[E1.1]** Prop 6 Sylow analysis~~ — **既に done** (§5.2 参照, commit `e673d3d`)。
-2. ~~**[E4.0]** Thm 7 Sylow analysis (110 = 2·5·11 dispatch)~~ — **既に done** (§5.2)。
-3. **[E5.0] done** — `Moore57.autSubgroup Γ : Subgroup (Equiv.Perm V)`
-   定義 (`Foundations/GraphTheory/AutSubgroup.lean`) + Cor 3 bridge
-   `cor3_375_bound_via_autSubgroup`。
-4. **[A2.0] done** — `SG625_12 = Heis(F₅) × Z₅` 構築
-   (`Foundations/GroupTheory/SmallGroup625_12.lean`)。Heisenberg cocycle で
-   exponent 5, 全演算は ZMod 5 上の polynomial identity (ring) で証明済。
-5. **[A2.1] done** — GAP-quoted 不変量を `native_decide` で検証:
-   `card_eq = 625`, `card_orderEq_five = 624`, `card_center = 25`,
-   `card_frattini = 5`, `frattini_is_commutator_image`。
+1. ~~**[E1.1]** Prop 6 Sylow analysis~~ — **done** (commit `e673d3d`)。
+2. ~~**[E4.0]** Thm 7 Sylow analysis (110 dispatch)~~ — **done**。
+3. ~~**[E5.0]** `autSubgroup` + Cor 3 bridge~~ — **done**。
+4. ~~**[A2.0]** SG(625, 12) = Heis(F₅) × Z₅ 構築~~ — **done**。
+5. ~~**[A2.1]** SG(625, 12) GAP 不変量検証~~ — **done**。
+6. ~~**[B4.1]** Cyclotomic integer trace for prime order p~~ — **done**
+   (commit `be8c0d7`)。
+7. **[B4.2] (★ 次の短期項目)** Starred p-prime row dispatch using B4.1:
+   - `lem12_no_p7_a0_*` (Lem 12 p=7 starred): `aut_pow_prime_E7_trace_int`
+     (p=7) + mod arithmetic で True-stub → False 証明に格上げ。
+   - Lem 13 prime-order starred 行: 既存 `lem13_*_via_*FixedData_pow3` 系
+     conditional row に B4.1 を被せて unconditional 化。
+   - 見積もり: 各 row ~50-100 LOC, 1-2 commit。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
-6. **[A1.1] + [A1.2]** SG(81, 9) uniqueness (15-group enumeration + filter)。
-7. **[E2.0] + [E3.0]** Prop 7, 8 Sylow analyses。
-8. **[B2.0] + [B3.0]** Permutation representation + Moore57 character bridge。
+8. **[A1.1] + [A1.2]** SG(81, 9) uniqueness (15-group enumeration + filter)。
+9. **[E2.0] + [E3.0] 再整備** Prop 7, 8 の Aut(Γ) ↔ subgroup 接続強化。
+10. **[B3.1+]** χⱼ を `Representation.character` of spectral subrep として
+    formally identify (現状は trace 関数定義だけ。 subrep 同型までは未)。
+11. **[B5.0+] / [B5.1] 拡張** Lem 11/12/13/14 の残る paper-faithful 形 +
+    semi-regular 軌道分解 (Prop 2 依存度の高い部分)。
 
 ### 7.3 長期 (substantive new infrastructure)
 
-9. **[C3.4]** Semi-regular orbit argument
-   (Tier C 残る唯一の substantive 項目、Lem 17/18 を unconditional 化)。
-10. **[B4, B5]** Character-dependent Lemmas 11 (a₁/a₂), 13, 14 paper-faithful。
-11. **[D1-D4]** Rank-3 perm group framework + Higman 1964 全体。
-12. **[A3, A4]** Order-625 group classification (Lem 22, Prop 4)。
+12. **[C3.4]** Semi-regular orbit argument
+    (Tier C 残る唯一の substantive 項目、Lem 17/18 を unconditional 化)。
+13. **[B4.3]** Composite-order / general rational-class Theorem 3 移植
+    (Galois 理論 + generalized eigenspace decomp)。 prime-order は B4.1
+    で代替済なので優先度低。
+14. **[D1-D4]** Rank-3 perm group framework + Higman 1964 全体。
+15. **[A3, A4]** Order-625 group classification (Lem 22, Prop 4)。
 
 ### 7.4 見送り推奨
 
-13. **[F1, F2]** Lem 6 (4) corner cases (|O| ∈ [5, 63])。
+16. **[F1, F2]** Lem 6 (4) corner cases (|O| ∈ [5, 63])。
     Mohar bound (|O| ≥ 64) があれば実用上問題なし。
-14. **[C1.2b, C1.3, C2.1, C2.2, C2.3]** Petersen/HS の Aut group, explicit
+17. **[C1.2b, C1.3, C2.1, C2.2, C2.3]** Petersen/HS の Aut group, explicit
     HS 構築, 一意性, 抽象 embedding ── Moore57 で**使用箇所が存在しない**
     (§3.0 参照)。
 
@@ -497,14 +554,34 @@ paper を素直に読むと必要に見えるが、Moore57 specific には不要
 | Philip Hall (Hall π-部分群存在) | §9 Thm 6/7 で必須 | **不要**: 2-prime case は Sylow = Hall, 3-prime case 110 は Sylow 11 normal で取れる |
 | Burnside p^a q^b 可解性 | §9 で必要かと推測 | **不要**: 解能性経由せず Sylow 直接で処理可 |
 | 一般 SRG 分類 (k ∈ {2, 3, 7, 57}) | Aschbacher Lem 1.3 で必須 | **不要 (Moore57 instance level)**: Higman 1964 算術 core (`theorem1_arithmetic_core`) 経由で Moore57 k=57 は Cameron 3.13 で済む |
+| Curtis–Reiner Theorem 3 (full) | §4 Lem 12/13 starred で必須 | **prime order は不要**: B4.1 `aut_pow_prime_E7_trace_int` (cyclotomic 経由) で代替可能。 composite-order/rational-class 一般形のみ残る (B4.3 deferred) |
 
 paper-level の本当のボトルネックは:
 - **GAP SmallGroup library**: Lean 等価物が無いため手構築必須 (Tier A)。
-- **Character theory** (Mathlib にあるが Moore57 spectral との bridge 必要)。
+  SG(81,9), SG(625,12) 本体は手構築済、uniqueness が残課題。
+- ~~**Character theory** (Mathlib にあるが Moore57 spectral との bridge 必要)~~:
+  Mathlib `Representation.character` ↔ `fixedVertexCount` bridge (B2) は
+  完了 + 自前 `chi0/chi1/chi2` (B3) + cyclotomic prime-order trace (B4.1)
+  まで揃ったので、prime-order starred 行は順次 unstub できる状態 (B4.2)。
 - ~~**Petersen / HS explicit graphs**~~: Petersen は decide 用に explicit 化済、
   HS は SRG パラメータベースで `HSFixedData` を回せるので explicit 構築 **不要**
   (§3.0 参照)。残る唯一の Tier C substantive 項目は [C3.4] semi-regular
   orbit argument のみ。
+
+### 8.1 知見の累積による状態変化 (2026-05-21 時点)
+
+過去のロードマップ版 (commit `4805b0f` 起点) と比べての地殻変動:
+
+* **Theorem 3 が "全部" ボトルネック → prime-order だけ bypass 可能** に。
+  これにより Lem 12 starred の少なくとも p=3, p=7 行 + Lem 13 starred の
+  prime-order 行は **B4.1 + 既存 mod-arithmetic だけで** unstub できる。
+  全 starred 行を Theorem 3 待ちにする必要は無い。
+* **Cyclotomic infrastructure (`PowPrimeTrace.lean`) が再利用可能**: 同じ
+  pattern は将来的に `E_57` や `E_-8` projection trace、または他の
+  Mathlib Moore-bound 系の議論にも使える。
+* **残る "真の" Lean-未移植定理**: Schur–Zassenhaus は Mathlib にあり、
+  Sylow も完備、Cyclotomic も整備済。 Moore57 に必要な大物外部定理は
+  ほぼゼロに近い (GAP SmallGroup uniqueness と Theorem 3 composite-order 拡張のみ)。
 
 ---
 
