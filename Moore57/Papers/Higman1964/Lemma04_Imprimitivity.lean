@@ -202,6 +202,26 @@ theorem lem4_not_preprimitive_of_stabilizer_lt
   -- Apply with B := G_{N_O(a)}: G_a < B, so B = ⊤; but h_proper says B ≠ ⊤.
   exact h_proper (h_coatom.2 _ h_lt)
 
+/-- **Lem 4 (paper-faithful imprimitivity contrapositive).** [done]
+
+Proper-signature paper-faithful form: under the strict-containment
+hypothesis `G_a < G_{N_O(a)}` and the properness condition
+`G_{N_O(a)} ≠ ⊤`, conclude `G` is not preprimitive (contrapositive
+of "primitive ⟹ stabilizer maximal").
+
+Re-export of `lem4_not_preprimitive_of_stabilizer_lt` for paper-faithful
+naming.  The full iff equivalence (paper's three-way) requires the
+rank-3 / Δ(a) ∪ {a} block structure analysis (deferred). -/
+theorem lem4_imprimitivity_paper_contrapositive
+    (G Ω : Type*) [Group G] [MulAction G Ω] [MulAction.IsPretransitive G Ω]
+    [Nontrivial Ω] (O : Moore57.orbital G Ω) (a : Ω)
+    (h_lt : MulAction.stabilizer G a <
+            MulAction.stabilizer G (Moore57.orbitalNeighborhood G Ω O a))
+    (h_proper : MulAction.stabilizer G
+                  (Moore57.orbitalNeighborhood G Ω O a) ≠ ⊤) :
+    ¬ MulAction.IsPreprimitive G Ω :=
+  lem4_not_preprimitive_of_stabilizer_lt G Ω O a h_lt h_proper
+
 /-- **Lem 4 (imprimitivity criterion).** [deferred-heavy]
 
 The paper's three-way equivalence ((i) imprimitive + k ≤ l ⟺ (ii)
@@ -212,8 +232,9 @@ in conditional/Mathlib-bridge form:
   containment G_a ≤ G_{N_O(a)}.
 * `lem4_isCoatom_stabilizer_iff_preprimitive` — Mathlib bridge
   (primitive iff stabilizer maximal).
-* `lem4_not_preprimitive_of_stabilizer_lt` — conditional contrapositive
-  using strict containment.
+* `lem4_not_preprimitive_of_stabilizer_lt` /
+  `lem4_imprimitivity_paper_contrapositive` (above) — conditional
+  contrapositive using strict containment.
 
 The full iff equivalence requires the rank-3 / Δ(a) ∪ {a} block
 structure analysis; that remains deferred. -/
