@@ -123,4 +123,39 @@ theorem lem18_case2_orderOf_dvd_5_of_pentagon_complement
   rw [hord] at h_dvd ⊢
   exact lem18_case2_arithmetic_5group_dvd_55_implies_5 j h_dvd
 
+/-- **Lemma 18 case (3) arithmetic core: 5-group with `|X| ∣ 3250` gives
+`|X| ∣ 125`.** [done]
+
+For a 5-group `X` (`|X| = 5^k`) with `Fix(X) = ∅` and X acting
+semi-regularly on `V`, the orbit equation forces `|X| ∣ |V| = 3250`.
+Since `3250 = 2 · 5³ · 13`, the 5-part of `3250` is exactly `5³ = 125`,
+so `5^k ∣ 3250` ⟹ `k ≤ 3` ⟹ `|X| ∈ {1, 5, 25, 125}`, all dividing
+`125`. -/
+theorem lem18_case3_arithmetic_5group_dvd_3250
+    (k : ℕ) (h_dvd : 5 ^ k ∣ 3250) :
+    5 ^ k ∣ 125 := by
+  have h_k_le : k ≤ 3 := by
+    by_contra h
+    have h4 : 4 ≤ k := Nat.lt_of_not_le h
+    -- 5^4 = 625 does not divide 3250 = 2·5³·13.
+    have h_div : 5 ^ 4 ∣ 3250 := dvd_trans (pow_dvd_pow 5 h4) h_dvd
+    revert h_div
+    decide
+  interval_cases k <;> decide
+
+/-- **Lemma 18 case (3) conditional + arithmetic (5-group, empty fix).**
+[done]
+
+If a single graph-automorphism σ has order a power of 5 (`σ^(5^k) = 1`)
+and `orderOf σ ∣ 3250` (semi-regular action on the whole vertex set, the
+geometric "Fix is empty" assumption), then `orderOf σ ∣ 125`. -/
+theorem lem18_case3_orderOf_dvd_125_of_empty_fix
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (h_dvd : orderOf σ ∣ 3250) :
+    orderOf σ ∣ 125 := by
+  have h5k : orderOf σ ∣ 5 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 5)).mp h5k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd ⊢
+  exact lem18_case3_arithmetic_5group_dvd_3250 j h_dvd
+
 end Moore57.Papers.MacajSiran2010.S6

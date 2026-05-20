@@ -133,6 +133,50 @@ theorem lem19_case3_orderOf_dvd_11_of_pentagon_fix
   · rw [h]; decide
   · rw [h]
 
+/-- **Lemma 19 cases (4)/(5) arithmetic core: 7-group with `|X| ∣ 56` is
+`Z₇` or trivial.** [done]
+
+For `p = 7` and a 7-group `X` with `|X| ∣ 56 = 7·8`, the only possibilities
+are `|X| = 1` or `|X| = 7` (since `7² = 49` does not divide `56`).
+
+Geometric source (case (4) at a star leaf or case (5) at an edge endpoint):
+the star case (4) leaf `v` has `|N(v) ∩ Fix(X)| = 1` (just the center),
+hence `|N(v) \ Fix(X)| = 56`; the edge case (5) endpoint `v` has
+`|N(v) ∩ Fix(X)| = 1` (just the other endpoint), hence
+`|N(v) \ Fix(X)| = 56`.  Both give `|X| ∣ 56` by semi-regularity. -/
+theorem lem19_case45_arithmetic_7group_dvd_56
+    (k : ℕ) (h_dvd : 7 ^ k ∣ 56) :
+    7 ^ k = 1 ∨ 7 ^ k = 7 := by
+  have h_le : 7 ^ k ≤ 56 := Nat.le_of_dvd (by norm_num) h_dvd
+  have h_k_le : k ≤ 1 := by
+    by_contra h
+    have h2 : 2 ≤ k := Nat.lt_of_not_le h
+    -- 7^2 = 49 does not divide 56.
+    have h_div : 7 ^ 2 ∣ 56 := dvd_trans (pow_dvd_pow 7 h2) h_dvd
+    revert h_div
+    decide
+  interval_cases k
+  · left; rfl
+  · right; rfl
+
+/-- **Lemma 19 cases (4)/(5) conditional + arithmetic (7-group, star leaf or
+edge endpoint).** [done]
+
+If σ has order a power of 7 (`σ^(7^k) = 1`) and `orderOf σ ∣ 56`
+(semi-regular action on `N(a) \ Fix(σ)` for a star-leaf or edge-endpoint
+`a`), then `orderOf σ ∣ 7`.  The geometric source is the §6 case (4) star
+or case (5) edge complement assumption `|N(a) \ Fix(σ)| = 56`. -/
+theorem lem19_case45_orderOf_dvd_7_of_leaf_or_edge_endpoint
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 7 ^ k = 1)
+    (h_dvd : orderOf σ ∣ 56) :
+    orderOf σ ∣ 7 := by
+  have h7k : orderOf σ ∣ 7 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 7)).mp h7k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd ⊢
+  rcases lem19_case45_arithmetic_7group_dvd_56 j h_dvd with h | h
+  · rw [h]; decide
+  · rw [h]
+
 /-- **Lemma 19 (large-prime `p`-group classification).** [deferred-heavy]
 
 The full 5-case classification.  Arithmetic cores for cases (1), (2),
