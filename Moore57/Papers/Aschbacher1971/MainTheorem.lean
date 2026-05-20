@@ -105,4 +105,55 @@ theorem main_valence_in_higman_classification :
     (57 : ℕ) = 2 ∨ (57 : ℕ) = 3 ∨ (57 : ℕ) = 7 ∨ (57 : ℕ) = 57 :=
   Moore57.Papers.Higman1964.theorem1_moore57_valence
 
+/-! ### Aschbacher Cor (D4.1): SRG arithmetic + involution dichotomy
+
+The combined corollary form: from the SRG eigenvalue/multiplicity
+chain (Lem 6/7 + Thm 1, i.e., `theorem1_case_two_full_conditional`)
+and the involution-fix dichotomy (Lem 1.4 algebraic core
+`asc1_4_arithmetic_core`), the (k, f) pair for a Moore SRG with
+involution satisfies:
+
+* `k ∈ {3, 7, 57}` (the Case II Higman classification, modulo k = 2
+  Case I), AND
+* `f ∈ {k − 1, k + 1}` (the involution fix dichotomy).
+
+This is the precise form of the joint arithmetic constraint needed
+for Aschbacher's §2 case analysis (which then uses Sylow + sign to
+exclude the k = 57 sub-case).  -/
+
+/-- **Aschbacher Cor (D4.1, combined classification)**: under the Case II
+arithmetic + involution quadratic, the `(k, f)` pair is fully classified.
+[done]
+
+Inputs:
+* `4·k = e² + 3` (perfect square discriminant — Case II Lem 7).
+* `2·(e·f₂) = k·(k·(e + 1) − 2)` (integer multiplicity formula in ℤ —
+  Lem 7 Moore-parameter specialisation).
+* `k ≥ 2` (non-degenerate rank-3 subdegree).
+* `(f − k − 1)(f − k + 1) = 0` (involution fix quadratic — Lem 1.4
+  algebraic core).
+
+Conclusion: `k ∈ {3, 7, 57} ∧ f ∈ {k − 1, k + 1}`. -/
+theorem asc_cor_combined_classification
+    {k e : ℕ} {f₂ f : ℤ}
+    (he_sq : 4 * k = e * e + 3)
+    (h_mult_Z : 2 * ((e : ℤ) * f₂) =
+                (k : ℤ) * ((k : ℤ) * ((e : ℤ) + 1) - 2))
+    (h_k_ge_2 : 2 ≤ k)
+    (h_invol_quad : (f - (k : ℤ) - 1) * (f - (k : ℤ) + 1) = 0) :
+    (k = 3 ∨ k = 7 ∨ k = 57) ∧ (f = (k : ℤ) - 1 ∨ f = (k : ℤ) + 1) :=
+  ⟨Moore57.Papers.Higman1964.theorem1_case_two_full_conditional
+     he_sq h_mult_Z h_k_ge_2,
+   asc1_4_arithmetic_core f (k : ℤ) h_invol_quad⟩
+
+/-- **Aschbacher Cor Moore57 instance**: for `(k, f) = (57, 56)`, the
+combined classification holds (k = 57 from Higman Thm 1; f = k − 1 from
+Lem 1.4 part 1).  [done] -/
+theorem asc_cor_moore57_instance :
+    ((57 : ℕ) = 3 ∨ (57 : ℕ) = 7 ∨ (57 : ℕ) = 57) ∧
+    ((56 : ℤ) = (57 : ℤ) - 1 ∨ (56 : ℤ) = (57 : ℤ) + 1) := by
+  refine ⟨?_, ?_⟩
+  · right; right; rfl
+  · left; norm_num
+
 end Moore57.Papers.Aschbacher1971

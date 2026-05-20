@@ -1,5 +1,7 @@
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Moore57Graph.Aut.InvolutionFixIsK155
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -64,7 +66,73 @@ theorem lem1_4_part2_k57 (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
   · exact aut_involution_fixedInducedGraph_isStarWithCenter hΓ σ hAut hinv hne
   · exact aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
 
-/-- **Lemma 1.4 (2) (general star-fix dichotomy `f = k ± 1`).** [deferred-heavy] -/
+/-! ### Lem 1.4 (2) algebraic core (D4.0)
+
+The Higman/Aschbacher dichotomy `f ∈ {k − 1, k + 1}` reduces to the
+quadratic identity `(f − k)² = 1`, equivalent to
+`(f − k − 1)(f − k + 1) = 0`.  Both directions are pure ℤ algebra.
+
+The quadratic identity comes from a trace computation:
+* `tr τ = f` (counting fixed points; `τ` is an involution).
+* `tr (A τ) = ±` something on each eigenspace (with `±1` for the
+  trivial k-eigenspace, χ values on s, t-eigenspaces).
+* `tr (A² τ) = …` second moment giving the SRG constraint.
+
+Combining these and using the SRG identity `A² = k I + λ A + μ (J − I − A)`
+yields the quadratic `(f − k)² = 1`.
+
+The algebraic core packages just the final arithmetic step. -/
+
+/-- **Aschbacher 1.4 (2) algebraic core (factored form)**: from the
+quadratic identity `(f − k − 1)(f − k + 1) = 0`, conclude
+`f = k − 1 ∨ f = k + 1`.  [done] -/
+theorem asc1_4_arithmetic_core (f k : ℤ)
+    (h_quad : (f - k - 1) * (f - k + 1) = 0) :
+    f = k - 1 ∨ f = k + 1 := by
+  rcases mul_eq_zero.mp h_quad with h | h
+  · right; linarith
+  · left; linarith
+
+/-- **Aschbacher 1.4 (2) algebraic core (square form)**: from
+`(f − k)² = 1`, conclude `f = k − 1 ∨ f = k + 1`.  [done]
+
+Equivalent to `asc1_4_arithmetic_core` via the identity
+`(f − k − 1)(f − k + 1) = (f − k)² − 1`. -/
+theorem asc1_4_arithmetic_core_sq (f k : ℤ)
+    (h_sq : (f - k) ^ 2 = 1) :
+    f = k - 1 ∨ f = k + 1 := by
+  apply asc1_4_arithmetic_core
+  have h_eq : (f - k - 1) * (f - k + 1) = (f - k) ^ 2 - 1 := by ring
+  rw [h_eq, h_sq]; ring
+
+/-- **Aschbacher 1.4 (2) iff form**: the dichotomy
+`f = k − 1 ∨ f = k + 1` is equivalent to the quadratic
+`(f − k − 1)(f − k + 1) = 0`. [done] -/
+theorem asc1_4_arithmetic_core_iff (f k : ℤ) :
+    (f - k - 1) * (f - k + 1) = 0 ↔ (f = k - 1 ∨ f = k + 1) := by
+  constructor
+  · exact asc1_4_arithmetic_core f k
+  · rintro (h | h) <;> · rw [h]; ring
+
+/-- **Aschbacher 1.4 (2) Moore57 instance via the algebraic core**: for
+`f = 56, k = 57`, the quadratic identity `(56 − 57)² = 1` gives the
+dichotomy branch `f = k − 1` (the "minus" branch realised by Moore57).
+[done] -/
+theorem asc1_4_moore57_arithmetic_instance :
+    (56 : ℤ) = 57 - 1 ∨ (56 : ℤ) = 57 + 1 := by
+  apply asc1_4_arithmetic_core_sq 56 57
+  norm_num
+
+/-- **Lemma 1.4 (2) (general star-fix dichotomy `f = k ± 1`).** [deferred-heavy]
+
+The algebraic core `(f − k)² = 1 ⟹ f = k ± 1` is fully formalised in
+`asc1_4_arithmetic_core_sq` / `asc1_4_arithmetic_core`.
+
+The full Lemma 1.4 (2) statement requires the spectral derivation of
+the quadratic `(f − k)² = 1` from involution trace identities on the
+Moore graph adjacency matrix; that remains [deferred-heavy].  Moore57
+instance is `lem1_4_part2_k57` (with the explicit `f = 56 = k − 1`
+branch). -/
 theorem lem1_4_part2 : True := by trivial
 
 end Moore57.Papers.Aschbacher1971
