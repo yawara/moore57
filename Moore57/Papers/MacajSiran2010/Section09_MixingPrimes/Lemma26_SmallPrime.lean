@@ -164,14 +164,44 @@ theorem lem26_conditional_combined
   obtain ⟨σ, c, hAut, hc, h_nbhd, h_a1⟩ := h_seven_nineteen_geom h_eq
   exact lem26_seven_nineteen_excluded_via_lem12 hΓ σ hAut c hc h_nbhd h_a1
 
+/-- **Lemma 26 (paper-faithful conditional, p ≤ 5 ∨ q ≤ 5).** [done]
+
+Re-export of `lem26_conditional_combined` with paper-faithful naming.
+Given:
+* Moore57 prime pair `p, q ∈ {3,5,7,11,13,19}` with `p < q`,
+* Paper geometric reduction `h_paper_geom` excluding all (p,q) pairs
+  except (3,5), (3,7), …, (5,19), (7,19),
+* The (7,19) ⇒ closed-neighbourhood fix + a₁ ≥ 21 structure,
+
+conclude `p ≤ 5 ∨ q ≤ 5`. -/
+theorem lem26_small_prime_paper
+    (hΓ : IsMoore57 Γ)
+    {p q : ℕ}
+    (h_p_in : p ∈ ({3, 5, 7, 11, 13, 19} : Finset ℕ))
+    (h_q_in : q ∈ ({3, 5, 7, 11, 13, 19} : Finset ℕ))
+    (h_lt : p < q)
+    (h_paper_geom :
+       ¬ ((p = 7 ∧ q = 11) ∨ (p = 7 ∧ q = 13) ∨
+          (p = 11 ∧ q = 13) ∨ (p = 11 ∧ q = 19) ∨
+          (p = 13 ∧ q = 19)))
+    (h_seven_nineteen_geom : p = 7 ∧ q = 19 →
+       ∃ σ : Equiv.Perm V, ∃ c : V,
+         (∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b)) ∧
+         σ c = c ∧
+         (∀ v ∈ Γ.neighborSet c, σ v = v) ∧
+         21 ≤ adjacentMovedCount Γ σ) :
+    p ≤ 5 ∨ q ≤ 5 :=
+  lem26_conditional_combined hΓ h_p_in h_q_in h_lt h_paper_geom
+    h_seven_nineteen_geom
+
 /-- **Lemma 26 (`p ≤ 5` or `q ≤ 5`).** [deferred-heavy]
 
 Original True-stub kept for backwards compatibility. The paper-faithful
-content is fully captured by `lem26_conditional_combined` above; what
-remains for the unconditional form is the geometric reduction
-`h_paper_geom` (Sylow + Lemma 19 + Fix-shape elimination of pairs) and
-the `h_seven_nineteen_geom` extraction (the (7, 19) ⇒ closed-neighbourhood
-fix structure). -/
+content is fully captured by `lem26_conditional_combined` /
+`lem26_small_prime_paper` (above); what remains for the unconditional
+form is the geometric reduction `h_paper_geom` (Sylow + Lemma 19 +
+Fix-shape elimination of pairs) and the `h_seven_nineteen_geom`
+extraction (the (7, 19) ⇒ closed-neighbourhood fix structure). -/
 theorem lem26_small_prime : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9
