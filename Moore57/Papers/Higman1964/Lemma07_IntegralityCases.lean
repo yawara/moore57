@@ -136,6 +136,19 @@ theorem lem7_moore_e_dvd_k_times_k_minus_2 (e k f₂ : ℤ)
     e ∣ k * (k - 2) :=
   ⟨2 * f₂ - k ^ 2, (lem7_moore_e_dvd_k_times_k_minus_2_form e k f₂ h_mult).symm⟩
 
+/-- **Lemma 7 (paper-faithful Moore-parameter divisibility).** [done]
+
+Proper-signature paper-faithful form: under the rank-3 integer
+multiplicity constraint `2 e f₂ = k(k(e + 1) − 2)` (Moore57 specialization
+of Lem 7 Case II), conclude `e ∣ k(k - 2)`.
+
+Re-export of `lem7_moore_e_dvd_k_times_k_minus_2` for paper-faithful
+naming. -/
+theorem lem7_integrality_cases_paper (e k f₂ : ℤ)
+    (h_mult : 2 * (e * f₂) = k * (k * (e + 1) - 2)) :
+    e ∣ k * (k - 2) :=
+  lem7_moore_e_dvd_k_times_k_minus_2 e k f₂ h_mult
+
 /-- **Lemma 7 (Case I / Case II structure for even `|G|`).** [deferred-heavy]
 
 Full classification of rank-3 even-order cases.  The Moore57
@@ -144,8 +157,8 @@ instance (Case II with `d = 15²`) is proven in
 (multiplicity formula + Case II divisibility) is now formalised:
 * `lem7_multiplicity_formula` (and `_sym` symmetric form)
 * `lem7_case_two_divisibility_f2` (and `_f3` symmetric form)
-* `lem7_moore_e_dvd_k_times_k_minus_2` (Moore specialization for
-  Theorem 1). -/
+* `lem7_moore_e_dvd_k_times_k_minus_2` / `lem7_integrality_cases_paper`
+  (Moore specialization for Theorem 1). -/
 theorem lem7_integrality_cases : True := by trivial
 
 end Moore57.Papers.Higman1964
