@@ -78,11 +78,19 @@ theorem lem6_trace_even_of_odd_order
     Even (∑ x : X, adjacentMovedCount Γ (x : Equiv.Perm V)) :=
   Moore57.sum_adjacentMovedCount_even_of_subgroup_odd_card X hX_odd
 
-/-- **Lemma 6 (3) (central ⇒ `Tr(O) ≤ 2`).** [deferred-heavy]
+/-- **Lemma 6 (3) (central ⇒ `Tr(O) ≤ 2`).** [done]
 
-Paper-stub kept for backwards compatibility; see
-`lem6_central_inducedTrace_le_two` for the proper-signature version. -/
-theorem lem6_central_trace_le_two (hΓ : IsMoore57 Γ) : True := by trivial
+Paper-faithful proper signature: if `O ⊆ adjMovedSet Γ x` (geometric
+content of `x` being central + contributing to `O`), then `Tr(O) ≤ 2`.
+
+Re-export of `lem6_central_inducedTrace_le_two`. -/
+theorem lem6_central_trace_le_two
+    (hΓ : IsMoore57 Γ) {x : Equiv.Perm V}
+    (hx : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x a) (x b))
+    {O : Finset V} (hO_subset : O ⊆ Moore57.adjMovedSet Γ x)
+    (hO_nonempty : O.Nonempty) :
+    inducedTrace Γ O ≤ 2 :=
+  Moore57.subset_adjMovedSet_inducedTrace_le_two hΓ hx hO_subset hO_nonempty
 
 /-- **Lemma 6 (3) (proper signature: central element ⇒ `Tr(O) ≤ 2`).**
 

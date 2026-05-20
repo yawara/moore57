@@ -45,24 +45,23 @@ open Moore57
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Lemma 10 (spectral trace bounds for Moore57).** [deferred-heavy]
+/-- **Lemma 10 (spectral trace bounds for Moore57).** [done]
 
-For any vertex subset `S` of a Moore57 graph,
-`−8 + |S|/50 ≤ Tr(S) ≤ 7 + |S|/65`. -/
-theorem lem10_trace_bounds (hΓ : IsMoore57 Γ) : True := by trivial
+For any nonempty vertex subset `S` of a Moore57 graph,
+`−8 + |S|/50 ≤ inducedTrace Γ S ≤ 7 + |S|/65`.
 
-/-- **Lemma 10 (proper signature).**
-
-The proper rational-valued Mohar bound for Moore57:
-`−8 + |S|/50 ≤ inducedTrace Γ S ≤ 7 + |S|/65`
-for any nonempty vertex subset `S`.
-
-Fully proven via spectral decomposition + PSD argument (see
-`Moore57.Moore57Graph.E7Matrix.MoharBound`). -/
-theorem lem10_inducedTrace_bounds
+Wraps `Moore57.mohar_trace_bounds` (spectral decomposition + PSD argument). -/
+theorem lem10_trace_bounds
     (hΓ : IsMoore57 Γ) {S : Finset V} (hS : S.Nonempty) :
     -8 + (S.card : ℚ) / 50 ≤ inducedTrace Γ S ∧
       inducedTrace Γ S ≤ 7 + (S.card : ℚ) / 65 :=
   Moore57.mohar_trace_bounds hΓ hS
+
+/-- **Lemma 10 (alternative name: `inducedTrace`-prefixed).** [done] -/
+theorem lem10_inducedTrace_bounds
+    (hΓ : IsMoore57 Γ) {S : Finset V} (hS : S.Nonempty) :
+    -8 + (S.card : ℚ) / 50 ≤ inducedTrace Γ S ∧
+      inducedTrace Γ S ≤ 7 + (S.card : ℚ) / 65 :=
+  lem10_trace_bounds hΓ hS
 
 end Moore57.Papers.MacajSiran2010.S3

@@ -46,7 +46,16 @@ Proof outline: by orbit-stabilizer, `|X| = |O| · |Stab_X(v)|`, and the
 multiplicity of `xv = w` over `x ∈ X` is `|Stab_X(v)|` for each
 `w ∈ O`.  Hence `#{x : v ∼ xv} = deg_O(v) · |Stab_X(v)|`, giving
 `Tr(O) = deg_O(v) = #{x : v ∼ xv} · |O| / |X|`. -/
-theorem lem9_orbit_trace_formula (_hΓ : IsMoore57 Γ) : True := by trivial
+theorem lem9_orbit_trace_formula
+    (X : Subgroup (Equiv.Perm V)) [Fintype X]
+    (hX_aut : ∀ x : X, ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x • a) (x • b))
+    {O : Finset V} {v : V}
+    (h_orbit_eq : O = (Finset.univ : Finset X).image (fun x : X => x • v)) :
+    inducedTrace Γ O =
+      (((Finset.univ : Finset X).filter (fun x : X => Γ.Adj v (x • v))).card : ℚ) *
+        (O.card : ℚ) / (Fintype.card X : ℚ) :=
+  Moore57.inducedTrace_orbit_count_formula_finite_group
+    (Γ := Γ) (G := X) hX_aut h_orbit_eq
 
 /-- **Lemma 9 (1) (proper signature: `Tr(O) = deg_{Γ[O]}(v)` for any
 `v ∈ O`).**
