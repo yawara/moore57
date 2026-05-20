@@ -368,4 +368,90 @@ theorem aut_card_fixedNeighborFinset_modEq_zero_of_pow_nineteen_pow
   rw [hdeg] at hmod
   exact hmod.trans (by decide)
 
+/-! ### Small-N(a) narrowing lemmas
+
+For each prime `p`, combine the prime-power mod-`p` constraint on
+`(autFixedNeighborFinset).card` with an upper bound to narrow the count
+to the unique value compatible with the congruence.  Companion to the
+global Fix-size narrowing lemmas (Moore57.Papers Section06 Lemma16).
+-/
+
+/-- **3-group small N(a)**: `≤ 2` implies `= 0` (`≡ 0 mod 3`). -/
+theorem aut_card_fixedNeighborFinset_eq_zero_of_pow_three_pow_of_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    {v : V} (hv : σ v = v)
+    (h_small : (autFixedNeighborFinset Γ σ v).card ≤ 2) :
+    (autFixedNeighborFinset Γ σ v).card = 0 := by
+  have hmod := aut_card_fixedNeighborFinset_modEq_zero_of_pow_three_pow
+    hΓ σ smul_adj k pow_pk hv
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **5-group small N(a)**: `≤ 6` implies `= 2` (`≡ 2 mod 5`). -/
+theorem aut_card_fixedNeighborFinset_eq_two_of_pow_five_pow_of_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    {v : V} (hv : σ v = v)
+    (h_small : (autFixedNeighborFinset Γ σ v).card ≤ 6) :
+    (autFixedNeighborFinset Γ σ v).card = 2 := by
+  have hmod := aut_card_fixedNeighborFinset_modEq_two_of_pow_five_pow
+    hΓ σ smul_adj k pow_pk hv
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **7-group small N(a)**: `≤ 7` implies `= 1` (`≡ 1 mod 7`). -/
+theorem aut_card_fixedNeighborFinset_eq_one_of_pow_seven_pow_of_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 7 ^ k = 1)
+    {v : V} (hv : σ v = v)
+    (h_small : (autFixedNeighborFinset Γ σ v).card ≤ 7) :
+    (autFixedNeighborFinset Γ σ v).card = 1 := by
+  have hmod := aut_card_fixedNeighborFinset_modEq_one_of_pow_seven_pow
+    hΓ σ smul_adj k pow_pk hv
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **11-group small N(a)**: `≤ 12` implies `= 2` (`≡ 2 mod 11`). -/
+theorem aut_card_fixedNeighborFinset_eq_two_of_pow_eleven_pow_of_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 11 ^ k = 1)
+    {v : V} (hv : σ v = v)
+    (h_small : (autFixedNeighborFinset Γ σ v).card ≤ 12) :
+    (autFixedNeighborFinset Γ σ v).card = 2 := by
+  have hmod := aut_card_fixedNeighborFinset_modEq_two_of_pow_eleven_pow
+    hΓ σ smul_adj k pow_pk hv
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **13-group small N(a)**: `≤ 17` implies `= 5` (`≡ 5 mod 13`). -/
+theorem aut_card_fixedNeighborFinset_eq_five_of_pow_thirteen_pow_of_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 13 ^ k = 1)
+    {v : V} (hv : σ v = v)
+    (h_small : (autFixedNeighborFinset Γ σ v).card ≤ 17) :
+    (autFixedNeighborFinset Γ σ v).card = 5 := by
+  have hmod := aut_card_fixedNeighborFinset_modEq_five_of_pow_thirteen_pow
+    hΓ σ smul_adj k pow_pk hv
+  rw [Nat.ModEq] at hmod
+  omega
+
+/-- **19-group small N(a)**: `≤ 18` implies `= 0` (`≡ 0 mod 19`). -/
+theorem aut_card_fixedNeighborFinset_eq_zero_of_pow_nineteen_pow_of_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (k : ℕ) (pow_pk : σ ^ 19 ^ k = 1)
+    {v : V} (hv : σ v = v)
+    (h_small : (autFixedNeighborFinset Γ σ v).card ≤ 18) :
+    (autFixedNeighborFinset Γ σ v).card = 0 := by
+  have hmod := aut_card_fixedNeighborFinset_modEq_zero_of_pow_nineteen_pow
+    hΓ σ smul_adj k pow_pk hv
+  rw [Nat.ModEq] at hmod
+  omega
+
 end Moore57
