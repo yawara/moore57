@@ -118,14 +118,35 @@ theorem thm6_dvd_one_of_seven_from_props_and_one_prime
   · -- 2-prime case: delegate to the Props 6/7/8 disjunction lemma.
     exact thm6_dvd_one_of_seven_from_props n h_two
 
+/-- **Theorem 6 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature paper-faithful packaging: given the Props 6/7/8
+dispatch (`n` divides one of three case-products) as input, conclude
+`n ∈ divisors of {171, 39, 275, 147, 35, 375, 135}` and `n ≤ 375`.
+
+The geometric content (Props 6/7/8 cases + Feit-Thompson solvability +
+Philip Hall + Lem 15) is deferred-heavy. -/
+theorem thm6_odd_order_paper
+    (n : ℕ)
+    (h_dispatch :
+       (n ∣ 135 ∨ n ∣ 375) ∨
+       (n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171) ∨
+       (n ∣ 35 ∨ n ∣ 275)) :
+    (n ∣ 171 ∨ n ∣ 39 ∨ n ∣ 275 ∨ n ∣ 147 ∨ n ∣ 35 ∨ n ∣ 375 ∨ n ∣ 135)
+    ∧ n ≤ 375 :=
+  ⟨thm6_dvd_one_of_seven_from_props n h_dispatch,
+   thm6_bound_375_from_props n h_dispatch⟩
+
 /-- **Theorem 6 (odd `|Aut(Γ)|` divides one of seven values).** [deferred-heavy]
 
 Arithmetic conclusion is captured by
 `thm6_dvd_one_of_seven_from_props` and
-`thm6_dvd_one_of_seven_from_props_and_one_prime`. What remains for
-the unconditional form is the paper's dispatch: Feit–Thompson
-solvability + Philip Hall subgroups for the 2-prime case, and
-Lemma 15 for the 3-prime case exclusion. -/
+`thm6_dvd_one_of_seven_from_props_and_one_prime` and combined in
+`thm6_odd_order_paper` (above).
+
+What remains for the unconditional form is the paper's dispatch:
+Feit–Thompson solvability + Philip Hall subgroups for the 2-prime case,
+and Lemma 15 for the 3-prime case exclusion. -/
 theorem thm6_odd_order (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9

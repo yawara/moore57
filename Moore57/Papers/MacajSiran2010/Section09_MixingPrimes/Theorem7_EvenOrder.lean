@@ -289,10 +289,27 @@ theorem thm7_card_38_sylow19_normal
     exact h_count.le
   exact Sylow.normal_of_subsingleton P
 
+/-- **Theorem 7 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature paper-faithful packaging: given the odd-part dispatch
+(`m ∈ divisors of {55, 25, 27, 7, 11, 19}`) as input, conclude
+`|G| ∈ divisors of {110, 50, 54, 14, 22, 38}` and `|G| ≤ 110`.
+
+The geometric content (Thm 2 Makhnev-Paduchikh + Thm 5 + Lems 12/15)
+is deferred-heavy. -/
+theorem thm7_even_order_paper
+    (n m : ℕ) (h_n : n = 2 * m)
+    (h_m : m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19) :
+    (n ∣ 110 ∨ n ∣ 50 ∨ n ∣ 54 ∨ n ∣ 14 ∨ n ∣ 22 ∨ n ∣ 38) ∧
+    n ≤ 110 :=
+  ⟨thm7_dvd_one_of_six_from_odd_part n m h_n h_m,
+   thm7_bound_110_from_odd_part n m h_n h_m⟩
+
 /-- **Theorem 7 (even `|Aut(Γ)|` divides one of six values).** [deferred-heavy]
 
 Arithmetic conclusion is captured by
-`thm7_dvd_one_of_six_from_odd_part` and `thm7_bound_110_from_odd_part`.
+`thm7_dvd_one_of_six_from_odd_part` and `thm7_bound_110_from_odd_part`
+and combined in `thm7_even_order_paper` (above).
 The Feit–Thompson-free Sylow dispatch is captured by the
 `thm7_card_*_sylow*_count_one` lemmas and unified in
 `thm7_sylow_q_count_one_dispatch`.
