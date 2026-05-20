@@ -211,12 +211,29 @@ theorem prop6_sylow5_normal
   haveI := prop6_sylow5_subsingleton X a h_a_le h_dvd
   exact Sylow.normal_of_subsingleton P
 
+/-- **Proposition 6 (paper-faithful conditional dispatch).** [done]
+
+Proper-signature wrapper for the paper's two-case `|X| ∣ {135, 375}`
+classification: given the case dispatch (case (1) `P ◁ X` with `a ≤ 3,
+b = 1` or case (2) `P ⋪ X` with `a = 1, 2 ≤ b ≤ 3`) as input, conclude
+`|X| ∈ {divisors of 135 or 375}`.
+
+The geometric content (which case applies based on the Sylow structure
+of σ ∈ Aut(Γ)) is deferred-heavy (Lem 17 case structure + Lem 18 case
+classification for the 5-group sub-block). -/
+theorem prop6_3_and_5_paper
+    (a b : ℕ) (h_a_pos : 1 ≤ a) (h_b_pos : 1 ≤ b)
+    (h_case_dispatch : ((a ≤ 3 ∧ b = 1) ∨ (a = 1 ∧ 2 ≤ b ∧ b ≤ 3))) :
+    (3^a * 5^b) ∣ 135 ∨ (3^a * 5^b) ∣ 375 :=
+  prop6_card_dvd_135_or_375 a b h_a_pos h_b_pos h_case_dispatch
+
 /-- **Proposition 6 (`(p, q) = (3, 5)` classification).** [deferred-heavy]
 
 The arithmetic backbone for both cases is captured by
 `prop6_case1_card_dvd_135` / `prop6_case2_card_dvd_375` /
-`prop6_card_dvd_135_or_375`.  The Feit–Thompson-free Sylow dispatch
-step is captured by `prop6_sylow5_count_one_of_*`.
+`prop6_card_dvd_135_or_375` / `prop6_3_and_5_paper` (above).
+The Feit–Thompson-free Sylow dispatch step is captured by
+`prop6_sylow5_count_one_of_*`.
 
 What remains for the unconditional statement is the geometric/structural
 side: the dichotomy between cases (1)/(2), the `|Fix(P)| = 10` Petersen
