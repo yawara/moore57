@@ -25,22 +25,24 @@ namespace Moore57.Papers.MacajSiran2010.S3
 variable {V : Type*} [Fintype V] [DecidableEq V]
   {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
 
-/-- **Corollary 1 (`a₁(x) ≤ 500`).** [deferred-heavy] -/
+/-- **Corollary 1 (`a₁(x) ≤ 500`).** [done]
+
+For any automorphism `x` of a Moore57 graph, `a₁(x) ≤ 500`.
+
+Wraps `Moore57.adjacentMovedCount_le_500` (which combines the Mohar
+lower trace bound from Lemma 10 with the `Tr(S) ≤ 2` no-quadrangle
+argument). -/
 theorem cor1_a1_le_500 (hΓ : IsMoore57 Γ) (x : Equiv.Perm V)
-    (hx : ∀ a b, Γ.Adj a b ↔ Γ.Adj (x a) (x b)) :
-    True := by trivial
+    (hx : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x a) (x b)) :
+    Moore57.adjacentMovedCount Γ x ≤ 500 :=
+  Moore57.adjacentMovedCount_le_500 hΓ hx
 
-/-- **Corollary 1 (proper signature: `adjacentMovedCount Γ x ≤ 500`).**
-
-For any automorphism `x` of a Moore57 graph,
-`adjacentMovedCount Γ x ≤ 500`.
-
-Combines the Mohar lower trace bound (Lemma 10) with the `Tr(S) ≤ 2`
-no-quadrangle argument; see `Moore57.adjacentMovedCount_le_500`. -/
+/-- **Corollary 1 (alternative name: `adjacentMovedCount Γ x ≤ 500`).** [done]
+Re-export of `cor1_a1_le_500` under the `adjacentMovedCount`-prefixed name. -/
 theorem cor1_adjacentMovedCount_le_500
     (hΓ : IsMoore57 Γ) (x : Equiv.Perm V)
     (hx : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (x a) (x b)) :
     Moore57.adjacentMovedCount Γ x ≤ 500 :=
-  Moore57.adjacentMovedCount_le_500 hΓ hx
+  cor1_a1_le_500 hΓ x hx
 
 end Moore57.Papers.MacajSiran2010.S3

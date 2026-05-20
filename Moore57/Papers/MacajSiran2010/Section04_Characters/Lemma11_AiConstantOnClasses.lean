@@ -147,6 +147,24 @@ theorem lem11_a1_via_characters
   rw [chi0_conj σ τ, chi1_conj σ τ hτ, chi2_conj σ τ hτ] at h_dest
   linarith [h_dest, h_src]
 
+/-- **Lemma 11 `a₂` conj-invariance via character chain.** [done]
+
+`a₂(τστ⁻¹) = |V| − a₀(τστ⁻¹) − a₁(τστ⁻¹) = |V| − a₀(σ) − a₁(σ) = a₂(σ)`.
+
+Direct consequence of `a₀` and `a₁` conj-invariance.  Since the project
+defines `a₂` arithmetically as `|V| − a₀ − a₁`, no separate character
+formula step is needed; the conj-invariance of `a₂` follows directly. -/
+theorem lem11_a2_via_characters
+    (hΓ : IsMoore57 Γ) (σ τ : Equiv.Perm V)
+    (hτ : ∀ v w, Γ.Adj v w ↔ Γ.Adj (τ v) (τ w)) :
+    ((Fintype.card V : ℚ) - (fixedVertexCount (τ * σ * τ⁻¹) : ℚ) -
+       (adjacentMovedCount Γ (τ * σ * τ⁻¹) : ℚ)) =
+    ((Fintype.card V : ℚ) - (fixedVertexCount σ : ℚ) -
+       (adjacentMovedCount Γ σ : ℚ)) := by
+  have h_a0 := lem11_a0_via_characters σ τ hτ
+  have h_a1 := lem11_a1_via_characters hΓ σ τ hτ
+  linarith [h_a0, h_a1]
+
 /-- **Lemma 11 (`aᵢ` constant on rational classes).** [deferred-heavy]
 
 The `a₀` part is fully proven as `lem11_a0_constant_on_rational_classes`
