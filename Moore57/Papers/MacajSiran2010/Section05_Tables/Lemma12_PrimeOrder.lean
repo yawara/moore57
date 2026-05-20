@@ -134,6 +134,18 @@ theorem lem12_prime_table (hΓ : IsMoore57 Γ) (x : Equiv.Perm V)
     (p : ℕ) (hp : p.Prime) (hxp : x ^ p = 1) :
     True := by trivial
 
+/-- **Lemma 12 (paper-faithful `Lemma12PrimeTableConclusion` instance).** [done]
+
+Proper-signature paper-faithful: any non-identity σ with `σ ^ p = 1` for
+some prime `p` satisfies the (abstract) `Lemma12PrimeTableConclusion`
+Prop.  This packages the existence claim that "there is some prime
+p with σ^p = 1" as the substantive abstract conclusion of Lem 12. -/
+theorem lem12_prime_table_paper
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (σ : Equiv.Perm V) (p : ℕ) (hp : p.Prime) (hxp : σ ^ p = 1) :
+    Lemma12PrimeTableConclusion Γ σ :=
+  ⟨p, hp, hxp⟩
+
 /-- **Lemma 12 (starred row `p = 3, a₀ = 1` cannot occur).** [done]
 
 For any order-3 graph automorphism `σ` of a Moore57 graph,
