@@ -259,4 +259,94 @@ permutation group" — subdegrees `(1, k, l)` with `n = 1 + k + l = |Ω|`. -/
 def IsRank3 : Prop :=
   permRank G Ω = 3
 
+/-! ### Orbital neighborhood cardinality and reverse neighborhoods (D3.2)
+
+For Higman 1964 Lem 3, we need:
+1. The cardinality `|N_O(a)|` (the **subdegree** of `O` at `a`) is
+   `G`-invariant — depends only on the orbit of `a`.
+2. The **reverse** orbital neighborhood `N⁻_O(a) := {c | (c, a) ∈ O}`
+   coincides with `N_{swapOrbital O}(a)`.
+
+Combining (1) and (2): if `swapOrbital O₁ = O₂` (i.e., `O₁, O₂` are
+paired), then `|N⁻_{O₁}(a)| = |N_{O₂}(a)|`.  Together with the
+in-degree = out-degree fact for any orbital in a transitive action
+(double-counting), this yields the Higman 1964 Lem 3 conclusion
+`k = l` for odd-order rank-3 groups. -/
+
+/-- The **subdegree** (cardinality of an orbital neighborhood) is
+`G`-invariant under the diagonal action.
+
+Proof: bijection `c ↦ g⁻¹ • c` between `N_O(g•a)` and `N_O(a)`. -/
+theorem orbitalNeighborhood_card_smul
+    (O : orbital G Ω) (g : G) (a : Ω) :
+    Nat.card (orbitalNeighborhood G Ω O (g • a)) =
+    Nat.card (orbitalNeighborhood G Ω O a) := by
+  apply Nat.card_eq_of_bijective (f := fun (x : orbitalNeighborhood G Ω O (g • a)) =>
+    (⟨g⁻¹ • x.val,
+      (mem_orbitalNeighborhood_smul_left G Ω O g a x.val).mp x.property⟩ :
+     orbitalNeighborhood G Ω O a))
+  refine ⟨?_, ?_⟩
+  · -- Injective
+    rintro ⟨c, _⟩ ⟨c', _⟩ h
+    apply Subtype.ext
+    have hcc : g⁻¹ • c = g⁻¹ • c' := congrArg Subtype.val h
+    exact MulAction.injective g⁻¹ hcc
+  · -- Surjective: from ⟨c, hc⟩ : RHS, the preimage is ⟨g • c, _⟩.
+    rintro ⟨c, hc⟩
+    refine ⟨⟨g • c, ?_⟩, ?_⟩
+    · rw [mem_orbitalNeighborhood_smul_left, ← mul_smul, inv_mul_cancel, one_smul]
+      exact hc
+    · apply Subtype.ext
+      change g⁻¹ • g • c = c
+      rw [← mul_smul, inv_mul_cancel, one_smul]
+
+/-- The **reverse orbital neighborhood**: the set of `c` such that
+`(c, a)` (rather than `(a, c)`) lies in `O`. -/
+def orbitalReverseNeighborhood (O : orbital G Ω) (a : Ω) : Set Ω :=
+  { c | (Quotient.mk'' (c, a) : orbital G Ω) = O }
+
+@[simp] theorem mem_orbitalReverseNeighborhood_iff (O : orbital G Ω) (a c : Ω) :
+    c ∈ orbitalReverseNeighborhood G Ω O a ↔
+    (Quotient.mk'' (c, a) : orbital G Ω) = O :=
+  Iff.rfl
+
+/-- The reverse orbital neighborhood of `O` at `a` is the forward
+neighborhood of the paired orbital `swapOrbital O` at `a`.
+
+This bridges the "in-degree" and "out-degree" views of an orbital
+through the pairing involution.
+
+Proof: `(c, a) ∈ O ↔ (a, c) ∈ swap O`, by definition of `swapOrbital`. -/
+theorem orbitalReverseNeighborhood_eq_orbitalNeighborhood_swap
+    (O : orbital G Ω) (a : Ω) :
+    orbitalReverseNeighborhood G Ω O a =
+    orbitalNeighborhood G Ω (swapOrbital G Ω O) a := by
+  ext c
+  simp only [mem_orbitalReverseNeighborhood_iff, mem_orbitalNeighborhood_iff]
+  constructor
+  · intro h
+    -- swap (c, a) = (a, c); apply swap to both sides of h.
+    have : swapOrbital G Ω (Quotient.mk'' (c, a)) = swapOrbital G Ω O := by
+      rw [h]
+    rwa [swapOrbital_mk] at this
+  · intro h
+    -- Apply swap to both sides; use involution.
+    have : swapOrbital G Ω (Quotient.mk'' (a, c)) = swapOrbital G Ω (swapOrbital G Ω O) := by
+      rw [h]
+    rw [swapOrbital_mk, swapOrbital_involutive] at this
+    exact this
+
+/-- **Higman 1964 Lem 3 backbone**: if `swapOrbital O₁ = O₂` (i.e., `O₁`
+and `O₂` are paired orbitals), then for any `a`, the reverse
+neighborhood of `O₁` at `a` coincides with the forward neighborhood of
+`O₂` at `a`.
+
+This is the structural identity behind the paper's "Δ'(a) = Γ(a)"
+hypothesis in odd-order rank-3 groups. -/
+theorem lem3_reverseNeighborhood_eq_neighborhood_of_paired
+    {O₁ O₂ : orbital G Ω} (h : swapOrbital G Ω O₁ = O₂) (a : Ω) :
+    orbitalReverseNeighborhood G Ω O₁ a =
+    orbitalNeighborhood G Ω O₂ a := by
+  rw [orbitalReverseNeighborhood_eq_orbitalNeighborhood_swap, h]
+
 end Moore57
