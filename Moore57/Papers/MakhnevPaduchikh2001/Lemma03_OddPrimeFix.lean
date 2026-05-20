@@ -161,4 +161,52 @@ theorem lem3_case6_hs_fix
     simpa using h_dvd_diff
   exact lem3_case6_arithmetic_core p Fact.out hp_odd hdvd
 
+/-- **Lemma 3, case (2) arithmetic core: odd prime divisors of `3249`.** [done]
+
+For `p` an odd prime dividing `3249 = 3^2 · 19^2`, conclude `p ∈ {3, 19}`.
+Proof: factor `3249 = 3^2 · 19^2`, apply `Nat.Prime.dvd_mul` /
+`Nat.Prime.dvd_of_dvd_pow`; each branch gives a prime-divides-prime
+collapse via `Nat.Prime.eq_one_or_self_of_dvd`. -/
+theorem lem3_case2_arithmetic_core
+    (p : ℕ) (hp_prime : Nat.Prime p) (_hp_odd : 2 < p)
+    (hdvd : p ∣ 3249) :
+    p = 3 ∨ p = 19 := by
+  have h_eq : (3249 : ℕ) = 3^2 * 19^2 := by norm_num
+  rw [h_eq] at hdvd
+  have h1 : p ∣ 3^2 ∨ p ∣ 19^2 := (hp_prime.dvd_mul).mp hdvd
+  rcases h1 with h3pow | h19pow
+  · have hp_dvd_3 : p ∣ 3 := hp_prime.dvd_of_dvd_pow h3pow
+    have : p = 1 ∨ p = 3 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 3)) p hp_dvd_3
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · left; exact h
+  · have hp_dvd_19 : p ∣ 19 := hp_prime.dvd_of_dvd_pow h19pow
+    have : p = 1 ∨ p = 19 :=
+      (Nat.Prime.eq_one_or_self_of_dvd (by decide : Nat.Prime 19)) p hp_dvd_19
+    rcases this with h | h
+    · exact absurd h hp_prime.one_lt.ne'
+    · right; exact h
+
+/-- **Lemma 3, case (2) conditional: singleton fix forces `p ∈ {3, 19}`.** [done]
+
+For a Moore57 graph automorphism `σ` of odd prime order `p` with
+`|Fix(σ)| = 1` (singleton), conclude `p ∈ {3, 19}` (matching the
+paper's `|X| ∣ 3·19 = 57`).
+
+Proof: the generic mod-`p` constraint gives `1 ≡ 3250 [MOD p]`, so
+`p ∣ 3249 = 3250 − 1`.  Apply `lem3_case2_arithmetic_core`. -/
+theorem lem3_case2_singleton_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (p : ℕ) [Fact (Nat.Prime p)]
+    (hp_odd : 2 < p) (hpow : σ ^ p = 1)
+    (h_fix_one : fixedVertexCount σ = 1) :
+    p = 3 ∨ p = 19 := by
+  have hmod := Moore57.aut_fixedVertexCount_modEq_card_of_pow_prime σ p hpow
+  rw [hΓ.card, h_fix_one] at hmod
+  have hdvd : p ∣ 3249 := by
+    have h_dvd_diff : p ∣ 3250 - 1 :=
+      (Nat.modEq_iff_dvd' (by norm_num)).mp hmod
+    simpa using h_dvd_diff
+  exact lem3_case2_arithmetic_core p Fact.out hp_odd hdvd
+
 end Moore57.Papers.MakhnevPaduchikh2001
