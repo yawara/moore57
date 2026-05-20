@@ -117,6 +117,27 @@ theorem lem13_p3_row_1_1_pow3_a1_zero
     rw [← pow_mul]; exact h_pow9
   exact lem12_p3_a1_eq_zero hΓ (σ ^ 3) (graphAut_pow σ hAut 3) h_pow3_pow3
 
+/-- **Lemma 13 (p=3 starred row `(?, 1)` cannot occur).** [done]
+
+If `σ` has order dividing 9 (so `σ^9 = 1`) and `a₀(σ³) = 1`, then we
+derive a contradiction via Lemma 12 starred for `σ³`.
+
+This applies `lem12_no_p3_a0_one` (itself based on B4.1 cyclotomic
+trace integrality + mod-15 + no-triangle) to `σ³`, which is an
+order-3 graph automorphism with `a₀ = 1`.
+
+Together with the propagation `a₀(σ) ≤ a₀(σ³)` (= 1), this rules out
+the entire `(?, 1)` column of the Lemma 13 p=3 table. -/
+theorem lem13_p3_row_1_1_no
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (h_pow9 : σ ^ 9 = 1)
+    (h_a0_pow3 : fixedVertexCount (σ ^ 3) = 1) :
+    False := by
+  have h_pow3_pow3 : (σ ^ 3) ^ 3 = 1 := by
+    rw [← pow_mul]; exact h_pow9
+  exact lem12_no_p3_a0_one hΓ (σ ^ 3) (graphAut_pow σ hAut 3) h_pow3_pow3 h_a0_pow3
+
 /-- **Lemma 13 (p=3 row `(?, 10)` via PetersenFixedData for `σ³`).** [done]
 
 If `σ` has order 9 and `σ³` has Petersen fix (non-starred Lem 12 p=3),

@@ -309,13 +309,43 @@ theorem lem12_a0_one_from_singletonFixedData
     fixedVertexCount σ = 1 :=
   h.fixedVertexCount_eq_one
 
-/-- **Lemma 12 (corollary, starred row `p = 7, a₀ = 58` cannot occur).** [deferred-heavy]
+/-- **Lemma 12 (starred row `p = 7, a₀ = 58` cannot occur).** [done]
 
-The geometric `a₁ = 0` consequence is fully formalised in
-`lem12_a1_zero_of_closed_neighbourhood_fixed`.  Combining this with
-the character-theoretic `a₁ ∈ {21 + 105k : k ∈ ℕ}` (from
-Proposition 2, deferred) yields the contradiction. -/
-theorem lem12_no_p7_a0_58 (hΓ : IsMoore57 Γ) : True := by trivial
+For any order-7 graph automorphism `σ` of a Moore57 graph fixing the
+closed neighbourhood of some vertex `c` (so `a₀(σ) = 58 = 1 + 57`), we
+derive a contradiction.
+
+Proof (mod-15 character-theoretic, mirroring `lem12_no_p3_a0_one`):
+1. `aut_pow_prime_E7_trace_int` (with `p = 7`): `tr(E₇·P_σ) ∈ ℤ`.
+2. `lem3_a1_mod_15` with that integer: `a₁ ≡ 7·a₀ + 5 (mod 15)`.
+3. With `a₀ = 58`: `a₁ ≡ 7·58 + 5 = 411 ≡ 6 (mod 15)`.
+4. `lem12_a1_zero_of_closed_neighbourhood_fixed` (geometric): `a₁ = 0`.
+5. `0 ≡ 6 (mod 15)` is false; contradiction.
+
+Notably, the paper's character-theoretic lower bound `a₁ ∈ {21 + 105k}`
+(Proposition 2, deferred) is *not needed* — the mod-15 congruence alone
+suffices for the contradiction, just like in the `p = 3, a₀ = 1` case. -/
+theorem lem12_no_p7_a0_58
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 7 = 1)
+    (c : V) (hc : σ c = c)
+    (h_nbhd : ∀ v ∈ Γ.neighborSet c, σ v = v)
+    (h_a0 : fixedVertexCount σ = 58) :
+    False := by
+  -- Step 1: trace is an integer (via B4.1 with p=7).
+  haveI : Fact (Nat.Prime 7) := ⟨by decide⟩
+  obtain ⟨z, hz⟩ := Moore57.aut_pow_prime_E7_trace_int hΓ σ hAut 7 hpow
+  -- Step 2: a₁ ≡ 7·a₀ + 5 (mod 15).
+  have h_mod := Moore57.Papers.MacajSiran2010.S2.lem3_a1_mod_15 hΓ σ hAut hz
+  -- Step 3: with a₀ = 58, a₁ ≡ 411 ≡ 6 (mod 15).
+  rw [h_a0] at h_mod
+  -- Step 4: a₁ = 0 from geometric closed-neighbourhood fix.
+  have h_a1 := lem12_a1_zero_of_closed_neighbourhood_fixed hΓ σ hAut c hc h_nbhd
+  -- Step 5: combine for contradiction.
+  rw [h_a1] at h_mod
+  unfold Int.ModEq at h_mod
+  omega
 
 /-- **Lemma 12 (conditional, starred row `p = 7, a₀ = 58`): closed
 neighbourhood geometric step plus character constraint forces False.** [done]
