@@ -1,5 +1,7 @@
 import Mathlib.Combinatorics.SimpleGraph.StronglyRegular
+import Mathlib.Tactic.Linarith
 import Moore57.Moore57Graph.Moore57Definition
+import Moore57.Foundations.GroupTheory.RankAndOrbital
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -78,12 +80,97 @@ theorem lem5_block_design_count_conditional
     m * (n - k - 1) = k * (k - l - 1) :=
   lem5_block_design_count_srg G h_srg hn
 
+/-! ### Lemma 5 generic ℤ form (D3.4) -/
+
+/-- **Lem 5 rank-3 perm group form (ℤ algebraic)**: from the rank-3
+counting identity `λk + μl = k(k − 1)` (Higman 1964 §3, line above
+"Lemma 5"), deduce `μl = k(k − λ − 1)`. [done]
+
+This is the precise paper-faithful algebraic content of Lem 5,
+independent of the SRG packaging.  The counting identity itself comes
+from double-counting "Δ-out-edges from `Δ(a)`": each vertex `b` in
+`Δ(a)` contributes `λ` (if `b ∈ Δ(a)` — wait that's the same vertex…)
+or more carefully:
+
+* Each vertex on `Δ(a)` has `k − 1` Δ-neighbors among the rest (out of
+  `n − 1` non-a vertices), so the total Δ-incidence from `Δ(a)` is
+  `k(k − 1)`.
+* Distributing by where the neighbor lies: `λ k + μ l` where `λk` are
+  the in-Δ(a) Δ-incidences and `μl` are the to-Γ(a) Δ-incidences.
+
+Note the deferred-heavy piece is the underlying double counting; this
+lemma packages the algebraic consequence. -/
+theorem lem5_rank3_perm_group_form_int (k l lam mu : ℤ)
+    (h_count : lam * k + mu * l = k * (k - 1)) :
+    mu * l = k * (k - lam - 1) := by
+  have h_rhs : k * (k - lam - 1) = k * (k - 1) - lam * k := by ring
+  linarith
+
+/-- **Lem 5 paper iff form (ℤ)**: the `λk + μl = k(k − 1)` counting
+identity is equivalent to `μl = k(k − λ − 1)` (the paper's stated form).
+[done] -/
+theorem lem5_rank3_perm_group_form_iff_int (k l lam mu : ℤ) :
+    lam * k + mu * l = k * (k - 1) ↔ mu * l = k * (k - lam - 1) := by
+  constructor
+  · exact lem5_rank3_perm_group_form_int k l lam mu
+  · intro h
+    have h_rhs : k * (k - lam - 1) = k * (k - 1) - lam * k := by ring
+    linarith
+
+/-- **Lem 5 Moore57 ℤ instance via the rank-3 perm group form**: for
+`(k, λ, μ, l) = (57, 0, 1, 3192)`, the rank-3 counting identity
+`0·57 + 1·3192 = 57·56` holds, so by `lem5_rank3_perm_group_form_int`
+we get `1·3192 = 57·(57 − 0 − 1)`. [done] -/
+theorem lem5_rank3_perm_group_form_moore57 :
+    (1 : ℤ) * 3192 = 57 * (57 - 0 - 1) := by
+  apply lem5_rank3_perm_group_form_int 57 3192 0 1
+  norm_num
+
+/-! ### Lem 5 orbital intersection number definitions (D3.4 backbone)
+
+For a rank-3 perm group with two non-diagonal orbitals `O₁` (= "Δ" in
+the paper) and `O₂` (= "Γ"), at a base point `a`, the intersection
+numbers `λ, μ` (and the symmetric `λ₁, μ₁`) measure orbital counts of
+the form `|N_{O₁}(a) ∩ N_{O₁}(b)|` for `b` ranging over `N_{O₁}(a)`
+(giving λ) or `N_{O₂}(a)` (giving μ).
+
+These are well-defined by `Moore57.orbitalIntersectionCount_orbital_invariant`
+(D3.1) — the count depends only on the orbital containing `(a, b)`,
+not on the specific representative. -/
+
+/-- **Orbital intersection number at a particular base pair**: the
+λ/μ-style intersection count, parameterized by which orbital triple
+(`O_target_a, O_target_b, O_base`) we're measuring.
+
+For Higman 1964 Lem 5 we set `O_target_a = O_target_b = O₁` (the Δ
+orbital); then `λ = orbitalIntersectionAt (a, b ∈ O₁)`, `μ =
+orbitalIntersectionAt (a, b ∈ O₂)`. -/
+noncomputable def orbitalIntersectionAt {G Ω : Type*}
+    [Group G] [MulAction G Ω]
+    (O₁ O₂ : Moore57.orbital G Ω) (a b : Ω) : ℕ :=
+  Moore57.orbitalIntersectionCount G Ω O₁ O₂ a b
+
+/-- **Lem 5 intersection number constancy (D3.1 wrap)**: the intersection
+number `orbitalIntersectionAt O₁ O₂ a b` depends only on the orbital
+containing `(a, b)`, not on the specific representative.
+
+Direct wrap of `Moore57.orbitalIntersectionCount_orbital_invariant`. -/
+theorem lem5_intersection_number_constant
+    {G Ω : Type*} [Group G] [MulAction G Ω]
+    (O₁ O₂ : Moore57.orbital G Ω) {a b a' b' : Ω}
+    (h : Moore57.SameOrbital G Ω (a, b) (a', b')) :
+    orbitalIntersectionAt O₁ O₂ a b = orbitalIntersectionAt O₁ O₂ a' b' :=
+  Moore57.orbitalIntersectionCount_orbital_invariant G Ω O₁ O₂ h
+
 /-- **Lemma 5 (μl = k(k − λ − 1)).** [deferred-heavy]
 
-Paper-faithful rank-3 perm group statement.  The SRG version is fully
-proven in `lem5_block_design_count_srg`; rank-3 perm groups give SRGs
-on the orbital adjacency structure, so the two forms are equivalent
-once the perm-group ↔ SRG bridge is built. -/
+Paper-faithful rank-3 perm group statement.  Now both the SRG version
+(`lem5_block_design_count_srg`) and the algebraic ℤ form
+(`lem5_rank3_perm_group_form_int`) are fully proven; rank-3 perm groups
+give SRGs on the orbital adjacency structure, so the two forms are
+equivalent once the perm-group ↔ SRG bridge is built (the orbital
+intersection numbers are constant by
+`lem5_intersection_number_constant` (D3.1)). -/
 theorem lem5_block_design_count : True := by trivial
 
 /-- **Moore57 instance of Lemma 5.** [done]
