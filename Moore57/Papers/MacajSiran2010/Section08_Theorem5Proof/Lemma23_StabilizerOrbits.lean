@@ -61,14 +61,28 @@ theorem lem23_arithmetic_stabilizer_eq_div
   rw [h_N]
   rw [Nat.mul_div_cancel _ h_O_pos]
 
+/-- **Lemma 23 (paper-faithful arithmetic form).** [done]
+
+Proper-signature paper-faithful packaging: for |X| = 625 acting with
+smallest orbit of size 125, the vertex stabilizer has order 5 (by
+orbit-stabilizer).  This is the arithmetic substance of Lem 23
+(the "|Y| = 5" claim). -/
+theorem lem23_stabilizer_orbits_paper
+    (orbit_size stab_order : ℕ)
+    (h_X : (625 : ℕ) = stab_order * orbit_size)
+    (h_O : orbit_size = 125) :
+    stab_order = 5 ∧ (5 : ℕ) ∣ 625 :=
+  ⟨lem23_arithmetic_stabilizer_order orbit_size stab_order h_X h_O,
+   lem23_arithmetic_5_dvd_625⟩
+
 /-- **Lemma 23 (stabilizer in 1 or 2 size-125 orbits).** [deferred-heavy]
 
 Arithmetic backbone (orbit-stabilizer giving |Y| = 5) in
-`lem23_arithmetic_stabilizer_order`. What remains is the paper's
-geometric content: the existence claim (at least one size-125 orbit
-exists for the given |X| / smallest-orbit setup) and the structural
-exclusion of `Y` stabilizing `≥ 3` size-125 orbits via Moore57
-fix-shape analysis on `Fix(Y)`. -/
+`lem23_arithmetic_stabilizer_order` and `lem23_stabilizer_orbits_paper`.
+What remains is the paper's geometric content: the existence claim
+(at least one size-125 orbit exists for the given |X| / smallest-orbit
+setup) and the structural exclusion of `Y` stabilizing `≥ 3` size-125
+orbits via Moore57 fix-shape analysis on `Fix(Y)`. -/
 theorem lem23_stabilizer_orbits (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S8
