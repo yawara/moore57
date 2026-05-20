@@ -131,11 +131,18 @@
 ### B5. Lem 13, Lem 14 paper-faithful 形
 
 * **[B5.0] (部分 done)** Lem 13 starred rows は arithmetic core で
-  処理済 (commit `f12e30e`)。 full 6-row table を char-theoretic に
-  ⟶ Theorem 3 / Prop 2 待ち、deferred。
+  処理済 (commit `f12e30e`)。 さらに 2026-05-20 夜 (commit `b35143b`)
+  で fix-set monotonicity (`fixedVertexCount_le_pow`) +
+  `graphAut_pow` helper を追加し、Lem 13 の追加 conditional rows:
+  - `lem13_p5_a0_zero_of_pow5_zero` (p=5 (0,0) propagation)
+  - `lem13_p3_a0_le_one_of_pow3_one` (p=3 (?, 1) constraint)
+  - `lem13_p3_row_1_1_pow3_a1_zero` (p=3 (1,1) bridge to Lem 12 p=3 starred)
+  full 6-row table を char-theoretic に ⟶ Theorem 3 / Prop 2 待ち、deferred。
 * **[B5.1] (部分 done)** `lem14_arithmetic_decomp` (`a₁ ≡ b₁_P + b₁_Q
-  (mod n)` ℤ-arithmetic packaging) 既に done。 full semi-regular
-  軌道分解は character + Prop 2 依存、deferred-heavy。
+  (mod n)` ℤ-arithmetic packaging) 既に done。
+  さらに `lem15_no_pq_14_a0_49_conditional` (Lem 15 pq=14 row, commit `b35143b`)
+  + Lem 17/18/19 dispatch numeric bounds (commit `51a70a5`).
+  full semi-regular 軌道分解は character + Prop 2 依存、deferred-heavy。
 
 ---
 
