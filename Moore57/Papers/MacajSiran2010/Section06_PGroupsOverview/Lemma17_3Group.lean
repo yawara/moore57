@@ -253,7 +253,60 @@ theorem lem17_le_81_from_dispatch
     (n : ℕ) (h : n ∣ 27 ∨ n ∣ 81) : n ≤ 81 :=
   Nat.le_of_dvd (by norm_num) (lem17_orderOf_dvd_81_from_dispatch n h)
 
-/-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy] -/
+/-! ### Prime-case (σ^3 = 1) unconditional wrappers
+
+For σ of prime order 3 (the base case k = 1 of `σ^{3^k} = 1`), the
+order divides 3 trivially, hence the Lem 17 case (1) bound `orderOf σ ∣ 27`
+and case (2) bound `orderOf σ ∣ 81` follow immediately without any
+semi-regular hypothesis or FixedData inspection.
+
+These wrappers are the **base case** of Path B (Phase 1) — for the
+composite case `σ^{3^k} = 1` with `k ≥ 2`, the unconditional derivation
+requires the deeper paper Lem 17/21/Cor 2 chain.  Documented as
+deferred-heavy (see `blogs/20260521.md`).
+-/
+
+/-- **Lemma 17 case (1) prime-case unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ³ = 1 (i.e. σ has order dividing
+the prime 3) and `PetersenFixedData Γ σ`, the bound `orderOf σ ∣ 27`
+holds trivially since `orderOf σ ∣ 3 ∣ 27`.
+
+This is the `k = 1` base case of the Phase 1 unconditional unstub goal —
+the composite case `σ^{3^k} = 1` with `k ≥ 2` requires the paper Lem 17
+cyclic specialization which is deferred-heavy. -/
+theorem lem17_case1_orderOf_dvd_27_with_petersenFixedData_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (_pfd : PetersenFixedData Γ σ) (_i : Fin 10)
+    (_smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 27 := by
+  have h3 : orderOf σ ∣ 3 := orderOf_dvd_of_pow_eq_one pow_3
+  exact dvd_trans h3 (by decide)
+
+/-- **Lemma 17 case (2) prime-case unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ³ = 1 and `SingletonFixedData σ`,
+the bound `orderOf σ ∣ 3` holds trivially.  Stronger than the paper's
+case (2) `∣ 81`: combined with C3.4 semi-regular conclusion `∣ 57`
+(which gives `∣ 3` for 3-groups), the bound is sharp.
+
+This is the `k = 1` base case of Phase 1 Lem 17 case (2) unconditional. -/
+theorem lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (_sfd : SingletonFixedData σ)
+    (_smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 3 :=
+  orderOf_dvd_of_pow_eq_one pow_3
+
+/-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy]
+
+The full case classification (Fix shape ∈ {Petersen, singleton} for any
+3-group, including composite-order σ) requires the paper Lem 17 + Lem 21
++ Cor 2 chain and is deferred-heavy.  Prime-case (`σ^3 = 1`)
+specializations are unconditional via
+`lem17_case1_orderOf_dvd_27_with_petersenFixedData_prime_unconditional`
+and `lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_unconditional`.
+Backward-compat True-stub. -/
 theorem lem17_3group_fix (hΓ : IsMoore57 Γ) : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S6

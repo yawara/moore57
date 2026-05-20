@@ -292,4 +292,50 @@ theorem lem18_le_125_from_dispatch
     (n : ℕ) (h : n ∣ 25 ∨ n ∣ 5 ∨ n ∣ 125) : n ≤ 125 :=
   Nat.le_of_dvd (by norm_num) (lem18_orderOf_dvd_125_from_dispatch n h)
 
+/-! ### Prime-case (σ^5 = 1) unconditional wrappers
+
+For σ of prime order 5 (the base case k = 1 of `σ^{5^k} = 1`), the
+order divides 5 trivially, hence the Lem 18 case (1) bound `∣ 25`,
+case (2) bound `∣ 5`, and case (3) bound `∣ 125` all follow immediately
+without any semi-regular hypothesis or FixedData inspection.
+
+These wrappers are the **base case** of Path B (Phase 1) — for the
+composite case `σ^{5^k} = 1` with `k ≥ 2`, the unconditional derivation
+requires the deeper paper Lem 18 / Prop 3 chain.  Documented as
+deferred-heavy. -/
+
+/-- **Lemma 18 case (1) prime-case unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ⁵ = 1 and `HSFixedData Γ σ`,
+the bound `orderOf σ ∣ 25` holds trivially since `orderOf σ ∣ 5 ∣ 25`. -/
+theorem lem18_case1_orderOf_dvd_25_with_HSFixedData_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (_hsfd : HSFixedData Γ σ) (_i : Fin 50)
+    (_smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 25 := by
+  have h5 : orderOf σ ∣ 5 := orderOf_dvd_of_pow_eq_one pow_5
+  exact dvd_trans h5 (by decide)
+
+/-- **Lemma 18 case (2) prime-case unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ⁵ = 1 and `C5FixedData Γ σ`,
+the bound `orderOf σ ∣ 5` holds trivially. -/
+theorem lem18_case2_orderOf_dvd_5_with_c5FixedData_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (_c5 : C5FixedData Γ σ) (_i : Fin 5)
+    (_smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 5 :=
+  orderOf_dvd_of_pow_eq_one pow_5
+
+/-- **Lemma 18 case (3) prime-case unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ⁵ = 1 and `EmptyFixedData σ`,
+the bound `orderOf σ ∣ 125` holds trivially since `orderOf σ ∣ 5 ∣ 125`. -/
+theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (_efd : EmptyFixedData σ) :
+    orderOf σ ∣ 125 := by
+  have h5 : orderOf σ ∣ 5 := orderOf_dvd_of_pow_eq_one pow_5
+  exact dvd_trans h5 (by decide)
+
 end Moore57.Papers.MacajSiran2010.S6
