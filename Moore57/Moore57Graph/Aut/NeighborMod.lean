@@ -454,4 +454,44 @@ theorem aut_card_fixedNeighborFinset_eq_zero_of_pow_nineteen_pow_of_small
   rw [Nat.ModEq] at hmod
   omega
 
+/-- **Singleton fix forces empty N(a) ∩ Fix.** [done]
+
+Pure graph-theoretic lemma (no Moore57 / prime-power hypothesis): if a
+permutation `σ` of `V` has exactly one fixed vertex (`fixedVertexCount σ = 1`)
+and that vertex is `v` (`σ v = v`), then no neighbour of `v` in `Γ` is fixed
+by `σ`.
+
+Reason: any `z ∈ autFixedNeighborFinset Γ σ v` is both σ-fixed and a graph
+neighbour of `v`.  Uniqueness of fixed point forces `z = v`, but graph
+irreflexivity then gives `Γ.Adj v v` — contradiction.
+
+Combined with the small-N(a) narrowing lemmas above, this rules out the
+"singleton Fix" candidate at the local level for Section 6 Lemmas
+17/19 case (2). -/
+theorem aut_fixedNeighborFinset_card_eq_zero_of_fixedVertexCount_eq_one
+    (σ : Equiv.Perm V) {v : V} (hv : σ v = v)
+    (h_one : fixedVertexCount σ = 1) :
+    (autFixedNeighborFinset Γ σ v).card = 0 := by
+  classical
+  apply Finset.card_eq_zero.mpr
+  apply Finset.eq_empty_iff_forall_notMem.mpr
+  intro z hz
+  obtain ⟨hvz, hσz⟩ := (mem_autFixedNeighborFinset σ).mp hz
+  -- Uniqueness of fixed point: filter set has card 1 ⟹ singleton.
+  let F : Finset V := (Finset.univ : Finset V).filter fun w => σ w = w
+  have hF_card : F.card = 1 := h_one
+  obtain ⟨a, hFa⟩ := Finset.card_eq_one.mp hF_card
+  have hv_in_F : v ∈ F := by
+    change v ∈ (Finset.univ : Finset V).filter _
+    simp [hv]
+  have hz_in_F : z ∈ F := by
+    change z ∈ (Finset.univ : Finset V).filter _
+    simp [hσz]
+  rw [hFa] at hv_in_F hz_in_F
+  have hva : v = a := Finset.mem_singleton.mp hv_in_F
+  have hza : z = a := Finset.mem_singleton.mp hz_in_F
+  have hzv : z = v := hza.trans hva.symm
+  rw [hzv] at hvz
+  exact Γ.irrefl hvz
+
 end Moore57
