@@ -338,4 +338,50 @@ theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData_prime_unconditional
   have h5 : orderOf σ ∣ 5 := orderOf_dvd_of_pow_eq_one pow_5
   exact dvd_trans h5 (by decide)
 
+/-- **Lemma 18 case (1) `k ≤ 2` unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ^(5^k) = 1 (k ≤ 2) and
+`HSFixedData Γ σ`, the bound `orderOf σ ∣ 25` holds since
+`orderOf σ ∣ 5^k ∣ 25` for k ≤ 2.
+
+Extends the prime-case wrapper to cover k ∈ {0, 1, 2} (σ of order 1, 5,
+or 25).  The `k ≥ 3` case (allowing `orderOf σ ≥ 125`) requires ruling
+out via paper Prop 3 or finer analysis. -/
+theorem lem18_case1_orderOf_dvd_25_with_HSFixedData_k_le_2_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (hk : k ≤ 2)
+    (pow_pk : σ ^ 5 ^ k = 1)
+    (_hsfd : HSFixedData Γ σ) (_i : Fin 50)
+    (_smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 25 := by
+  have h_dvd : (5 : ℕ) ^ k ∣ 25 := by
+    have : 5 ^ k ∣ 5 ^ 2 := pow_dvd_pow 5 hk
+    simpa using this
+  have h_pow : σ ^ 25 = 1 := by
+    obtain ⟨l, hl⟩ := h_dvd
+    rw [hl, pow_mul, pow_pk, one_pow]
+  exact orderOf_dvd_of_pow_eq_one h_pow
+
+/-- **Lemma 18 case (3) `k ≤ 3` unconditional wrapper.** [done]
+
+For σ a graph automorphism of Γ with σ^(5^k) = 1 (k ≤ 3) and
+`EmptyFixedData σ`, the bound `orderOf σ ∣ 125` holds since
+`orderOf σ ∣ 5^k ∣ 125` for k ≤ 3.
+
+Extends the prime-case wrapper to cover k ∈ {0, 1, 2, 3} (σ of order
+1, 5, 25, or 125).  The `k ≥ 4` case (allowing `orderOf σ = 625`)
+requires the paper Lem 22 + Prop 4 SG(625, 12) exclusion (deferred-
+heavy). -/
+theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData_k_le_3_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (hk : k ≤ 3)
+    (pow_pk : σ ^ 5 ^ k = 1)
+    (_efd : EmptyFixedData σ) :
+    orderOf σ ∣ 125 := by
+  have h_dvd : (5 : ℕ) ^ k ∣ 125 := by
+    have : 5 ^ k ∣ 5 ^ 3 := pow_dvd_pow 5 hk
+    simpa using this
+  have h_pow : σ ^ 125 = 1 := by
+    obtain ⟨l, hl⟩ := h_dvd
+    rw [hl, pow_mul, pow_pk, one_pow]
+  exact orderOf_dvd_of_pow_eq_one h_pow
+
 end Moore57.Papers.MacajSiran2010.S6
