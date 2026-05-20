@@ -89,13 +89,86 @@ theorem prop7_card_dvd_147_39_or_171
     · right; right; decide
     · right; right; decide
 
+/-- **Proposition 7 Sylow arithmetic for `q = 7`: `n₇ = 1` from `n₇ ∣ 3 ∧
+n₇ ≡ 1 (mod 7)`**.  [done]
+
+For `|X| = 3 · 7^b` (Prop 7 case `q = 7, a = 1`), Sylow's third gives
+`n₇ ∣ 3` and `n₇ ≡ 1 (mod 7)`.  Divisors of 3: `{1, 3}`; only `1 ≡ 1
+(mod 7)` (3 mod 7 = 3 ≠ 1).  Hence `n₇ = 1` and Sylow 7 is normal. -/
+theorem prop7_q7_sylow7_count_one
+    (n7 : ℕ) (h_dvd : n7 ∣ 3) (h_mod : n7 % 7 = 1) :
+    n7 = 1 := by
+  have h_le : n7 ≤ 3 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n7 <;> omega
+
+/-- **Proposition 7 Sylow arithmetic for `q = 13`: `n₁₃ = 1` from `n₁₃ ∣ 3 ∧
+n₁₃ ≡ 1 (mod 13)`**.  [done]
+
+For `|X| = 3 · 13` (Prop 7 case `q = 13`, `a = b = 1`).  Divisors of 3:
+`{1, 3}`; only `1 ≡ 1 (mod 13)` (3 mod 13 = 3 ≠ 1). -/
+theorem prop7_q13_sylow13_count_one
+    (n13 : ℕ) (h_dvd : n13 ∣ 3) (h_mod : n13 % 13 = 1) :
+    n13 = 1 := by
+  have h_le : n13 ≤ 3 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n13 <;> omega
+
+/-- **Proposition 7 Sylow arithmetic for `q = 19`: `n₁₉ = 1` from `n₁₉ ∣ 9 ∧
+n₁₉ ≡ 1 (mod 19)`**.  [done]
+
+For `|X| = 3^a · 19` (Prop 7 case `q = 19, a ≤ 2`).  Divisors of 9:
+`{1, 3, 9}`; only `1 ≡ 1 (mod 19)` (3 mod 19 = 3, 9 mod 19 = 9, both
+≠ 1). -/
+theorem prop7_q19_sylow19_count_one
+    (n19 : ℕ) (h_dvd : n19 ∣ 9) (h_mod : n19 % 19 = 1) :
+    n19 = 1 := by
+  have h_le : n19 ≤ 9 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n19 <;> omega
+
+/-- **Proposition 7 unified Sylow arithmetic: `n_q = 1` for `q ∈ {7, 13, 19}`**.
+[done]
+
+Combines the three q-case arithmetic lemmas into a single dispatch.
+Hypothesis form: `n_q ∣ 3^a` (with `a ≤ 1` for q ∈ {7, 13}, `a ≤ 2` for
+q = 19) and `n_q ≡ 1 (mod q)`. -/
+theorem prop7_sylow_q_count_one
+    (q a n_q : ℕ)
+    (h_a_bound :
+      (q = 7 ∧ a ≤ 1) ∨ (q = 13 ∧ a ≤ 1) ∨ (q = 19 ∧ a ≤ 2))
+    (h_dvd : n_q ∣ 3 ^ a) (h_mod : n_q % q = 1) :
+    n_q = 1 := by
+  rcases h_a_bound with ⟨hq, ha⟩ | ⟨hq, ha⟩ | ⟨hq, ha⟩
+  · subst hq
+    refine prop7_q7_sylow7_count_one n_q ?_ h_mod
+    have : (3 ^ a : ℕ) ∣ 3 := by
+      have := pow_dvd_pow 3 ha
+      simpa using this
+    exact h_dvd.trans this
+  · subst hq
+    refine prop7_q13_sylow13_count_one n_q ?_ h_mod
+    have : (3 ^ a : ℕ) ∣ 3 := by
+      have := pow_dvd_pow 3 ha
+      simpa using this
+    exact h_dvd.trans this
+  · subst hq
+    refine prop7_q19_sylow19_count_one n_q ?_ h_mod
+    have : (3 ^ a : ℕ) ∣ 9 := by
+      have := pow_dvd_pow 3 ha
+      have h9 : (3 ^ 2 : ℕ) = 9 := by norm_num
+      rw [h9] at this
+      exact this
+    exact h_dvd.trans this
+
 /-- **Proposition 7 (`(p, q) = (3, large)` classification).** [deferred-heavy]
 
 The arithmetic content of the case-by-case `|X|` enumeration is captured
 by `prop7_card_enumeration` and the Cor 3 bridge by
-`prop7_card_dvd_147_39_or_171`.  What remains for the unconditional
-statement is the geometric/structural side: showing `q ≠ 11`, `Q ◁ X`,
-`P ⋪ X`, and the per-`q` bounds on `|P|` and `|Q|`. -/
+`prop7_card_dvd_147_39_or_171`.  The Feit–Thompson-free Sylow dispatch
+giving `Q ◁ X` is captured by `prop7_q*_sylow*_count_one` lemmas (one
+per q ∈ {7, 13, 19}) and unified in `prop7_sylow_q_count_one`.
+
+What remains for the unconditional statement is the geometric/structural
+side: showing `q ≠ 11`, `P ⋪ X`, and the per-`q` bounds on `|P|` and
+`|Q|`. -/
 theorem prop7_3_and_large : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S9

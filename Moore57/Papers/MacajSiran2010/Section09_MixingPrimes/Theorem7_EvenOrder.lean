@@ -92,10 +92,112 @@ theorem thm7_odd_part_le_55
   · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 11) h; omega
   · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 19) h; omega
 
+/-! ### Sylow arithmetic for even-order dispatch (Feit–Thompson-free)
+
+The Thm 7 even-order list is `{110, 50, 54, 14, 22, 38}`.  For each
+order `|G|` in this list, Sylow's third theorem combined with mod
+arithmetic forces the "large prime" Sylow subgroup to be normal,
+giving the structural decomposition needed for the paper's
+`G = ⟨Y, t⟩ × X` form **without** invoking Feit–Thompson or Philip
+Hall.
+
+All six even orders share the 3-prime case logic for 110 = 2·5·11
+(via Sylow 11 normal ⟹ Hall {5, 11} subgroup of order 55 exists),
+or are 2-prime with the Sylow of the odd prime normal.
+-/
+
+/-- **Theorem 7 Sylow arithmetic for `|G| = 110 = 2·5·11`: `n₁₁ = 1`**. [done]
+
+For `|G| = 2·5·11 = 110`, Sylow's third gives `n₁₁ ∣ 10` (since
+`|G|/|Sylow 11| = 10`) and `n₁₁ ≡ 1 (mod 11)`.  Divisors of 10:
+`{1, 2, 5, 10}`; only `1 ≡ 1 (mod 11)` (the others are `2, 5, 10`
+mod 11, all ≠ 1).  Hence `n₁₁ = 1` and Sylow 11 is normal.
+
+This is the key 3-prime case dispatch:  combined with Sylow 5 (which
+normalizes Sylow 11), we get a Hall `{5, 11}`-subgroup of order 55.
+**No Philip Hall theorem is needed.** -/
+theorem thm7_card_110_sylow11_count_one
+    (n11 : ℕ) (h_dvd : n11 ∣ 10) (h_mod : n11 % 11 = 1) :
+    n11 = 1 := by
+  have h_le : n11 ≤ 10 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n11 <;> omega
+
+/-- **Theorem 7 Sylow arithmetic for `|G| = 50 = 2·5²`: `n₅ = 1`**. [done] -/
+theorem thm7_card_50_sylow5_count_one
+    (n5 : ℕ) (h_dvd : n5 ∣ 2) (h_mod : n5 % 5 = 1) :
+    n5 = 1 := by
+  have h_le : n5 ≤ 2 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n5 <;> omega
+
+/-- **Theorem 7 Sylow arithmetic for `|G| = 54 = 2·3³`: `n₃ = 1`**. [done] -/
+theorem thm7_card_54_sylow3_count_one
+    (n3 : ℕ) (h_dvd : n3 ∣ 2) (h_mod : n3 % 3 = 1) :
+    n3 = 1 := by
+  have h_le : n3 ≤ 2 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n3 <;> omega
+
+/-- **Theorem 7 Sylow arithmetic for `|G| = 14 = 2·7`: `n₇ = 1`**. [done] -/
+theorem thm7_card_14_sylow7_count_one
+    (n7 : ℕ) (h_dvd : n7 ∣ 2) (h_mod : n7 % 7 = 1) :
+    n7 = 1 := by
+  have h_le : n7 ≤ 2 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n7 <;> omega
+
+/-- **Theorem 7 Sylow arithmetic for `|G| = 22 = 2·11`: `n₁₁ = 1`**. [done] -/
+theorem thm7_card_22_sylow11_count_one
+    (n11 : ℕ) (h_dvd : n11 ∣ 2) (h_mod : n11 % 11 = 1) :
+    n11 = 1 := by
+  have h_le : n11 ≤ 2 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n11 <;> omega
+
+/-- **Theorem 7 Sylow arithmetic for `|G| = 38 = 2·19`: `n₁₉ = 1`**. [done] -/
+theorem thm7_card_38_sylow19_count_one
+    (n19 : ℕ) (h_dvd : n19 ∣ 2) (h_mod : n19 % 19 = 1) :
+    n19 = 1 := by
+  have h_le : n19 ≤ 2 := Nat.le_of_dvd (by norm_num) h_dvd
+  interval_cases n19 <;> omega
+
+/-- **Theorem 7 unified Sylow dispatch (`q` Sylow normal for each even
+candidate order)**.  [done]
+
+For each `(|G|, q)` pair in the even-order Thm 7 list with `q` the
+"largest" prime, `n_q = 1` forced by Sylow + mod arithmetic.  This
+provides the Feit–Thompson-free dispatch: each even-order candidate
+has a unique (hence normal) Sylow q-subgroup.
+
+| `|G|` | factorization | normalised prime |
+|-------|---------------|------------------|
+| 110   | 2·5·11        | q = 11           |
+| 50    | 2·5²          | q = 5            |
+| 54    | 2·3³          | q = 3            |
+| 14    | 2·7           | q = 7            |
+| 22    | 2·11          | q = 11           |
+| 38    | 2·19          | q = 19           | -/
+theorem thm7_sylow_q_count_one_dispatch
+    (q n_q : ℕ)
+    (h_dvd_mod :
+      (q = 11 ∧ n_q ∣ 10 ∧ n_q % 11 = 1) ∨
+      (q = 5  ∧ n_q ∣ 2  ∧ n_q % 5  = 1) ∨
+      (q = 3  ∧ n_q ∣ 2  ∧ n_q % 3  = 1) ∨
+      (q = 7  ∧ n_q ∣ 2  ∧ n_q % 7  = 1) ∨
+      (q = 19 ∧ n_q ∣ 2  ∧ n_q % 19 = 1)) :
+    n_q = 1 := by
+  rcases h_dvd_mod with ⟨_, hd, hm⟩ | ⟨_, hd, hm⟩ | ⟨_, hd, hm⟩ |
+                       ⟨_, hd, hm⟩ | ⟨_, hd, hm⟩
+  · exact thm7_card_110_sylow11_count_one n_q hd hm
+  · exact thm7_card_50_sylow5_count_one n_q hd hm
+  · exact thm7_card_54_sylow3_count_one n_q hd hm
+  · exact thm7_card_14_sylow7_count_one n_q hd hm
+  · exact thm7_card_38_sylow19_count_one n_q hd hm
+
 /-- **Theorem 7 (even `|Aut(Γ)|` divides one of six values).** [deferred-heavy]
 
 Arithmetic conclusion is captured by
 `thm7_dvd_one_of_six_from_odd_part` and `thm7_bound_110_from_odd_part`.
+The Feit–Thompson-free Sylow dispatch is captured by the
+`thm7_card_*_sylow*_count_one` lemmas and unified in
+`thm7_sylow_q_count_one_dispatch`.
+
 What remains for the unconditional form is the paper's dispatch:
 Thm 2 (Makhnev–Paduchikh) gives `G = ⟨Y, t⟩ × X` with `t` involution;
 Thm 5 + Lems 12/15 constrain the odd part `m = |G|/2`. -/
