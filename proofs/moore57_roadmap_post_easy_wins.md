@@ -513,7 +513,25 @@ HS の explicit 50 頂点構築すら **不要**。Cameron Ch3 §6 でも:
   - `IsRank3 G Ω : Prop := permRank G Ω = 3` (rank-3 predicate)
   - `Lemma02_IntersectionNumbers.lean` で
     `lem2_intersection_count_orbital_invariant` として paper-faithful wrap。
-* **[D3.2] (未)** Lem 3: odd order rank-3 ⟹ k = l, n = 2k+1, λ = μ。
+* **[D3.2] (partial done, 2026-05-21)** Lem 3: odd order rank-3 ⟹
+  k = l, n = 2k+1, λ = μ。 structural backbone を `RankAndOrbital.lean`
+  に追加:
+  - `orbitalNeighborhood_card_smul`: subdegree (`|N_O(a)|`) は G-action
+    不変 (bijection `c ↦ g⁻¹ • c` 経由)
+  - `orbitalReverseNeighborhood O a := { c | (c, a) ∈ O }` (in-degree
+    集合 — 逆方向 neighborhood)
+  - `orbitalReverseNeighborhood_eq_orbitalNeighborhood_swap`:
+    `N⁻_O(a) = N_{swapOrbital O}(a)` (in-degree ↔ paired orbital の
+    out-degree)
+  - `lem3_reverseNeighborhood_eq_neighborhood_of_paired`:
+    `swapOrbital O₁ = O₂` (paired) なら `N⁻_{O₁}(a) = N_{O₂}(a)`
+    — paper の "Δ'(a) = Γ(a)" の構造的核
+  - `Lemma03_SelfPaired.lean` で paper-faithful wrap
+    (`lem3_paired_orbital_neighborhood_card_eq`,
+    `lem3_subdegree_G_invariant`)
+  本体「odd order ⟹ k = l」は Lem 1 主形 (Cauchy + counting) +
+  in-deg = out-deg (double counting) と組み合わせて導く。 これは
+  deferred 維持。
 * **[D3.3] (未)** Lem 4: 不可約性 ⇔ G_a ≠ G_{Γ(a)} ⇔ Γ(a) = Γ(b) for some a ≠ b。
 * **[D3.4] (未)** Lem 5: μl = k(k − λ − 1) (rank-3 perm group 形)。Moore57 SRG 形は既に proven。
 * **[D3.5] (未)** Lem 6, 7: incidence matrix の eigenvalue 解析。
@@ -773,7 +791,9 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) papers+proofs: Tier D D3.1 — orbital intersection count constancy (Lem 2 backbone)
+* (HEAD) papers+proofs: Tier D D3.2 partial — subdegree G-invariance + reverse-neighborhood ↔ swap bridge (Lem 3 backbone)
+* `a75e397` proofs+blogs: Tier D D3.1 done — Lem 2 orbital constancy backbone
+* `86f5be0` papers: Tier D D3.1 — orbital intersection count constancy (Lem 2 backbone)
 * `40bb98a` papers: Tier B finish — True-stub `Conclusion` defs + Lem 11 conditional
 * (prev HEAD) papers+proofs: Tier A A2.2-minimal — heisSubgroup + z5DirectFactor for SG625_12
 * `67c6e69` papers+proofs: D2.1/D2.2 paired orbital + D3.0 partial Lem 1 statements
