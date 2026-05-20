@@ -69,4 +69,92 @@ theorem prop3_arithmetic_core_no_partition_of_7_with_sq_31
 /-- **Proposition 3 (Hoffman–Singleton-fix 5-group `|X| ≤ 5`).** [deferred-heavy] -/
 theorem prop3_hs_fix_bound (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Proposition 3 arithmetic step: `n ∣ 25 ∧ n ≠ 25 ⟹ n ≤ 5`.**
+[done — C3.6]
+
+Since `25 = 5²`, the divisors of 25 are `{1, 5, 25}`.  Excluding 25
+leaves `{1, 5}`, both of which are at most 5. -/
+theorem prop3_arithmetic_dvd_25_ne_25_le_5
+    (n : ℕ) (h_dvd : n ∣ 25) (h_no_25 : n ≠ 25) :
+    n ≤ 5 := by
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 5)).mp
+    (show n ∣ 5 ^ 2 by simpa using h_dvd) with ⟨j, hj, hn⟩
+  interval_cases j
+  · omega
+  · omega
+  · exact absurd hn h_no_25
+
+/-- **Proposition 3 conditional bridge via `HSFixedData` (Lem 18 (1) input
+form)**. [done — C3.6]
+
+Given:
+* `σ ^ 5^k = 1` (σ is a 5-group element),
+* `HSFixedData Γ σ` (Fix(σ) = Hoffman–Singleton),
+* `h_semi_regular : orderOf σ ∣ 50` (Lem 18 (1) input — semi-regular
+  action of σ on `N(a) \ Fix(σ)`),
+* `h_no_25 : orderOf σ ≠ 25` (deferred §8 step 1-5 conclusion: paper's
+  trace + orbit + arithmetic-core argument excluding `|X| = 25`),
+
+conclude `orderOf σ ≤ 5`.
+
+This packages the §8 Prop 3 conclusion as a proper conditional bridge:
+the `|X| = 25` exclusion (deferred) plus the Lem 18 (1) bound combine to
+the paper's stated `|X| ≤ 5`. -/
+theorem prop3_hs_fix_bound_with_hsFixedData
+    (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (hsfd : HSFixedData Γ σ)
+    (h_semi_regular : orderOf σ ∣ 50)
+    (h_no_25 : orderOf σ ≠ 25) :
+    orderOf σ ≤ 5 :=
+  prop3_arithmetic_dvd_25_ne_25_le_5 _
+    (Moore57.Papers.MacajSiran2010.S6.lem18_case1_orderOf_dvd_25_with_HSFixedData
+      σ k pow_pk hsfd h_semi_regular)
+    h_no_25
+
+/-- **Proposition 3 unconditional bridge via `HSFixedData` and the C3.4
+semi-regular orbit argument**. [done — C3.6]
+
+Replaces the `h_semi_regular : orderOf σ ∣ 50` numeric hypothesis with
+the paper-faithful semi-regular hypothesis on `N(a) \ Fix(σ)`.  The
+remaining deferred input is `h_no_25` (paper §8 step 1-5 conclusion). -/
+theorem prop3_hs_fix_bound_with_hsFixedData_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (hsfd : HSFixedData Γ σ) (i : Fin 50)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ Moore57.autMovedNeighborFinset Γ σ (hsfd.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k)
+    (h_no_25 : orderOf σ ≠ 25) :
+    orderOf σ ≤ 5 :=
+  prop3_arithmetic_dvd_25_ne_25_le_5 _
+    (Moore57.Papers.MacajSiran2010.S6.lem18_case1_orderOf_dvd_25_with_HSFixedData_semiRegular
+      hΓ σ k pow_pk hsfd i smul_adj hsemi)
+    h_no_25
+
+/-- **Proposition 3 abstract conclusion (paper claim)**: for any 5-group
+element σ with HS-shape fix, `|X| ≤ 5`.
+
+This is the Tier B finalize-style abstract `Conclusion : Prop` def for
+Proposition 3.  Once the `|X| = 25` exclusion (paper §8 step 1-5) is
+Lean-internalised, this becomes provable unconditionally via
+`prop3_hs_fix_bound_with_hsFixedData_*`. -/
+def Proposition3HSFixConclusion (Γ : SimpleGraph V) : Prop :=
+  ∀ (σ : Equiv.Perm V) (k : ℕ),
+    σ ^ 5 ^ k = 1 → HSFixedData Γ σ → orderOf σ ≤ 5
+
+/-- **Proposition 3 arithmetic core packaged as the §8 step 5
+abstract conclusion**. [done — C3.6]
+
+`prop3_arithmetic_core_no_partition_of_7_with_sq_31` repackaged as a
+Prop-level non-existence statement, exposing the §8 step 5 conclusion
+in the form usable by downstream `Proposition3` bridges. -/
+def Proposition3Step5Conclusion : Prop :=
+  ¬ ∃ (x1 x2 x3 x4 x5 x6 x7 : ℕ),
+    x1 + 2 * x2 + 3 * x3 + 4 * x4 + 5 * x5 + 6 * x6 + 7 * x7 = 7 ∧
+    x1 + 4 * x2 + 9 * x3 + 16 * x4 + 25 * x5 + 36 * x6 + 49 * x7 = 31
+
+theorem prop3_step5_conclusion_holds : Proposition3Step5Conclusion := by
+  rintro ⟨x1, x2, x3, x4, x5, x6, x7, h_sum, h_sq⟩
+  exact prop3_arithmetic_core_no_partition_of_7_with_sq_31
+    x1 x2 x3 x4 x5 x6 x7 h_sum h_sq
+
 end Moore57.Papers.MacajSiran2010.S8
