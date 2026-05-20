@@ -67,10 +67,18 @@ unconditional に格上げ。 prime-order starred 行は実質的にすべて Th
 * **[A2.1] (done)** GAP-quoted 不変量検証 (`native_decide` ベース):
   `card_eq = 625`, `card_orderEq_five = 624`, `card_center = 25`,
   `card_frattini = 5`, `frattini_is_commutator_image` まで完了。
-* **[A2.2] (未)** 代表系 `U × V` 構造の検証 (Lem 22 の主要前提)。
-  - 必要なのは「位数 25 の Abel 部分群 U と位数 25 の非 Abel 部分群 V の
-    集合論的代表系での積分解」を Lean object として取り出すこと。
-  - 現状の `SG625_12.lean` の `center = ⟨f₃, f₄⟩` 構造から派生できそう。
+* **[A2.2-minimal] (done, 2026-05-21)** Heis × Z₅ 直積構造の Subgroup-level 明示化
+  (`SmallGroup625_12.lean` に追加):
+  - `heisSubgroup : Subgroup SG625_12` (order 125, kernel of d-projection)
+  - `z5DirectFactor : Subgroup SG625_12` (order 5, central direct factor)
+  - `heisSubgroup_card = 125`, `z5DirectFactor_card = 5` (`native_decide`)
+  - `heisSubgroup_normal`, `z5DirectFactor_le_center`,
+    `heisSubgroup_inf_z5DirectFactor_eq_bot` (構造的事実)
+* **[A2.2-full] (未, low-priority)** 本格的 paper-faithful U × V 代表系
+  (Lem 22 の主要前提)。 paper の「位数 25 の Abel 部分群 U と位数 25 の
+  **非 Abel** 部分群 V」は SG625_12 が exponent-5 (位数 25 部分群はすべて
+  abelian) と矛盾する形なので、paper の文脈で何を指すか要確認 (cosets?
+  representative system?)。 後続 [A4.0] 作業時に再評価。
 
 ### A3. SG(625, 12) uniqueness — 位数 625 群分類
 
@@ -89,6 +97,23 @@ unconditional に格上げ。 prime-order starred 行は実質的にすべて Th
 * **[A4.0] (未)** SG(625, 12) の `b_{1j}` 行構造の計算 (A2 完成後)。
 * **[A4.1] (未)** `Σ b_{1j} = 57 ∧ Σ b_{1j}·b_{j1} + b_{11} − 56 = 125` の整数解非存在
   (omega / native_decide で具体的行列入力に対し)。
+
+### Tier A 投資判断 (2026-05-21 更新)
+
+**重要観察**: `lem22_smallGroup_625_12`, `prop4_sg625_excluded`,
+`cor2_smallGroup_81_9` の True-stubs は **downstream で誰からも consume
+されていない** (`grep` で定義箇所のみ hit)。 すなわち:
+
+- これら 3 つを unstub しても、それ自体は上位の `Theorem 4`, `Theorem 5`,
+  `cor3_375_bound` (いずれも True-stub) には伝播しない。
+- 上位 True-stub を解消するには Tier A 以外 (Tier B paper-faithful, Tier C
+  semi-regular, など) のヘビーな work も全て必要。
+- 重い A1.2 (15 群構築), A3 (10 群構築), A4 (paper-specific arithmetic)
+  は **直接的な ROI 無し** で着手は推奨しない。
+
+**Tier A での残り推奨 work**: なし (現時点)。 重い uniqueness 系は他 Tier の
+前進待ち、SG819 / SG625_12 / heisSubgroup / z5DirectFactor の foundation は
+将来 paper-faithful work で再利用できる infrastructure として既に整備済。
 
 ---
 
@@ -582,10 +607,19 @@ uniqueness 着手) を検討。
 11. ~~**[D2.0]** orbital structure 定義~~ — **done**:
     `orbital G Ω`, `permRank G Ω`, `SameOrbital` を
     `RankAndOrbital.lean` に追加。
-12. **[★ 次の短期項目]** 候補:
-   - **[D2.1, D2.2]** Paired orbital + self-paired criterion (D2.0 後続)。
-   - **[A1.1 → A1.2]** 位数 81 の 15 群の直接構築 (重い、各 100-200 LOC)。
+12. ~~**[D2.1, D2.2]** Paired orbital + self-paired criterion~~ —
+    **done** (commit `67c6e69`): `swapOrbital`, `IsSelfPaired`,
+    `isSelfPaired_diagonalOrbital` を `RankAndOrbital.lean` に追加。
+13. ~~**[A2.2-minimal]** SG625_12 の Heis × Z₅ subgroup 分解~~ —
+    **done**: `heisSubgroup`, `z5DirectFactor` + 順序 / 正規性 / 中心包含
+    / 共通根 ⊥ を `SmallGroup625_12.lean` に追加。
+    **Tier A 全体の投資判断**: 重い uniqueness work (A1.2, A3, A4) は
+    downstream consumer 無し (`grep` 確認済) のため現時点で着手非推奨。
+14. **[★ 次の短期項目]** 候補:
    - **[B4.3]** Composite-order Galois cyclotomic decomp (deferred-heavy)。
+   - **[B5.0+]** 既存 paper-faithful row bridge の拡張 (semi-regular 待ち)。
+   - **[C3.4]** Semi-regular orbit argument (Lem 17/18 を unconditional 化、
+     downstream consumer あり)。
 
 ### 7.2 中期 (multi-commit、各 200-1000 LOC)
 
@@ -665,7 +699,8 @@ paper-level の本当のボトルネックは:
 
 ## 10. 直近の主要 commit (2026-05-21)
 
-* (HEAD) papers+proofs: D2.1/D2.2 paired orbital + D3.0 partial Lem 1 statements
+* (HEAD) papers+proofs: Tier A A2.2-minimal — heisSubgroup + z5DirectFactor for SG625_12
+* `67c6e69` papers+proofs: D2.1/D2.2 paired orbital + D3.0 partial Lem 1 statements
 * `1f1e656` proofs+blogs: A1.1 orientation (negative) + E5.1 + D2.0
 * `5608b87` papers: E5.1 Sylow-SchurZassenhaus + D2.0 orbital structure
 * `c39c87c` proofs+blogs: Tier B B3.1+ done — chi0/chi1/chi2 spectral subreps
