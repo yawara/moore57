@@ -245,6 +245,8 @@ The full arithmetic chain (Case I + Case II + bridge to multiplicities)
 is formalised:
 * Case I core: `theorem1_case1_arithmetic_core` (`k = 0 ∨ k = 2`).
 * Case II arithmetic core: `theorem1_arithmetic_core` (`k ∈ {1, 3, 7, 57}`).
+* Combined Case I+II: `theorem1_combined_arithmetic_core` /
+  `theorem1_n_kSq_plus_one_paper` (below).
 * Multiplicity / discriminant bridge: `theorem1_e_dvd_fifteen` +
   `theorem1_e_sq_dvd_225_of_dvd_and_sq`.
 * Case II full conditional (Moore parameters): `theorem1_case_two_full_conditional`.
@@ -253,6 +255,21 @@ The full "k = 0/1 excluded by non-degeneracy" packaging and Case I/II
 disjunction at the rank-3 level remain external (require the
 permutation-group / incidence-matrix infrastructure). -/
 theorem theorem1_n_kSq_plus_one : True := by trivial
+
+/-- **Theorem 1 (paper-faithful Case I/II disjunction).** [done]
+
+Proper-signature paper-faithful packaging: given the Case I (`k² + 1 =
+1 + 2k`) or Case II (`∃ e, 4k = e² + 3 ∧ e² ∣ 225`) arithmetic
+disjunction as input, conclude `k ∈ {0, 1, 2, 3, 7, 57}`.
+
+This is `theorem1_combined_arithmetic_core` packaged with paper-faithful
+naming.  The Moore57 instance (`k = 57`) is the fourth non-trivial
+classification value. -/
+theorem theorem1_n_kSq_plus_one_paper {k : ℕ}
+    (h : (k * k + 1 = 1 + 2 * k) ∨
+         (∃ e : ℕ, 4 * k = e * e + 3 ∧ e * e ∣ 225)) :
+    k = 0 ∨ k = 1 ∨ k = 2 ∨ k = 3 ∨ k = 7 ∨ k = 57 :=
+  theorem1_combined_arithmetic_core h
 
 /-- **Theorem 1, Moore57 instance.**
 
