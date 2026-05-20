@@ -2,6 +2,7 @@ import Moore57.Moore57Graph.E7Matrix.PermutationCommutation
 import Moore57.D19OnMoore57.E7Projection.ProjectionTraceBridge
 import Moore57.D19OnMoore57.E7Projection.ProjectionRepresentationSkeleton
 import Moore57.Foundations.LinearAlgebra.InvolutionTrace
+import Moore57.Foundations.LinearAlgebra.PowPrimeTrace
 
 /-!
 # E7-projection trace integrality for an involutive Moore57 automorphism (Tier 2)
@@ -74,6 +75,71 @@ theorem aut_involution_E7_trace_int
     simpa using this
   -- Apply the abstract integer-trace lemma for involutive endomorphisms.
   obtain ⟨z, hz⟩ := Moore57.LinearMap.exists_int_trace_of_involutive f hsq
+  refine ⟨z, ?_⟩
+  rw [← hz]
+  exact (trace_restrict_E7Range_permMatrix_toLin'_eq_matrix_trace hΓ σ haut).symm
+
+/-- Helper: `(permMatrix σ)^n = permMatrix (σ^n)` (Moore57 hom). -/
+private theorem permMatrix_pow_eq_local (σ : Equiv.Perm V) (n : ℕ) :
+    (permMatrix σ : Matrix V V ℚ) ^ n = permMatrix (σ ^ n) := by
+  induction n with
+  | zero => rw [pow_zero, pow_zero, moore57_permMatrix_one]
+  | succ k ih => rw [pow_succ, ih, pow_succ, moore57_permMatrix_mul]
+
+/-- For any prime-order automorphism `σ` of a Moore57 graph
+(`σ^p = 1`, `p` prime), `Matrix.trace (E7Matrix Γ * permMatrix σ)` is an integer.
+
+This generalizes `aut_involution_E7_trace_int` (the `p = 2` case) to
+arbitrary prime order, using cyclotomic-block trace theory
+(`Foundations/LinearAlgebra/PowPrimeTrace.lean`). -/
+theorem aut_pow_prime_E7_trace_int
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p : ℕ) [Fact (Nat.Prime p)] (hpow : σ ^ p = 1) :
+    ∃ z : ℤ, Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ) := by
+  classical
+  let W := LinearMap.range (E7Matrix Γ).toLin'
+  have hcomm :
+      Commute (E7Matrix Γ).toLin' (permMatrix σ).toLin' :=
+    E7Matrix_toLin'_commute_permMatrix_toLin' Γ σ haut
+  have hmaps :
+      ∀ x ∈ W, (permMatrix σ).toLin' x ∈ W := by
+    intro x hx
+    exact ((Module.End.mem_invtSubmodule_iff_mapsTo
+      (f := (permMatrix σ).toLin')).mp
+        ((LinearMap.IsIdempotentElem.commute_iff
+          (E7Matrix_toLin'_isIdempotentElem hΓ)
+          (T := (permMatrix σ).toLin')).mp hcomm).1) hx
+  let f : W →ₗ[ℚ] W := (permMatrix σ).toLin'.restrict hmaps
+  -- σ^p = 1 ⟹ permMatrix σ ^ p = 1 as matrix.
+  have hperm_pow : (permMatrix σ : Matrix V V ℚ) ^ p = 1 := by
+    rw [permMatrix_pow_eq_local, hpow, moore57_permMatrix_one]
+  -- ⟹ (permMatrix σ).toLin' ^ p = 1 as linear map.
+  have hlin_pow : ((permMatrix σ).toLin' : Module.End ℚ (V → ℚ)) ^ p = 1 := by
+    have h := Matrix.toLin'_pow (permMatrix σ) p
+    rw [hperm_pow, Matrix.toLin'_one] at h
+    -- h : (1 : V → ℚ →ₗ V → ℚ) = (permMatrix σ).toLin' ^ p ... wait check direction
+    -- toLin'_pow : (M^k).toLin' = M.toLin'^k
+    -- After rw [hperm_pow]: (1 : Matrix V V ℚ).toLin' = (permMatrix σ).toLin'^p
+    -- After rw [Matrix.toLin'_one]: 1 = (permMatrix σ).toLin' ^ p
+    -- So h.symm gives what we want.
+    exact h.symm
+  -- ⟹ f^p = 1 on subspace W.
+  have hf_pow : f ^ p = 1 := by
+    apply LinearMap.ext
+    intro ⟨x, hx⟩
+    apply Subtype.ext
+    -- Goal (after Subtype.ext): ↑((f ^ p) ⟨x, hx⟩) = ↑((1 : W →ₗ[ℚ] W) ⟨x, hx⟩) = x
+    show ((f ^ p) ⟨x, hx⟩ : V → ℚ) = x
+    have key : ((f ^ p) ⟨x, hx⟩ : V → ℚ) =
+        ((permMatrix σ).toLin' ^ p) x := by
+      change ((((permMatrix σ).toLin'.restrict hmaps) ^ p) ⟨x, hx⟩ : V → ℚ) = _
+      exact Moore57.LinearMap.restrict_pow_apply
+        (permMatrix σ).toLin' W hmaps p ⟨x, hx⟩
+    rw [key, hlin_pow]
+    rfl
+  -- Apply the abstract integer-trace lemma.
+  obtain ⟨z, hz⟩ := Moore57.LinearMap.exists_int_trace_of_pow_prime_eq_one f p hf_pow
   refine ⟨z, ?_⟩
   rw [← hz]
   exact (trace_restrict_E7Range_permMatrix_toLin'_eq_matrix_trace hΓ σ haut).symm

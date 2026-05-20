@@ -8,6 +8,7 @@ import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Moore57Graph.Aut.HSFixedData
 import Moore57.Moore57Graph.Aut.PetersenFixedData
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
+import Moore57.Moore57Graph.Aut.TraceIntegrality
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -120,13 +121,37 @@ theorem lem12_prime_table (hΓ : IsMoore57 Γ) (x : Equiv.Perm V)
     (p : ℕ) (hp : p.Prime) (hxp : x ^ p = 1) :
     True := by trivial
 
-/-- **Lemma 12 (corollary, starred row `p = 3, a₀ = 1` cannot occur).** [deferred-heavy]
+/-- **Lemma 12 (starred row `p = 3, a₀ = 1` cannot occur).** [done]
 
-Half proven: `lem12_p3_a1_eq_zero` gives `a₁ = 0` for any order-3 graph
-aut.  Combined with the character-theoretic table `a₁ ∈ {27 + 45k : k ∈ ℕ}`
-(deferred, depends on Proposition 2), this row has no valid `(a₀, a₁)`
-pair and hence cannot occur. -/
-theorem lem12_no_p3_a0_one (hΓ : IsMoore57 Γ) : True := by trivial
+For any order-3 graph automorphism `σ` of a Moore57 graph,
+`a₀(σ) = 1` leads to a contradiction.
+
+Proof (mod-15 character-theoretic):
+1. `aut_pow_prime_E7_trace_int` (with `p = 3`): `tr(E₇·P_σ) ∈ ℤ`.
+2. `lem3_a1_mod_15` with that integer: `a₁ ≡ 7·a₀ + 5 (mod 15)`.
+3. With `a₀ = 1`: `a₁ ≡ 12 (mod 15)`.
+4. `lem12_p3_a1_eq_zero` (no-triangle, geometric): `a₁ = 0`.
+5. `0 ≡ 12 (mod 15)` is false; contradiction. -/
+theorem lem12_no_p3_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 3 = 1)
+    (h_a0 : fixedVertexCount σ = 1) :
+    False := by
+  -- Step 1: trace is an integer.
+  obtain ⟨z, hz⟩ := Moore57.aut_pow_prime_E7_trace_int hΓ σ hAut 3 hpow
+  -- Step 2: a₁ ≡ 7·a₀ + 5 (mod 15).
+  have h_mod := Moore57.Papers.MacajSiran2010.S2.lem3_a1_mod_15 hΓ σ hAut hz
+  -- Step 3: with a₀ = 1, a₁ ≡ 12 (mod 15).
+  rw [h_a0] at h_mod
+  -- h_mod : a₁ ≡ 7 * 1 + 5 = 12 (mod 15)
+  -- Step 4: a₁ = 0.
+  have h_a1 := lem12_p3_a1_eq_zero hΓ σ hAut hpow
+  -- Step 5: combine for contradiction.
+  rw [h_a1] at h_mod
+  -- h_mod : (0 : ℤ) ≡ 7 * 1 + 5 [ZMOD 15] = 12 (mod 15)
+  unfold Int.ModEq at h_mod
+  omega
 
 /-- **Lemma 12 (conditional, starred row `p = 3, a₀ = 1`): geometric step
 plus character constraint forces False.** [done]
