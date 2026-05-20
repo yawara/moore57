@@ -3,6 +3,7 @@ import Moore57.D19OnMoore57.E7Projection.ProjectionTraceBridge
 import Moore57.D19OnMoore57.E7Projection.ProjectionRepresentationSkeleton
 import Moore57.Foundations.LinearAlgebra.InvolutionTrace
 import Moore57.Foundations.LinearAlgebra.PowPrimeTrace
+import Moore57.Foundations.LinearAlgebra.PowCompositeTrace
 
 /-!
 # E7-projection trace integrality for an involutive Moore57 automorphism (Tier 2)
@@ -85,6 +86,65 @@ private theorem permMatrix_pow_eq_local (σ : Equiv.Perm V) (n : ℕ) :
   induction n with
   | zero => rw [pow_zero, pow_zero, moore57_permMatrix_one]
   | succ k ih => rw [pow_succ, ih, pow_succ, moore57_permMatrix_mul]
+
+/-- **Composite-order generalization** (Phase 2.1).  For any automorphism σ
+of a Moore57 graph with `σ^n = 1` (n > 0), `Matrix.trace (E7Matrix Γ *
+permMatrix σ)` is an integer.
+
+This generalizes `aut_pow_prime_E7_trace_int` (prime n case) to arbitrary
+positive order, using the composite-order cyclotomic-block trace theory
+(`Foundations/LinearAlgebra/PowCompositeTrace.lean`, specifically
+`trace_int_of_pow_eq_one`).
+
+The infrastructure is identical to the prime case (idempotent commutation,
+range restriction, restrict-pow-apply) — only the final integer-trace
+appeal changes from `exists_int_trace_of_pow_prime_eq_one` to the
+composite-version `trace_int_of_pow_eq_one`. -/
+theorem aut_pow_E7_trace_int_composite
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (haut : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (n : ℕ) (hn : 0 < n) (hpow : σ ^ n = 1) :
+    ∃ z : ℤ, Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ) := by
+  classical
+  let W := LinearMap.range (E7Matrix Γ).toLin'
+  have hcomm :
+      Commute (E7Matrix Γ).toLin' (permMatrix σ).toLin' :=
+    E7Matrix_toLin'_commute_permMatrix_toLin' Γ σ haut
+  have hmaps :
+      ∀ x ∈ W, (permMatrix σ).toLin' x ∈ W := by
+    intro x hx
+    exact ((Module.End.mem_invtSubmodule_iff_mapsTo
+      (f := (permMatrix σ).toLin')).mp
+        ((LinearMap.IsIdempotentElem.commute_iff
+          (E7Matrix_toLin'_isIdempotentElem hΓ)
+          (T := (permMatrix σ).toLin')).mp hcomm).1) hx
+  let f : W →ₗ[ℚ] W := (permMatrix σ).toLin'.restrict hmaps
+  -- σ^n = 1 ⟹ permMatrix σ ^ n = 1 as matrix.
+  have hperm_pow : (permMatrix σ : Matrix V V ℚ) ^ n = 1 := by
+    rw [permMatrix_pow_eq_local, hpow, moore57_permMatrix_one]
+  -- ⟹ (permMatrix σ).toLin' ^ n = 1 as linear map.
+  have hlin_pow : ((permMatrix σ).toLin' : Module.End ℚ (V → ℚ)) ^ n = 1 := by
+    have h := Matrix.toLin'_pow (permMatrix σ) n
+    rw [hperm_pow, Matrix.toLin'_one] at h
+    exact h.symm
+  -- ⟹ f^n = 1 on subspace W.
+  have hf_pow : f ^ n = 1 := by
+    apply LinearMap.ext
+    intro ⟨x, hx⟩
+    apply Subtype.ext
+    change ((f ^ n) ⟨x, hx⟩ : V → ℚ) = x
+    have key : ((f ^ n) ⟨x, hx⟩ : V → ℚ) =
+        ((permMatrix σ).toLin' ^ n) x := by
+      change ((((permMatrix σ).toLin'.restrict hmaps) ^ n) ⟨x, hx⟩ : V → ℚ) = _
+      exact Moore57.LinearMap.restrict_pow_apply
+        (permMatrix σ).toLin' W hmaps n ⟨x, hx⟩
+    rw [key, hlin_pow]
+    rfl
+  -- Apply the composite-order integer-trace lemma.
+  obtain ⟨z, hz⟩ := Moore57.LinearMap.trace_int_of_pow_eq_one f hn hf_pow
+  refine ⟨z, ?_⟩
+  rw [← hz]
+  exact (trace_restrict_E7Range_permMatrix_toLin'_eq_matrix_trace hΓ σ haut).symm
 
 /-- For any prime-order automorphism `σ` of a Moore57 graph
 (`σ^p = 1`, `p` prime), `Matrix.trace (E7Matrix Γ * permMatrix σ)` is an integer.

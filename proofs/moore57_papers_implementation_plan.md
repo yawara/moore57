@@ -90,22 +90,27 @@ MS 2010 §6 Lem 21 (`Fix(σ^l) = Fix(σ)`)。
 直前作業の自然な継続。 Lem 13 p=5 starred order-25 row を unstub。
 
 ### 2.1 σ ∈ Aut(Γ) → ℚ-linear endomorphism bridge
-- [ ] `Moore57Graph/Aut/TraceIntegrality.lean` 拡張:
+- [x] `Moore57Graph/Aut/TraceIntegrality.lean` 拡張:
   - 既存 `aut_pow_prime_E7_trace_int` (B4.1, p prime) と同様の structure で
-  - `aut_pow_E7_trace_int_composite`: `σ^n = 1` (任意 n > 0) ⟹
-    `Matrix.trace (E7Matrix Γ * permMatrix σ) ∈ ℤ`
-- [ ] B4.3 `trace_int_of_pow_eq_one` を applied:
+  - **`aut_pow_E7_trace_int_composite`**: `σ^n = 1` (任意 n > 0) ⟹
+    `Matrix.trace (E7Matrix Γ * permMatrix σ) ∈ ℤ` **追加完了**
+- [x] B4.3 `trace_int_of_pow_eq_one` を applied:
   - `f := (E7Matrix.toLin').restrict (E7Range)`
   - σ^n = 1 ⟹ f^n = 1 on the range (既存 prime version の真の一般化)
   - `restrict_pow_apply` + `Matrix.toLin'_pow` パターン再利用
 
 ### 2.2 Lem 13 p=5 starred rows unstub
-- [ ] `Moore57/Papers/MacajSiran2010/Section05_Tables/Lemma13_PrimeSquared.lean`:
-  - `lem13_starred_row_5_0_5_no_integer_trace` (現状 Tr hypothesis のまま)
-  - `lem13_starred_row_5_5_5_no_integer_trace` (同上)
-  - `aut_pow_E7_trace_int_composite` を input に True-stub → False 証明に
-  - B4.2 の `lem12_no_p7_a0_58` と同じ pattern (mod-15 矛盾)
-- [ ] Lem 13 p=5 (0, 5), (5, 5) row が完全 unconditional に
+- [x] `Moore57/Papers/MacajSiran2010/Section05_Tables/Lemma13_PrimeSquared.lean`:
+  - `lem13_starred_row_5_0_5_no_integer_trace` (現状 Tr hypothesis のまま, 既存 done)
+  - `lem13_starred_row_5_5_5_no_integer_trace` (同上, 既存 done)
+  - **`lem13_starred_row_5_0_5_no_aut_conditional`** 追加: graph-aut 入力
+    `(hΓ, σ, hAut, σ^25 = 1)` + Prop 2 arithmetic 派生条件
+  - **`lem13_starred_row_5_5_5_no_aut_conditional`** 同様 追加
+  - `aut_pow_E7_trace_int_composite` を internal で利用 (trace ∈ ℤ 自動)
+- [~] Lem 13 p=5 (0, 5), (5, 5) row が **conditional unconditional** に
+  (Prop 2 deferred は明示)
+- 完全 unconditional 化は Prop 2 (paper §4 character system) の Lean 化必要。
+  Prop 2 自体は `prop2_character_system : True := trivial` (deferred-heavy)。
 
 **完了条件**: Lem 13 starred row のうち p=5 order-25 σ 関連が unstub、
 Lem 13 全 row が unconditional に近づく (残るは composite-order の他 row)。

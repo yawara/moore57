@@ -4,6 +4,7 @@ import Moore57.Moore57Graph.Aut.PetersenFixedData
 import Moore57.Moore57Graph.Aut.HSFixedData
 import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
+import Moore57.Moore57Graph.Aut.TraceIntegrality
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -201,5 +202,63 @@ Lemma 3 (character formula).  Arithmetic cores for the two starred
 (non-integral) rows are proven above; substantive content captured in
 `Lemma13PrimeSquaredConclusion`. -/
 theorem lem13_prime_squared_table (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-! ### Phase 2.2: graph-aut wrappers using B4.3 composite-order trace integrality
+
+These wrappers package the existing starred-row arithmetic cores
+(`lem13_starred_row_5_0_5_no_integer_trace`,
+`lem13_starred_row_5_5_5_no_integer_trace`) together with B4.3's
+`aut_pow_E7_trace_int_composite` to give a paper-faithful "from σ ∈ Aut(Γ)
+directly" form.
+
+Remaining ingredient: the Proposition 2 character-system step that derives
+`5·Tr(σ) = 168 + 300k + 300l` (resp. `108 + 300k + 300l`) from
+`σ ∈ Aut(Γ) + σ^25 = 1 + (a₀(σ), a₀(σ^5)) = (0, 5)` (resp. `(5, 5)`).
+Encoded as `h_prop2_arith` hypothesis (deferred per `Proposition2_CharacterSystem`).
+-/
+
+/-- **Lemma 13 (graph-aut conditional, starred row `5* (0, 5)`).** [done — conditional]
+
+From an order-25 graph automorphism σ in the starred row `5* (0, 5)`
+(with a₀(σ) = 0, a₀(σ^5) = 5), and the Proposition 2-derived arithmetic
+input `5·Tr(σ) = 168 + 300k + 300l`, the existing arithmetic core
+`lem13_starred_row_5_0_5_no_integer_trace` provides the contradiction.
+
+Trace integrality is internalized via `aut_pow_E7_trace_int_composite`
+(B4.3 Step 5); only the Prop 2 step remains conditional. -/
+theorem lem13_starred_row_5_0_5_no_aut_conditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1)
+    (h_prop2_arith : ∀ z : ℤ,
+       Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ) →
+       ∃ k l : ℕ, 5 * z = 168 + 300 * k + 300 * l) :
+    False := by
+  obtain ⟨z, hz⟩ := Moore57.aut_pow_E7_trace_int_composite hΓ σ hAut 25
+    (by norm_num) hpow
+  obtain ⟨k, l, h_arith⟩ := h_prop2_arith z hz
+  exact lem13_starred_row_5_0_5_no_integer_trace z k l h_arith
+
+/-- **Lemma 13 (graph-aut conditional, starred row `5* (5, 5)`).** [done — conditional]
+
+From an order-25 graph automorphism σ in the starred row `5* (5, 5)`
+(with a₀(σ) = 5, a₀(σ^5) = 5), and the Proposition 2-derived arithmetic
+input `5·Tr(σ) = 108 + 300k + 300l`, the existing arithmetic core
+`lem13_starred_row_5_5_5_no_integer_trace` provides the contradiction.
+
+Trace integrality is internalized via `aut_pow_E7_trace_int_composite`
+(B4.3 Step 5); only the Prop 2 step remains conditional. -/
+theorem lem13_starred_row_5_5_5_no_aut_conditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1)
+    (h_prop2_arith : ∀ z : ℤ,
+       Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ) →
+       ∃ k l : ℕ, 5 * z = 108 + 300 * k + 300 * l) :
+    False := by
+  obtain ⟨z, hz⟩ := Moore57.aut_pow_E7_trace_int_composite hΓ σ hAut 25
+    (by norm_num) hpow
+  obtain ⟨k, l, h_arith⟩ := h_prop2_arith z hz
+  exact lem13_starred_row_5_5_5_no_integer_trace z k l h_arith
 
 end Moore57.Papers.MacajSiran2010.S5
