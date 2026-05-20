@@ -165,6 +165,54 @@ theorem petersenFixedData_complement_neighbor_count
   change ((Γ.neighborFinset (h.v i)).filter (fun w => ¬ σ w = w)).card = 54
   omega
 
+/-- **Induced triangle-free**: any three fixed vertices indexed by Petersen do
+not form a triangle.
+
+This is the §6 Lem 17 case (1) input encoding "the σ-fixed induced subgraph
+is triangle-free" (since Petersen is `λ = 0`).  Derived directly from
+`induced_adj_iff` and `petersenGraph_triangleFree`. -/
+theorem induced_triangleFree (h : PetersenFixedData Γ σ) :
+    ∀ i j k : Fin 10, Γ.Adj (h.v i) (h.v j) → Γ.Adj (h.v j) (h.v k) →
+      Γ.Adj (h.v i) (h.v k) → False := by
+  intro i j k hij hjk hik
+  rw [h.induced_adj_iff] at hij hjk hik
+  exact petersenGraph_triangleFree i j k hij hjk hik
+
+/-- **Induced no 4-cycle**: four distinct fixed vertices (with `i ≠ k` and
+`j ≠ l`) cannot form a 4-cycle.
+
+Derived from `induced_adj_iff` and `petersenGraph_no_C4` (Petersen has girth
+5). -/
+theorem induced_no_C4 (h : PetersenFixedData Γ σ) :
+    ∀ i j k l : Fin 10, i ≠ k → j ≠ l →
+      Γ.Adj (h.v i) (h.v j) → Γ.Adj (h.v j) (h.v k) →
+      Γ.Adj (h.v k) (h.v l) → Γ.Adj (h.v l) (h.v i) → False := by
+  intro i j k l hik hjl hij hjk hkl hli
+  rw [h.induced_adj_iff] at hij hjk hkl hli
+  exact petersenGraph_no_C4 i j k l hik hjl hij hjk hkl hli
+
+/-- **Induced ordered adjacency pair count**: among the 100 ordered pairs of
+fixed-vertex indices, exactly 30 are Γ-adjacent (matching Petersen's
+`2 · |E| = 30`).
+
+This is the bridge to `petersenGraph_edgeFinset_card` at the `PetersenFixedData`
+level: the σ-fixed induced subgraph has exactly 15 edges (since 30 ordered
+pairs = 15 unordered edges via symmetry). -/
+theorem induced_adj_pairs_card_eq_30 [DecidableRel Γ.Adj]
+    (h : PetersenFixedData Γ σ) :
+    ((Finset.univ : Finset (Fin 10 × Fin 10)).filter
+      (fun p => Γ.Adj (h.v p.1) (h.v p.2))).card = 30 := by
+  have hcong :
+      ((Finset.univ : Finset (Fin 10 × Fin 10)).filter
+        (fun p => Γ.Adj (h.v p.1) (h.v p.2)))
+        = ((Finset.univ : Finset (Fin 10 × Fin 10)).filter
+            (fun p => petersenGraph.Adj p.1 p.2)) := by
+    apply Finset.filter_congr
+    intro p _
+    exact h.induced_adj_iff p.1 p.2
+  rw [hcong]
+  decide
+
 end PetersenFixedData
 
 end Moore57

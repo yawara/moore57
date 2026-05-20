@@ -70,4 +70,40 @@ theorem isHoffmanSingletonLike_card {G : SimpleGraph V} [DecidableRel G.Adj]
 theorem isHoffmanSingletonLike_regular {G : SimpleGraph V} [DecidableRel G.Adj]
     (h : IsHoffmanSingletonLike G) : G.IsRegularOfDegree 7 := h.regular
 
+/-- **Petersen-like graphs have exactly 15 edges.**
+
+By the degree-sum formula: `∑ v, degree v = 2 · |E|`.  With 10 vertices each
+of degree 3, the left side is `30`, so `|E| = 15`. -/
+theorem isPetersenLike_edgeFinset_card {G : SimpleGraph V}
+    [DecidableRel G.Adj] (h : IsPetersenLike G) : G.edgeFinset.card = 15 := by
+  have hcard : Fintype.card V = 10 := h.card
+  have hreg : ∀ v : V, G.degree v = 3 := h.regular
+  have hsum := G.sum_degrees_eq_twice_card_edges
+  have h30 : ∑ v : V, G.degree v = 30 := by
+    calc ∑ v : V, G.degree v
+        = ∑ _v : V, 3 := Finset.sum_congr rfl (fun v _ => hreg v)
+      _ = Fintype.card V * 3 := by
+          rw [Finset.sum_const, Finset.card_univ]; ring
+      _ = 30 := by rw [hcard]
+  rw [h30] at hsum
+  omega
+
+/-- **Hoffman–Singleton-like graphs have exactly 175 edges.**
+
+By the degree-sum formula with 50 vertices of degree 7: `50 · 7 / 2 = 175`. -/
+theorem isHoffmanSingletonLike_edgeFinset_card {G : SimpleGraph V}
+    [DecidableRel G.Adj] (h : IsHoffmanSingletonLike G) :
+    G.edgeFinset.card = 175 := by
+  have hcard : Fintype.card V = 50 := h.card
+  have hreg : ∀ v : V, G.degree v = 7 := h.regular
+  have hsum := G.sum_degrees_eq_twice_card_edges
+  have h350 : ∑ v : V, G.degree v = 350 := by
+    calc ∑ v : V, G.degree v
+        = ∑ _v : V, 7 := Finset.sum_congr rfl (fun v _ => hreg v)
+      _ = Fintype.card V * 7 := by
+          rw [Finset.sum_const, Finset.card_univ]; ring
+      _ = 350 := by rw [hcard]
+  rw [h350] at hsum
+  omega
+
 end Moore57

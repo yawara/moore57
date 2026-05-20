@@ -175,6 +175,57 @@ theorem hsFixedData_complement_neighbor_count
   change ((Γ.neighborFinset (h.v i)).filter (fun w => ¬ σ w = w)).card = 50
   omega
 
+/-- **HS induced triangle-free**: three fixed vertices indexed by HS do not
+form a triangle.
+
+Derived from `induced_lambda` (`λ = 0`): adjacent `v i, v k` share `0` common
+indexed neighbours, but a triangle would witness `v j` as one. -/
+theorem induced_triangleFree (h : HSFixedData Γ σ) :
+    ∀ i j k : Fin 50, Γ.Adj (h.v i) (h.v j) → Γ.Adj (h.v j) (h.v k) →
+      Γ.Adj (h.v i) (h.v k) → False := by
+  intro i j k hij hjk hik
+  have hzero := h.induced_lambda i k hik
+  have hfin : {m : Fin 50 | Γ.Adj (h.v i) (h.v m) ∧ Γ.Adj (h.v k) (h.v m)}.Finite :=
+    Set.toFinite _
+  have hempty := (Set.ncard_eq_zero hfin).mp hzero
+  have hmem : j ∈ {m : Fin 50 | Γ.Adj (h.v i) (h.v m) ∧ Γ.Adj (h.v k) (h.v m)} :=
+    ⟨hij, hjk.symm⟩
+  rw [hempty] at hmem
+  exact hmem.elim
+
+/-- **HS induced no 4-cycle**: four distinct fixed vertices (with `i ≠ k` and
+`j ≠ l`) cannot form a 4-cycle.
+
+Derived from `induced_lambda` and `induced_mu`: either `v i, v k` are
+adjacent (giving a triangle excluded by `λ = 0`) or non-adjacent (giving
+≥ 2 common neighbours, contradicting `μ = 1`). -/
+theorem induced_no_C4 (h : HSFixedData Γ σ) :
+    ∀ i j k l : Fin 50, i ≠ k → j ≠ l →
+      Γ.Adj (h.v i) (h.v j) → Γ.Adj (h.v j) (h.v k) →
+      Γ.Adj (h.v k) (h.v l) → Γ.Adj (h.v l) (h.v i) → False := by
+  intro i j k l hik hjl hij hjk hkl hli
+  by_cases hadj : Γ.Adj (h.v i) (h.v k)
+  · exact h.induced_triangleFree i j k hij hjk hadj
+  · have h1 := h.induced_mu i k hik hadj
+    have hj_mem : j ∈ {m : Fin 50 | Γ.Adj (h.v i) (h.v m) ∧ Γ.Adj (h.v k) (h.v m)} :=
+      ⟨hij, hjk.symm⟩
+    have hl_mem : l ∈ {m : Fin 50 | Γ.Adj (h.v i) (h.v m) ∧ Γ.Adj (h.v k) (h.v m)} :=
+      ⟨hli.symm, hkl⟩
+    have hsub : ({j, l} : Set (Fin 50)) ⊆
+        {m : Fin 50 | Γ.Adj (h.v i) (h.v m) ∧ Γ.Adj (h.v k) (h.v m)} := by
+      intro x hx
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+      rcases hx with rfl | rfl
+      · exact hj_mem
+      · exact hl_mem
+    have hpair : Set.ncard ({j, l} : Set (Fin 50)) = 2 := by
+      rw [Set.ncard_pair hjl]
+    have hfin : {m : Fin 50 | Γ.Adj (h.v i) (h.v m) ∧ Γ.Adj (h.v k) (h.v m)}.Finite :=
+      Set.toFinite _
+    have hge2 := Set.ncard_le_ncard hsub hfin
+    rw [hpair] at hge2
+    omega
+
 end HSFixedData
 
 end Moore57

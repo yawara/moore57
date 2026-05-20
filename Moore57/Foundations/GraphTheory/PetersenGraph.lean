@@ -114,4 +114,69 @@ theorem petersenGraph_isSRG : petersenGraph.IsSRGWith 10 3 0 1 where
   of_adj := petersenGraph_lambda
   of_not_adj := fun _ _ hne hadj => petersenGraph_mu _ _ hne hadj
 
+/-- **Petersen has exactly 15 edges.**
+
+Handshaking lemma: `∑ v, degree v = 2 · |E|`.  With every vertex of degree 3
+and 10 vertices, the left side is `30`, so `|E| = 15`. -/
+theorem petersenGraph_edgeFinset_card : petersenGraph.edgeFinset.card = 15 := by
+  have hsum := petersenGraph.sum_degrees_eq_twice_card_edges
+  have hdeg : ∀ v : Fin 10, petersenGraph.degree v = 3 := petersenGraph_regular
+  simp [hdeg] at hsum
+  omega
+
+/-- **Petersen is triangle-free.**
+
+Direct consequence of `λ = 0`: no two adjacent vertices share a common
+neighbour, hence no triangles. -/
+theorem petersenGraph_triangleFree : ∀ a b c : Fin 10,
+    petersenGraph.Adj a b → petersenGraph.Adj b c → petersenGraph.Adj a c → False := by
+  intro a b c hab hbc hac
+  have hcn : Fintype.card (petersenGraph.commonNeighbors a c) = 0 :=
+    petersenGraph_lambda a c hac
+  have : b ∈ petersenGraph.commonNeighbors a c := ⟨hab, hbc.symm⟩
+  have hpos : 0 < Fintype.card (petersenGraph.commonNeighbors a c) :=
+    Fintype.card_pos_iff.mpr ⟨⟨b, this⟩⟩
+  omega
+
+/-- **Petersen has girth at least 5: no 4-cycle.**
+
+`λ = μ = ?` actually gives no 4-cycle via Moore-property: two non-adjacent
+distinct vertices share exactly `μ = 1` common neighbour, so they cannot
+share two distinct common neighbours (which would form a 4-cycle). -/
+theorem petersenGraph_no_C4 :
+    ∀ a b c d : Fin 10, a ≠ c → b ≠ d →
+      petersenGraph.Adj a b → petersenGraph.Adj b c →
+      petersenGraph.Adj c d → petersenGraph.Adj d a → False := by
+  intro a b c d hac hbd hab hbc hcd hda
+  -- a and c are both adjacent to b and d.  If a, c are non-adjacent, μ = 1
+  -- gives ≤ 1 common neighbour, contradicting 2 (b, d).  If a, c are
+  -- adjacent, λ = 0 says they share 0 common neighbours, again contradicting
+  -- the existence of b.
+  by_cases hadj : petersenGraph.Adj a c
+  · -- Triangle abc via a-b-c.
+    exact petersenGraph_triangleFree a b c hab hbc hadj
+  · -- a, c non-adjacent and distinct ⟹ μ = 1 common neighbour.
+    have hcn : Fintype.card (petersenGraph.commonNeighbors a c) = 1 :=
+      petersenGraph_mu a c hac hadj
+    have hb_mem : b ∈ petersenGraph.commonNeighbors a c := ⟨hab, hbc.symm⟩
+    have hd_mem : d ∈ petersenGraph.commonNeighbors a c := ⟨hda.symm, hcd⟩
+    -- Two distinct elements in a 1-element finset is impossible.
+    have hne : (⟨b, hb_mem⟩ : petersenGraph.commonNeighbors a c) ≠ ⟨d, hd_mem⟩ := by
+      intro heq
+      exact hbd (Subtype.mk.injEq _ _ _ _ |>.mp heq)
+    have hge2 : 2 ≤ Fintype.card (petersenGraph.commonNeighbors a c) := by
+      have := Fintype.card_subtype_le (fun (x : petersenGraph.commonNeighbors a c) =>
+        x = ⟨b, hb_mem⟩ ∨ x = ⟨d, hd_mem⟩)
+      have hcard2 : Fintype.card {x : petersenGraph.commonNeighbors a c //
+          x = ⟨b, hb_mem⟩ ∨ x = ⟨d, hd_mem⟩} = 2 := by
+        rw [Fintype.card_subtype]
+        rw [show (Finset.univ.filter (fun x : petersenGraph.commonNeighbors a c =>
+              x = ⟨b, hb_mem⟩ ∨ x = ⟨d, hd_mem⟩))
+            = {⟨b, hb_mem⟩, ⟨d, hd_mem⟩} from ?_]
+        · rw [Finset.card_insert_of_notMem (by simpa using hne), Finset.card_singleton]
+        · ext x
+          simp [Finset.mem_insert, Finset.mem_singleton]
+      omega
+    omega
+
 end Moore57
