@@ -1,4 +1,5 @@
 import Moore57.Papers.MacajSiran2010.Section03_EquitablePartitions.Definition
+import Moore57.Foundations.GroupAction.SemiRegularOrbit
 import Mathlib.GroupTheory.GroupAction.Defs
 import Mathlib.Algebra.Group.Action.End
 import Mathlib.Algebra.Group.Subgroup.ZPowers.Basic
@@ -169,6 +170,56 @@ theorem cell_mk_of_fixed [Fintype V] [DecidableEq V] {σ : Equiv.Perm V}
     rw [zpow_apply_of_fixed ha k] at h_smul
     exact h_smul.symm
   · rintro rfl; rfl
+
+/-- **Cell coincides with `cyclicOrbitFinset`**: for any representative
+`v`, the orbit class cell equals the standard cyclic orbit Finset. -/
+theorem cell_mk_eq_cyclicOrbitFinset [Fintype V] [DecidableEq V]
+    (σ : Equiv.Perm V) (v : V) :
+    orbitClass.cell σ (orbitClass.mk σ v) =
+      Moore57.cyclicOrbitFinset σ v := by
+  ext w
+  rw [orbitClass.mem_cell, Moore57.cyclicOrbitFinset.mem_cyclicOrbitFinset]
+  constructor
+  · -- mk σ w = mk σ v → ∃ k < orderOf σ, σ^k v = w
+    intro hwv
+    unfold orbitClass.mk at hwv
+    have : w ∈ MulAction.orbit (Subgroup.zpowers σ) v := Quotient.exact hwv
+    obtain ⟨g, hg⟩ := this
+    obtain ⟨k, hk⟩ := Subgroup.mem_zpowers_iff.mp g.2
+    have h_smul : (g : Equiv.Perm V) v = w := hg
+    rw [← hk] at h_smul
+    -- σ^k v = w; reduce k mod orderOf σ
+    have hpos : 0 < orderOf σ := (isOfFinOrder_of_finite σ).orderOf_pos
+    -- For k : ℤ, find m : ℕ with 0 ≤ m < orderOf σ and σ^m v = σ^k v.
+    -- Use k = orderOf σ * q + r form, with 0 ≤ r < orderOf σ.
+    -- For ℤ this is k.emod (orderOf σ : ℤ).
+    set r := (k % (orderOf σ : ℤ)).toNat with hr_def
+    have hr_lt : r < orderOf σ := by
+      have h1 : k % (orderOf σ : ℤ) < (orderOf σ : ℤ) := by
+        apply Int.emod_lt_of_pos
+        exact_mod_cast hpos
+      have h2 : 0 ≤ k % (orderOf σ : ℤ) := by
+        apply Int.emod_nonneg
+        omega
+      have h3 : (r : ℤ) = k % (orderOf σ : ℤ) := by
+        rw [hr_def]; exact (Int.toNat_of_nonneg h2)
+      have : (r : ℤ) < (orderOf σ : ℤ) := by rw [h3]; exact h1
+      exact_mod_cast this
+    refine ⟨r, hr_lt, ?_⟩
+    -- (σ^r) v = (σ^k) v
+    rw [← h_smul]
+    -- σ^r = σ^k via zpow_mod_orderOf.
+    have h_emod : (r : ℤ) = k % (orderOf σ : ℤ) := by
+      rw [hr_def]
+      apply Int.toNat_of_nonneg
+      apply Int.emod_nonneg; omega
+    have h_zpow_eq : (σ : Equiv.Perm V)^(r : ℤ) = σ^k := by
+      rw [h_emod, zpow_mod_orderOf]
+    rw [← zpow_natCast, h_zpow_eq]
+  · -- ∃ k < orderOf σ, σ^k v = w → mk σ w = mk σ v
+    rintro ⟨k, _, hk⟩
+    rw [← hk]
+    exact orbitClass.mk_pow_apply σ k v
 
 end orbitClass
 
