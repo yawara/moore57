@@ -105,6 +105,24 @@ see Cameron Ch.3 §3.5 / `Higman1964.Theorem1_moore57_valence`.
 For `k = 57` see `IsMoore57.adjMatrix_sq_eq`. -/
 theorem lem1_3_valence_classification : True := by trivial
 
+/-- **Lemma 1.3 (paper-faithful conditional dispatch, `a ≠ b` branch).** [done]
+
+Proper-signature paper-faithful packaging of the `(a ≠ b)` integrality
+branch: given the eigenvalue integrality data `4k = e² + 3` and
+`e² ∣ 225`, conclude `k ∈ {1, 3, 7, 57}`.
+
+This is the proper-signature variant of `lem1_3_valence_classification`
+for the non-pentagon branch.  Delegates to `lem1_3_arithmetic_core`
+which in turn wraps `Higman1964.theorem1_arithmetic_core`.
+
+The pentagon branch (`k = 2`, `a = b`) is excluded by this signature
+but handled separately via Cameron Ch.3 §3.5 / `Higman1964` valence
+analysis. -/
+theorem lem1_3_valence_classification_paper {k e : ℕ}
+    (h_eq : 4 * k = e * e + 3) (h_dvd : e * e ∣ 225) :
+    k = 1 ∨ k = 3 ∨ k = 7 ∨ k = 57 :=
+  lem1_3_arithmetic_core h_eq h_dvd
+
 /-- **Lemma 1.3 (`k = 57` instance for Moore57).** -/
 theorem lem1_3_moore57_k_eq_57 (hΓ : IsMoore57 Γ) :
     Γ.IsRegularOfDegree 57 :=
