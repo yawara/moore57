@@ -594,6 +594,56 @@ noncomputable def fixNOrbits (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
     c ∈ fixNOrbits Γ σ ↔ isFixNOrbit σ Γ c := by
   unfold fixNOrbits; simp
 
+/-- **L1.1c: `fixSingletonOrbits σ` has cardinality 50.**
+
+For `σ` with `HSFixedData Γ σ` (50 σ-fixed vertices indexed by `Fin 50`),
+the σ-orbit classes whose cell is a singleton of a σ-fixed vertex form a
+Finset of cardinality 50.
+
+Proof: define `f i := mk σ (hsfd.v i)` to inject `Fin 50` into
+`fixSingletonOrbits σ`.  Surjectivity uses `hsfd.span`: every σ-fixed
+vertex is some `hsfd.v i`. -/
+theorem fixSingletonOrbits_card_eq_50
+    (σ : Equiv.Perm V) (hsfd : HSFixedData Γ σ) :
+    (fixSingletonOrbits σ).card = 50 := by
+  let f : Fin 50 → Moore57.orbitClass σ := fun i => Moore57.orbitClass.mk σ (hsfd.v i)
+  -- f i ∈ fixSingletonOrbits σ for every i
+  have hf_mem : ∀ i, f i ∈ fixSingletonOrbits σ := by
+    intro i
+    rw [mem_fixSingletonOrbits]
+    exact ⟨hsfd.v i, hsfd.v_fixed i, Moore57.orbitClass.cell_mk_of_fixed (hsfd.v_fixed i)⟩
+  -- f injective
+  have hf_inj : Function.Injective f := by
+    intro i j hij
+    apply hsfd.v_injective
+    have hcells : Moore57.orbitClass.cell σ (f i) = Moore57.orbitClass.cell σ (f j) := by
+      rw [hij]
+    rw [Moore57.orbitClass.cell_mk_of_fixed (hsfd.v_fixed i),
+        Moore57.orbitClass.cell_mk_of_fixed (hsfd.v_fixed j)] at hcells
+    exact Finset.singleton_inj.mp hcells
+  -- image of Fin 50 under f equals fixSingletonOrbits σ
+  have h_eq : (Finset.univ : Finset (Fin 50)).image f = fixSingletonOrbits σ := by
+    apply Finset.ext
+    intro c
+    simp only [Finset.mem_image, Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨i, rfl⟩; exact hf_mem i
+    · intro hc
+      rw [mem_fixSingletonOrbits] at hc
+      obtain ⟨a, ha, hcell⟩ := hc
+      obtain ⟨i, hi⟩ := hsfd.span a ha
+      refine ⟨i, ?_⟩
+      -- f i = mk σ (hsfd.v i) = mk σ a = c.
+      -- We have cell σ c = {a}, so a ∈ cell σ c, so mk σ a = c.
+      have ha_mem : a ∈ Moore57.orbitClass.cell σ c := by
+        rw [hcell]; exact Finset.mem_singleton_self a
+      rw [Moore57.orbitClass.mem_cell] at ha_mem
+      show Moore57.orbitClass.mk σ (hsfd.v i) = c
+      rw [← hi]
+      exact ha_mem
+  -- Card via injectivity
+  rw [← h_eq, Finset.card_image_of_injective _ hf_inj, Finset.card_univ, Fintype.card_fin]
+
 /-! ### Sub-task C: trace-0 free orbit Classical chooser -/
 
 /-- **`prop3_choose_trace_0_free_orbit`: select `idx_178` + 27 other free orbits.**
