@@ -740,4 +740,166 @@ theorem petersenGraph_exists_5cycle_through_edge
              x ≠ y ∧ x ≠ z ∧ y ≠ z :=
   petersenGraph_isPetersenLike.exists_5cycle_through_edge hvw
 
+/-! ### Tier 3: K_{3,3}-minus-matching incidence
+
+The "bipartite remainder" between `N(v) \ {w}` and `N(w) \ {v}` carries a
+fully determined incidence structure: **no edges between the two sides**
+(else a 4-cycle through edge `(v, w)`), and for every pair `(x, y)` of
+opposite-side vertices, a **unique stranger 2-path** `x - u - y`, where
+`u` is simultaneously a stranger of `v` and a stranger of `w`.
+
+Together with the bipartite-side disjointness (`bipartite_sides_disjoint`,
+Tier 2) and the 2+2 cardinality (`partnersOf_card`/`partnersOf_w_v_card`,
+Tier 2), this gives the 4-element pairing pattern characterising
+`K_{3,3}` minus a perfect matching — the central Bose 1963 edge-relative
+incidence used downstream by Macaj-Siran 2010 Lemma 17. -/
+
+/-- **No edge between `N(v) \ {w}` and `N(w) \ {v}`** (`λ = 0` on edge
+`(v, w)`, formulated as the absence of 4-cycles through `(v, w)`).
+
+If `x ∈ N(v) \ {w}` and `y ∈ N(w) \ {v}` with `G.Adj x y`, then
+`v - x - y - w - v` is a 4-cycle (`v ≠ y` because `y ∈ N(w) \ {v}` would
+give `Adj v w ∧ Adj y w` triangle if `v = y`... no, simpler: `v ≠ y`
+since if `v = y` then `Adj x v` and `y = v ∈ N(w) \ {v}` is false).
+
+The proof: assume `Adj x y`.  Then `v - x - y - w - v` would close
+into a 4-cycle with `v ≠ y` (from `y ∈ (N(w)).erase v`) and `x ≠ w`
+(from `x ∈ (N(v)).erase w`).  Apply `no_C4`. -/
+theorem IsPetersenLike.no_edge_between_v_w_sides
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w)
+    {x y : V} (hx : x ∈ (G.neighborFinset v).erase w)
+    (hy : y ∈ (G.neighborFinset w).erase v) :
+    ¬ G.Adj x y := by
+  intro hxy
+  rw [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hx hy
+  obtain ⟨hxw, hadj_vx⟩ := hx
+  obtain ⟨hyv, hadj_wy⟩ := hy
+  -- 4-cycle: v - x - y - w - v, i.e. (a, b, c, d) = (v, x, y, w) with
+  -- a ≠ c (v ≠ y) and b ≠ d (x ≠ w).
+  have hvy : v ≠ y := fun heq => hyv heq.symm
+  exact h.no_C4 v x y w hvy hxw hadj_vx hxy hadj_wy.symm hvw.symm
+
+/-- **Bipartite sides are distinct as vertices**
+(disjointness restatement at the element level).
+
+For any `x ∈ N(v) \ {w}` and `y ∈ N(w) \ {v}`, we have `x ≠ y`: else `x`
+would be a common neighbour of `v` and `w`, contradicting `λ = 0` (no
+triangle through edge `(v, w)`). -/
+theorem IsPetersenLike.bipartite_sides_ne
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w)
+    {x y : V} (hx : x ∈ (G.neighborFinset v).erase w)
+    (hy : y ∈ (G.neighborFinset w).erase v) :
+    x ≠ y := by
+  intro heq
+  subst heq
+  rw [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hx hy
+  exact h.no_triangle_through_edge hvw x ⟨hx.2, hy.2⟩
+
+/-- **Unique common neighbour for any `(x, y)` across the two bipartite
+sides** (`μ = 1` applied to the explicit non-adjacent pair).
+
+For any `x ∈ N(v) \ {w}` and `y ∈ N(w) \ {v}`, `x` and `y` are distinct
+(`bipartite_sides_ne`) and non-adjacent (`no_edge_between_v_w_sides`),
+hence have a **unique** common neighbour `u`. -/
+theorem IsPetersenLike.exists_unique_commonNeighbor_bipartite
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w)
+    {x y : V} (hx : x ∈ (G.neighborFinset v).erase w)
+    (hy : y ∈ (G.neighborFinset w).erase v) :
+    ∃! u, G.Adj x u ∧ G.Adj y u := by
+  have hxy_ne : x ≠ y := h.bipartite_sides_ne hvw hx hy
+  have hxy_nadj : ¬ G.Adj x y := h.no_edge_between_v_w_sides hvw hx hy
+  exact h.exists_unique_commonNeighbor x y hxy_ne hxy_nadj
+
+/-- **The unique common neighbour of `(x, y)` is a stranger of `v`**
+(does **not** lie in `{v} ∪ N(v)`).
+
+Given `x ∈ N(v) \ {w}`, `y ∈ N(w) \ {v}`, and the unique common
+neighbour `u` of `(x, y)`:
+* `u ≠ v` because `G.Adj x u` and `Adj v u` would give two common
+  neighbours of the **adjacent** pair `(v, x)`... wait, simpler: if
+  `u = v` then `G.Adj y u = G.Adj y v` ⇒ `Adj v y`, which contradicts
+  `λ = 0` triangle through `(v, w)` since `y ∈ N(w)` (i.e. `Adj v y ∧
+  Adj w y ∧ Adj v w` triangle).
+* `¬ G.Adj v u` because `G.Adj x u ∧ G.Adj v u ∧ G.Adj v x` would be a
+  triangle (triangle-free).
+-/
+theorem IsPetersenLike.commonNeighbor_bipartite_stranger_v
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w)
+    {x y u : V} (hx : x ∈ (G.neighborFinset v).erase w)
+    (hy : y ∈ (G.neighborFinset w).erase v)
+    (hxu : G.Adj x u) (hyu : G.Adj y u) :
+    u ∈ strangers G v := by
+  rw [mem_strangers_iff]
+  rw [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hx hy
+  obtain ⟨_, hadj_vx⟩ := hx
+  obtain ⟨_, hadj_wy⟩ := hy
+  refine ⟨?_, ?_⟩
+  · -- u ≠ v: if u = v then Adj y v, so v ∈ N(y) and also Adj w y, giving
+    -- a triangle v - w - y - v through edge (v, w).
+    intro heq
+    subst heq
+    -- `hyu : G.Adj y v`, `hadj_wy : G.Adj w y`, `hvw : G.Adj v w`.
+    exact h.no_triangle_through_edge hvw y ⟨hyu.symm, hadj_wy⟩
+  · -- ¬ Adj v u: else triangle v - x - u - v.
+    intro hadj_vu
+    exact h.triangleFree v x u hadj_vx hxu hadj_vu
+
+/-- **The unique common neighbour of `(x, y)` is a stranger of `w`**
+(symmetric to `commonNeighbor_bipartite_stranger_v`).
+
+By identical reasoning with the roles of `v` and `w` swapped. -/
+theorem IsPetersenLike.commonNeighbor_bipartite_stranger_w
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w)
+    {x y u : V} (hx : x ∈ (G.neighborFinset v).erase w)
+    (hy : y ∈ (G.neighborFinset w).erase v)
+    (hxu : G.Adj x u) (hyu : G.Adj y u) :
+    u ∈ strangers G w := by
+  rw [mem_strangers_iff]
+  rw [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hx hy
+  obtain ⟨_, hadj_vx⟩ := hx
+  obtain ⟨_, hadj_wy⟩ := hy
+  refine ⟨?_, ?_⟩
+  · -- u ≠ w: if u = w then Adj x w, so triangle v - w - x - v.
+    intro heq
+    subst heq
+    exact h.no_triangle_through_edge hvw x ⟨hadj_vx, hxu.symm⟩
+  · -- ¬ Adj w u: else triangle w - y - u - w.
+    intro hadj_wu
+    exact h.triangleFree w y u hadj_wy hyu hadj_wu
+
+/-- **Existence and uniqueness of the stranger 2-path `x - u - y`**
+(the central K_{3,3}-minus-matching incidence content).
+
+For any `x ∈ N(v) \ {w}` and `y ∈ N(w) \ {v}` on the opposite bipartite
+sides of an edge `(v, w)`, there is a **unique** vertex `u` such that:
+* `G.Adj x u ∧ G.Adj y u` (i.e., `u` is a common neighbour of `(x, y)`);
+* `u ∈ strangers G v` (so `u ≠ v` and `¬ Adj v u`);
+* `u ∈ strangers G w` (so `u ≠ w` and `¬ Adj w u`).
+
+In particular `u ∉ {v, w} ∪ N(v) ∪ N(w)`: the connecting vertex is a
+"double stranger" (a stranger of both `v` and `w`).
+
+This is the four-edge bipartite incidence underlying Bose 1963's
+description of edge-vicinity in `(10, 3, 0, 1)`-SRGs: each of the four
+pairs `(xᵢ, yⱼ)` with `xᵢ ∈ N(v) \ {w}` and `yⱼ ∈ N(w) \ {v}` is joined
+by a unique stranger 2-path. -/
+theorem IsPetersenLike.exists_unique_stranger_path_bipartite
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w)
+    {x y : V} (hx : x ∈ (G.neighborFinset v).erase w)
+    (hy : y ∈ (G.neighborFinset w).erase v) :
+    ∃! u, G.Adj x u ∧ G.Adj y u ∧ u ∈ strangers G v ∧ u ∈ strangers G w := by
+  obtain ⟨u, ⟨hxu, hyu⟩, huniq⟩ :=
+    h.exists_unique_commonNeighbor_bipartite hvw hx hy
+  refine ⟨u, ⟨hxu, hyu,
+    h.commonNeighbor_bipartite_stranger_v hvw hx hy hxu hyu,
+    h.commonNeighbor_bipartite_stranger_w hvw hx hy hxu hyu⟩, ?_⟩
+  intro u' ⟨hxu', hyu', _, _⟩
+  exact huniq u' ⟨hxu', hyu'⟩
+
 end Moore57
