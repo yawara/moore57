@@ -455,4 +455,162 @@ theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData_prime_via_semiRegular
       Moore57.semiRegular_at_movedPoint_of_prime_orderOf
         σ 5 (by decide) pow_5 v (efd.no_fixed v) k hkv)
 
+/-! ### Conclusion-Prop encoding (Lem 19 case 3 pattern, Plan B for Lem 18)
+
+Mirroring `Lemma19Case3Conclusion` (commit `902cf19`) but for the §6 Lem 18
+5-group classification.  Each of the three fix shapes (HS, Pentagon, Empty)
+gets its own `Lemma18Case<N>Conclusion : Equiv.Perm V → Prop` bundling the
+paper's case bound (`∣ 25`, `∣ 5`, `∣ 125`), along with a `_via_conclusion`
+bridge and a prime-case unconditional discharge from the corresponding
+`FixedData` hypothesis.
+
+**Plan B note.**  Unlike Lem 19 case 3 (where `σ^11 = 1 ∧ σ ≠ 1` forces
+Pentagon fix uniquely via `aut_order_eleven_C5FixedData`), Lem 18 has three
+distinct fix shapes for `σ^5 = 1` and no analogous `aut_order_five_*FixedData`
+constructor in Foundations.  Hence the prime-case `_conclusion_*` wrappers
+here still require the **case-discriminating** FixedData (HS / Pentagon /
+Empty) hypothesis to discharge the Conclusion.  A genuine
+`*_conclusion_prime_unconditional` (no FixedData) for Lem 18 would require
+new Foundations work (paper Lem 18 fix-shape classification for σ^5 = 1)
+and is intentionally deferred for the parallel Foundations agent.
+-/
+
+/-- **Lemma 18 case (1) abstract conclusion** (Conclusion Prop encoding).
+
+For σ a 5-group element acting as a graph automorphism of a Moore57 Γ
+with `Fix(⟨σ⟩) = Hoffman-Singleton`, the paper's case (1) conclusion is:
+`orderOf σ ∣ 25` (i.e., `|⟨σ⟩| ∈ {1, 5, 25}`).
+
+Bundled as a Prop for downstream §6 Theorem 4 / §7 dispatch chains,
+paralleling `Lemma19Case3Conclusion` and `Lemma17ThreeGroupFixConclusion`. -/
+def Lemma18Case1Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 25
+
+/-- **Lemma 18 case (2) abstract conclusion** (Conclusion Prop encoding).
+
+For σ a 5-group element acting as a graph automorphism of a Moore57 Γ
+with `Fix(⟨σ⟩) = Pentagon` (`C5FixedData`), the paper's case (2)
+conclusion at the cyclic level is: `orderOf σ ∣ 5` (the orbit-stabilizer
+sharpening of `|X| ∣ 125 = 5 · 25`).
+
+Bundled as a Prop for downstream dispatch chains. -/
+def Lemma18Case2Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 5
+
+/-- **Lemma 18 case (3) abstract conclusion** (Conclusion Prop encoding).
+
+For σ a 5-group element acting as a graph automorphism of a Moore57 Γ
+with `Fix(⟨σ⟩) = ∅` (`EmptyFixedData`), the paper's case (3) conclusion
+is: `orderOf σ ∣ 125` (since the 5-part of `|V| = 3250 = 2 · 5³ · 13`
+is exactly `5³ = 125`).
+
+Bundled as a Prop for downstream dispatch chains. -/
+def Lemma18Case3Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 125
+
+/-- **Lemma 18 case (1) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma18Case1Conclusion σ` (the paper's case (1) HS-fix
+divisibility bound), conclude `orderOf σ ∣ 25`.  Trivial bridge —
+exposed for the Conclusion-Prop dispatch pattern used by `MainTheorem`. -/
+theorem lem18_case1_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma18Case1Conclusion σ) :
+    orderOf σ ∣ 25 :=
+  h_conclusion
+
+/-- **Lemma 18 case (2) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma18Case2Conclusion σ` (the paper's case (2) Pentagon-fix
+divisibility bound), conclude `orderOf σ ∣ 5`.  Trivial bridge. -/
+theorem lem18_case2_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma18Case2Conclusion σ) :
+    orderOf σ ∣ 5 :=
+  h_conclusion
+
+/-- **Lemma 18 case (3) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma18Case3Conclusion σ` (the paper's case (3) empty-fix
+divisibility bound), conclude `orderOf σ ∣ 125`.  Trivial bridge. -/
+theorem lem18_case3_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma18Case3Conclusion σ) :
+    orderOf σ ∣ 125 :=
+  h_conclusion
+
+/-- **Lemma 18 case (1) Conclusion instance, prime-case + HSFixedData.** [done]
+
+The Conclusion Prop `Lemma18Case1Conclusion σ` is discharged for σ a
+graph automorphism of a Moore57 Γ with `σ^5 = 1` and `HSFixedData Γ σ`,
+via `lem18_case1_orderOf_dvd_25_with_HSFixedData_prime_via_semiRegular`.
+
+**Plan B note.** Unlike Lem 19 case 3 (which uses
+`aut_order_eleven_C5FixedData` to drop the FixedData hypothesis),
+Lem 18 case (1) still requires the explicit `HSFixedData` hypothesis to
+distinguish from the other two fix shapes (Pentagon, Empty).  A
+hypothesis-free version would require a new
+`aut_order_five_HSFixedData` constructor in Foundations (deferred). -/
+theorem lem18_case1_conclusion_prime
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (hsfd : HSFixedData Γ σ) (i : Fin 50)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    Lemma18Case1Conclusion σ :=
+  lem18_case1_orderOf_dvd_25_with_HSFixedData_prime_via_semiRegular
+    hΓ σ pow_5 hsfd i smul_adj
+
+/-- **Lemma 18 case (2) Conclusion instance, prime-case + C5FixedData.** [done]
+
+The Conclusion Prop `Lemma18Case2Conclusion σ` is discharged for σ a
+graph automorphism of a Moore57 Γ with `σ^5 = 1` and `C5FixedData Γ σ`,
+via `lem18_case2_orderOf_dvd_5_with_c5FixedData_prime_via_semiRegular`.
+
+**Plan B note.**  As with case (1), distinguishing Pentagon fix from
+HS or Empty requires the explicit `C5FixedData` hypothesis.  The
+hypothesis-free version would require a new
+`aut_order_five_C5FixedData` constructor (deferred). -/
+theorem lem18_case2_conclusion_prime
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (c5 : C5FixedData Γ σ) (i : Fin 5)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    Lemma18Case2Conclusion σ :=
+  lem18_case2_orderOf_dvd_5_with_c5FixedData_prime_via_semiRegular
+    hΓ σ pow_5 c5 i smul_adj
+
+/-- **Lemma 18 case (3) Conclusion instance, prime-case + EmptyFixedData.** [done]
+
+The Conclusion Prop `Lemma18Case3Conclusion σ` is discharged for σ a
+graph automorphism of a Moore57 Γ with `σ^5 = 1` and `EmptyFixedData σ`,
+via `lem18_case3_orderOf_dvd_125_with_emptyFixedData_prime_via_semiRegular`.
+
+**Plan B note.**  Empty fix requires the explicit `EmptyFixedData`
+hypothesis to distinguish from the HS / Pentagon cases.  A
+hypothesis-free version would require a new
+`aut_order_five_EmptyFixedData` constructor (deferred). -/
+theorem lem18_case3_conclusion_prime
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (efd : EmptyFixedData σ) :
+    Lemma18Case3Conclusion σ :=
+  lem18_case3_orderOf_dvd_125_with_emptyFixedData_prime_via_semiRegular
+    hΓ σ pow_5 efd
+
+/-- **Lemma 18 prime-case Conclusion dispatch.** [done]
+
+Given σ a graph automorphism of a Moore57 Γ with `σ^5 = 1`, the
+three-case fix-shape disjunction (HS / Pentagon / Empty) dispatches into
+the per-case Conclusion Props.  This packages the paper's full §6 Lem 18
+trichotomy at the Conclusion-Prop level for the prime case `σ^5 = 1`,
+analogous to `lem17_3group_fix_paper` for the §6 Lem 17 3-group case. -/
+theorem lem18_5group_fix_prime_conclusion
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_dispatch :
+      (∃ (_hsfd : HSFixedData Γ σ) (_i : Fin 50), True) ∨
+      (∃ (_c5 : C5FixedData Γ σ) (_i : Fin 5), True) ∨
+      (∃ (_efd : EmptyFixedData σ), True)) :
+    Lemma18Case1Conclusion σ ∨
+    Lemma18Case2Conclusion σ ∨
+    Lemma18Case3Conclusion σ := by
+  rcases h_dispatch with ⟨hsfd, i, _⟩ | ⟨c5, i, _⟩ | ⟨efd, _⟩
+  · exact Or.inl (lem18_case1_conclusion_prime hΓ σ pow_5 hsfd i smul_adj)
+  · exact Or.inr (Or.inl (lem18_case2_conclusion_prime hΓ σ pow_5 c5 i smul_adj))
+  · exact Or.inr (Or.inr (lem18_case3_conclusion_prime hΓ σ pow_5 efd))
+
 end Moore57.Papers.MacajSiran2010.S6
