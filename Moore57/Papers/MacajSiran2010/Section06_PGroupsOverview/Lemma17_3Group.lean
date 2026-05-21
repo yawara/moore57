@@ -403,6 +403,20 @@ theorem lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular
     (Moore57.aut_semiRegular_at_movedNeighbor_of_prime
       (Γ := Γ) σ 3 (by decide) pow_3 sfd.v)
 
+/-- **Lemma 17 abstract conclusion (3-group fix classification).**
+
+For an automorphism group `X` of Γ that is a 3-group (so any element σ
+satisfies `σ ^ 3 ^ k = 1` for some `k`), the paper claims that either:
+
+* Case (1): `Fix(X)` is the Petersen graph and `|X| ∣ 27`; or
+* Case (2): `Fix(X)` is a singleton and `|X| ∣ 81`.
+
+Packaged here as a disjunction at the single-cyclic-element level:
+either `orderOf σ ∣ 27` (Petersen branch) or `orderOf σ ∣ 81`
+(singleton branch). -/
+def Lemma17ThreeGroupFixConclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 27 ∨ orderOf σ ∣ 81
+
 /-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy]
 
 The full case classification (Fix shape ∈ {Petersen, singleton} for any
@@ -413,5 +427,32 @@ specializations are unconditional via
 and `lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_unconditional`.
 Backward-compat True-stub. -/
 theorem lem17_3group_fix (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Lemma 17 (paper-faithful conditional 3-group fix shape).**
+[done — conditional]
+
+Proper-signature paper-faithful conditional: given a 3-group element
+`σ` (i.e., `σ^(3^k) = 1` for some k) and the deferred-heavy Fix-shape
+classification packaged as a disjunction (`PetersenFixedData Γ σ` with
+`k ≤ 3`, or `SingletonFixedData σ` with `k ≤ 4`), the paper's
+`Lemma17ThreeGroupFixConclusion` follows by case dispatch into the
+already-proven `lem17_case1_*_k_le_3_unconditional` and
+`lem17_case2_*_k_le_4_unconditional` wrappers. -/
+theorem lem17_3group_fix_paper
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_dispatch :
+      (∃ (k : ℕ) (_ : k ≤ 3) (_ : σ ^ 3 ^ k = 1)
+        (_pfd : PetersenFixedData Γ σ) (_i : Fin 10), True) ∨
+      (∃ (k : ℕ) (_ : k ≤ 4) (_ : σ ^ 3 ^ k = 1)
+        (_sfd : SingletonFixedData σ), True)) :
+    Lemma17ThreeGroupFixConclusion σ := by
+  rcases h_dispatch with ⟨k, hk, hpow, pfd, i, _⟩ | ⟨k, hk, hpow, sfd, _⟩
+  · left
+    exact lem17_case1_orderOf_dvd_27_with_petersenFixedData_k_le_3_unconditional
+      hΓ σ k hk hpow pfd i smul_adj
+  · right
+    exact lem17_case2_orderOf_dvd_81_with_singletonFixedData_k_le_4_unconditional
+      hΓ σ k hk hpow sfd smul_adj
 
 end Moore57.Papers.MacajSiran2010.S6

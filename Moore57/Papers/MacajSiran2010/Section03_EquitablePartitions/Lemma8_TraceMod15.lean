@@ -98,6 +98,13 @@ theorem lem8_trace_mod_fifteen_paper (hΓ : IsMoore57 Γ)
     Tr ≡ -8 * (k - 10) [ZMOD 15] :=
   lem8_trace_mod_fifteen_zmod Tr a k h_spectrum
 
+/-- **Lemma 8 abstract conclusion (`Tr(X) ≡ −8(k − 10) mod 15`).**
+
+Paper's mod-15 trace congruence packaged as a `Prop` — `Tr` is the
+trace of the orbit-adjacency matrix and `k` is the number of orbits. -/
+def Lemma8TraceMod15Conclusion (Tr k : ℤ) : Prop :=
+  Tr ≡ -8 * (k - 10) [ZMOD 15]
+
 /-- **Lemma 8 (`Tr(X) ≡ −8(k − 10) mod 15`).** [deferred-heavy]
 
 Paper-faithful Moore57-conditional statement.  The geometric content —
@@ -107,5 +114,15 @@ the SRG eigenvalue theory for the orbit-adjacency matrix and is left
 as a deferred-heavy skeleton.  Backward-compat True-stub; proper-
 signature form is `lem8_trace_mod_fifteen_paper`. -/
 theorem lem8_trace_mod_fifteen (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Lemma 8 (paper-faithful conclusion instance).** [done — conditional]
+
+Re-states `lem8_trace_mod_fifteen_paper` using the abstract conclusion
+Prop `Lemma8TraceMod15Conclusion`. -/
+theorem lem8_trace_mod_fifteen_conclusion
+    (hΓ : IsMoore57 Γ)
+    (Tr a k : ℤ) (h_spectrum : Tr = 65 + 15 * a - 8 * k) :
+    Lemma8TraceMod15Conclusion Tr k :=
+  lem8_trace_mod_fifteen_paper hΓ Tr a k h_spectrum
 
 end Moore57.Papers.MacajSiran2010.S3
