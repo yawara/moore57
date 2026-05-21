@@ -272,4 +272,146 @@ theorem prop3_direct_step5_conclusion_holds : Proposition3DirectStep5Conclusion 
   rintro ⟨b, h_sum, h_sq⟩
   exact prop3_no_solution_direct b h_sum h_sq
 
+/-! ### Paper §8 Steps 1-4: trace argument & structural scaffold (Path B research)
+
+Steps 1-4 of MS 2010 §8 Prop 3 derive paper equations (7), (8) from the
+hypothesis `|X| = 25`.  The chain involves substantial Moore57-specific
+structural analysis:
+
+* **Step 1** (orbit decomposition): semi-regular action of X on `Γ \ Fix(X)`
+  yields 50 size-1 orbits (= Fix(X) = HS) + 128 size-25 orbits.
+  Of the 128 size-25 orbits, 100 are "fix-neighbourhood" orbits (each
+  fixed vertex `a` has exactly 2 orbits in `N(a) \ Fix`, and these are
+  pairwise disjoint since common neighbours of two fixed points are in
+  Fix(X) by Moore graph μ=1).  The remaining 28 are "free" orbits.
+
+* **Step 2** (fix-N-orbits trace = 0): for any orbit `O ⊂ N(a)` with
+  `a ∈ Fix(X)`, two distinct vertices `v, v' ∈ O` are not adjacent
+  (else `a` would be a common neighbour of two adjacent vertices,
+  contradicting Moore57 girth 5 / `λ = 0`).  Hence `Tr(O) = 0`.
+
+* **Step 3** (free orbits trace ∈ {0, 2}): for orbit `O` of size 25,
+  Lem 6 (3) gives `Tr(O) ≤ 2` (X abelian ⟹ central, X has odd order).
+  Lem 6 (2) gives `Tr(X)` even.  So `Tr(O) ∈ {0, 2}`.
+
+* **Step 4** (∃ free orbit with trace 0): by Lem 8 (trace mod 15),
+  `Tr(X) ≡ -8(178 - 10) ≡ -8 · 168 ≡ 6 (mod 15)`.  Combined with
+  `Tr(X) ≤ 56` (= 28 · 2) and `Tr(X)` even, the only possible
+  `Tr(X)` values are `{6, 36}`, both `< 56`.  Hence at least
+  `28 - 18 = 10` free orbits have trace 0.
+
+These are decomposed below as abstract `Prop` defs (Step 1-3) and
+the arithmetic core for Step 4 (purely number-theoretic).  Each is
+formalisable independently; the chain through to `prop3_no_solution_direct`
+is provided as a conditional bridge.
+-/
+
+/-- **Step 3 arithmetic core: `Tr(O) ≤ 2 ∧ even ⟹ Tr(O) ∈ {0, 2}`.** [done]
+
+For an orbit `O` of size 25, Lem 6 (3) gives `Tr(O) ≤ 2` (X abelian,
+central element argument).  Lem 6 (2) gives `Tr(O)` even (X has odd
+order).  Together, `Tr(O) ∈ {0, 2}`.
+
+This is a tiny arithmetic step packaging the two Lem 6 inputs. -/
+theorem prop3_step3_arithmetic_orbit_trace_in_zero_two
+    (n : ℕ) (h_le : n ≤ 2) (h_even : 2 ∣ n) : n = 0 ∨ n = 2 := by
+  interval_cases n <;> omega
+
+/-- **Step 4 arithmetic core: 28 trace-2 orbits forces `2 · n_two ≢ 6 [MOD 15]`.** [done]
+
+If we have `n_zero` trace-0 orbits and `n_two` trace-2 orbits among the
+28 "free" orbits (with `n_zero + n_two = 28`), and if `2 · n_two ≡ 6 [MOD 15]`
+(from Lem 8 + the 100 fix-N orbits contributing 0 to trace), then
+`n_zero ≥ 1` (in fact `n_zero ≥ 10`).
+
+Proof: `2 · n_two ≤ 56` and `≡ 6 (mod 15)` ⟹ `2 · n_two ∈ {6, 36}`,
+i.e., `n_two ∈ {3, 18}`.  In both cases `n_two ≤ 18 < 28`, so
+`n_zero ≥ 10`. -/
+theorem prop3_step4_arithmetic_zero_orbit_exists
+    (n_zero n_two : ℕ)
+    (h_total : n_zero + n_two = 28)
+    (h_mod : 2 * n_two ≡ 6 [MOD 15]) :
+    10 ≤ n_zero := by
+  -- n_two ≤ 28 from h_total
+  have h_n_two_le : n_two ≤ 28 := by omega
+  -- Enumerate n_two ∈ {0, 1, ..., 28} and check mod 15 constraint
+  have h_n_two_le_18 : n_two ≤ 18 := by
+    rw [Nat.ModEq] at h_mod
+    interval_cases n_two <;> omega
+  omega
+
+/-- **Step 4 arithmetic: existence of zero-trace orbit (weak form).** [done]
+
+The weaker version of `prop3_step4_arithmetic_zero_orbit_exists`:
+just `n_zero ≥ 1` (matching paper's stated claim). -/
+theorem prop3_step4_arithmetic_at_least_one_zero
+    (n_zero n_two : ℕ)
+    (h_total : n_zero + n_two = 28)
+    (h_mod : 2 * n_two ≡ 6 [MOD 15]) :
+    1 ≤ n_zero :=
+  le_trans (by omega) (prop3_step4_arithmetic_zero_orbit_exists n_zero n_two h_total h_mod)
+
+/-- **Step 4 arithmetic: `n_two ∈ {3, 18}` exactly.** [done]
+
+Strongest form: the modular + bound constraints force `n_two` to be
+exactly 3 or 18 (so `Tr(X) ∈ {6, 36}`). -/
+theorem prop3_step4_arithmetic_two_count_eq
+    (n_two : ℕ)
+    (h_le : n_two ≤ 28)
+    (h_mod : 2 * n_two ≡ 6 [MOD 15]) :
+    n_two = 3 ∨ n_two = 18 := by
+  rw [Nat.ModEq] at h_mod
+  interval_cases n_two <;> omega
+
+/-- **Proposition 3 Step 1-4 conclusion (abstract paper-faithful)**.
+
+Steps 1-4 combined: from `|X| = 25 + HSFixedData`, produce the eq (7)+(8)
+witness `b : Fin 27 → ℕ` for application to `prop3_no_solution_direct`.
+
+This is a paper-faithful encoding of the deferred structural chain
+(Moore57 orbit decomposition + trace argument + zero-trace-orbit
+selection + quotient adjacency entries).  Once this conclusion is
+witnessed in Lean, the §8 step 5 contradiction follows via
+`prop3_no_solution_direct`. -/
+def Proposition3Step1To4Conclusion (Γ : SimpleGraph V) : Prop :=
+  ∀ (σ : Equiv.Perm V), orderOf σ = 25 → HSFixedData Γ σ →
+    ∃ b : Fin 27 → ℕ, (∑ i, b i = 7) ∧ (∑ i, (b i)^2 = 31)
+
+/-- **Proposition 3 `|X| ≠ 25` via structural Step 1-4 conclusion**.  [done — bridge]
+
+Combines the deferred `Proposition3Step1To4Conclusion` (witness construction)
+with the proven `prop3_no_solution_direct` (no-solution) to derive
+`orderOf σ ≠ 25` for any `σ` with `HSFixedData`.
+
+This provides the `h_no_25` hypothesis required by
+`prop3_hs_fix_bound_with_hsFixedData_semiRegular` for full Prop 3
+unstubbing — conditional on `Proposition3Step1To4Conclusion Γ`. -/
+theorem prop3_no_order_25_via_steps_1_to_4
+    (σ : Equiv.Perm V) (hsfd : HSFixedData Γ σ)
+    (h_steps : Proposition3Step1To4Conclusion Γ) :
+    orderOf σ ≠ 25 := by
+  intro h_eq
+  obtain ⟨b, h_sum, h_sq⟩ := h_steps σ h_eq hsfd
+  exact prop3_no_solution_direct b h_sum h_sq
+
+/-- **Proposition 3 full bound via Steps 1-4 + 5**.  [done — bridge]
+
+The final chain: given the (deferred) structural Step 1-4 conclusion,
+plus the proven C3.4 semi-regular orbit bridge, derive the paper's
+`|X| ≤ 5` bound (Proposition 3 statement) unconditionally on the
+arithmetic side.
+
+The remaining deferred work is `Proposition3Step1To4Conclusion`
+(the structural Moore57 analysis producing `b` from `|X| = 25`). -/
+theorem prop3_hs_fix_bound_via_steps_1_to_4
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 5 ^ k = 1)
+    (hsfd : HSFixedData Γ σ) (i : Fin 50)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ Moore57.autMovedNeighborFinset Γ σ (hsfd.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k)
+    (h_steps : Proposition3Step1To4Conclusion Γ) :
+    orderOf σ ≤ 5 :=
+  prop3_hs_fix_bound_with_hsFixedData_semiRegular hΓ σ k pow_pk hsfd i smul_adj hsemi
+    (prop3_no_order_25_via_steps_1_to_4 σ hsfd h_steps)
+
 end Moore57.Papers.MacajSiran2010.S8
