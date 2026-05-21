@@ -121,6 +121,55 @@ theorem mk_zpow_apply (σ : Equiv.Perm V) (k : ℤ) (v : V) :
   -- (σ^k) • v = (σ^k) v.  We need: (⟨σ^k, _⟩ : zpowers σ) • v = (σ^k) v
   rfl
 
+/-- For `a : V` with `σ a = a`, every nat power of σ fixes a. -/
+theorem pow_apply_of_fixed {σ : Equiv.Perm V} {a : V} (ha : σ a = a) (n : ℕ) :
+    (σ^n) a = a := by
+  induction n with
+  | zero => rfl
+  | succ m ihm => rw [pow_succ', Equiv.Perm.mul_apply, ihm, ha]
+
+/-- For `a : V` with `σ a = a`, every int power of σ fixes a. -/
+theorem zpow_apply_of_fixed {σ : Equiv.Perm V} {a : V} (ha : σ a = a) (k : ℤ) :
+    (σ^k) a = a := by
+  cases k with
+  | ofNat n =>
+      have hcast : (σ : Equiv.Perm V)^(Int.ofNat n) = σ^n := by
+        change (σ : Equiv.Perm V)^((n : ℕ) : ℤ) = σ^n
+        exact zpow_natCast σ n
+      rw [hcast]
+      exact pow_apply_of_fixed ha n
+  | negSucc n =>
+      have hzpow : (σ : Equiv.Perm V)^(Int.negSucc n) = (σ^(n+1))⁻¹ := by
+        have h1 : (Int.negSucc n : ℤ) = -((n+1 : ℕ) : ℤ) := by
+          rw [Int.negSucc_eq]; push_cast; ring
+        rw [h1, zpow_neg, zpow_natCast]
+      rw [hzpow]
+      -- (σ^(n+1))⁻¹ a = a from σ^(n+1) a = a
+      have h : (σ^(n+1)) a = a := pow_apply_of_fixed ha (n+1)
+      exact ((σ^(n+1) : Equiv.Perm V).symm_apply_eq).mpr h.symm
+
+/-- **Singleton-cell at a fixed vertex**: if `σ a = a`, then
+`cell σ (mk σ a) = {a}`.  Used for the 50 fix-singleton orbits in Prop 3. -/
+theorem cell_mk_of_fixed [Fintype V] [DecidableEq V] {σ : Equiv.Perm V}
+    {a : V} (ha : σ a = a) :
+    orbitClass.cell σ (orbitClass.mk σ a) = {a} := by
+  ext v
+  rw [orbitClass.mem_cell, Finset.mem_singleton]
+  constructor
+  · -- mk σ v = mk σ a → v = a (since orbit of a is just {a})
+    intro hv
+    unfold orbitClass.mk at hv
+    have : v ∈ MulAction.orbit (Subgroup.zpowers σ) a :=
+      Quotient.exact hv
+    obtain ⟨g, hg⟩ := this
+    obtain ⟨k, hk⟩ := Subgroup.mem_zpowers_iff.mp g.2
+    have h_smul : (g : Equiv.Perm V) a = v := hg
+    rw [← hk] at h_smul
+    -- (σ^k) a = a (since σ a = a)
+    rw [zpow_apply_of_fixed ha k] at h_smul
+    exact h_smul.symm
+  · rintro rfl; rfl
+
 end orbitClass
 
 section EquitablePartitionFromOrbits
