@@ -366,4 +366,324 @@ Backward-compat True-stub.  Proper-signature dispatch is
 count dispatch via `lem16_prime_from_N_count_*`. -/
 theorem lem16_pgroup_fix_shape (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-! ### Conclusion-Prop encoding (Lem 18 / Lem 19 pattern, applied to Lem 16)
+
+Mirroring `Lemma18Case<N>Conclusion` (commit `07f52de`) and
+`Lemma19Case3Conclusion` (commit `902cf19`), each existing §6 Lem 16
+theorem gets its own `Lemma16…Conclusion : Prop` bundling the paper's
+case bound (`= 0`, `= 1`, `= 2`, `= 5` for the global count side;
+`p ∈ {…}` for the local N(a) side).  Bridges (`_via_conclusion`) expose
+the Conclusion → existing-paper-form trivial bridge, and unconditional
+wrappers (`_conclusion_*_unconditional`) discharge the Conclusion from
+the corresponding `_if_small` / N(a)-count hypothesis using the
+already-proven theorem.
+
+**Design choice.**  Per-prime (not per-case-parametric-in-`p`)
+Conclusion Props, because each existing `lem16_caseN_<prime>group_*`
+theorem fixes the prime to make the mod-`p` residue and small-bound
+threshold concrete; a single Prop parametric in `p` would not have a
+uniform proof.  Per-count (not per-prime) on the local-N(a) side
+because each `lem16_prime_from_N_count_<c>` fixes `c` to make the
+prime-divisor enumeration concrete.
+-/
+
+/-! #### Per-prime global-count Conclusion encoding (cases 1, 2, 3, 4) -/
+
+/-- **Lemma 16 case (1) [p = 13] abstract conclusion** (Conclusion Prop). -/
+def Lemma16Case1_13Group_EmptyFix_Conclusion (σ : Equiv.Perm V) : Prop :=
+  fixedVertexCount σ = 0
+
+/-- **Lemma 16 case (1) [p = 5] abstract conclusion** (Conclusion Prop). -/
+def Lemma16Case1_5Group_EmptyFix_Conclusion (σ : Equiv.Perm V) : Prop :=
+  fixedVertexCount σ = 0
+
+/-- **Lemma 16 case (2) [p = 3] abstract conclusion** (Conclusion Prop). -/
+def Lemma16Case2_3Group_SingletonFix_Conclusion (σ : Equiv.Perm V) : Prop :=
+  fixedVertexCount σ = 1
+
+/-- **Lemma 16 case (2) [p = 19] abstract conclusion** (Conclusion Prop). -/
+def Lemma16Case2_19Group_SingletonFix_Conclusion (σ : Equiv.Perm V) : Prop :=
+  fixedVertexCount σ = 1
+
+/-- **Lemma 16 case (3) [p = 7] abstract conclusion** (Conclusion Prop). -/
+def Lemma16Case3_7Group_EdgeFix_Conclusion (σ : Equiv.Perm V) : Prop :=
+  fixedVertexCount σ = 2
+
+/-- **Lemma 16 case (4) [p = 5] abstract conclusion** (Conclusion Prop). -/
+def Lemma16Case4_5Group_PentagonFix_Conclusion (σ : Equiv.Perm V) : Prop :=
+  fixedVertexCount σ = 5
+
+/-- **Lemma 16 case (4) [p = 11] abstract conclusion** (Conclusion Prop). -/
+def Lemma16Case4_11Group_PentagonFix_Conclusion (σ : Equiv.Perm V) : Prop :=
+  fixedVertexCount σ = 5
+
+/-! #### `_via_conclusion` bridges (Conclusion → paper-stated form) -/
+
+/-- **Lemma 16 case (1) [p = 13] via Conclusion encoding (paper-faithful).** -/
+theorem lem16_case1_13group_via_conclusion
+    (σ : Equiv.Perm V)
+    (h_conclusion : Lemma16Case1_13Group_EmptyFix_Conclusion σ) :
+    fixedVertexCount σ = 0 :=
+  h_conclusion
+
+/-- **Lemma 16 case (1) [p = 5] via Conclusion encoding (paper-faithful).** -/
+theorem lem16_case1_5group_via_conclusion
+    (σ : Equiv.Perm V)
+    (h_conclusion : Lemma16Case1_5Group_EmptyFix_Conclusion σ) :
+    fixedVertexCount σ = 0 :=
+  h_conclusion
+
+/-- **Lemma 16 case (2) [p = 3] via Conclusion encoding (paper-faithful).** -/
+theorem lem16_case2_3group_via_conclusion
+    (σ : Equiv.Perm V)
+    (h_conclusion : Lemma16Case2_3Group_SingletonFix_Conclusion σ) :
+    fixedVertexCount σ = 1 :=
+  h_conclusion
+
+/-- **Lemma 16 case (2) [p = 19] via Conclusion encoding (paper-faithful).** -/
+theorem lem16_case2_19group_via_conclusion
+    (σ : Equiv.Perm V)
+    (h_conclusion : Lemma16Case2_19Group_SingletonFix_Conclusion σ) :
+    fixedVertexCount σ = 1 :=
+  h_conclusion
+
+/-- **Lemma 16 case (3) [p = 7] via Conclusion encoding (paper-faithful).** -/
+theorem lem16_case3_7group_via_conclusion
+    (σ : Equiv.Perm V)
+    (h_conclusion : Lemma16Case3_7Group_EdgeFix_Conclusion σ) :
+    fixedVertexCount σ = 2 :=
+  h_conclusion
+
+/-- **Lemma 16 case (4) [p = 5] via Conclusion encoding (paper-faithful).** -/
+theorem lem16_case4_5group_via_conclusion
+    (σ : Equiv.Perm V)
+    (h_conclusion : Lemma16Case4_5Group_PentagonFix_Conclusion σ) :
+    fixedVertexCount σ = 5 :=
+  h_conclusion
+
+/-- **Lemma 16 case (4) [p = 11] via Conclusion encoding (paper-faithful).** -/
+theorem lem16_case4_11group_via_conclusion
+    (σ : Equiv.Perm V)
+    (h_conclusion : Lemma16Case4_11Group_PentagonFix_Conclusion σ) :
+    fixedVertexCount σ = 5 :=
+  h_conclusion
+
+/-! #### Conditional Conclusion-instance wrappers (`_if_small` re-packaged)
+
+These are the Conclusion-Prop counterparts of the existing
+`lem16_caseN_<prime>group_fix_*_if_small` theorems: same hypothesis
+shape (mod-`p` `p^k`-element + small-Fix bound), but the conclusion
+is bundled as the `Lemma16…Conclusion` Prop.
+-/
+
+/-- **Lemma 16 case (1) [p = 13] Conclusion instance (small-Fix bound).** -/
+theorem lem16_case1_13group_conclusion_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 13 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 12) :
+    Lemma16Case1_13Group_EmptyFix_Conclusion σ :=
+  lem16_case1_13group_fix_empty_if_small hΓ σ k pow_pk h_small
+
+/-- **Lemma 16 case (1) [p = 5] Conclusion instance (small-Fix bound).** -/
+theorem lem16_case1_5group_conclusion_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 5 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 4) :
+    Lemma16Case1_5Group_EmptyFix_Conclusion σ :=
+  lem16_case1_5group_fix_empty_if_small hΓ σ k pow_pk h_small
+
+/-- **Lemma 16 case (2) [p = 3] Conclusion instance (small-Fix bound).** -/
+theorem lem16_case2_3group_conclusion_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 3 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 3) :
+    Lemma16Case2_3Group_SingletonFix_Conclusion σ :=
+  lem16_case2_3group_fix_singleton_if_small hΓ σ k pow_pk h_small
+
+/-- **Lemma 16 case (2) [p = 19] Conclusion instance (small-Fix bound).** -/
+theorem lem16_case2_19group_conclusion_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 19 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 19) :
+    Lemma16Case2_19Group_SingletonFix_Conclusion σ :=
+  lem16_case2_19group_fix_singleton_if_small hΓ σ k pow_pk h_small
+
+/-- **Lemma 16 case (3) [p = 7] Conclusion instance (small-Fix bound).** -/
+theorem lem16_case3_7group_conclusion_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 7 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 8) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
+  lem16_case3_7group_fix_edge_if_small hΓ σ k pow_pk h_small
+
+/-- **Lemma 16 case (4) [p = 5] Conclusion instance (small-Fix + non-empty).** -/
+theorem lem16_case4_5group_conclusion_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 5 ^ k = 1)
+    (h_nonempty : 1 ≤ fixedVertexCount σ)
+    (h_small : fixedVertexCount σ ≤ 9) :
+    Lemma16Case4_5Group_PentagonFix_Conclusion σ :=
+  lem16_case4_5group_fix_pentagon_if_small hΓ σ k pow_pk h_nonempty h_small
+
+/-- **Lemma 16 case (4) [p = 11] Conclusion instance (small-Fix bound).** -/
+theorem lem16_case4_11group_conclusion_if_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ)
+    (pow_pk : σ ^ 11 ^ k = 1)
+    (h_small : fixedVertexCount σ ≤ 15) :
+    Lemma16Case4_11Group_PentagonFix_Conclusion σ :=
+  lem16_case4_11group_fix_pentagon_if_small hΓ σ k pow_pk h_small
+
+/-! #### Per-count local-N(a) Conclusion encoding
+
+For the `lem16_prime_from_N_count_<c>` theorems, the Conclusion Prop
+bundles the prime-set membership (paper's odd-prime list reduction).
+Per-count (not per-prime) because each `c ∈ {0, 1, 2, 3, 7}` fixes the
+prime-divisor enumeration uniformly across all odd primes `p > 2`.
+-/
+
+/-- **Lemma 16 N(a) = 0 (singleton-Fix) abstract conclusion.** -/
+def Lemma16PrimeFromNCountZeroConclusion (p : ℕ) : Prop :=
+  p = 3 ∨ p = 19
+
+/-- **Lemma 16 N(a) = 1 (star-leaf) abstract conclusion.** -/
+def Lemma16PrimeFromNCountOneConclusion (p : ℕ) : Prop :=
+  p = 7
+
+/-- **Lemma 16 N(a) = 2 (pentagon-vertex) abstract conclusion.** -/
+def Lemma16PrimeFromNCountTwoConclusion (p : ℕ) : Prop :=
+  p = 5 ∨ p = 11
+
+/-- **Lemma 16 N(a) = 3 (Petersen-vertex) abstract conclusion.** -/
+def Lemma16PrimeFromNCountThreeConclusion (p : ℕ) : Prop :=
+  p = 3
+
+/-- **Lemma 16 N(a) = 7 (HS-vertex) abstract conclusion.** -/
+def Lemma16PrimeFromNCountSevenConclusion (p : ℕ) : Prop :=
+  p = 5
+
+/-- **Lemma 16 N(a) = 0 via Conclusion encoding (paper-faithful).** -/
+theorem lem16_prime_from_N_count_zero_via_conclusion
+    (p : ℕ) (h_conclusion : Lemma16PrimeFromNCountZeroConclusion p) :
+    p = 3 ∨ p = 19 :=
+  h_conclusion
+
+/-- **Lemma 16 N(a) = 1 via Conclusion encoding (paper-faithful).** -/
+theorem lem16_prime_from_N_count_one_via_conclusion
+    (p : ℕ) (h_conclusion : Lemma16PrimeFromNCountOneConclusion p) :
+    p = 7 :=
+  h_conclusion
+
+/-- **Lemma 16 N(a) = 2 via Conclusion encoding (paper-faithful).** -/
+theorem lem16_prime_from_N_count_two_via_conclusion
+    (p : ℕ) (h_conclusion : Lemma16PrimeFromNCountTwoConclusion p) :
+    p = 5 ∨ p = 11 :=
+  h_conclusion
+
+/-- **Lemma 16 N(a) = 3 via Conclusion encoding (paper-faithful).** -/
+theorem lem16_prime_from_N_count_three_via_conclusion
+    (p : ℕ) (h_conclusion : Lemma16PrimeFromNCountThreeConclusion p) :
+    p = 3 :=
+  h_conclusion
+
+/-- **Lemma 16 N(a) = 7 via Conclusion encoding (paper-faithful).** -/
+theorem lem16_prime_from_N_count_seven_via_conclusion
+    (p : ℕ) (h_conclusion : Lemma16PrimeFromNCountSevenConclusion p) :
+    p = 5 :=
+  h_conclusion
+
+/-- **Lemma 16 N(a) = 0 Conclusion instance (unconditional from N count).** -/
+theorem lem16_prime_from_N_count_zero_conclusion_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_zero : (Moore57.autFixedNeighborFinset Γ σ a).card = 0) :
+    Lemma16PrimeFromNCountZeroConclusion p :=
+  lem16_prime_from_N_count_zero hΓ σ smul_adj p k hp_odd pow_pk ha h_N_zero
+
+/-- **Lemma 16 N(a) = 1 Conclusion instance (unconditional from N count).** -/
+theorem lem16_prime_from_N_count_one_conclusion_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_one : (Moore57.autFixedNeighborFinset Γ σ a).card = 1) :
+    Lemma16PrimeFromNCountOneConclusion p :=
+  lem16_prime_from_N_count_one hΓ σ smul_adj p k hp_odd pow_pk ha h_N_one
+
+/-- **Lemma 16 N(a) = 2 Conclusion instance (unconditional from N count).** -/
+theorem lem16_prime_from_N_count_two_conclusion_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_two : (Moore57.autFixedNeighborFinset Γ σ a).card = 2) :
+    Lemma16PrimeFromNCountTwoConclusion p :=
+  lem16_prime_from_N_count_two hΓ σ smul_adj p k hp_odd pow_pk ha h_N_two
+
+/-- **Lemma 16 N(a) = 3 Conclusion instance (unconditional from N count).** -/
+theorem lem16_prime_from_N_count_three_conclusion_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_three : (Moore57.autFixedNeighborFinset Γ σ a).card = 3) :
+    Lemma16PrimeFromNCountThreeConclusion p :=
+  lem16_prime_from_N_count_three hΓ σ smul_adj p k hp_odd pow_pk ha h_N_three
+
+/-- **Lemma 16 N(a) = 7 Conclusion instance (unconditional from N count).** -/
+theorem lem16_prime_from_N_count_seven_conclusion_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a)
+    (h_N_seven : (Moore57.autFixedNeighborFinset Γ σ a).card = 7) :
+    Lemma16PrimeFromNCountSevenConclusion p :=
+  lem16_prime_from_N_count_seven hΓ σ smul_adj p k hp_odd pow_pk ha h_N_seven
+
+/-! #### Paper-faithful proper-signature dispatch (Conclusion-Prop form)
+
+`lem16_pgroup_fix_shape_paper_conclusion`: Conclusion-Prop counterpart
+of `lem16_pgroup_fix_shape_paper`, packaging the 5-case N(a) count
+dispatch in terms of the per-count Conclusion Props.
+-/
+
+/-- **Lemma 16 (paper-faithful Conclusion-Prop dispatch).** [done]
+
+Conclusion-Prop counterpart of `lem16_pgroup_fix_shape_paper`: for σ
+a `p^k`-element with odd prime `p > 2` fixing a vertex `a`, the
+σ-fixed-neighbour count `c = |N(a) ∩ Fix(σ)|` dispatches into the
+per-count Conclusion Props. -/
+theorem lem16_pgroup_fix_shape_paper_conclusion
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (p k : ℕ) [Fact (Nat.Prime p)] (hp_odd : 2 < p)
+    (pow_pk : σ ^ p ^ k = 1)
+    {a : V} (ha : σ a = a) :
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 0 →
+        Lemma16PrimeFromNCountZeroConclusion p) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 1 →
+        Lemma16PrimeFromNCountOneConclusion p) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 2 →
+        Lemma16PrimeFromNCountTwoConclusion p) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 3 →
+        Lemma16PrimeFromNCountThreeConclusion p) ∧
+    ((Moore57.autFixedNeighborFinset Γ σ a).card = 7 →
+        Lemma16PrimeFromNCountSevenConclusion p) :=
+  ⟨fun h => lem16_prime_from_N_count_zero_conclusion_unconditional
+      hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_one_conclusion_unconditional
+      hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_two_conclusion_unconditional
+      hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_three_conclusion_unconditional
+      hΓ σ smul_adj p k hp_odd pow_pk ha h,
+   fun h => lem16_prime_from_N_count_seven_conclusion_unconditional
+      hΓ σ smul_adj p k hp_odd pow_pk ha h⟩
+
 end Moore57.Papers.MacajSiran2010.S6
