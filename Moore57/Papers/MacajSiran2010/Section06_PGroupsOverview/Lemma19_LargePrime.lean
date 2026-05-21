@@ -4,6 +4,7 @@ import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 import Moore57.Moore57Graph.Aut.OrderElevenIsC5
 import Moore57.Moore57Graph.Aut.OrderThirteenEmptyFix
+import Moore57.Moore57Graph.Aut.OrderNineteenSingletonFix
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -530,5 +531,194 @@ theorem lem19_case1_conclusion_prime_with_fix_count_zero
     Lemma19Case1Conclusion σ :=
   lem19_case1_orderOf_dvd_13_prime_with_fix_count_zero hΓ σ pow_13 hne
     smul_adj h_fix_empty
+
+/-! ## Lemma 19 case (2) [19-group, singleton fix] unconditional path
+
+Mirrors the case (1) path established for the 13-prime, but **fully
+unconditional**: the upstream theorem `order19_aut_fixedVertexCount_eq_one`
+discharges `fixedVertexCount σ = 1` directly from `σ^19 = 1 ∧ σ ≠ 1`,
+so no fix-shape hypothesis is required.
+
+The chain is:
+1. `aut_order_nineteen_SingletonFixedData` constructs the
+   `SingletonFixedData σ` from `σ^19 = 1 ∧ σ ≠ 1 ∧ smul_adj` (no
+   `fixedVertexCount σ = 1` hypothesis, in contrast to the 13-case).
+2. `singleton_orderOf_dvd_57_of_semiRegular` (C3.4 bridge) gives
+   `orderOf σ ∣ 57` from a semi-regular hypothesis on `N(v) \ {v}`.
+3. `lem19_case2_orderOf_dvd_19_of_singleton_fix` (arithmetic core)
+   sharpens to `orderOf σ ∣ 19`.
+
+For the prime case, semi-regularity is supplied automatically by
+`Moore57.aut_semiRegular_at_movedNeighbor_of_prime`, so the
+final `lem19_case2_orderOf_dvd_19_prime_unconditional` requires only
+`σ^19 = 1 ∧ σ ≠ 1 ∧ smul_adj`. -/
+
+/-- **Lemma 19 case (2) prime-case via `SingletonFixedData` and semi-regular.**
+[done — Path B, prime case]
+
+For σ a graph automorphism of a Moore57 graph with `σ^19 = 1` and a
+`SingletonFixedData σ` structure (the paper case-(2) shape input), the
+C3.4 semi-regular orbit bridge gives `orderOf σ ∣ 57`, sharpened to
+`orderOf σ ∣ 19` by the arithmetic core.
+
+For the prime case `σ^19 = 1`, the cyclic action is automatically
+semi-regular on every moved neighbour (via
+`Moore57.aut_semiRegular_at_movedNeighbor_of_prime`), so no `hsemi`
+hypothesis is required. -/
+theorem lem19_case2_orderOf_dvd_19_with_singletonFixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (sfd : Moore57.SingletonFixedData σ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 19 := by
+  -- Step 1: combine SingletonFixedData + C3.4 + automatic prime-case
+  -- semi-regular ⟹ orderOf σ ∣ 57.
+  have h_dvd_57 : orderOf σ ∣ 57 :=
+    Moore57.SingletonFixedData.singleton_orderOf_dvd_57_of_semiRegular
+      (Γ := Γ) hΓ sfd smul_adj
+      (Moore57.aut_semiRegular_at_movedNeighbor_of_prime
+        (Γ := Γ) σ 19 (by decide) pow_19 sfd.v)
+  -- Step 2: sharpen to orderOf σ ∣ 19 via the arithmetic core.
+  exact lem19_case2_orderOf_dvd_19_of_singleton_fix σ 1 (by simpa using pow_19)
+    h_dvd_57
+
+/-- **Lemma 19 case (2) prime-case with explicit `fixedVertexCount σ = 1`.**
+[done — Path B, prime case]
+
+Given the paper case-(2) fix-singleton fact `fixedVertexCount σ = 1`
+(supplied either as a hypothesis or — for the 19-prime — derivable
+unconditionally from `order19_aut_fixedVertexCount_eq_one`), construct
+`SingletonFixedData σ` via `singletonFixedData_of_fixedVertexCount_eq_one`
+and dispatch through
+`lem19_case2_orderOf_dvd_19_with_singletonFixedData_prime_via_semiRegular`.
+
+This form is parallel to `lem19_case1_orderOf_dvd_13_prime_with_fix_count_zero`
+for the 13-case (with the difference that the 19-case's fix-singleton
+input is now derivable, see
+`lem19_case2_orderOf_dvd_19_prime_unconditional`). -/
+theorem lem19_case2_orderOf_dvd_19_prime_with_fix_count_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_fix_one : Moore57.fixedVertexCount σ = 1) :
+    orderOf σ ∣ 19 :=
+  let sfd := Moore57.singletonFixedData_of_fixedVertexCount_eq_one σ h_fix_one
+  lem19_case2_orderOf_dvd_19_with_singletonFixedData_prime_via_semiRegular
+    hΓ σ pow_19 sfd smul_adj
+
+/-- **Lemma 19 case (2) prime-case via small-fix narrowing.**
+[done — Path B, prime case]
+
+Given `fixedVertexCount σ ≤ 19` (which is implied by virtually any
+shape-narrowing input for the 19-prime case), the mod-19 constraint
+`fixedVertexCount σ ≡ 1 [MOD 19]` forces `fixedVertexCount σ = 1`, and
+the previous variant applies.
+
+The `≤ 19` upper bound is the §6 Lem 16 case (2) shape-narrowing input
+`lem16_case2_19group_fix_singleton_if_small`. -/
+theorem lem19_case2_orderOf_dvd_19_prime_via_small_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_small : Moore57.fixedVertexCount σ ≤ 19) :
+    orderOf σ ∣ 19 :=
+  let sfd := Moore57.aut_order_nineteen_SingletonFixedData_of_small_fix
+    hΓ σ pow_19 h_small
+  lem19_case2_orderOf_dvd_19_with_singletonFixedData_prime_via_semiRegular
+    hΓ σ pow_19 sfd smul_adj
+
+/-- **Lemma 19 case (2) prime-case fully unconditional.**
+[done — unconditional Path B]
+
+For σ a graph automorphism of a Moore57 graph with `σ^19 = 1` and
+`σ ≠ 1`, the singleton-fix shape (`SingletonFixedData σ`) is *constructed*
+unconditionally from `aut_order_nineteen_SingletonFixedData` (which
+internally invokes the unconditional theorem
+`order19_aut_fixedVertexCount_eq_one`), and the C3.4 semi-regular bridge
+then gives `orderOf σ ∣ 19`.
+
+This eliminates the `SingletonFixedData` and `fixedVertexCount = 1`
+hypotheses entirely — both are derived from `σ^19 = 1 ∧ σ ≠ 1 ∧ smul_adj`
+via the order-19 classification of Moore57 automorphisms
+(`OrderNineteenSingletonFix.lean`).  This is the **genuine unconditional**
+form of Lemma 19 case (2) for the prime order-19 case.
+
+Mirrors `lem19_case3_orderOf_dvd_11_prime_unconditional` (which uses
+`aut_order_eleven_C5FixedData` for the pentagon case).
+
+Note: requires `σ ≠ 1` (otherwise `σ` is trivial and `orderOf σ = 1`
+trivially divides `19`). -/
+theorem lem19_case2_orderOf_dvd_19_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 19 :=
+  let sfd := Moore57.aut_order_nineteen_SingletonFixedData hΓ σ smul_adj pow_19 hne
+  lem19_case2_orderOf_dvd_19_with_singletonFixedData_prime_via_semiRegular
+    hΓ σ pow_19 sfd smul_adj
+
+/-- **Lemma 19 case (2) prime-case unconditional with trivial case.** [done]
+
+Combines the `σ ≠ 1` non-trivial branch (derived via
+`aut_order_nineteen_SingletonFixedData` + semi-regular C3.4 bridge) with
+the trivial `σ = 1` branch (where `orderOf σ = 1 ∣ 19`).
+
+This is the **strictly weakest** hypothesis form: only `σ^19 = 1` and
+`smul_adj` are required.  Mirrors
+`lem19_case3_orderOf_dvd_11_prime_unconditional_total`. -/
+theorem lem19_case2_orderOf_dvd_19_prime_unconditional_total
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 19 := by
+  by_cases hne : σ = 1
+  · subst hne
+    simp
+  · exact lem19_case2_orderOf_dvd_19_prime_unconditional hΓ σ pow_19 hne smul_adj
+
+/-! ### Conclusion Prop encoding (paper-faithful dispatch, case 2) -/
+
+/-- **Lemma 19 case (2) abstract conclusion** (Conclusion Prop encoding).
+
+For σ of order 19 (or 1) acting as a graph automorphism of a Moore57 Γ,
+the paper's case (2) conclusion is: `orderOf σ ∣ 19`.
+
+Bundled as a Prop for downstream Cor3 dispatch chain, paralleling
+`Lemma19Case1Conclusion` and `Lemma19Case3Conclusion`. -/
+def Lemma19Case2Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 19
+
+/-- **Lemma 19 case (2) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma19Case2Conclusion σ` (the paper's case (2) divisibility
+bound), conclude `orderOf σ ∣ 19`.  Trivial bridge — exposed for the
+Conclusion-Prop dispatch pattern used by `MainTheorem`. -/
+theorem lem19_case2_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma19Case2Conclusion σ) :
+    orderOf σ ∣ 19 :=
+  h_conclusion
+
+/-- **Lemma 19 case (2) Conclusion instance, prime-case unconditional.** [done]
+
+The Conclusion Prop `Lemma19Case2Conclusion σ` is *unconditionally*
+discharged for `σ^19 = 1` graph automorphisms of a Moore57 Γ, via
+`lem19_case2_orderOf_dvd_19_prime_unconditional_total`.  No
+`SingletonFixedData` or `fixedVertexCount = 1` hypothesis required. -/
+theorem lem19_case2_conclusion_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    Lemma19Case2Conclusion σ :=
+  lem19_case2_orderOf_dvd_19_prime_unconditional_total hΓ σ pow_19 smul_adj
+
+/-- **Lemma 19 case (2) Conclusion instance, with explicit fix-singleton.** [done]
+
+Variant of `lem19_case2_conclusion_prime_unconditional` that exposes
+`fixedVertexCount σ = 1` as an explicit hypothesis, for parallelism with
+`lem19_case1_conclusion_prime_with_fix_count_zero`.  Useful for callers
+that already have the fix-singleton fact in scope (e.g., from a Lem 16
+case (2) dispatch). -/
+theorem lem19_case2_conclusion_prime_with_fix_count_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_fix_one : Moore57.fixedVertexCount σ = 1) :
+    Lemma19Case2Conclusion σ :=
+  lem19_case2_orderOf_dvd_19_prime_with_fix_count_one hΓ σ pow_19 smul_adj
+    h_fix_one
 
 end Moore57.Papers.MacajSiran2010.S6
