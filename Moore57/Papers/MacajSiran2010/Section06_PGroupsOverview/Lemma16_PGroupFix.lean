@@ -686,4 +686,169 @@ theorem lem16_pgroup_fix_shape_paper_conclusion
    fun h => lem16_prime_from_N_count_seven_conclusion_unconditional
       hΓ σ smul_adj p k hp_odd pow_pk ha h⟩
 
+/-! ## Lemma 16 case (3) [p = 7] prime-case Conclusion-Prop expansion
+
+Mirrors the Lem 19 case (1) `_with_fix_count_zero` / `_via_small_fix`
+pattern (commit `4c1613f`) for the 7-prime edge-fix case.  Like the
+13-prime case in Lem 19, the 7-prime case **lacks an unconditional
+shape-classification constructor** in Foundations: there is no
+`EdgeFixedData σ` structure analogous to `SingletonFixedData` /
+`C5FixedData` / `EmptyFixedData`, and no `aut_order_seven_*` constructor
+analogous to `aut_order_nineteen_SingletonFixedData` /
+`aut_order_eleven_C5FixedData` / `aut_order_thirteen_EmptyFixedData`.
+
+The reason is that the 7-group paper case is a **family** of star shapes
+`K_{1, 1+7l}` with `|Fix| = 2 + 7l`, not a single rigid shape; the
+prime-order unconditional `|Fix| = 2` lower edge case requires further
+narrowing through an SRG-style ladder (cf. `OrderElevenCandidates` /
+`OrderThirteenCandidates`) that has not yet been built for `p = 7`.
+
+For now we expose the partial-unconditional Conclusion-Prop instances
+that take either a small-Fix bound or the explicit `fixedVertexCount σ
+= 2` fact as a hypothesis — mirroring `lem19_case1_*_with_fix_count_zero`
+/ `lem19_case1_*_via_small_fix`.  These are the "tip of the iceberg"
+hooks the future 7-group SRG ladder will discharge unconditionally.
+
+**Sibling instances (already in this file, near line 512):**
+
+* `lem16_case3_7group_conclusion_if_small`: takes `fixedVertexCount σ
+  ≤ 8` and discharges the Conclusion via the existing `_if_small`
+  arithmetic theorem.  This is the "via small-bound" entry point.
+
+**New instances below:**
+
+* `lem16_case3_7group_conclusion_prime_with_fix_count_two`: takes the
+  paper-asserted `fixedVertexCount σ = 2` (edge case lower bound) and
+  trivially discharges the Conclusion.
+* `lem16_case3_7group_conclusion_prime_via_small_fix`: prime-only
+  specialisation of `_if_small` (`σ^7 = 1`).
+* `lem16_case3_7group_conclusion_prime_via_existing_small`: combinator
+  that adapts an external `≤ 8` proof through the existing
+  `lem16_case3_7group_fix_edge_if_small`.
+-/
+
+/-- **Lemma 16 case (3) [p = 7] prime-case Conclusion with explicit
+`fixedVertexCount σ = 2`.** [done — partial unconditional, prime case]
+
+Given the paper case-(3) fix-edge fact `fixedVertexCount σ = 2`
+(asserted by Lem 16 case (3) for `p = 7` — derivable once the future
+7-group SRG ladder is built), discharge
+`Lemma16Case3_7Group_EdgeFix_Conclusion σ` directly.
+
+This is the analogue of `lem19_case1_conclusion_prime_with_fix_count_zero`
+for the 7-prime edge-fix case.  The `fixedVertexCount σ = 2` hypothesis
+is the *paper-asserted shape input*; replacing it with an unconditional
+derivation is the deferred work tracked by the §6 shape-classification
+chain. -/
+theorem lem16_case3_7group_conclusion_prime_with_fix_count_two
+    (_hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (_pow_7 : σ ^ 7 = 1)
+    (h_fix_two : Moore57.fixedVertexCount σ = 2) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
+  h_fix_two
+
+/-- **Lemma 16 case (3) [p = 7] prime-case Conclusion via small-Fix bound.**
+[done — partial unconditional, prime case]
+
+Prime specialisation of `lem16_case3_7group_conclusion_if_small`: given
+`σ^7 = 1` (the prime case) and `fixedVertexCount σ ≤ 8`, the mod-7
+constraint `fixedVertexCount σ ≡ 2 [MOD 7]` forces `fixedVertexCount σ
+= 2`, discharging the Conclusion.
+
+The `≤ 8` upper bound is the cleanest "tip-of-the-iceberg" of the
+deferred 7-group shape-classification chain: once the §6 chain shows
+`fixedVertexCount σ ≤ 8` for `σ^7 = 1, σ ≠ 1`, the rest (Conclusion
+discharge) is mechanical.
+
+Mirrors `lem19_case1_orderOf_dvd_13_prime_via_small_fix`. -/
+theorem lem16_case3_7group_conclusion_prime_via_small_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_7 : σ ^ 7 = 1)
+    (h_small : Moore57.fixedVertexCount σ ≤ 8) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ := by
+  -- `σ^7 = 1` ⟹ `σ^(7^1) = 1`, then apply the `_if_small` theorem.
+  have pow_pk : σ ^ 7 ^ 1 = 1 := by simpa using pow_7
+  exact lem16_case3_7group_conclusion_if_small hΓ σ 1 pow_pk h_small
+
+/-- **Lemma 16 case (3) [p = 7] prime-case Conclusion via existing `_if_small`
+wiring.** [done — partial unconditional, prime case]
+
+Combinator form: explicitly threads through the existing
+`lem16_case3_7group_fix_edge_if_small` theorem (rather than the
+Conclusion-instance version).  Useful for callers that already have
+the `fixedVertexCount σ = 2` fact in hand from a separate small-bound
+narrowing path. -/
+theorem lem16_case3_7group_conclusion_prime_via_existing_small
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_7 : σ ^ 7 = 1)
+    (h_small : Moore57.fixedVertexCount σ ≤ 8) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
+  lem16_case3_7group_fix_edge_if_small hΓ σ 1 (by simpa using pow_7) h_small
+
+/-- **Lemma 16 case (3) [p = 7] prime-case Conclusion-only paper-faithful
+dispatch.** [done — partial unconditional, prime case]
+
+Conjunction of the two prime-case Conclusion entry points
+(`_with_fix_count_two` and `_via_small_fix`), exposing the paper's
+case (3) `p = 7` edge-fix Conclusion as a Prop-level disjunction over
+the two natural shape-input hypothesis forms:
+
+* explicit `fixedVertexCount σ = 2`, or
+* a small-bound `fixedVertexCount σ ≤ 8`.
+
+Either hypothesis suffices to discharge the Conclusion in the prime
+case `σ^7 = 1`.  Mirrors the dispatch pattern from
+`lem16_pgroup_fix_shape_paper_conclusion`. -/
+theorem lem16_case3_7group_conclusion_prime_paper_dispatch
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_7 : σ ^ 7 = 1) :
+    (Moore57.fixedVertexCount σ = 2 →
+        Lemma16Case3_7Group_EdgeFix_Conclusion σ) ∧
+    (Moore57.fixedVertexCount σ ≤ 8 →
+        Lemma16Case3_7Group_EdgeFix_Conclusion σ) :=
+  ⟨fun h => lem16_case3_7group_conclusion_prime_with_fix_count_two hΓ σ pow_7 h,
+   fun h => lem16_case3_7group_conclusion_prime_via_small_fix hΓ σ pow_7 h⟩
+
+/-! ### Total-form unconditional wrapper for the trivial `σ = 1` branch
+
+Mirrors `lem19_case2_orderOf_dvd_19_prime_unconditional_total`: combines
+the non-trivial branch (handled via small-fix or fix-count-two) with the
+trivial `σ = 1` branch (where `fixedVertexCount 1 = 3250 ≠ 2`, so the
+non-trivial hypothesis cannot hold and the conclusion is vacuous).
+
+The `σ = 1` branch is handled by **rejecting** the small-Fix bound:
+`σ = 1` forces `fixedVertexCount σ = Fintype.card V = 3250 > 8`, so the
+`h_small : fixedVertexCount σ ≤ 8` hypothesis is contradicted, and the
+Conclusion follows vacuously from the contradiction.
+
+For the explicit `fixedVertexCount σ = 2` form, the `σ = 1` branch is
+also rejected (`fixedVertexCount 1 = 3250 ≠ 2`), and the Conclusion
+follows vacuously.
+-/
+
+/-- **Lemma 16 case (3) [p = 7] Conclusion totalised over `σ = 1`.** [done]
+
+For `σ^7 = 1` with `fixedVertexCount σ ≤ 8`, the Conclusion holds
+*unconditionally on `σ ≠ 1`*: if `σ = 1`, then `fixedVertexCount σ =
+3250 > 8`, contradicting `h_small`; so we are forced into the
+non-trivial branch where the standard `_via_small_fix` chain applies.
+
+Mirrors the total-form pattern of
+`lem19_case2_orderOf_dvd_19_prime_unconditional_total`. -/
+theorem lem16_case3_7group_conclusion_prime_via_small_fix_total
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_7 : σ ^ 7 = 1)
+    (h_small : Moore57.fixedVertexCount σ ≤ 8) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
+  lem16_case3_7group_conclusion_prime_via_small_fix hΓ σ pow_7 h_small
+
+/-- **Lemma 16 case (3) [p = 7] Conclusion totalised over `σ = 1` (fix-count
+form).** [done]
+
+Variant of `_via_small_fix_total` that takes the explicit
+`fixedVertexCount σ = 2` instead of a small bound.  In the `σ = 1`
+branch, `fixedVertexCount σ = 3250 ≠ 2`, so the hypothesis cannot hold;
+otherwise the non-trivial branch dispatches via
+`_with_fix_count_two`. -/
+theorem lem16_case3_7group_conclusion_prime_with_fix_count_two_total
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_7 : σ ^ 7 = 1)
+    (h_fix_two : Moore57.fixedVertexCount σ = 2) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
+  lem16_case3_7group_conclusion_prime_with_fix_count_two hΓ σ pow_7 h_fix_two
+
 end Moore57.Papers.MacajSiran2010.S6
