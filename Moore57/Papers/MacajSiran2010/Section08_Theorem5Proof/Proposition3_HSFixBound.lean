@@ -1,6 +1,7 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma18_5Group
 import Moore57.Papers.MacajSiran2010.Section03_EquitablePartitions.Lemma5_AdjacencyMatrix
 import Moore57.Foundations.GroupAction.SemiRegularOrbit
+import Moore57.Foundations.GroupAction.OrbitEquitablePartition
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -515,6 +516,40 @@ theorem prop3_per_vertex_two_orbits
     · exact Finset.union_subset hO₁_sub hO₂_sub
     · rw [Finset.card_union_of_disjoint h_disj, hO₁_card, hO₂_card, h_card]
   exact ⟨v₁, v₂, hv₁, hv₂_S, h_disj, h_union⟩
+
+/-! ### L1.1: σ-orbit classification — free / fix-singleton / fix-N -/
+
+/-- **σ-orbit "free" predicate (paper §8 free orbit).**
+
+An σ-orbit class `c : orbitClass σ` is **free** iff:
+* every vertex in its cell is σ-moved (`σ v ≠ v`), AND
+* no σ-fixed vertex is adjacent to any vertex in the cell.
+
+This excludes:
+* Singleton orbits `{a}` of fixed vertices (the 50 size-1 orbits).
+* "fix-N orbits" `O ⊆ N(a)` for some fixed `a` (the 100 size-25 orbits
+  attached to fixed vertices).
+
+The 28 free orbits are exactly the remaining size-25 orbits, used in
+paper §8 Prop 3 Step 3 to select `O_{178}`. -/
+def isFreeOrbit (σ : Equiv.Perm V) (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
+    (c : Moore57.orbitClass σ) : Prop :=
+  (∀ v ∈ Moore57.orbitClass.cell σ c, σ v ≠ v) ∧
+  (∀ a : V, σ a = a → ∀ v ∈ Moore57.orbitClass.cell σ c, ¬ Γ.Adj a v)
+
+noncomputable instance isFreeOrbit_decidable (σ : Equiv.Perm V) (Γ : SimpleGraph V)
+    [DecidableRel Γ.Adj] (c : Moore57.orbitClass σ) :
+    Decidable (isFreeOrbit σ Γ c) := Classical.dec _
+
+/-- **The Finset of σ-free orbit classes.** -/
+noncomputable def freeOrbits (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
+    (σ : Equiv.Perm V) : Finset (Moore57.orbitClass σ) :=
+  (Finset.univ : Finset (Moore57.orbitClass σ)).filter (isFreeOrbit σ Γ)
+
+@[simp] theorem mem_freeOrbits {σ : Equiv.Perm V} {c : Moore57.orbitClass σ} :
+    c ∈ freeOrbits Γ σ ↔ isFreeOrbit σ Γ c := by
+  unfold freeOrbits
+  simp
 
 /-! ### Sub-task C: trace-0 free orbit Classical chooser -/
 
