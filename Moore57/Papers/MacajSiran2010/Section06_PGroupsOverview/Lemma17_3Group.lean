@@ -3,6 +3,7 @@ import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.PetersenFixedData
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 import Moore57.Moore57Graph.Aut.OrderNineteenSingletonFix
+import Moore57.Moore57Graph.Aut.OrderThreeShapeClassification
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -679,5 +680,122 @@ theorem lem17_per_case_to_three_group_fix_conclusion
   rcases h_per_case with h1 | h2
   · exact Or.inl h1
   · exact Or.inr (lem17_case2_via_conclusion_paper σ h2)
+
+/-! ### Singleton branch *truly* unconditional via 3-group shape Foundations
+(commit `be72ed5`)
+
+The 3-group SRG ladder Foundations
+(`Moore57.Moore57Graph.Aut.OrderThreeShapeClassification`) provides the
+constructor
+
+  `aut_order_three_SingletonFixedData_of_lt_10` :
+    `IsMoore57 Γ → σ^3 = 1 → σ ≠ 1 → smul_adj → fixedVertexCount σ < 10
+      → SingletonFixedData σ`
+
+derived from the unconditional dichotomy
+`aut_order_three_fixedVertexCount_eq_one_or_ten` (only the values `{1, 10}`
+are possible for `|Fix(σ)|` when `σ^3 = 1, σ ≠ 1` on Moore57).
+
+Combined with
+`lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular`
+above, this delivers the **case 2 prime-case singleton branch fully
+unconditional** on
+`IsMoore57 Γ + σ^3 = 1 + σ ≠ 1 + smul_adj + |Fix(σ)| < 10`:
+
+* the `SingletonFixedData σ` hypothesis is *constructed*, not required;
+* the case-1 (Petersen) alternative is *excluded* by `|Fix(σ)| < 10`
+  (forcing `|Fix(σ)| = 1`).
+
+Note: the case-1 branch (Petersen, `|Fix(σ)| ≥ 10`) still requires the
+deferred-heavy Petersen uniqueness theorem (`PetersenFixedData` from
+`IsSRGWith 10 3 0 1`) — Foundations only exposes `IsSRGWith 10 3 0 1` here.
+-/
+
+/-- **Lemma 17 case (2) prime-case `orderOf σ ∣ 3` truly unconditional
+(singleton branch, via |Fix| < 10).** [done — Path B, Foundations
+commit `be72ed5`]
+
+The case-2 conclusion `orderOf σ ∣ 3` is derived **without** a
+`SingletonFixedData` hypothesis, by combining
+
+1. `aut_order_three_SingletonFixedData_of_lt_10` (Foundations) — narrowing
+   `|Fix(σ)| < 10` to `SingletonFixedData σ` via the unconditional
+   case-1/case-2 dichotomy from the SRG classification ladder.
+2. `lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular`
+   — the existing C3.4 semi-regular bridge from `SingletonFixedData`
+   + `σ^3 = 1` to `orderOf σ ∣ 3`.
+
+The narrowing `|Fix(σ)| < 10` is the paper's "small fix" hypothesis
+(case-2 input); the deeper paper Lem 21 + Cor 2 chain would be needed to
+*derive* it from `σ^3 = 1` alone (the Petersen-fix case 1 with
+`|Fix| = 10` is the alternative). -/
+theorem lem17_case2_orderOf_dvd_3_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_small : Moore57.fixedVertexCount σ < 10) :
+    orderOf σ ∣ 3 :=
+  let sfd :=
+    Moore57.aut_order_three_SingletonFixedData_of_lt_10
+      (Γ := Γ) hΓ σ smul_adj pow_3 hne h_small
+  lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular
+    hΓ σ pow_3 sfd smul_adj
+
+/-- **Lemma 17 case (2) Conclusion prime-case truly unconditional
+(singleton branch, via |Fix| < 10).** [done — Path B, Foundations
+commit `be72ed5`]
+
+Conclusion-Prop wrapper around `lem17_case2_orderOf_dvd_3_prime_unconditional`.
+Discharges `Lemma17Case2Conclusion σ` (= `orderOf σ ∣ 3`) from the truly
+unconditional inputs: `IsMoore57 Γ + σ^3 = 1 + σ ≠ 1 + smul_adj +
+|Fix(σ)| < 10`. -/
+theorem lem17_case2_conclusion_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_small : Moore57.fixedVertexCount σ < 10) :
+    Lemma17Case2Conclusion σ :=
+  lem17_case2_orderOf_dvd_3_prime_unconditional hΓ σ pow_3 hne smul_adj
+    h_small
+
+/-- **Lemma 17 case (2) Conclusion prime-case via `|Fix(σ)| ≤ 9`
+(paper-signature variant).** [done — Path B, Foundations commit `be72ed5`]
+
+Paper-signature form using `≤ 9` (equivalent to `< 10`).  Some upstream
+callers state the small-fix narrowing as `≤ 9` (the maximum `|Fix(σ)|`
+strictly less than the Petersen-branch `= 10`), so this variant provides
+the matching dispatch shape. -/
+theorem lem17_case2_conclusion_prime_via_fix_le_9
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_le_9 : Moore57.fixedVertexCount σ ≤ 9) :
+    Lemma17Case2Conclusion σ :=
+  lem17_case2_conclusion_prime_unconditional hΓ σ pow_3 hne smul_adj
+    (by omega)
+
+/-- **Lemma 17 case (2) Conclusion prime-case via `|Fix(σ)| ≠ 10`
+(complement form).** [done — Path B, Foundations commit `be72ed5`]
+
+Alternate dispatch shape: the singleton branch is selected by excluding
+the Petersen branch `|Fix(σ)| = 10`.  Combined with the unconditional
+dichotomy `|Fix(σ)| ∈ {1, 10}`, the negation forces `|Fix(σ)| = 1` and
+the rest is mechanical.
+
+This is the most paper-faithful form: case 2 = "not Petersen", which
+matches the §6 Lem 17 case split as stated. -/
+theorem lem17_case2_conclusion_prime_via_fix_ne_10
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_ne_10 : Moore57.fixedVertexCount σ ≠ 10) :
+    Lemma17Case2Conclusion σ := by
+  -- Use the unconditional dichotomy `|Fix(σ)| = 1 ∨ |Fix(σ)| = 10`
+  -- and the `≠ 10` hypothesis to force `|Fix(σ)| = 1`, giving `< 10`.
+  have hdich :=
+    Moore57.aut_order_three_fixedVertexCount_singleton_or_petersen
+      (Γ := Γ) hΓ σ smul_adj pow_3 hne
+  have h_eq_1 : Moore57.fixedVertexCount σ = 1 := by
+    rcases hdich with h1 | h10
+    · exact h1
+    · exact absurd h10 h_ne_10
+  exact lem17_case2_conclusion_prime_unconditional hΓ σ pow_3 hne smul_adj
+    (by rw [h_eq_1]; decide)
 
 end Moore57.Papers.MacajSiran2010.S6
