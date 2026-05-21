@@ -482,4 +482,100 @@ theorem lem13_no_p5_pow5_a0_one
   exact lem13_no_pow_p_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 (by decide) hpow
     hne_pow5 h_a0_pow5 (by decide)
 
+/-! ### Phase 11S: σ^p rows `a₀(σ^p) ∈ {0, 2}` exclusion (session 11)
+
+Mirroring the Lem 12 a₀ ∈ {0, 2} unconditional exclusions via the
+`orderOf · ∣ |V| - a₀(·)` bridge, we apply them to `σ^p` for an
+order-`p²` graph automorphism σ.  The key is that `σ^p` has prime
+order `p` (provided `σ^p ≠ 1`), so the Lem 12 row exclusions transport
+through `graphAut_pow`.
+-/
+
+/-- **Lemma 13 (unconditional, `a₀(σ^p) = 0` with prime `p ∤ 3250` impossible).**
+[done]
+
+**New unconditional row exclusion** mirroring
+`lem12_no_a0_zero_of_prime_not_dvd_3250`, applied to `σ^p` (which has
+order `p`).  For an order-`p²` graph automorphism `σ` (with `σ^(p²) = 1`,
+`σ^p ≠ 1`) and `a₀(σ^p) = 0`: the bridge forces `p ∣ 3250 = 2 · 5³ · 13`.
+
+For `p ∉ {2, 5, 13}` this is a contradiction. -/
+theorem lem13_no_pow_p_a0_zero_of_prime_not_dvd_3250
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpp : σ ^ (p * p) = 1)
+    (hne_pow_p : σ ^ p ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ p) = 0)
+    (h_p_not_dvd : ¬ p ∣ 3250) :
+    False := by
+  -- (σ^p)^p = σ^(p²) = 1.
+  have hpow_p_p : (σ ^ p) ^ p = 1 := by
+    rw [← pow_mul]; exact hpp
+  -- Apply the Lem 12 row-exclusion to σ^p.
+  exact lem12_no_a0_zero_of_prime_not_dvd_3250 hΓ (σ ^ p)
+    (graphAut_pow σ hAut p) p hp hpow_p_p hne_pow_p h_a0 h_p_not_dvd
+
+/-- **Lemma 13 (unconditional, `a₀(σ^p) = 2` with prime `p ∤ 3248` impossible).**
+[done]
+
+**New unconditional row exclusion** mirroring
+`lem12_no_a0_two_of_prime_not_dvd_3248`, applied to `σ^p`. -/
+theorem lem13_no_pow_p_a0_two_of_prime_not_dvd_3248
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpp : σ ^ (p * p) = 1)
+    (hne_pow_p : σ ^ p ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ p) = 2)
+    (h_p_not_dvd : ¬ p ∣ 3248) :
+    False := by
+  have hpow_p_p : (σ ^ p) ^ p = 1 := by
+    rw [← pow_mul]; exact hpp
+  exact lem12_no_a0_two_of_prime_not_dvd_3248 hΓ (σ ^ p)
+    (graphAut_pow σ hAut p) p hp hpow_p_p hne_pow_p h_a0 h_p_not_dvd
+
+/-- **Lemma 13 (unconditional, `p = 3, a₀(σ³) = 0` impossible).** [done]
+
+Specialization to `p = 3`: for any order-9 graph automorphism `σ`
+(with `σ³ ≠ 1`), `a₀(σ³) = 0` is impossible since `3 ∤ 3250`. -/
+theorem lem13_no_p3_pow3_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 9 = 1) (hne_pow3 : σ ^ 3 ≠ 1)
+    (h_a0_pow3 : fixedVertexCount (σ ^ 3) = 0) :
+    False := by
+  have h9 : (9 : ℕ) = 3 * 3 := by decide
+  rw [h9] at hpow
+  exact lem13_no_pow_p_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 3 (by decide) hpow
+    hne_pow3 h_a0_pow3 (by decide)
+
+/-- **Lemma 13 (unconditional, `p = 3, a₀(σ³) = 2` impossible).** [done]
+
+Specialization to `p = 3`: `a₀(σ³) = 2` is impossible since `3 ∤ 3248`. -/
+theorem lem13_no_p3_pow3_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 9 = 1) (hne_pow3 : σ ^ 3 ≠ 1)
+    (h_a0_pow3 : fixedVertexCount (σ ^ 3) = 2) :
+    False := by
+  have h9 : (9 : ℕ) = 3 * 3 := by decide
+  rw [h9] at hpow
+  exact lem13_no_pow_p_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 3 (by decide) hpow
+    hne_pow3 h_a0_pow3 (by decide)
+
+/-- **Lemma 13 (unconditional, `p = 5, a₀(σ⁵) = 2` impossible).** [done]
+
+Specialization to `p = 5`: `a₀(σ⁵) = 2` is impossible since `5 ∤ 3248`.
+(Note: `5 ∣ 3250`, so the `a₀(σ⁵) = 0` row is NOT excluded by this
+bridge for `p = 5` — it remains as a permissible row in the table.) -/
+theorem lem13_no_p5_pow5_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1) (hne_pow5 : σ ^ 5 ≠ 1)
+    (h_a0_pow5 : fixedVertexCount (σ ^ 5) = 2) :
+    False := by
+  have h25 : (25 : ℕ) = 5 * 5 := by decide
+  rw [h25] at hpow
+  exact lem13_no_pow_p_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 5 (by decide) hpow
+    hne_pow5 h_a0_pow5 (by decide)
+
 end Moore57.Papers.MacajSiran2010.S5

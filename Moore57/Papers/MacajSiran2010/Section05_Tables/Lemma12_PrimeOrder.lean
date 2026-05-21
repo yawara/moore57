@@ -537,4 +537,237 @@ theorem lem12_no_p13_a0_one
   lem12_no_a0_one_of_prime_not_dvd_57 hΓ σ hAut 13 (by decide) hpow hne h_a0
     (by decide)
 
+/-! ### Phase 11S: a₀ ∈ {0, 2} row exclusions via `orderOf σ ∣ |V| - a₀` (session 11)
+
+For a prime-order graph automorphism `σ` of Moore57 (`σ^p = 1`, `p` prime,
+`σ ≠ 1`), the semi-regular bridge
+`aut_card_V_eq_fixedVertexCount_add_orderOf_mul` combined with the prime
+semi-regular helper `semiRegular_at_movedPoint_of_prime_orderOf` yields
+the divisibility
+```
+orderOf σ = p ∣ Fintype.card V - fixedVertexCount σ = 3250 - a₀(σ).
+```
+
+For Moore57, `|V| = 3250 = 2 · 5³ · 13`.  Thus:
+* `a₀ = 0`: `p ∣ 3250 ⟹ p ∈ {2, 5, 13}`, so any prime `p ∉ {2, 5, 13}`
+  excludes the row.
+* `a₀ = 2`: `p ∣ 3248 = 2⁴ · 7 · 29`, so any prime `p ∉ {2, 7, 29}`
+  excludes the row.
+
+Below we provide generic prime-row exclusion theorems plus
+specializations for the standard §5 primes `p ∈ {3, 7, 11, 19}`.
+-/
+
+/-- **Lemma 12 helper: prime semi-regular complement hypothesis.** [done]
+
+For a non-trivial prime-order permutation σ (`σ^p = 1`, `p` prime,
+`σ ≠ 1`), the cyclic action is semi-regular on every moved point of V:
+```
+∀ v : V, σ v ≠ v → ∀ k : ℕ, (σ^k) v = v → orderOf σ ∣ k.
+```
+This is the semi-regular hypothesis required by
+`aut_card_V_eq_fixedVertexCount_add_orderOf_mul`, packaged from the
+prime-base-case `semiRegular_at_movedPoint_of_prime_orderOf` (which
+works pointwise). -/
+theorem lem12_semiRegular_complement_of_prime
+    (σ : Equiv.Perm V) (p : ℕ) (hp : Nat.Prime p) (hpow : σ ^ p = 1) :
+    ∀ v : V, σ v ≠ v → ∀ k : ℕ, (σ ^ k) v = v → orderOf σ ∣ k := by
+  intro v hv k hk
+  exact semiRegular_at_movedPoint_of_prime_orderOf σ p hp hpow v hv k hk
+
+/-- **Lemma 12 (orderOf σ divides |V| - a₀(σ) for prime-order σ).** [done]
+
+Generic divisibility constraint at any prime-order graph automorphism σ
+of Moore57: `orderOf σ ∣ Fintype.card V - fixedVertexCount σ`.  For
+Moore57, `Fintype.card V = 3250`, so `orderOf σ = p ∣ 3250 - a₀(σ)`.
+
+Proof: combine the prime semi-regular complement
+(`lem12_semiRegular_complement_of_prime`) with
+`aut_card_V_eq_fixedVertexCount_add_orderOf_mul`, then read off the
+divisibility from the additive decomposition. -/
+theorem lem12_orderOf_dvd_card_sub_fixedVertexCount
+    (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpow : σ ^ p = 1) :
+    orderOf σ ∣ (Fintype.card V - fixedVertexCount σ) := by
+  have hsemi := lem12_semiRegular_complement_of_prime σ p hp hpow
+  obtain ⟨k, hk⟩ := Moore57.aut_card_V_eq_fixedVertexCount_add_orderOf_mul
+                      σ hAut hsemi
+  -- hk : Fintype.card V = fixedVertexCount σ + k * orderOf σ
+  -- Goal: orderOf σ ∣ Fintype.card V - fixedVertexCount σ
+  -- Subtract:  Fintype.card V - fixedVertexCount σ = k * orderOf σ.
+  have hsub : Fintype.card V - fixedVertexCount σ = k * orderOf σ := by omega
+  rw [hsub, mul_comm]
+  exact dvd_mul_right _ _
+
+/-- **Lemma 12 (unconditional, `a₀ = 0` with prime `p ∤ 3250` impossible).**
+[done]
+
+**New unconditional row exclusion.**  For a prime-order graph
+automorphism `σ` of Moore57 (`σ^p = 1`, `σ ≠ 1`, `p` prime) with
+`a₀(σ) = 0` (no fixed vertex, i.e. σ acts semi-regularly on all of V):
+the bridge `orderOf σ ∣ |V| - 0 = 3250` combined with
+`orderOf σ = p` forces `p ∣ 3250 = 2 · 5³ · 13`.
+
+Thus for any prime `p ∉ {2, 5, 13}`, the row `a₀ = 0` cannot occur.
+Covers `p = 3, 7, 11, 17, 19, 23, ...`. -/
+theorem lem12_no_a0_zero_of_prime_not_dvd_3250
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpow : σ ^ p = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 0)
+    (h_p_not_dvd : ¬ p ∣ 3250) :
+    False := by
+  classical
+  -- orderOf σ = p (from σ^p = 1, p prime, σ ≠ 1).
+  haveI : Fact (Nat.Prime p) := ⟨hp⟩
+  have h_ord : orderOf σ = p := orderOf_eq_prime hpow hne
+  -- divisibility: orderOf σ ∣ |V| - a₀(σ).
+  have h_dvd := lem12_orderOf_dvd_card_sub_fixedVertexCount σ hAut p hp hpow
+  -- card V = 3250, a₀ = 0 ⟹ orderOf σ ∣ 3250.
+  rw [hΓ.card, h_a0] at h_dvd
+  -- so p ∣ 3250.
+  have h_p_dvd : p ∣ 3250 := by rw [← h_ord]; simpa using h_dvd
+  exact h_p_not_dvd h_p_dvd
+
+/-- **Lemma 12 (unconditional, `a₀ = 2` with prime `p ∤ 3248` impossible).**
+[done]
+
+**New unconditional row exclusion.**  For a prime-order graph
+automorphism `σ` of Moore57 with `a₀(σ) = 2`: the bridge
+`orderOf σ ∣ |V| - 2 = 3248` combined with `orderOf σ = p` forces
+`p ∣ 3248 = 2⁴ · 7 · 29`.
+
+Thus for any prime `p ∉ {2, 7, 29}`, the row `a₀ = 2` cannot occur.
+Covers `p = 3, 5, 11, 13, 17, 19, 23, ...`. -/
+theorem lem12_no_a0_two_of_prime_not_dvd_3248
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpow : σ ^ p = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 2)
+    (h_p_not_dvd : ¬ p ∣ 3248) :
+    False := by
+  classical
+  haveI : Fact (Nat.Prime p) := ⟨hp⟩
+  have h_ord : orderOf σ = p := orderOf_eq_prime hpow hne
+  have h_dvd := lem12_orderOf_dvd_card_sub_fixedVertexCount σ hAut p hp hpow
+  -- card V = 3250, a₀ = 2 ⟹ orderOf σ ∣ 3248.
+  rw [hΓ.card, h_a0] at h_dvd
+  -- so p ∣ 3248.
+  have h_p_dvd : p ∣ 3248 := by rw [← h_ord]; simpa using h_dvd
+  exact h_p_not_dvd h_p_dvd
+
+/-- **Lemma 12 (unconditional, `p = 3, a₀ = 0` impossible).** [done]
+
+Specialization of `lem12_no_a0_zero_of_prime_not_dvd_3250` to `p = 3`:
+since `3 ∤ 3250`, the row `(p = 3, a₀ = 0)` cannot occur. -/
+theorem lem12_no_p3_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 0) :
+    False :=
+  lem12_no_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 3 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 7, a₀ = 0` impossible).** [done]
+
+Specialization to `p = 7`: since `7 ∤ 3250`, the row cannot occur. -/
+theorem lem12_no_p7_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 7 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 0) :
+    False :=
+  lem12_no_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 7 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 11, a₀ = 0` impossible).** [done]
+
+Specialization to `p = 11`: since `11 ∤ 3250`, the row cannot occur. -/
+theorem lem12_no_p11_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 11 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 0) :
+    False :=
+  lem12_no_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 11 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 19, a₀ = 0` impossible).** [done]
+
+Specialization to `p = 19`: since `19 ∤ 3250`, the row `(p = 19, a₀ = 0)`
+cannot occur.  Note: the existing `lem12_p19_a0_one` proves `a₀ = 1` is
+forced for `p = 19`, so this gives an independent exclusion of `a₀ = 0`
+via the semi-regular orbit count. -/
+theorem lem12_no_p19_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 19 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 0) :
+    False :=
+  lem12_no_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 19 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 3, a₀ = 2` impossible).** [done]
+
+Specialization of `lem12_no_a0_two_of_prime_not_dvd_3248` to `p = 3`:
+since `3 ∤ 3248`, the row cannot occur. -/
+theorem lem12_no_p3_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 2) :
+    False :=
+  lem12_no_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 3 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 5, a₀ = 2` impossible).** [done]
+
+Specialization to `p = 5`: since `5 ∤ 3248`, the row cannot occur. -/
+theorem lem12_no_p5_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 5 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 2) :
+    False :=
+  lem12_no_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 5 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 11, a₀ = 2` impossible).** [done]
+
+Specialization to `p = 11`: since `11 ∤ 3248`, the row cannot occur. -/
+theorem lem12_no_p11_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 11 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 2) :
+    False :=
+  lem12_no_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 11 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 13, a₀ = 2` impossible).** [done]
+
+Specialization to `p = 13`: since `13 ∤ 3248`, the row cannot occur. -/
+theorem lem12_no_p13_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 13 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 2) :
+    False :=
+  lem12_no_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 13 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 19, a₀ = 2` impossible).** [done]
+
+Specialization to `p = 19`: since `19 ∤ 3248`, the row cannot occur. -/
+theorem lem12_no_p19_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 19 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 2) :
+    False :=
+  lem12_no_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 19 (by decide) hpow hne h_a0
+    (by decide)
+
 end Moore57.Papers.MacajSiran2010.S5
