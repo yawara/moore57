@@ -55,13 +55,34 @@ def Proposition2CharacterSystem
     ∀ (g : G),
       ρ.character g = ∑ i : Fin n, (m i : ℚ) * (rs i).character g
 
+/-- **Proposition 2 (paper-faithful conditional re-export).** [done — conditional]
+
+Proper-signature paper-faithful form: given the `Proposition2CharacterSystem ρ`
+hypothesis as input, for any `g : G`, the character value `ρ.character g`
+is expressed as a non-negative integer linear combination of irreducible
+rational character values:
+`ρ.character g = ∑ i, (m i : ℚ) * (rs i).character g`.
+
+This makes the abstract `Prop` usable as a hypothesis in Lem 13 / Lem 15
+starred-row arguments. The underlying Proposition 2 itself is deferred. -/
+theorem prop2_character_system_paper
+    {G : Type u} [Group G] [Fintype G]
+    {V : Type v} [AddCommGroup V] [Module ℚ V] [FiniteDimensional ℚ V]
+    (ρ : Representation ℚ G V) (h : Proposition2CharacterSystem ρ) :
+    ∃ (n : ℕ) (rs : Fin n → Representation ℚ G (Fin n → ℚ))
+      (m : Fin n → ℕ),
+      ∀ (g : G),
+        ρ.character g = ∑ i : Fin n, (m i : ℚ) * (rs i).character g :=
+  h
+
 /-- **Proposition 2 (non-negative integer character system).** [deferred-heavy]
 
 Placeholder for the full proposition; substantive content is in
 `Proposition2CharacterSystem`. The proof depends on Theorem 3
 (Curtis–Reiner) and the ℚ-irreducible decomposition of finite-group
 representations, which is in Mathlib via Maschke but not yet wired
-together with rational characters in the form the paper needs. -/
+together with rational characters in the form the paper needs.
+Proper-signature conditional re-export: `prop2_character_system_paper`. -/
 theorem prop2_character_system : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S4

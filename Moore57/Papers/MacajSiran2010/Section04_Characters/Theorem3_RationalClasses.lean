@@ -52,10 +52,30 @@ def Theorem3RationalClasses
     Nat.Coprime k.natAbs (orderOf σ) →
     ρ.character (σ ^ k) = ρ.character σ
 
+/-- **Theorem 3 (paper-faithful conditional re-export).** [done — conditional]
+
+Proper-signature paper-faithful form: given the Curtis–Reiner-style
+hypothesis `Theorem3RationalClasses ρ` (rational character constant on
+rational classes) as input, for any `σ : G` and integer `k` coprime to
+`orderOf σ`, conclude `ρ.character (σ ^ k) = ρ.character σ`.
+
+This makes the `Prop`-level abstract conclusion usable as a hypothesis
+in downstream lemmas that need the rational-class constancy.  The
+underlying Curtis–Reiner theorem itself is external (unmigrated from
+Mathlib). -/
+theorem thm3_rational_classes_paper
+    {G : Type u} [Group G] [Fintype G]
+    {V : Type v} [AddCommGroup V] [Module ℚ V] [FiniteDimensional ℚ V]
+    (ρ : Representation ℚ G V) (h : Theorem3RationalClasses ρ)
+    (σ : G) (k : ℤ) (hk : Nat.Coprime k.natAbs (orderOf σ)) :
+    ρ.character (σ ^ k) = ρ.character σ :=
+  h σ k hk
+
 /-- **Theorem 3 (rational characters constant on rational classes).** [external]
 
 Placeholder for the unmigrated Curtis–Reiner theorem. The substantive
-statement is captured in `Theorem3RationalClasses`. -/
+statement is captured in `Theorem3RationalClasses` and the conditional
+re-export `thm3_rational_classes_paper` (above). -/
 theorem thm3_rational_classes : True := by trivial
 
 end Moore57.Papers.MacajSiran2010.S4
