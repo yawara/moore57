@@ -902,4 +902,193 @@ theorem IsPetersenLike.exists_unique_stranger_path_bipartite
   intro u' ⟨hxu', hyu', _, _⟩
   exact huniq u' ⟨hxu', hyu'⟩
 
+/-! ### Tier 4: 4-vs-2 cardinality split of strangers under edge `(v, w)`
+
+For an edge `(v, w)`, the 6 strangers of `v` split into:
+* **2 partners-of-`w`** (`partnersOf G v w`): the strangers of `v` that
+  are adjacent to `w` (equivalently, lie in `N(w) \ {v}`).
+* **4 cross-side strangers** (`crossStrangers G v w`): the strangers of
+  `v` that are **not** adjacent to `w`.  By
+  `exists_unique_stranger_path_bipartite`, these are precisely the
+  vertices reached as the unique common neighbour of some pair
+  `(x, y) ∈ (N(v) \ {w}) × (N(w) \ {v})`.
+
+The 2+4 split is the algebraic core of the `K_{3,3}`-minus-matching
+incidence at edge `(v, w)`, providing the cardinality-counting that
+underlies Bose 1963's edge-relative enumeration. -/
+
+/-- **Cross-side strangers of `v` under edge `(v, w)`.**
+
+The strangers of `v` that are **not** adjacent to `w`.  These are the 4
+strangers reached as the common-neighbour witnesses across the bipartite
+sides `(N(v) \ {w}) × (N(w) \ {v})` (cf.
+`exists_unique_stranger_path_bipartite`). -/
+def crossStrangers (G : SimpleGraph V) [DecidableRel G.Adj] (v w : V) : Finset V :=
+  (strangers G v).filter (fun u => ¬ G.Adj w u)
+
+/-- **Membership in `crossStrangers`**. -/
+theorem mem_crossStrangers_iff
+    {G : SimpleGraph V} [DecidableRel G.Adj] {v w u : V} :
+    u ∈ crossStrangers G v w ↔ u ∈ strangers G v ∧ ¬ G.Adj w u := by
+  unfold crossStrangers
+  rw [Finset.mem_filter]
+
+/-- **`crossStrangers G v w` and `partnersOf G v w` are disjoint** for an
+edge `(v, w)`.
+
+Membership in `partnersOf G v w` implies adjacency to `w`, which is
+explicitly forbidden in `crossStrangers G v w`.  This is the algebraic
+separation underlying the 2+4 split. -/
+theorem IsPetersenLike.crossStrangers_disjoint_partnersOf_w
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {v w : V} :
+    Disjoint (crossStrangers G v w) (partnersOf G v w) := by
+  rw [Finset.disjoint_left]
+  intro u hu_cross hu_part
+  rw [mem_crossStrangers_iff] at hu_cross
+  rw [mem_partnersOf_iff] at hu_part
+  exact hu_cross.2 hu_part.2
+
+/-- **Strangers of `v` partition as `partnersOf G v w ∪ crossStrangers G v w`**
+for an edge `(v, w)`.
+
+The 2-element `partnersOf G v w` (strangers adjacent to `w`) and the
+4-element `crossStrangers G v w` (strangers non-adjacent to `w`) together
+cover all 6 strangers of `v`, by case-splitting on `G.Adj w u`. -/
+theorem IsPetersenLike.strangers_eq_partnersOf_w_union_crossStrangers
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w) :
+    strangers G v = partnersOf G v w ∪ crossStrangers G v w := by
+  ext u
+  rw [Finset.mem_union, mem_crossStrangers_iff,
+      h.mem_partnersOf_w_iff_stranger hvw]
+  constructor
+  · intro hu
+    by_cases hwu : G.Adj w u
+    · exact Or.inl ⟨hu, hwu⟩
+    · exact Or.inr ⟨hu, hwu⟩
+  · rintro (⟨hu, _⟩ | ⟨hu, _⟩) <;> exact hu
+
+/-- **`crossStrangers G v w` has cardinality 4** for an edge `(v, w)`.
+
+By `strangers_card = 6`, `partnersOf_card = 2`, disjointness, and the
+2+4 partition.  This is the cardinality content of the
+`K_{3,3}`-minus-matching incidence. -/
+theorem IsPetersenLike.crossStrangers_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w) :
+    (crossStrangers G v w).card = 4 := by
+  have hpart := h.strangers_eq_partnersOf_w_union_crossStrangers hvw
+  have hdisj := @IsPetersenLike.crossStrangers_disjoint_partnersOf_w V _ _ G _ v w
+  have hstr : (strangers G v).card = 6 := h.strangers_card v
+  have hpw : (partnersOf G v w).card = 2 := h.partnersOf_card hvw
+  have hunion : (partnersOf G v w ∪ crossStrangers G v w).card =
+      (partnersOf G v w).card + (crossStrangers G v w).card :=
+    Finset.card_union_of_disjoint hdisj.symm
+  rw [hpart, hunion, hpw] at hstr
+  omega
+
+/-- **Each cross-side stranger arises as the unique common neighbour of
+some `(x, y) ∈ (N(v) \ {w}) × (N(w) \ {v})`** (existence form).
+
+For an edge `(v, w)` and a stranger `u` of `v` non-adjacent to `w`, the
+unique `z ∈ N(v)` with `G.Adj z u` (from `μ = 1` via
+`exists_unique_partnersOf_index`) is some `x ≠ w` (else `u` would be
+adjacent to `w`, contradiction).  Similarly `u ∈ strangers G w` (since
+`u ≠ w` from `u ∈ strangers G v ∧ ¬ Adj w u`, plus `¬ Adj w u`), and the
+unique witness `y ∈ N(w)` with `G.Adj y u` is `≠ v` (else `Adj v u`,
+contradicting `u ∈ strangers G v`). -/
+theorem IsPetersenLike.crossStrangers_arises_from_pair
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w)
+    {u : V} (hu : u ∈ crossStrangers G v w) :
+    ∃ x y, x ∈ (G.neighborFinset v).erase w ∧
+           y ∈ (G.neighborFinset w).erase v ∧
+           G.Adj x u ∧ G.Adj y u := by
+  rw [mem_crossStrangers_iff] at hu
+  obtain ⟨hu_str_v, hwu_nadj⟩ := hu
+  -- Step 1: u is also a stranger of w (u ≠ w from u ≠ v and ¬ Adj v u
+  -- via μ = 1 forcing u ≠ w... actually directly:
+  -- u ≠ w because if u = w then G.Adj v u = G.Adj v w which contradicts
+  -- u ∈ strangers G v).
+  have hu_ne_v : u ≠ v := (mem_strangers_iff.mp hu_str_v).1
+  have hvu_nadj : ¬ G.Adj v u := (mem_strangers_iff.mp hu_str_v).2
+  have hu_ne_w : u ≠ w := by
+    intro heq
+    subst heq
+    exact hvu_nadj hvw
+  -- Step 2: μ = 1 applied to (v, u): unique x ∈ N(v) with G.Adj x u.
+  obtain ⟨x, ⟨hx_mem, hxu⟩, _⟩ := h.exists_unique_neighbor_witness hu_str_v
+  -- x ≠ w: else G.Adj w u, contradicting ¬ Adj w u.
+  have hxw : x ≠ w := by
+    intro heq
+    subst heq
+    exact hwu_nadj hxu
+  have hx_erase : x ∈ (G.neighborFinset v).erase w := by
+    rw [Finset.mem_erase]
+    exact ⟨hxw, hx_mem⟩
+  -- Step 3: μ = 1 applied to (w, u): unique y ∈ N(w) with G.Adj y u.
+  have hu_str_w : u ∈ strangers G w := by
+    rw [mem_strangers_iff]
+    refine ⟨hu_ne_w, ?_⟩
+    intro hwu
+    exact hwu_nadj hwu
+  obtain ⟨y, ⟨hy_mem, hyu⟩, _⟩ := h.exists_unique_neighbor_witness hu_str_w
+  -- y ≠ v: else G.Adj v u, contradicting hvu_nadj.
+  have hyv : y ≠ v := by
+    intro heq
+    subst heq
+    exact hvu_nadj hyu
+  have hy_erase : y ∈ (G.neighborFinset w).erase v := by
+    rw [Finset.mem_erase]
+    exact ⟨hyv, hy_mem⟩
+  exact ⟨x, y, hx_erase, hy_erase, hxu, hyu⟩
+
+/-- **Symmetric 4-vs-2 split: cross-strangers of `w` (mirror of
+`crossStrangers G v w`).**
+
+For an edge `(v, w)`, the role of `v` and `w` is symmetric.  This is
+literally `crossStrangers G w v`, with cardinality 4 by
+`crossStrangers_card` applied to `hvw.symm`. -/
+theorem IsPetersenLike.crossStrangers_w_v_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w) :
+    (crossStrangers G w v).card = 4 :=
+  h.crossStrangers_card hvw.symm
+
+/-- **Symmetric strangers partition at `w`**: `strangers G w = partnersOf G w v ∪ crossStrangers G w v`. -/
+theorem IsPetersenLike.strangers_w_eq_partnersOf_v_union_crossStrangers
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w) :
+    strangers G w = partnersOf G w v ∪ crossStrangers G w v :=
+  h.strangers_eq_partnersOf_w_union_crossStrangers hvw.symm
+
+/-- **`crossStrangers G v w` equals the "double-stranger" set** for an edge
+`(v, w)`.
+
+The cross-strangers from `v`'s view (non-`w`-adjacent strangers of `v`)
+coincide with strangers of both `v` and `w`: both `u ≠ v, w` and
+`¬ Adj v u, ¬ Adj w u`.  This needs `G.Adj v w` to rule out the corner
+case `u = w` (then `u ∈ strangers G v` is allowed if `¬ Adj v w`, but
+the edge `G.Adj v w` forces `w ∉ strangers G v`). -/
+theorem IsPetersenLike.crossStrangers_eq_double_strangers
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {v w : V} (hvw : G.Adj v w) :
+    crossStrangers G v w =
+      (strangers G v).filter (fun u => u ∈ strangers G w) := by
+  ext u
+  rw [mem_crossStrangers_iff, Finset.mem_filter]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨hu_str_v, hwu_nadj⟩
+    refine ⟨hu_str_v, ?_⟩
+    rw [mem_strangers_iff]
+    refine ⟨?_, hwu_nadj⟩
+    intro heq
+    subst heq
+    -- u = w. u ∈ strangers G v means ¬ G.Adj v u = ¬ G.Adj v w, contradicting hvw.
+    exact (mem_strangers_iff.mp hu_str_v).2 hvw
+  · rintro ⟨hu_str_v, hu_str_w⟩
+    rw [mem_strangers_iff] at hu_str_w
+    exact ⟨hu_str_v, hu_str_w.2⟩
+
 end Moore57

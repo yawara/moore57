@@ -577,4 +577,305 @@ theorem lem15_no_pq77_pow11_a0_zero
   exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 7 11
     (by decide) (by decide) hpow hne_pow11 h_a0 (by decide)
 
+/-! ### More `(p, q)` table specializations (session 13)
+
+Additional pairs from MS 2010 §5 Lemma 15 table:
+`pq ∈ {33, 51, 55, 57, 65, 85, 91, 95, 119, 143, 209, 247}`.
+All follow the session 12 template: rewrite `σ ^ pq = σ ^ (p * q)`, then
+apply the generic `lem15_no_pow_{p,q}_a0_{zero,one,two}_of_prime_not_dvd_*`. -/
+
+/-- **Lemma 15 (unconditional, `pq = 33, a₀(σ^11) = 0` impossible).** [done]
+
+σ of order 33 = 3·11; σ^11 has order 3; `3 ∤ 3250`. -/
+theorem lem15_no_pq33_pow11_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 33 = 1) (hne_pow11 : σ ^ 11 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 11) = 0) :
+    False := by
+  have h33 : (33 : ℕ) = 3 * 11 := by decide
+  rw [h33] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 3 11
+    (by decide) (by decide) hpow hne_pow11 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 33, a₀(σ^11) = 2` impossible).** [done]
+
+σ^11 has order 3; `3 ∤ 3248`. -/
+theorem lem15_no_pq33_pow11_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 33 = 1) (hne_pow11 : σ ^ 11 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 11) = 2) :
+    False := by
+  have h33 : (33 : ℕ) = 3 * 11 := by decide
+  rw [h33] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 3 11
+    (by decide) (by decide) hpow hne_pow11 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 51, a₀(σ^17) = 0` impossible).** [done]
+
+σ of order 51 = 3·17; σ^17 has order 3; `3 ∤ 3250`. -/
+theorem lem15_no_pq51_pow17_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 51 = 1) (hne_pow17 : σ ^ 17 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 17) = 0) :
+    False := by
+  have h51 : (51 : ℕ) = 3 * 17 := by decide
+  rw [h51] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 3 17
+    (by decide) (by decide) hpow hne_pow17 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 51, a₀(σ^17) = 2` impossible).** [done]
+
+σ^17 has order 3; `3 ∤ 3248`. -/
+theorem lem15_no_pq51_pow17_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 51 = 1) (hne_pow17 : σ ^ 17 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 17) = 2) :
+    False := by
+  have h51 : (51 : ℕ) = 3 * 17 := by decide
+  rw [h51] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 3 17
+    (by decide) (by decide) hpow hne_pow17 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 55, a₀(σ^11) = 1` impossible).** [done]
+
+σ of order 55 = 5·11; σ^11 has order 5; `5 ∤ 57`. -/
+theorem lem15_no_pq55_pow11_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 55 = 1) (hne_pow11 : σ ^ 11 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 11) = 1) :
+    False := by
+  have h55 : (55 : ℕ) = 5 * 11 := by decide
+  rw [h55] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 11
+    (by decide) (by decide) hpow hne_pow11 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 55, a₀(σ^11) = 2` impossible).** [done]
+
+σ^11 has order 5; `5 ∤ 3248`. -/
+theorem lem15_no_pq55_pow11_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 55 = 1) (hne_pow11 : σ ^ 11 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 11) = 2) :
+    False := by
+  have h55 : (55 : ℕ) = 5 * 11 := by decide
+  rw [h55] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 5 11
+    (by decide) (by decide) hpow hne_pow11 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 57, a₀(σ^19) = 0` impossible).** [done]
+
+σ of order 57 = 3·19; σ^19 has order 3; `3 ∤ 3250`. -/
+theorem lem15_no_pq57_pow19_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 57 = 1) (hne_pow19 : σ ^ 19 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 19) = 0) :
+    False := by
+  have h57 : (57 : ℕ) = 3 * 19 := by decide
+  rw [h57] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 3 19
+    (by decide) (by decide) hpow hne_pow19 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 57, a₀(σ^19) = 2` impossible).** [done]
+
+σ^19 has order 3; `3 ∤ 3248`. -/
+theorem lem15_no_pq57_pow19_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 57 = 1) (hne_pow19 : σ ^ 19 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 19) = 2) :
+    False := by
+  have h57 : (57 : ℕ) = 3 * 19 := by decide
+  rw [h57] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 3 19
+    (by decide) (by decide) hpow hne_pow19 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 65, a₀(σ^13) = 1` impossible).** [done]
+
+σ of order 65 = 5·13; σ^13 has order 5; `5 ∤ 57`. -/
+theorem lem15_no_pq65_pow13_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 65 = 1) (hne_pow13 : σ ^ 13 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 13) = 1) :
+    False := by
+  have h65 : (65 : ℕ) = 5 * 13 := by decide
+  rw [h65] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 13
+    (by decide) (by decide) hpow hne_pow13 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 65, a₀(σ^13) = 2` impossible).** [done]
+
+σ^13 has order 5; `5 ∤ 3248`. -/
+theorem lem15_no_pq65_pow13_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 65 = 1) (hne_pow13 : σ ^ 13 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 13) = 2) :
+    False := by
+  have h65 : (65 : ℕ) = 5 * 13 := by decide
+  rw [h65] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 5 13
+    (by decide) (by decide) hpow hne_pow13 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 85, a₀(σ^17) = 1` impossible).** [done]
+
+σ of order 85 = 5·17; σ^17 has order 5; `5 ∤ 57`. -/
+theorem lem15_no_pq85_pow17_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 85 = 1) (hne_pow17 : σ ^ 17 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 17) = 1) :
+    False := by
+  have h85 : (85 : ℕ) = 5 * 17 := by decide
+  rw [h85] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 17
+    (by decide) (by decide) hpow hne_pow17 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 85, a₀(σ^17) = 2` impossible).** [done]
+
+σ^17 has order 5; `5 ∤ 3248`. -/
+theorem lem15_no_pq85_pow17_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 85 = 1) (hne_pow17 : σ ^ 17 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 17) = 2) :
+    False := by
+  have h85 : (85 : ℕ) = 5 * 17 := by decide
+  rw [h85] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 5 17
+    (by decide) (by decide) hpow hne_pow17 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 91, a₀(σ^13) = 0` impossible).** [done]
+
+σ of order 91 = 7·13; σ^13 has order 7; `7 ∤ 3250`. -/
+theorem lem15_no_pq91_pow13_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 91 = 1) (hne_pow13 : σ ^ 13 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 13) = 0) :
+    False := by
+  have h91 : (91 : ℕ) = 7 * 13 := by decide
+  rw [h91] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 7 13
+    (by decide) (by decide) hpow hne_pow13 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 91, a₀(σ^13) = 1` impossible).** [done]
+
+σ^13 has order 7; `7 ∤ 57`. -/
+theorem lem15_no_pq91_pow13_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 91 = 1) (hne_pow13 : σ ^ 13 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 13) = 1) :
+    False := by
+  have h91 : (91 : ℕ) = 7 * 13 := by decide
+  rw [h91] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 7 13
+    (by decide) (by decide) hpow hne_pow13 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 95, a₀(σ^19) = 1` impossible).** [done]
+
+σ of order 95 = 5·19; σ^19 has order 5; `5 ∤ 57`. -/
+theorem lem15_no_pq95_pow19_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 95 = 1) (hne_pow19 : σ ^ 19 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 19) = 1) :
+    False := by
+  have h95 : (95 : ℕ) = 5 * 19 := by decide
+  rw [h95] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 19
+    (by decide) (by decide) hpow hne_pow19 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 95, a₀(σ^19) = 2` impossible).** [done]
+
+σ^19 has order 5; `5 ∤ 3248`. -/
+theorem lem15_no_pq95_pow19_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 95 = 1) (hne_pow19 : σ ^ 19 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 19) = 2) :
+    False := by
+  have h95 : (95 : ℕ) = 5 * 19 := by decide
+  rw [h95] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 5 19
+    (by decide) (by decide) hpow hne_pow19 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 119, a₀(σ^17) = 0` impossible).** [done]
+
+σ of order 119 = 7·17; σ^17 has order 7; `7 ∤ 3250`. -/
+theorem lem15_no_pq119_pow17_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 119 = 1) (hne_pow17 : σ ^ 17 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 17) = 0) :
+    False := by
+  have h119 : (119 : ℕ) = 7 * 17 := by decide
+  rw [h119] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 7 17
+    (by decide) (by decide) hpow hne_pow17 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 119, a₀(σ^17) = 1` impossible).** [done]
+
+σ^17 has order 7; `7 ∤ 57`. -/
+theorem lem15_no_pq119_pow17_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 119 = 1) (hne_pow17 : σ ^ 17 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 17) = 1) :
+    False := by
+  have h119 : (119 : ℕ) = 7 * 17 := by decide
+  rw [h119] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 7 17
+    (by decide) (by decide) hpow hne_pow17 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 143, a₀(σ^13) = 0` impossible).** [done]
+
+σ of order 143 = 11·13; σ^13 has order 11; `11 ∤ 3250`. -/
+theorem lem15_no_pq143_pow13_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 143 = 1) (hne_pow13 : σ ^ 13 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 13) = 0) :
+    False := by
+  have h143 : (143 : ℕ) = 11 * 13 := by decide
+  rw [h143] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 11 13
+    (by decide) (by decide) hpow hne_pow13 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 209, a₀(σ^19) = 0` impossible).** [done]
+
+σ of order 209 = 11·19; σ^19 has order 11; `11 ∤ 3250`. -/
+theorem lem15_no_pq209_pow19_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 209 = 1) (hne_pow19 : σ ^ 19 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 19) = 0) :
+    False := by
+  have h209 : (209 : ℕ) = 11 * 19 := by decide
+  rw [h209] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 11 19
+    (by decide) (by decide) hpow hne_pow19 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 247, a₀(σ^19) = 1` impossible).** [done]
+
+σ of order 247 = 13·19; σ^19 has order 13; `13 ∤ 57`. -/
+theorem lem15_no_pq247_pow19_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 247 = 1) (hne_pow19 : σ ^ 19 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 19) = 1) :
+    False := by
+  have h247 : (247 : ℕ) = 13 * 19 := by decide
+  rw [h247] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 13 19
+    (by decide) (by decide) hpow hne_pow19 h_a0 (by decide)
+
 end Moore57.Papers.MacajSiran2010.S5
