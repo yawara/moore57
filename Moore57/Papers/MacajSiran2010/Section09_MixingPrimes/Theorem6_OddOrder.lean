@@ -690,3 +690,77 @@ theorem thm6_one_prime_branch_card_dvd_343_holds_of_prime_card_given_dispatch
 end Lem16PrimeCardWire
 
 end Moore57.Papers.MacajSiran2010.S9
+
+/-! ### Prime-power-card σ-extractor (Plan B extended dispatch, p^a with a ≥ 1)
+
+The `exists_aut_generator_of_prime_card` helper above extracts a generator
+σ of order exactly `p` from `Nat.card (autSubgroup Γ) = p` via the
+cyclicity of groups of prime order.  For the **prime-power** case
+`Nat.card (autSubgroup Γ) = n` with `n ≥ 2` (typically `n = p²` or
+`n = p^k`), the group need not be cyclic, but it is **finite**, so for
+**any** σ in the subgroup we have `σ ^ n = 1` by Lagrange
+(`pow_card_eq_one'`).  The extractor below produces a non-identity σ from
+`autSubgroup Γ` satisfying `σ ^ n = 1` and `smul_adj`, using only the
+hypothesis `Nat.card (autSubgroup Γ) = n` with `n ≥ 2`.
+
+This is the prime-power analogue of `exists_aut_generator_of_prime_card`
+without the `orderOf σ = p` claim (which would require `Nat.card` to be
+prime for cyclicity, and even then would be tied to the generator).  For
+the §9 Plan B extended-dispatch wires (cards `9, 25, 49, 27, 125, 343,
+…`) the looser `σ ^ n = 1` is exactly what the Lem 17/18/16 underlying
+arithmetic lemmas consume (they only need `σ ^ 3^k = 1` etc.). -/
+
+namespace Moore57.Papers.MacajSiran2010.S9
+
+section PrimePowerExtractor
+
+variable {V : Type*} [Fintype V] [DecidableEq V]
+  {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Aut card ≥ 2 ⟹ ∃ non-identity σ in autSubgroup with σ ^ n = 1**
+(helper for prime-power-card wires).
+[done]
+
+For `Nat.card (autSubgroup Γ) = n` with `n ≥ 2`, extract a σ ∈ autSubgroup
+with:
+* `σ ≠ 1` (from `Nontrivial` of the subgroup, since `Nat.card ≥ 2`),
+* `σ ^ n = 1` (from `pow_card_eq_one'` and the subgroup carrier),
+* `smul_adj` (from `mem_autSubgroup_iff`).
+
+Used by the prime-power MainTheorem dispatch (cards `9, 25, 49, …`) where
+the underlying Lem 17/18/16 arithmetic only needs `σ ^ p^k = 1`, not the
+sharper `orderOf σ = p` of the prime-card extractor. -/
+theorem exists_aut_pow_card_eq_one_of_card_ge_two
+    {n : ℕ} (hn : 2 ≤ n) (h_card : Nat.card (Moore57.autSubgroup Γ) = n) :
+    ∃ σ : Equiv.Perm V, σ ∈ Moore57.autSubgroup Γ ∧ σ ≠ 1 ∧ σ ^ n = 1 ∧
+      ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w) := by
+  -- Step 1: `Nontrivial` of the subgroup from `Nat.card ≥ 2`.
+  haveI : Nontrivial (Moore57.autSubgroup Γ) := by
+    rw [← Finite.one_lt_card_iff_nontrivial]
+    omega
+  -- Step 2: obtain g ≠ 1 in the subgroup.
+  obtain ⟨g, hg⟩ := exists_ne (1 : Moore57.autSubgroup Γ)
+  -- Step 3: package as Equiv.Perm V.
+  refine ⟨(g : Equiv.Perm V), g.property, ?_, ?_, ?_⟩
+  · -- (g : Equiv.Perm V) ≠ 1
+    intro heq
+    apply hg
+    apply Subtype.ext
+    simpa using heq
+  · -- (g : Equiv.Perm V) ^ n = 1
+    have h_pow_eq :
+        (g : Equiv.Perm V) ^ n = ((g ^ n : Moore57.autSubgroup Γ) : Equiv.Perm V) := by
+      push_cast
+      rfl
+    -- g ^ Nat.card = 1 in the subgroup, and `Nat.card = n`.
+    have h_subgroup_pow : (g ^ n : Moore57.autSubgroup Γ) = 1 := by
+      rw [← h_card]
+      exact pow_card_eq_one'
+    rw [h_pow_eq, h_subgroup_pow]
+    rfl
+  · -- smul_adj
+    exact (Moore57.mem_autSubgroup_iff).mp g.property
+
+end PrimePowerExtractor
+
+end Moore57.Papers.MacajSiran2010.S9
