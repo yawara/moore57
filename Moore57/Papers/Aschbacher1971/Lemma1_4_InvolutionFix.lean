@@ -135,4 +135,18 @@ instance is `lem1_4_part2_k57` (with the explicit `f = 56 = k − 1`
 branch). -/
 theorem lem1_4_part2 : True := by trivial
 
+/-- **Lemma 1.4 (2) (paper-faithful conditional dispatch).** [done]
+
+Proper-signature paper-faithful packaging: given the quadratic identity
+`(f − k)² = 1` from the spectral trace computation (the deferred-heavy
+input), conclude the dichotomy `f = k − 1 ∨ f = k + 1`.
+
+Delegates to `asc1_4_arithmetic_core_sq`.  The Moore57 instance with
+`f = 56, k = 57` falls in the `f = k − 1` branch and is established
+unconditionally via `lem1_4_part2_k57`. -/
+theorem lem1_4_part2_paper {f k : ℤ}
+    (h_quad_sq : (f - k) ^ 2 = 1) :
+    f = k - 1 ∨ f = k + 1 :=
+  asc1_4_arithmetic_core_sq f k h_quad_sq
+
 end Moore57.Papers.Aschbacher1971

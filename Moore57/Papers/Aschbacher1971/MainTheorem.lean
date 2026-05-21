@@ -78,6 +78,28 @@ in-tree as Cameron Ch.3 §§3.1–3.4 (basis algebra, association schemes)
 and Higman 1964 (rank-3 framework). -/
 theorem main_no_rank3_3250_57 : True := by trivial
 
+/-- **Main theorem (paper-faithful via vertex-transitivity).** [done]
+
+Proper-signature paper-faithful packaging: since any rank-3 transitive
+permutation group is in particular vertex-transitive (`MulAction.IsPretransitive`
+on the underlying set), the stronger
+`MacajSiran2010.S2.cor_lem2_no_vertex_transitive_aut` already excludes
+the case `Aschbacher's missing rank-3 permutation group of degree 3250
+and subdegree 57 on a Moore57 graph`.
+
+The conditional hypothesis `hVtrans` packages the rank-3 ⇒ vertex-transitive
+implication (a structural fact about rank-3 transitive groups).
+Delegates to `MacajSiran2010.S2.cor_lem2_no_vertex_transitive_aut`. -/
+theorem main_no_rank3_3250_57_paper
+    {V : Type*} [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (hΓ : Moore57.IsMoore57 Γ)
+    (G : Subgroup (Equiv.Perm V)) [DecidablePred (· ∈ G)]
+    (hG : ∀ σ ∈ G, ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hVtrans : MulAction.IsPretransitive G V) : False :=
+  Moore57.Papers.MacajSiran2010.S2.cor_lem2_no_vertex_transitive_aut
+    hΓ G hG hVtrans
+
 /-- **Main theorem (proven form, via vertex-transitivity).**
 
 The rank-3 hypothesis implies vertex-transitivity (rank-3 transitive
