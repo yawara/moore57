@@ -798,4 +798,179 @@ theorem lem17_case2_conclusion_prime_via_fix_ne_10
   exact lem17_case2_conclusion_prime_unconditional hΓ σ pow_3 hne smul_adj
     (by rw [h_eq_1]; decide)
 
+section FullDispatch
+
+universe u
+
+variable {W : Type u} [Fintype W] [DecidableEq W]
+variable {Δ : SimpleGraph W} [DecidableRel Δ.Adj]
+
+/-! ### Full dispatch (Petersen ⊕ singleton) given Petersen uniqueness
+(commit `9c078f2` follow-up: combined wire over both branches)
+
+Combines the unconditional shape dichotomy from
+`OrderThreeShapeClassification.aut_order_three_SingletonOrPetersenSRG_unconditional`
+with the conditional `PetersenFixedData` constructor
+`PetersenFixedData.petersenFixedData_of_isSRGWith_given_uniqueness` (which
+consumes the `PetersenUniqueness` Prop from
+`Foundations.GraphTheory.PetersenUniqueness`).
+
+This is the **full Lem 17 prime-case dispatch**:
+* input: `IsMoore57 Γ + σ^3=1 + σ ≠ 1 + smul_adj + PetersenUniqueness`,
+* output (paper-faithful): `orderOf σ ∣ 27` (case 1) *or* `orderOf σ ∣ 3`
+  (case 2, sharpened from paper's `∣ 81`), automatically dispatched.
+
+Once `PetersenUniqueness` is landed as a Lean-side theorem (separate
+deferred work — Bose 1963 / Hoffman–Singleton 1960), the `h_uniq` argument
+can be discharged and these wrappers become **truly unconditional** on the
+prime case (`σ^3 = 1, σ ≠ 1`).
+
+Until then, the dispatch is fully wired modulo the single Prop hypothesis
+`PetersenUniqueness` — every other piece (case-(1) Petersen-SRG signature
+extraction, case-(2) singleton narrowing, semi-regular orbit bridges,
+arithmetic cores) is unconditional.
+-/
+
+/-- **Lemma 17 full dispatch (prime case, given Petersen uniqueness):
+per-case Conclusion disjunction.** [done — full wire, conditional on
+`PetersenUniqueness`]
+
+Given:
+* `hΓ : IsMoore57 Γ`,
+* `σ : Equiv.Perm V` with `σ^3 = 1` and `σ ≠ 1`,
+* `smul_adj` (σ is a graph automorphism),
+* `h_uniq : PetersenUniqueness` (the Bose 1963 / Hoffman–Singleton 1960
+  classical uniqueness theorem, packaged as a `Prop` in
+  `Foundations.GraphTheory.PetersenUniqueness`),
+
+automatic dispatch into either the case-1 (Petersen) Conclusion
+`Lemma17Case1Conclusion σ` (= `orderOf σ ∣ 27`) or the case-2 (singleton)
+Conclusion `Lemma17Case2Conclusion σ` (= `orderOf σ ∣ 3`).
+
+Wiring:
+1. `aut_order_three_SingletonOrPetersenSRG_unconditional` (Foundations,
+   `OrderThreeShapeClassification.lean`) gives the proof-relevant
+   dichotomy: `SingletonFixedData σ ⊕'
+     (PLift (fixedVertexCount σ = 10) ×' PLift (IsSRGWith 10 3 0 1))`.
+2. Singleton branch:
+   `lem17_case2_conclusion_prime_with_singletonFixedData` discharges
+   the `SingletonFixedData` input to `Lemma17Case2Conclusion`.
+3. Petersen-SRG branch:
+   `petersenFixedData_of_isSRGWith_given_uniqueness` (from
+   `PetersenFixedData.lean`) consumes the `IsSRGWith 10 3 0 1` signature
+   and the Petersen uniqueness Prop to construct `PetersenFixedData Γ σ`,
+   then `lem17_case1_conclusion_prime_with_petersenFixedData` discharges
+   the case-1 Conclusion.
+
+After `PetersenUniqueness` lands as a Lean theorem, replace `h_uniq` by
+the theorem application to obtain a sorry-free unconditional dispatch. -/
+theorem lem17_3group_full_dispatch_per_case_given_uniqueness
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_uniq : Moore57.PetersenUniqueness.{u}) :
+    Lemma17Case1Conclusion σ ∨ Lemma17Case2Conclusion σ := by
+  -- Step 1: unconditional shape dichotomy.
+  have hdich :=
+    Moore57.aut_order_three_SingletonOrPetersenSRG_unconditional
+      (Γ := Δ) hΓ σ smul_adj pow_3 hne
+  -- Step 2: dispatch on the dichotomy.
+  rcases hdich with sfd | ⟨_h10, h_srg⟩
+  · -- Singleton branch (case 2).
+    refine Or.inr ?_
+    exact lem17_case2_conclusion_prime_with_singletonFixedData hΓ σ pow_3 sfd
+      smul_adj
+  · -- Petersen-SRG branch (case 1): promote SRG signature to
+    -- PetersenFixedData via the uniqueness Prop, then dispatch case 1.
+    refine Or.inl ?_
+    have h_srg_unpacked : (Moore57.autFixedInducedGraph Δ σ).IsSRGWith 10 3 0 1 :=
+      h_srg.down
+    -- Promote SRG signature to PetersenFixedData via the explicit
+    -- universe-bound `PetersenUniqueness.{u}` Prop.  The universe binding
+    -- `W : Type u` aligns with `PetersenUniqueness.{u}` so unification
+    -- succeeds where the implicit-universe form fails.
+    let pfd : Moore57.PetersenFixedData Δ σ :=
+      Moore57.petersenFixedData_of_isSRGWith_given_uniqueness
+        (h_unique := h_uniq) (h_srg := h_srg_unpacked)
+    exact lem17_case1_conclusion_prime_with_petersenFixedData hΓ σ pow_3 pfd
+      ⟨0, by decide⟩ smul_adj
+
+/-- **Lemma 17 full dispatch (prime case, given Petersen uniqueness):
+original disjunction form.** [done — full wire, conditional on
+`PetersenUniqueness`]
+
+Returns the paper-faithful `Lemma17ThreeGroupFixConclusion σ` (= the
+disjunction `orderOf σ ∣ 27 ∨ orderOf σ ∣ 81`), automatically dispatched
+between the Petersen branch (case 1) and the singleton branch (case 2),
+given the same inputs as
+`lem17_3group_full_dispatch_per_case_given_uniqueness`.
+
+Composition of that lemma with `lem17_per_case_to_three_group_fix_conclusion`
+which lifts the sharper case-2 `∣ 3` to the paper-stated `∣ 81`. -/
+theorem lem17_3group_full_dispatch_given_uniqueness
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_uniq : Moore57.PetersenUniqueness.{u}) :
+    Lemma17ThreeGroupFixConclusion σ :=
+  lem17_per_case_to_three_group_fix_conclusion σ
+    (lem17_3group_full_dispatch_per_case_given_uniqueness hΓ σ pow_3 hne
+      smul_adj h_uniq)
+
+/-- **Lemma 17 full dispatch paper bound `orderOf σ ∣ 27` (combined upper).**
+[done — full wire, conditional on `PetersenUniqueness`]
+
+The paper's Lem 17 statement combines both branches under a single
+upper-bound divisor: `orderOf σ ∣ 27`.  In the prime case (`σ^3 = 1`),
+both branches deliver this bound directly:
+
+* case 1 (Petersen): `orderOf σ ∣ 27` (the case-1 conclusion itself).
+* case 2 (singleton): `orderOf σ ∣ 3 ∣ 27` (sharpened ⟹ paper-stated).
+
+This is the cleanest single-divisor paper-faithful form of Lem 17 in the
+prime case, given Petersen uniqueness. -/
+theorem lem17_3group_paper_bound_given_uniqueness
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_uniq : Moore57.PetersenUniqueness.{u}) :
+    orderOf σ ∣ 27 := by
+  rcases lem17_3group_full_dispatch_per_case_given_uniqueness hΓ σ pow_3 hne
+    smul_adj h_uniq with h1 | h2
+  · -- case 1: orderOf σ ∣ 27 directly.
+    exact h1
+  · -- case 2: orderOf σ ∣ 3 ∣ 27.
+    exact dvd_trans h2 (by decide)
+
+/-- **Lemma 17 full dispatch Conclusion Prop encoding.**
+
+Encapsulates the combined paper-bound `orderOf σ ∣ 27` from the full
+dispatch as a `Prop`, paralleling `Lemma17Case1Conclusion` and
+`Lemma17Case2Conclusion`.  Used by downstream Cor3 / MainTheorem
+dispatch chain when the per-case split is not needed. -/
+def Lemma17FullDispatchConclusion (σ : Equiv.Perm W) : Prop :=
+  orderOf σ ∣ 27
+
+/-- **Lemma 17 full dispatch via Conclusion encoding.** [done]
+
+Given the `Lemma17FullDispatchConclusion σ` Prop, conclude
+`orderOf σ ∣ 27`.  Trivial bridge — exposed for the Conclusion-Prop
+dispatch pattern. -/
+theorem lem17_full_dispatch_via_conclusion
+    (σ : Equiv.Perm W) (h_conclusion : Lemma17FullDispatchConclusion σ) :
+    orderOf σ ∣ 27 :=
+  h_conclusion
+
+/-- **Lemma 17 full dispatch Conclusion instance, given Petersen
+uniqueness.** [done — full wire, conditional on `PetersenUniqueness`]
+
+Conclusion-Prop wrapper around `lem17_3group_paper_bound_given_uniqueness`.
+Discharges `Lemma17FullDispatchConclusion σ` (= `orderOf σ ∣ 27`) from the
+prime-case inputs plus the Petersen uniqueness Prop. -/
+theorem lem17_3group_full_dispatch_conclusion_given_uniqueness
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_uniq : Moore57.PetersenUniqueness.{u}) :
+    Lemma17FullDispatchConclusion σ :=
+  lem17_3group_paper_bound_given_uniqueness hΓ σ pow_3 hne smul_adj h_uniq
+
+end FullDispatch
+
 end Moore57.Papers.MacajSiran2010.S6
