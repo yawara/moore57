@@ -175,4 +175,42 @@ theorem aut_card_le_375_via_conclusions
       Nat.card (Moore57.autSubgroup Γ) ≤ 110) :=
   S9.cor3_375_bound_via_autSubgroup h_odd h_even
 
+/-! ## Bridges from per-theorem Conclusion encodings -/
+
+/-- **Bridge: `Thm6OddOrderConclusion ⟹ Cor3OddDispatchConclusion`**. [done]
+
+The §9 per-theorem `Thm6OddOrderConclusion` is strictly stronger than
+`Cor3OddDispatchConclusion Γ` (it is `∀ n, Odd n → ...`, while the latter
+specializes at `n = Nat.card (autSubgroup Γ)`).  Specialization gives the
+bridge by direct application. -/
+theorem cor3_odd_dispatch_of_thm6_conclusion
+    (h : S9.Thm6OddOrderConclusion) : Cor3OddDispatchConclusion Γ :=
+  fun h_odd => h _ h_odd
+
+/-- **Bridge: `Thm7EvenOrderConclusion ⟹ Cor3EvenOddPartConclusion`**. [done]
+
+Parallel to `cor3_odd_dispatch_of_thm6_conclusion`: the §9 per-theorem
+`Thm7EvenOrderConclusion` specializes to the `Cor3EvenOddPartConclusion Γ`
+at `n = Nat.card (autSubgroup Γ)`. -/
+theorem cor3_even_oddpart_of_thm7_conclusion
+    (h : S9.Thm7EvenOrderConclusion) : Cor3EvenOddPartConclusion Γ :=
+  fun h_even => h _ h_even
+
+/-- **Main theorem (top-level via per-theorem Conclusion defs)**. [done]
+
+Same bound as `aut_card_le_375_via_conclusions`, but parameterised on
+the stronger §9 per-theorem `Thm6OddOrderConclusion` /
+`Thm7EvenOrderConclusion` encodings (which are `∀ n, ...` forms,
+independent of `Γ`). -/
+theorem aut_card_le_375_via_thm_conclusions
+    (hΓ : IsMoore57 Γ)
+    (h_thm6 : S9.Thm6OddOrderConclusion)
+    (h_thm7 : S9.Thm7EvenOrderConclusion) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 375 ∧
+    (Even (Nat.card (Moore57.autSubgroup Γ)) →
+      Nat.card (Moore57.autSubgroup Γ) ≤ 110) :=
+  aut_card_le_375_via_conclusions hΓ
+    (cor3_odd_dispatch_of_thm6_conclusion h_thm6)
+    (cor3_even_oddpart_of_thm7_conclusion h_thm7)
+
 end Moore57.Papers.MacajSiran2010
