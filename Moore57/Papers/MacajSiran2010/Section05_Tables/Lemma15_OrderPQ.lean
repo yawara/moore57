@@ -87,6 +87,76 @@ theorem lem15_starred_row_pq35_trace_above_bound
     (Tr : ℤ) (h_eq : Tr = 206) (h_bd : Tr ≤ 186) : False := by
   omega
 
+/-- **Lemma 15 starred row `pq = 35` brute-force via `(a₀, a₁)` + χ₁
+integrality.** [done]
+
+Stronger packaging: the paper's character-system computation actually
+produces `a₁(σ) = 206` for the starred `pq = 35, a₀ = 1` row.  Combined
+with Theorem 1's χ₁ formula `χ₁(σ) = (8·a₀ + a₁ - 65) / 15 ∈ ℤ`, we get
+`8·1 + 206 - 65 = 149 ≡ 14 (mod 15)`, which is `≢ 0`, contradicting
+integrality of `χ₁`.
+
+This is a strictly **stronger** Diophantine encoding than
+`lem15_starred_row_pq35_trace_above_bound`: it removes the
+orbit-trace upper-bound hypothesis (`Tr ≤ 186`) and replaces it with
+the mod-15 character integrality, which is already proven by
+Theorem 1 (`thm1_chi1_formula`).
+
+`omega` handles the modular arithmetic with `χ₁ : ℤ` as witness. -/
+theorem lem15_starred_row_pq35_chi1_not_int
+    (a₀ a₁ : ℤ) (χ₁ : ℤ)
+    (h_a0 : a₀ = 1) (h_a1 : a₁ = 206)
+    (h_chi1 : 15 * χ₁ = 8 * a₀ + a₁ - 65) :
+    False := by
+  omega
+
+/-- **Lemma 15 starred row `pq = 35` brute-force via `(a₀, a₁)` + χ₂
+integrality.** [done]
+
+Alternative path: Theorem 1's χ₂ formula
+`χ₂(σ) = (7·a₀ - a₁ + 50) / 15 ∈ ℤ`.  With `(a₀, a₁) = (1, 206)`:
+`7·1 - 206 + 50 = -149 ≡ 1 (mod 15)`, i.e. `≢ 0`, contradicting
+integrality of `χ₂`.
+
+Sister of `lem15_starred_row_pq35_chi1_not_int`; together they show
+**both** χ₁ and χ₂ would be non-integer for the starred row data.
+`omega` discharges. -/
+theorem lem15_starred_row_pq35_chi2_not_int
+    (a₀ a₁ : ℤ) (χ₂ : ℤ)
+    (h_a0 : a₀ = 1) (h_a1 : a₁ = 206)
+    (h_chi2 : 15 * χ₂ = 7 * a₀ - a₁ + 50) :
+    False := by
+  omega
+
+/-- **Lemma 15 starred row `pq = 35` brute-force via `fixedVertexCount_le_pow`
++ paper row data.** [done]
+
+If the starred row `pq = 35, a₀(σ) = 1, a₀(σ⁵) = 51, a₀(σ⁷) = 50`
+materialises as an actual graph automorphism σ of order 35, then by
+`fixedVertexCount_le_pow σ n`, `a₀(σ) ≤ a₀(σ^n)` for any `n`.
+This is satisfied (`1 ≤ 51` and `1 ≤ 50`), so the propagation
+inequality alone is **not** a contradiction.
+
+Additional constraint: under the paper's row table, the further
+identity `a₀(σ⁵) + a₀(σ⁷) ≡ a₀(σ) + a₀(σ³⁵)  (mod ...)` from the
+character-system would be needed; this is **NOT** something omega can
+discharge without explicit hypotheses.
+
+This theorem records the negative result for transparency: pure
+fixed-count propagation `1 ≤ 51 ∧ 1 ≤ 50` is consistent with the
+row data, so the paper's contradiction must come from elsewhere
+(character integrality or orbit-trace bound). -/
+theorem lem15_starred_row_pq35_fix_le_pow_consistent
+    (σ : Equiv.Perm V)
+    (h_a0 : fixedVertexCount σ = 1)
+    (h_a0_pow5 : fixedVertexCount (σ ^ 5) = 51)
+    (h_a0_pow7 : fixedVertexCount (σ ^ 7) = 50) :
+    fixedVertexCount σ ≤ fixedVertexCount (σ ^ 5) ∧
+    fixedVertexCount σ ≤ fixedVertexCount (σ ^ 7) := by
+  refine ⟨?_, ?_⟩
+  · exact Moore57.fixedVertexCount_le_pow σ 5
+  · exact Moore57.fixedVertexCount_le_pow σ 7
+
 /-- **Lemma 15 (no order-65 automorphism) — abstract conclusion.**
 
 For any Moore57 graph Γ and any graph automorphism `σ` of order 65,
