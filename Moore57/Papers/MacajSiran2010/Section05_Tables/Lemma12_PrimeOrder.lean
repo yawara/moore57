@@ -1,6 +1,7 @@
 import Moore57.Papers.MacajSiran2010.Section04_Characters.Proposition2_CharacterSystem
 import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Lemma2_Involution
 import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Lemma3_Chi1Formula
+import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma14_SemiRegularCongruence
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
 import Moore57.Moore57Graph.Aut.FixedCount
 import Moore57.Moore57Graph.Aut.OrderElevenIsC5
@@ -393,5 +394,147 @@ theorem lem12_no_p7_a0_58_conditional
     False := by
   have h0 := lem12_a1_zero_of_closed_neighbourhood_fixed hΓ σ hAut c hc h_nbhd
   omega
+
+/-! ### Phase 10P: Lem 14 unconditional wire-up (session 10)
+
+The session-9 `lem14_moore57_semiRegular_congruence_of_prime` provides
+the unconditional single-prime semi-regular congruence for any
+prime-order graph automorphism `σ` of Moore57 fixing some vertex `a`:
+```
+(autFixedNeighborFinset Γ σ a).card ≡ 57  [MOD orderOf σ].
+```
+Below we expose this in the Lem 12 namespace and combine it with the
+"singleton fix forces zero fix-neighbour count" lemma to produce a new
+**unconditional** exclusion of prime-order rows where `a₀ = 1` and the
+prime does not divide 57.
+-/
+
+/-- **Lemma 12 (paper-faithful): fix-neighbour count `≡ 57 (mod p)` at any
+fixed vertex of a prime-order graph automorphism.** [done]
+
+Re-exports `lem14_moore57_semiRegular_congruence_of_prime` (session 9
+unconditional) in the Lem 12 namespace.  For a Moore57 graph and any
+prime-order graph automorphism `σ` (with `σ ≠ 1` so `orderOf σ = p`)
+fixing a vertex `a`, the σ-fixed-neighbour count of `a` satisfies
+```
+(autFixedNeighborFinset Γ σ a).card ≡ 57  [MOD p].
+```
+-/
+theorem lem12_fixedNeighborCount_modEq_57_of_prime
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpow : σ ^ p = 1) (hne : σ ≠ 1)
+    {a : V} (ha : σ a = a) :
+    (Moore57.autFixedNeighborFinset Γ σ a).card ≡ 57 [MOD p] := by
+  haveI : Fact (Nat.Prime p) := ⟨hp⟩
+  have h_ord : orderOf σ = p := orderOf_eq_prime hpow hne
+  have hmod :=
+    lem14_moore57_semiRegular_congruence_of_prime hΓ σ p hp hpow hAut ha
+  -- hmod : ... ≡ 57 [MOD orderOf σ]; rewrite via h_ord.
+  rwa [h_ord] at hmod
+
+/-- **Lemma 12 (unconditional, `a₀ = 1` with prime `p ∤ 57` impossible).**
+[done]
+
+**New unconditional row exclusion** combining the session-9 Lem 14
+single-prime semi-regular congruence with the singleton-fix lemma
+`aut_fixedNeighborFinset_card_eq_zero_of_fixedVertexCount_eq_one`.
+
+For a prime-order graph automorphism `σ` of Moore57 (`σ^p = 1`, `σ ≠ 1`,
+`p` prime) with `a₀(σ) = 1`:
+* the unique fixed vertex `a` has *no* σ-fixed neighbours (singleton-fix
+  forces `|N(a) ∩ Fix(σ)| = 0` by graph irreflexivity);
+* Lem 14 forces `|N(a) ∩ Fix(σ)| ≡ 57 (mod p)`, so `0 ≡ 57 (mod p)`,
+  hence `p ∣ 57 = 3·19`.
+
+Thus for any prime `p ∉ {3, 19}`, the row `a₀ = 1` cannot occur.  This
+covers `p = 5, 7, 11, 13, 17, …` — a new unconditional exclusion
+strengthening the existing `lem12_no_p3_a0_one` (which excludes the
+specific `p = 3` row via mod-15 + no-triangle). -/
+theorem lem12_no_a0_one_of_prime_not_dvd_57
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpow : σ ^ p = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 1)
+    (h_p_not_dvd : ¬ p ∣ 57) :
+    False := by
+  classical
+  -- Step 1: extract the unique fixed vertex `a`.
+  let F : Finset V := (Finset.univ : Finset V).filter fun w => σ w = w
+  have hF_card : F.card = 1 := h_a0
+  obtain ⟨a, hFa⟩ := Finset.card_eq_one.mp hF_card
+  have ha : σ a = a := by
+    have hmem : a ∈ F := by
+      rw [hFa]; exact Finset.mem_singleton.mpr rfl
+    change a ∈ (Finset.univ : Finset V).filter _ at hmem
+    exact (Finset.mem_filter.mp hmem).2
+  -- Step 2: |N(a) ∩ Fix(σ)| = 0 (singleton-fix lemma).
+  have h_zero :=
+    Moore57.aut_fixedNeighborFinset_card_eq_zero_of_fixedVertexCount_eq_one
+      (Γ := Γ) σ ha h_a0
+  -- Step 3: Lem 14 says ... ≡ 57 (mod p).
+  have h_mod :=
+    lem12_fixedNeighborCount_modEq_57_of_prime hΓ σ hAut p hp hpow hne ha
+  -- Step 4: combine: 0 ≡ 57 (mod p), so p ∣ 57.
+  rw [h_zero] at h_mod
+  -- h_mod : 0 ≡ 57 [MOD p]
+  have h_p_dvd : p ∣ 57 := by
+    have : (57 : ℕ) ≡ 0 [MOD p] := h_mod.symm
+    exact (Nat.modEq_zero_iff_dvd).mp this
+  exact h_p_not_dvd h_p_dvd
+
+/-- **Lemma 12 (unconditional, `p = 5, a₀ = 1` impossible).** [done]
+
+Specialization of `lem12_no_a0_one_of_prime_not_dvd_57` to `p = 5`:
+since `5 ∤ 57`, the row `(p = 5, a₀ = 1)` cannot occur. -/
+theorem lem12_no_p5_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 5 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 1) :
+    False :=
+  lem12_no_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 7, a₀ = 1` impossible).** [done]
+
+Specialization to `p = 7`: since `7 ∤ 57`, the row `(p = 7, a₀ = 1)`
+cannot occur. -/
+theorem lem12_no_p7_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 7 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 1) :
+    False :=
+  lem12_no_a0_one_of_prime_not_dvd_57 hΓ σ hAut 7 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 11, a₀ = 1` impossible).** [done]
+
+Specialization to `p = 11`: since `11 ∤ 57`, the row `(p = 11, a₀ = 1)`
+cannot occur. Note: the existing `lem12_p11_a0_five` proves the unique
+non-trivial p=11 row gives `a₀ = 5`, so `a₀ = 1` was already excluded;
+this theorem gives an independent (Lem 14-based) proof. -/
+theorem lem12_no_p11_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 11 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 1) :
+    False :=
+  lem12_no_a0_one_of_prime_not_dvd_57 hΓ σ hAut 11 (by decide) hpow hne h_a0
+    (by decide)
+
+/-- **Lemma 12 (unconditional, `p = 13, a₀ = 1` impossible).** [done]
+
+Specialization to `p = 13`: since `13 ∤ 57`, the row `(p = 13, a₀ = 1)`
+cannot occur. -/
+theorem lem12_no_p13_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 13 = 1) (hne : σ ≠ 1)
+    (h_a0 : fixedVertexCount σ = 1) :
+    False :=
+  lem12_no_a0_one_of_prime_not_dvd_57 hΓ σ hAut 13 (by decide) hpow hne h_a0
+    (by decide)
 
 end Moore57.Papers.MacajSiran2010.S5

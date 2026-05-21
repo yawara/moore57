@@ -390,4 +390,96 @@ theorem lem13_p5_starred_rows_no_aut_paper_bundled
   · exact lem13_starred_row_5_5_5_no_aut_paper hΓ σ hAut hpow h_concl.2
   · exact lem13_starred_row_5_0_5_no_aut_paper hΓ σ hAut hpow h_concl.1
 
+/-! ### Phase 10P: Lem 14 unconditional wire-up for σ^p (session 10)
+
+For an order-`p²` graph automorphism `σ`, the sub-automorphism `σ^p`
+has prime order `p` (provided `σ^p ≠ 1`).  We apply the session-9 Lem 14
+single-prime congruence to `σ^p` via `graphAut_pow`, obtaining a new
+**unconditional** modular constraint on the fix-neighbour count of `σ^p`
+at any of its fixed vertices.
+
+Combined with the singleton-fix `|N(a) ∩ Fix(σ^p)| = 0` lemma, this
+gives a new exclusion of `a₀(σ^p) = 1` whenever `p ∤ 57` — directly
+analogous to the new Lem 12 row exclusions
+`lem12_no_p5_a0_one`, `lem12_no_p7_a0_one`, etc.
+-/
+
+/-- **Lemma 13 (paper-faithful): fix-neighbour count `≡ 57 (mod p)` at any
+fixed vertex of `σ^p` for an order-`p²` graph automorphism `σ`.** [done]
+
+For an order-`p²` graph automorphism `σ` (with `σ^(p²) = 1` and the
+non-degeneracy `σ^p ≠ 1` so that `σ^p` has order exactly `p`), at any
+σ^p-fixed vertex `a`,
+```
+(autFixedNeighborFinset Γ (σ^p) a).card ≡ 57  [MOD p].
+```
+
+This is `lem12_fixedNeighborCount_modEq_57_of_prime` (the Lem 14
+re-export) applied to `σ^p`, using `graphAut_pow` to lift the graph-aut
+hypothesis. -/
+theorem lem13_pow_p_fixedNeighborCount_modEq_57_of_prime
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpp : σ ^ (p * p) = 1)
+    (hne_pow_p : σ ^ p ≠ 1)
+    {a : V} (ha : (σ ^ p) a = a) :
+    (Moore57.autFixedNeighborFinset Γ
+      (σ ^ p : Equiv.Perm V) a).card ≡ 57 [MOD p] := by
+  -- (σ^p)^p = σ^(p²) = 1.
+  have hpow_p_p : (σ ^ p : Equiv.Perm V) ^ p = 1 := by
+    rw [← pow_mul]; exact hpp
+  -- Apply Lem 12 / Lem 14 to σ^p.
+  exact lem12_fixedNeighborCount_modEq_57_of_prime hΓ (σ ^ p)
+    (graphAut_pow σ hAut p) p hp hpow_p_p hne_pow_p ha
+
+/-- **Lemma 13 (unconditional, `a₀(σ^p) = 1` with prime `p ∤ 57` impossible).**
+[done]
+
+**New unconditional row exclusion** combining the session-9 Lem 14
+single-prime semi-regular congruence (lifted to `σ^p` via `graphAut_pow`)
+with the singleton-fix lemma
+`aut_fixedNeighborFinset_card_eq_zero_of_fixedVertexCount_eq_one`.
+
+For an order-`p²` graph automorphism `σ` (with `σ^(p²) = 1`, `σ^p ≠ 1`)
+and `a₀(σ^p) = 1`:
+* the unique σ^p-fixed vertex `a` has no σ^p-fixed neighbours;
+* Lem 14 (applied to σ^p) forces `0 ≡ 57 (mod p)`, hence `p ∣ 57`.
+
+For `p ∉ {3, 19}` (in particular `p = 5`), this is a contradiction.
+Used by the Lem 13 `p = 5` table to exclude any row with `a₀(σ^5) = 1`. -/
+theorem lem13_no_pow_p_a0_one_of_prime_not_dvd_57
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p : ℕ) (hp : Nat.Prime p) (hpp : σ ^ (p * p) = 1)
+    (hne_pow_p : σ ^ p ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ p) = 1)
+    (h_p_not_dvd : ¬ p ∣ 57) :
+    False := by
+  -- (σ^p)^p = σ^(p²) = 1.
+  have hpow_p_p : (σ ^ p) ^ p = 1 := by
+    rw [← pow_mul]; exact hpp
+  -- Apply the Lem 12 row-exclusion to σ^p.
+  exact lem12_no_a0_one_of_prime_not_dvd_57 hΓ (σ ^ p)
+    (graphAut_pow σ hAut p) p hp hpow_p_p hne_pow_p h_a0 h_p_not_dvd
+
+/-- **Lemma 13 (unconditional, `p = 5`, `a₀(σ⁵) = 1` impossible).** [done]
+
+Specialization of `lem13_no_pow_p_a0_one_of_prime_not_dvd_57` to `p = 5`:
+since `5 ∤ 57`, any order-25 graph automorphism `σ` (with `σ^5 ≠ 1`)
+having `a₀(σ⁵) = 1` is impossible.
+
+Note: the Lem 13 p=5 row table covers `a₀(σ⁵) ∈ {0, 5, 50}`; this
+theorem rules out the analogous `a₀(σ⁵) = 1` configuration that would
+otherwise need to be ruled out by separate fix-shape analysis. -/
+theorem lem13_no_p5_pow5_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1) (hne_pow5 : σ ^ 5 ≠ 1)
+    (h_a0_pow5 : fixedVertexCount (σ ^ 5) = 1) :
+    False := by
+  have h25 : (25 : ℕ) = 5 * 5 := by decide
+  rw [h25] at hpow
+  exact lem13_no_pow_p_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 (by decide) hpow
+    hne_pow5 h_a0_pow5 (by decide)
+
 end Moore57.Papers.MacajSiran2010.S5
