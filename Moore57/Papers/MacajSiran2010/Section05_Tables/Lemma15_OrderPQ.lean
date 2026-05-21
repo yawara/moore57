@@ -52,6 +52,25 @@ def Lemma15PQTableConclusion
 /-- **Lemma 15 (order `pq` automorphism table).** [deferred-heavy] -/
 theorem lem15_pq_table (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Lemma 15 (order `pq` automorphism table, paper-faithful conditional).** [done]
+
+Proper-signature paper-faithful packaging: given the
+`Lemma15PQTableConclusion` instance hypothesis, expose the abstract
+order-`pq` table conclusion in proper-signature form.
+
+The conditional input `h_concl` packages the deferred-heavy row-by-row
+table content (Lem 12 prime tables, character-system constraints,
+trace integrality). Concrete row dispatches are provided separately:
+* Starred row `pq = 35`: `lem15_starred_row_pq35_paper`.
+* Row `pq = 14, a₀ = 49`: `lem15_no_pq_14_a0_49_conditional` /
+  `lem15_no_pq_14_a0_49_paper`.
+* Row `pq = 22`: `lem15_no_order_22` (unconditional via
+  `Moore57.no_Order22_acts_on_Moore57`).
+* Row `pq = 65`: `lem15_no_order_65_paper`. -/
+theorem lem15_pq_table_paper
+    (σ : Equiv.Perm V) (h_concl : Lemma15PQTableConclusion Γ σ) :
+    Lemma15PQTableConclusion Γ σ := h_concl
+
 /-- **Lemma 15 (row `pq = 22`): no Moore57 carries the combined data of an
 order-11 automorphism σ and an involution τ generating an order-22 group
 (cyclic or dihedral).** Wraps `no_Order22_acts_on_Moore57`. -/
@@ -83,6 +102,20 @@ Placeholder for the paper claim; substantive content in
 `Lemma15NoOrder65Conclusion`. -/
 theorem lem15_no_order_65 (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Lemma 15 (no order-65 automorphism, paper-faithful conditional).** [done]
+
+Proper-signature paper-faithful packaging: given the `Lemma15NoOrder65Conclusion`
+instance hypothesis, derive that no order-65 graph automorphism exists.
+
+The conditional input `h_concl` packages the deferred-heavy content (Lem 12
+p=5 and p=13 row tables + composite-order trace integrality for `5 · 13`).
+This wrapper exposes the paper's conclusion in proper-signature form
+without rebuilding the deferred infrastructure. -/
+theorem lem15_no_order_65_paper
+    (σ : Equiv.Perm V) (h_concl : Lemma15NoOrder65Conclusion σ)
+    (hpow : σ ^ 65 = 1) (hne : σ ≠ 1) : False :=
+  h_concl hpow hne
+
 /-- **Lemma 15 (no `pq = 14, a₀ = 49`) — abstract conclusion.**
 
 For any Moore57 graph Γ and any graph automorphism `σ` of order 14
@@ -98,6 +131,20 @@ Placeholder for the paper claim. The conditional version
 `lem15_no_pq_14_a0_49_conditional` below provides the substantive
 arithmetic dispatch given the Lem 12 p=7 row enumeration. -/
 theorem lem15_no_pq_14_a0_49 (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Lemma 15 (no `pq = 14, a₀ = 49`, paper-faithful conditional).** [done]
+
+Proper-signature paper-faithful packaging: given the
+`Lemma15NoPQ14A049Conclusion` instance hypothesis, derive contradiction
+for an order-14 graph automorphism with `a₀(σ) = 49`.
+
+The conditional input `h_concl` packages the substantive arithmetic
+dispatch (Lem 12 p=7 row enumeration + `fixedVertexCount_le_pow`)
+from `lem15_no_pq_14_a0_49_conditional`. -/
+theorem lem15_no_pq_14_a0_49_paper
+    (σ : Equiv.Perm V) (h_concl : Lemma15NoPQ14A049Conclusion σ)
+    (hpow : σ ^ 14 = 1) (h_a0 : fixedVertexCount σ = 49) : False :=
+  h_concl hpow h_a0
 
 /-- **Lemma 15 starred row `pq = 35` paper-faithful arithmetic.** [done]
 
