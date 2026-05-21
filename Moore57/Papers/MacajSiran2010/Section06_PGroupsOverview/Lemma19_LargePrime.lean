@@ -3,6 +3,7 @@ import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 import Moore57.Moore57Graph.Aut.OrderElevenIsC5
+import Moore57.Moore57Graph.Aut.OrderThirteenEmptyFix
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -389,5 +390,145 @@ theorem lem19_large_prime_pgroup_conclusion
     (n : ℕ) (h : n ∣ 13 ∨ n ∣ 19 ∨ n ∣ 11 ∨ n ∣ 7) :
     Lemma19LargePrimeConclusion n :=
   lem19_large_prime_pgroup_paper n h
+
+/-! ## Lemma 19 case (1) [13-group, empty fix] unconditional path
+
+Mirrors the case (3) path established in commit `902cf19`:
+1. `aut_order_thirteen_EmptyFixedData` constructs the `EmptyFixedData σ`
+   from `σ^13 = 1 ∧ σ ≠ 1 ∧ smul_adj` plus the fix-emptiness fact
+   `fixedVertexCount σ = 0`.
+2. `empty_orderOf_dvd_3250_of_semiRegular` (C3.4 bridge) gives
+   `orderOf σ ∣ 3250` from a semi-regular hypothesis on `V`.
+3. `lem19_case1_orderOf_dvd_13_of_empty_fix` (arithmetic core) sharpens
+   to `orderOf σ ∣ 13`.
+
+The fix-emptiness fact `fixedVertexCount σ = 0` is *paper-asserted* by
+Lemma 4 case (1) / Lemma 16 case (1) (`p = 13` ⟹ Fix is empty); the
+formal shape-classification chain that derives it unconditionally from
+`σ^13 = 1 ∧ σ ≠ 1` is deferred (it requires the SRG-style structural
+narrowing analogous to the order-11 chain in `OrderElevenCandidates`).
+
+For now we expose two variants:
+* `lem19_case1_orderOf_dvd_13_prime_with_fix_count_zero`: takes
+  `fixedVertexCount σ = 0` as hypothesis and constructs
+  `EmptyFixedData σ` internally via `aut_order_thirteen_EmptyFixedData`.
+* `lem19_case1_orderOf_dvd_13_prime_via_semiRegular`: takes
+  `EmptyFixedData σ` directly (paper case-(1) shape input).
+-/
+
+/-- **Lemma 19 case (1) prime-case via `EmptyFixedData` and semi-regular.**
+[done — Path B, prime case]
+
+For σ a graph automorphism of a Moore57 graph with `σ^13 = 1` and an
+`EmptyFixedData σ` structure (the paper case-(1) shape input), the
+C3.4 semi-regular orbit bridge gives `orderOf σ ∣ 3250`, sharpened to
+`orderOf σ ∣ 13` by the arithmetic core.
+
+For the prime case `σ^13 = 1`, the cyclic action is automatically
+semi-regular on the entire vertex set (since `EmptyFixedData` ⟹ no
+fixed point), so no `hsemi` hypothesis is required.  The semi-regularity
+is supplied by `Moore57.semiRegular_at_movedPoint_of_prime_orderOf`. -/
+theorem lem19_case1_orderOf_dvd_13_with_emptyFixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_13 : σ ^ 13 = 1)
+    (efd : Moore57.EmptyFixedData σ) :
+    orderOf σ ∣ 13 := by
+  -- Step 1: derive σ-semi-regularity on V from `σ^13 = 1` (prime) and
+  -- the absence of fixed points (every `v : V` is moved by σ).
+  have hsemi : ∀ v : V, ∀ k : ℕ, (σ^k) v = v → orderOf σ ∣ k :=
+    fun v k hkv =>
+      Moore57.semiRegular_at_movedPoint_of_prime_orderOf
+        σ 13 (by decide) pow_13 v (efd.no_fixed v) k hkv
+  -- Step 2: combine semi-regularity + EmptyFixedData ⟹ orderOf σ ∣ 3250.
+  have h_dvd_3250 : orderOf σ ∣ 3250 :=
+    Moore57.EmptyFixedData.empty_orderOf_dvd_3250_of_semiRegular
+      (Γ := Γ) hΓ efd hsemi
+  -- Step 3: sharpen to orderOf σ ∣ 13 via the arithmetic core.
+  exact lem19_case1_orderOf_dvd_13_of_empty_fix σ 1 (by simpa using pow_13)
+    h_dvd_3250
+
+/-- **Lemma 19 case (1) prime-case with explicit `fixedVertexCount σ = 0`.**
+[done — Path B, prime case, partial unconditional]
+
+Given the paper case-(1) fix-emptiness fact `fixedVertexCount σ = 0`
+(asserted by Lem 4 case (1) / Lem 16 case (1) for `p = 13`), construct
+`EmptyFixedData σ` via `aut_order_thirteen_EmptyFixedData` and dispatch
+through `lem19_case1_orderOf_dvd_13_with_emptyFixedData_prime_via_semiRegular`.
+
+This is the **partial unconditional** form: the only remaining
+hypothesis beyond `σ^13 = 1 ∧ σ ≠ 1 ∧ smul_adj` is the paper-asserted
+shape `fixedVertexCount σ = 0`, which becomes derivable once the §6
+shape-classification chain matures. -/
+theorem lem19_case1_orderOf_dvd_13_prime_with_fix_count_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_13 : σ ^ 13 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_fix_empty : Moore57.fixedVertexCount σ = 0) :
+    orderOf σ ∣ 13 :=
+  let efd := Moore57.aut_order_thirteen_EmptyFixedData hΓ σ smul_adj pow_13
+    hne h_fix_empty
+  lem19_case1_orderOf_dvd_13_with_emptyFixedData_prime_via_semiRegular
+    hΓ σ pow_13 efd
+
+/-- **Lemma 19 case (1) prime-case via small-fix narrowing.**
+[done — Path B, prime case]
+
+Given `fixedVertexCount σ ≤ 12` (a paper-asserted bound for the
+13-prime case, expected from the shape-classification chain), the
+mod-13 constraint `fixedVertexCount σ ≡ 0 [MOD 13]` forces
+`fixedVertexCount σ = 0`, and the previous variant applies.
+
+The `≤ 12` upper bound is the cleanest "tip-of-the-iceberg" of the
+deferred shape-classification chain: once the §6 chain shows
+`fixedVertexCount σ < 13` for `σ^13 = 1, σ ≠ 1`, the rest of the
+chain (Empty / orderOf ∣ 3250 / orderOf ∣ 13) is mechanical. -/
+theorem lem19_case1_orderOf_dvd_13_prime_via_small_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_13 : σ ^ 13 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_small : Moore57.fixedVertexCount σ ≤ 12) :
+    orderOf σ ∣ 13 :=
+  let efd := Moore57.aut_order_thirteen_EmptyFixedData_of_small_fix
+    hΓ σ smul_adj pow_13 hne h_small
+  lem19_case1_orderOf_dvd_13_with_emptyFixedData_prime_via_semiRegular
+    hΓ σ pow_13 efd
+
+/-! ### Conclusion Prop encoding (paper-faithful dispatch) -/
+
+/-- **Lemma 19 case (1) abstract conclusion** (Conclusion Prop encoding).
+
+For σ of order 13 (or 1) acting as a graph automorphism of a Moore57 Γ,
+the paper's case (1) conclusion is: `orderOf σ ∣ 13`.
+
+Bundled as a Prop for downstream Cor3 dispatch chain, paralleling
+`Lemma19Case3Conclusion`. -/
+def Lemma19Case1Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 13
+
+/-- **Lemma 19 case (1) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma19Case1Conclusion σ` (the paper's case (1) divisibility
+bound), conclude `orderOf σ ∣ 13`.  Trivial bridge — exposed for the
+Conclusion-Prop dispatch pattern. -/
+theorem lem19_case1_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma19Case1Conclusion σ) :
+    orderOf σ ∣ 13 :=
+  h_conclusion
+
+/-- **Lemma 19 case (1) Conclusion instance, prime-case with fix-emptiness.**
+[done — partial unconditional]
+
+The Conclusion Prop `Lemma19Case1Conclusion σ` is discharged for
+`σ^13 = 1` graph automorphisms of a Moore57 Γ that satisfy the paper
+case-(1) fix-emptiness `fixedVertexCount σ = 0`.  No additional
+`EmptyFixedData` argument required — it is constructed via
+`aut_order_thirteen_EmptyFixedData`. -/
+theorem lem19_case1_conclusion_prime_with_fix_count_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_13 : σ ^ 13 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_fix_empty : Moore57.fixedVertexCount σ = 0) :
+    Lemma19Case1Conclusion σ :=
+  lem19_case1_orderOf_dvd_13_prime_with_fix_count_zero hΓ σ pow_13 hne
+    smul_adj h_fix_empty
 
 end Moore57.Papers.MacajSiran2010.S6
