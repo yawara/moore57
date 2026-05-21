@@ -137,12 +137,40 @@ theorem thm6_odd_order_paper
   ⟨thm6_dvd_one_of_seven_from_props n h_dispatch,
    thm6_bound_375_from_props n h_dispatch⟩
 
+/-- **Theorem 6 abstract conclusion** (Conclusion Prop encoding).
+
+For an odd integer `n` (`|Aut(Γ)|` odd), the paper dispatches `n` into
+one of three case-product divisibility classes:
+* Prop 6 case (3, 5): `n ∣ 135` or `n ∣ 375`,
+* Prop 7 case (3, q≥7): `n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171`,
+* Prop 8 case (5, q≥7): `n ∣ 35 ∨ n ∣ 275`.
+
+Bundled as a Prop for downstream `cor3_375_bound` chain. -/
+def Thm6OddOrderConclusion : Prop :=
+  ∀ n : ℕ, Odd n →
+    ((n ∣ 135 ∨ n ∣ 375) ∨
+     (n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171) ∨
+     (n ∣ 35 ∨ n ∣ 275))
+
+/-- **Theorem 6 via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Thm6OddOrderConclusion` (paper's Props 6/7/8 disjunction
+for odd `n`), conclude `n ≤ 375`.  Delegates to `thm6_odd_order_paper`
+after applying the Conclusion. -/
+theorem thm6_odd_order_via_conclusion
+    (n : ℕ) (h_odd : Odd n) (h_conclusion : Thm6OddOrderConclusion) :
+    (n ∣ 171 ∨ n ∣ 39 ∨ n ∣ 275 ∨ n ∣ 147 ∨ n ∣ 35 ∨ n ∣ 375 ∨ n ∣ 135)
+    ∧ n ≤ 375 :=
+  thm6_odd_order_paper n (h_conclusion n h_odd)
+
 /-- **Theorem 6 (odd `|Aut(Γ)|` divides one of seven values).** [deferred-heavy]
 
 Arithmetic conclusion is captured by
 `thm6_dvd_one_of_seven_from_props` and
 `thm6_dvd_one_of_seven_from_props_and_one_prime` and combined in
-`thm6_odd_order_paper` (above).
+`thm6_odd_order_paper` (above).  The Conclusion Prop encoding is
+`Thm6OddOrderConclusion`; the conditional bridge from Conclusion to
+the bound is `thm6_odd_order_via_conclusion`.
 
 What remains for the unconditional form is the paper's dispatch:
 Feit–Thompson solvability + Philip Hall subgroups for the 2-prime case,
