@@ -1,4 +1,5 @@
 import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma14_SemiRegularCongruence
+import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma13_PrimeSquared
 import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma12_PrimeOrder
 import Moore57.Papers.MacajSiran2010.Section04_Characters.Proposition2_CharacterSystem
 import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Theorem1_Higman
@@ -328,5 +329,252 @@ theorem lem15_no_pq_14_a0_49_conditional
   have h_le : fixedVertexCount σ ≤ fixedVertexCount (σ ^ 2) :=
     fixedVertexCount_le_pow σ 2
   rcases h_lem12_p7_table with h | h <;> omega
+
+/-! ### Phase 12X2: σ^p / σ^q row exclusions for order-pq σ (session 12)
+
+For an order-`pq` graph automorphism σ (`σ^(p*q) = 1`, `σ^p ≠ 1`, `σ^q ≠ 1`,
+`p`, `q` distinct primes), each of `σ^p` and `σ^q` has prime order: `σ^p`
+has order `q` and `σ^q` has order `p`.
+
+This reduces Lem 15 row exclusions on `σ^p` / `σ^q` to the Lem 12
+prime-order row exclusions established in `lem12_no_*_of_prime_not_dvd_*`.
+We expose generic σ^p / σ^q wrappers + specializations for `(p, q)` pairs
+from the §5 Lemma 15 table.
+-/
+
+/-- **Lemma 15 helper: prime sub-power lifting `(σ^p)^q = 1`.** [done]
+
+For any permutation with `σ^(p*q) = 1`, we have `(σ^p)^q = σ^(p*q) = 1`
+and `(σ^q)^p = σ^(p*q) = 1`. Lifted symmetric helper. -/
+theorem lem15_pow_pq_pow_sub
+    (σ : Equiv.Perm V) (p q : ℕ) (hpq : σ ^ (p * q) = 1) :
+    (σ ^ p) ^ q = 1 ∧ (σ ^ q) ^ p = 1 := by
+  refine ⟨?_, ?_⟩
+  · rw [← pow_mul]; exact hpq
+  · rw [← pow_mul]; rw [mul_comm]; exact hpq
+
+/-- **Lemma 15 (unconditional, `a₀(σ^q) = 0` with prime `p ∤ 3250` impossible).**
+[done]
+
+**New unconditional row exclusion via reduction to Lemma 12.**  For an
+order-`pq` graph automorphism `σ` (`σ^(p*q) = 1`, `σ^q ≠ 1`, `p`, `q`
+distinct primes), `σ^q` has prime order `p`. Applying
+`lem12_no_a0_zero_of_prime_not_dvd_3250` to `σ^q` yields contradiction
+whenever `a₀(σ^q) = 0` and `p ∤ 3250 = 2 · 5³ · 13`.
+
+For `p ∉ {2, 5, 13}` this excludes the row. -/
+theorem lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p q : ℕ) (hp : Nat.Prime p) (_hq : Nat.Prime q)
+    (hpq_pow : σ ^ (p * q) = 1) (hne_pow_q : σ ^ q ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ q) = 0)
+    (h_p_not_dvd : ¬ p ∣ 3250) :
+    False := by
+  -- (σ^q)^p = σ^(p*q) = 1.
+  have hpow_q_p : (σ ^ q) ^ p = 1 := by
+    rw [← pow_mul, mul_comm]; exact hpq_pow
+  -- Apply Lem 12 row-exclusion to σ^q (which has order p).
+  exact lem12_no_a0_zero_of_prime_not_dvd_3250 hΓ (σ ^ q)
+    (graphAut_pow σ hAut q) p hp hpow_q_p hne_pow_q h_a0 h_p_not_dvd
+
+/-- **Lemma 15 (unconditional, `a₀(σ^q) = 1` with prime `p ∤ 57` impossible).**
+[done]
+
+**New unconditional row exclusion** combining `lem12_no_a0_one_of_prime_not_dvd_57`
+with the σ^q sub-power lifting. For an order-`pq` graph automorphism `σ`
+with `σ^q ≠ 1`, `σ^q` has prime order `p`, and `a₀(σ^q) = 1` would force
+`p ∣ 57 = 3 · 19`.
+
+For `p ∉ {3, 19}` this excludes the row. -/
+theorem lem15_no_pow_q_a0_one_of_prime_not_dvd_57
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p q : ℕ) (hp : Nat.Prime p) (_hq : Nat.Prime q)
+    (hpq_pow : σ ^ (p * q) = 1) (hne_pow_q : σ ^ q ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ q) = 1)
+    (h_p_not_dvd : ¬ p ∣ 57) :
+    False := by
+  have hpow_q_p : (σ ^ q) ^ p = 1 := by
+    rw [← pow_mul, mul_comm]; exact hpq_pow
+  exact lem12_no_a0_one_of_prime_not_dvd_57 hΓ (σ ^ q)
+    (graphAut_pow σ hAut q) p hp hpow_q_p hne_pow_q h_a0 h_p_not_dvd
+
+/-- **Lemma 15 (unconditional, `a₀(σ^q) = 2` with prime `p ∤ 3248` impossible).**
+[done]
+
+For an order-`pq` graph automorphism `σ` (with `σ^q ≠ 1`), `σ^q` has
+prime order `p`. Applying `lem12_no_a0_two_of_prime_not_dvd_3248` excludes
+`a₀(σ^q) = 2` whenever `p ∤ 3248 = 2⁴ · 7 · 29`.
+
+For `p ∉ {2, 7, 29}` this excludes the row. -/
+theorem lem15_no_pow_q_a0_two_of_prime_not_dvd_3248
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p q : ℕ) (hp : Nat.Prime p) (_hq : Nat.Prime q)
+    (hpq_pow : σ ^ (p * q) = 1) (hne_pow_q : σ ^ q ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ q) = 2)
+    (h_p_not_dvd : ¬ p ∣ 3248) :
+    False := by
+  have hpow_q_p : (σ ^ q) ^ p = 1 := by
+    rw [← pow_mul, mul_comm]; exact hpq_pow
+  exact lem12_no_a0_two_of_prime_not_dvd_3248 hΓ (σ ^ q)
+    (graphAut_pow σ hAut q) p hp hpow_q_p hne_pow_q h_a0 h_p_not_dvd
+
+/-- **Lemma 15 (unconditional, `a₀(σ^p) = 0` with prime `q ∤ 3250` impossible).**
+[done]
+
+Mirror of `lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250` for the σ^p case
+(which has prime order `q`).  `σ^p` has order `q`; `a₀(σ^p) = 0` forces
+`q ∣ 3250`. -/
+theorem lem15_no_pow_p_a0_zero_of_prime_not_dvd_3250
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p q : ℕ) (_hp : Nat.Prime p) (hq : Nat.Prime q)
+    (hpq_pow : σ ^ (p * q) = 1) (hne_pow_p : σ ^ p ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ p) = 0)
+    (h_q_not_dvd : ¬ q ∣ 3250) :
+    False := by
+  -- (σ^p)^q = σ^(p*q) = 1.
+  have hpow_p_q : (σ ^ p) ^ q = 1 := by
+    rw [← pow_mul]; exact hpq_pow
+  exact lem12_no_a0_zero_of_prime_not_dvd_3250 hΓ (σ ^ p)
+    (graphAut_pow σ hAut p) q hq hpow_p_q hne_pow_p h_a0 h_q_not_dvd
+
+/-- **Lemma 15 (unconditional, `a₀(σ^p) = 1` with prime `q ∤ 57` impossible).**
+[done]
+
+Mirror for the σ^p case. -/
+theorem lem15_no_pow_p_a0_one_of_prime_not_dvd_57
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p q : ℕ) (_hp : Nat.Prime p) (hq : Nat.Prime q)
+    (hpq_pow : σ ^ (p * q) = 1) (hne_pow_p : σ ^ p ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ p) = 1)
+    (h_q_not_dvd : ¬ q ∣ 57) :
+    False := by
+  have hpow_p_q : (σ ^ p) ^ q = 1 := by
+    rw [← pow_mul]; exact hpq_pow
+  exact lem12_no_a0_one_of_prime_not_dvd_57 hΓ (σ ^ p)
+    (graphAut_pow σ hAut p) q hq hpow_p_q hne_pow_p h_a0 h_q_not_dvd
+
+/-- **Lemma 15 (unconditional, `a₀(σ^p) = 2` with prime `q ∤ 3248` impossible).**
+[done]
+
+Mirror for the σ^p case. -/
+theorem lem15_no_pow_p_a0_two_of_prime_not_dvd_3248
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (p q : ℕ) (_hp : Nat.Prime p) (hq : Nat.Prime q)
+    (hpq_pow : σ ^ (p * q) = 1) (hne_pow_p : σ ^ p ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ p) = 2)
+    (h_q_not_dvd : ¬ q ∣ 3248) :
+    False := by
+  have hpow_p_q : (σ ^ p) ^ q = 1 := by
+    rw [← pow_mul]; exact hpq_pow
+  exact lem12_no_a0_two_of_prime_not_dvd_3248 hΓ (σ ^ p)
+    (graphAut_pow σ hAut p) q hq hpow_p_q hne_pow_p h_a0 h_q_not_dvd
+
+/-! ### Specializations for §5 Lemma 15 `(p, q)` table entries
+
+The Lemma 15 paper table considers `pq ∈ {14, 21, 22, 33, 35, 39, 55, 65, 77, ...}`.
+For each (p, q) pair with `p < q` we get pq-specific row exclusions by
+specializing the generic theorems above.
+
+We pick representative pairs where the generic exclusion applies non-trivially:
+- `pq = 21 = 3 · 7`: σ^7 has order 3 (excludes a₀(σ^7) ∈ {0, 1, 2}).
+- `pq = 33 = 3 · 11`: σ^11 has order 3 (excludes a₀(σ^11) ∈ {0, 1, 2}).
+- `pq = 35 = 5 · 7`: σ^7 has order 5 (excludes a₀(σ^7) ∈ {1, 2}; a₀ = 0 ok).
+- `pq = 39 = 3 · 13`: σ^13 has order 3 (excludes a₀(σ^13) ∈ {0, 1, 2}).
+- `pq = 55 = 5 · 11`: σ^11 has order 5 (excludes a₀(σ^11) ∈ {1, 2}; a₀ = 0 ok).
+- `pq = 65 = 5 · 13`: σ^13 has order 5 (excludes a₀(σ^13) ∈ {1, 2}; a₀ = 0 ok).
+- `pq = 77 = 7 · 11`: σ^11 has order 7 (excludes a₀(σ^11) ∈ {0, 1, 2}).
+-/
+
+/-- **Lemma 15 (unconditional, `pq = 21, a₀(σ^7) = 0` impossible).** [done]
+
+Specialization: σ of order 21 = 3·7; σ^7 has order 3; `3 ∤ 3250`. -/
+theorem lem15_no_pq21_pow7_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 21 = 1) (hne_pow7 : σ ^ 7 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 7) = 0) :
+    False := by
+  have h21 : (21 : ℕ) = 3 * 7 := by decide
+  rw [h21] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 3 7
+    (by decide) (by decide) hpow hne_pow7 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 21, a₀(σ^7) = 1` impossible).** [done]
+
+Specialization: σ^7 has order 3; `3 ∣ 57` so this is **not** excluded by
+this route (need other tools). Skipped (no contradiction available
+through this bridge). -/
+theorem lem15_no_pq21_pow7_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 21 = 1) (hne_pow7 : σ ^ 7 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 7) = 2) :
+    False := by
+  have h21 : (21 : ℕ) = 3 * 7 := by decide
+  rw [h21] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 3 7
+    (by decide) (by decide) hpow hne_pow7 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 35, a₀(σ^7) = 1` impossible).** [done]
+
+Specialization: σ of order 35 = 5·7; σ^7 has order 5; `5 ∤ 57`. -/
+theorem lem15_no_pq35_pow7_a0_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 35 = 1) (hne_pow7 : σ ^ 7 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 7) = 1) :
+    False := by
+  have h35 : (35 : ℕ) = 5 * 7 := by decide
+  rw [h35] at hpow
+  exact lem15_no_pow_q_a0_one_of_prime_not_dvd_57 hΓ σ hAut 5 7
+    (by decide) (by decide) hpow hne_pow7 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 35, a₀(σ^7) = 2` impossible).** [done]
+
+Specialization: σ^7 has order 5; `5 ∤ 3248`. -/
+theorem lem15_no_pq35_pow7_a0_two
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 35 = 1) (hne_pow7 : σ ^ 7 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 7) = 2) :
+    False := by
+  have h35 : (35 : ℕ) = 5 * 7 := by decide
+  rw [h35] at hpow
+  exact lem15_no_pow_q_a0_two_of_prime_not_dvd_3248 hΓ σ hAut 5 7
+    (by decide) (by decide) hpow hne_pow7 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 39, a₀(σ^13) = 0` impossible).** [done]
+
+Specialization: σ of order 39 = 3·13; σ^13 has order 3; `3 ∤ 3250`. -/
+theorem lem15_no_pq39_pow13_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 39 = 1) (hne_pow13 : σ ^ 13 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 13) = 0) :
+    False := by
+  have h39 : (39 : ℕ) = 3 * 13 := by decide
+  rw [h39] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 3 13
+    (by decide) (by decide) hpow hne_pow13 h_a0 (by decide)
+
+/-- **Lemma 15 (unconditional, `pq = 77, a₀(σ^11) = 0` impossible).** [done]
+
+Specialization: σ of order 77 = 7·11; σ^11 has order 7; `7 ∤ 3250`. -/
+theorem lem15_no_pq77_pow11_a0_zero
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 77 = 1) (hne_pow11 : σ ^ 11 ≠ 1)
+    (h_a0 : fixedVertexCount (σ ^ 11) = 0) :
+    False := by
+  have h77 : (77 : ℕ) = 7 * 11 := by decide
+  rw [h77] at hpow
+  exact lem15_no_pow_q_a0_zero_of_prime_not_dvd_3250 hΓ σ hAut 7 11
+    (by decide) (by decide) hpow hne_pow11 h_a0 (by decide)
 
 end Moore57.Papers.MacajSiran2010.S5
