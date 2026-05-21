@@ -1,5 +1,8 @@
 import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma14_SemiRegularCongruence
 import Moore57.Papers.MacajSiran2010.Section05_Tables.Lemma12_PrimeOrder
+import Moore57.Papers.MacajSiran2010.Section04_Characters.Proposition2_CharacterSystem
+import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Theorem1_Higman
+import Moore57.Moore57Graph.Aut.TraceIntegrality
 import Moore57.Order22OnMoore57.NoGo
 
 set_option linter.unusedSectionVars false
@@ -224,6 +227,86 @@ contradiction.  Re-export of `lem15_starred_row_pq35_trace_above_bound`. -/
 theorem lem15_starred_row_pq35_paper
     (Tr : ℤ) (h_eq : Tr = 206) (h_bd : Tr ≤ 186) : False :=
   lem15_starred_row_pq35_trace_above_bound Tr h_eq h_bd
+
+/-! ### Cleaner discharge for Lem 15 starred row `pq = 35`
+
+The arithmetic kernel `lem15_starred_row_pq35_chi1_not_int` already
+handles the modular discharge given `(a₀, a₁) = (1, 206)`.  Building
+on the §4 Conclusion-Prop `Lemma15Pq35A0Eq1ForcesA1Eq206Conclusion`
+(which packages the paper's character-system derivation of
+`a₁(σ) = 206`), plus `thm1_chi1_formula` and the B4.3 integer-trace
+`aut_pow_E7_trace_int_composite`, we expose a fully paper-faithful
+contradiction wrapper that consumes only:
+  - the starred-row data `(a₀ = 1, σ ∈ Aut Γ of order 35)`, and
+  - the deferred-heavy `Lemma15Pq35A0Eq1ForcesA1Eq206Conclusion`
+    hypothesis.
+
+The orbit-trace `Tr ≤ 186` upper bound (used by the older
+`lem15_starred_row_pq35_paper`) is **NOT** required by this cleaner
+path — the character-system `a₁(σ) = 206` alone is mod-15 inconsistent
+with `χ₁` being an integer trace.
+-/
+
+/-- **Lemma 15 starred row `pq = 35` cleaner discharge via χ₁ integrality
+and Conclusion Prop input.** [done — conditional]
+
+Given an order-35 graph automorphism σ of a Moore (57, 2)-graph Γ with
+`a₀(σ) = 1`, and the §4 Conclusion Prop
+`Lemma15Pq35A0Eq1ForcesA1Eq206Conclusion Γ σ` (which encodes the
+paper's character-system derivation `a₁(σ) = 206`), conclude `False`.
+
+Proof skeleton:
+1. `lem15_pq35_a1_eq_206_paper` extracts `a₁(σ) = 206` (as ℤ).
+2. `thm1_chi1_formula` gives `χ₁(σ) = (8·a₀ + a₁ - 65) / 15`, i.e.
+   `15·χ₁ = 8·a₀ + a₁ - 65` as a ℚ-identity.
+3. `aut_pow_E7_trace_int_composite` (with `n = 35`, `σ^35 = 1`) gives
+   `χ₁(σ) = (z : ℚ)` for some `z : ℤ`.
+4. Substituting `(a₀, a₁) = (1, 206)` into step 2 yields
+   `15 * z = 8·1 + 206 - 65 = 149` as an integer identity.
+5. `omega` closes `¬ ∃ z : ℤ, 15 * z = 149`.
+
+This is **strictly cleaner** than `lem15_starred_row_pq35_paper`: it
+removes the orbit-trace upper-bound hypothesis (`Tr ≤ 186`) entirely
+and replaces it with the mod-15 character integrality, which is
+provided by Theorem 1 and B4.3's composite-trace integrality. -/
+theorem lem15_starred_row_pq35_paper_from_chi1
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (h_concl : Moore57.Papers.MacajSiran2010.S4.Lemma15Pq35A0Eq1ForcesA1Eq206Conclusion Γ σ)
+    (h_pow : σ ^ 35 = 1)
+    (h_a0 : Moore57.fixedVertexCount σ = 1)
+    (h_aut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b)) :
+    False := by
+  -- Step 1: paper-derived `a₁(σ) = 206` from the Conclusion Prop
+  have h_a1 : (Moore57.adjacentMovedCount Γ σ : ℤ) = 206 :=
+    Moore57.Papers.MacajSiran2010.S4.lem15_pq35_a1_eq_206_paper
+      σ h_concl h_pow h_a0 h_aut
+  -- Step 3: trace integrality of χ₁(σ) = tr(E7 · P_σ) for σ^35 = 1.
+  obtain ⟨z, hz⟩ :=
+    Moore57.aut_pow_E7_trace_int_composite hΓ σ h_aut 35 (by norm_num) h_pow
+  -- Step 2: thm1_chi1_formula gives a ℚ-identity for tr(E7 · P_σ).
+  have hform :
+      Matrix.trace (Moore57.E7Matrix Γ * Moore57.permMatrix σ) =
+        (8 * (Moore57.fixedVertexCount σ : ℚ) +
+          (Moore57.adjacentMovedCount Γ σ : ℚ) - 65) / 15 :=
+    Moore57.Papers.MacajSiran2010.S2.thm1_chi1_formula hΓ σ h_aut
+  -- Combine: 15·z = 8·a₀ + a₁ - 65 as ℚ, then push back to ℤ.
+  have h_a0Q : (Moore57.fixedVertexCount σ : ℚ) = 1 := by
+    exact_mod_cast h_a0
+  have h_a1Q : (Moore57.adjacentMovedCount Γ σ : ℚ) = 206 := by
+    have h_a1' : (Moore57.adjacentMovedCount Γ σ : ℚ) =
+        ((206 : ℤ) : ℚ) := by exact_mod_cast h_a1
+    simpa using h_a1'
+  rw [hz, h_a0Q, h_a1Q] at hform
+  -- hform : (z : ℚ) = (8·1 + 206 - 65) / 15 = 149/15
+  have hzQ : (z : ℚ) = 149 / 15 := by linarith [hform]
+  -- 15·z = 149 in ℤ via cast: (15 : ℚ) * (149/15) = 149
+  have h15z : ((15 * z : ℤ) : ℚ) = 149 := by
+    push_cast
+    rw [hzQ]
+    ring
+  have h15zℤ : (15 * z : ℤ) = 149 := by exact_mod_cast h15z
+  -- omega closes: no integer z satisfies 15·z = 149.
+  omega
 
 /-- **Lemma 15 (`pq = 14, a₀ = 49`) conditional contradiction.** [done]
 
