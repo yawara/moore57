@@ -1,5 +1,6 @@
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma18_5Group
 import Moore57.Papers.MacajSiran2010.Section03_EquitablePartitions.Lemma5_AdjacencyMatrix
+import Moore57.Foundations.GroupAction.SemiRegularOrbit
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -305,6 +306,126 @@ the arithmetic core for Step 4 (purely number-theoretic).  Each is
 formalisable independently; the chain through to `prop3_no_solution_direct`
 is provided as a conditional bridge.
 -/
+
+/-! ### Items 1-4: Step 1-4 structural depth (Moore57-specific cores) -/
+
+/-- **Item 1: σ-orbit size = 25 (semi-regular + order 25).** [done — research]
+
+For `σ : Equiv.Perm V` with `orderOf σ = 25` and the semi-regular
+hypothesis (`σ^k v = v → orderOf σ ∣ k` for the moved `v`), the
+cyclic orbit `⟨σ⟩ · v` has size exactly 25.
+
+Direct application of `Moore57.cyclicOrbitFinset.card_eq_orderOf`. -/
+theorem prop3_item1_orbit_size_eq_25
+    (σ : Equiv.Perm V) (h_order : orderOf σ = 25)
+    (v : V) (hsemi : ∀ k : ℕ, (σ ^ k) v = v → orderOf σ ∣ k) :
+    (Moore57.cyclicOrbitFinset σ v).card = 25 := by
+  rw [Moore57.cyclicOrbitFinset.card_eq_orderOf σ v hsemi]
+  exact h_order
+
+/-- **Item 2: fix-N orbits pairwise disjoint via Moore graph μ=1/λ=0.** [done — research]
+
+For `a, a' ∈ Fix(σ)` distinct fixed vertices of a graph aut σ:
+the common neighbourhoods `N(a) ∩ N(a')` consists only of σ-fixed
+vertices (or is empty).  Equivalently,
+`(N(a) \ Fix(σ)) ∩ (N(a') \ Fix(σ)) = ∅`.
+
+**Proof**:
+* If `a ~ a'`: triangle `a, w, a'` for any common `w ∈ N(a) ∩ N(a')`
+  contradicts `λ = 0` (no_triangle).
+* If `a ≁ a'`: `|cN(a, a')| = μ = 1`, the unique common neighbour `w`
+  is fixed by σ (σ permutes common neighbours; both `a, a'` fixed,
+  so σ maps `w` to a common neighbour, which is unique = `w`).
+
+Hence any `w ∈ N(a) ∩ N(a')` is fixed by σ. -/
+theorem prop3_item2_common_neighbor_fixed
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ x y : V, Γ.Adj x y ↔ Γ.Adj (σ x) (σ y))
+    {a a' : V} (ha : σ a = a) (ha' : σ a' = a') (haa' : a ≠ a')
+    {w : V} (hwa : Γ.Adj a w) (hwa' : Γ.Adj a' w) :
+    σ w = w := by
+  by_cases haadj : Γ.Adj a a'
+  · -- Triangle a-w-a' with a~a': contradiction
+    exact absurd haadj.symm (fun h => hΓ.no_triangle hwa hwa'.symm h)
+  · -- a ≁ a', μ = 1 ⟹ unique common neighbour
+    have hcN : Fintype.card (Γ.commonNeighbors a a') = 1 := hΓ.of_not_adj haa' haadj
+    have hw_mem : w ∈ Γ.commonNeighbors a a' := ⟨hwa, hwa'⟩
+    have hsw_mem : σ w ∈ Γ.commonNeighbors a a' := by
+      refine ⟨?_, ?_⟩
+      · have := (smul_adj a w).mp hwa
+        rwa [ha] at this
+      · have := (smul_adj a' w).mp hwa'
+        rwa [ha'] at this
+    -- Extract uniqueness from card = 1
+    obtain ⟨u, hu⟩ := Fintype.card_eq_one_iff.mp hcN
+    have heq : (⟨σ w, hsw_mem⟩ : Γ.commonNeighbors a a') = ⟨w, hw_mem⟩ := by
+      rw [hu ⟨σ w, hsw_mem⟩, hu ⟨w, hw_mem⟩]
+    exact Subtype.mk.injEq _ _ _ _ |>.mp heq
+
+/-- **Item 2 corollary: `(N(a) \ Fix(σ)) ∩ (N(a') \ Fix(σ)) = ∅`.** [done — research]
+
+For distinct `a, a' ∈ Fix(σ)`, the σ-moved neighbourhoods are disjoint
+as sets.  This is the structural fact underlying the orbit
+decomposition `100 = 50 · 2` (each fixed vertex contributes 2 fix-N
+orbits pairwise disjoint with other fixed vertices' orbits). -/
+theorem prop3_item2_fix_N_disjoint
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ x y : V, Γ.Adj x y ↔ Γ.Adj (σ x) (σ y))
+    {a a' : V} (ha : σ a = a) (ha' : σ a' = a') (haa' : a ≠ a')
+    {w : V} (hwa : Γ.Adj a w) (hwa' : Γ.Adj a' w) (hw_moved : σ w ≠ w) :
+    False :=
+  hw_moved (prop3_item2_common_neighbor_fixed hΓ σ smul_adj ha ha' haa' hwa hwa')
+
+/-- **Item 3: b vector construction from orbit equitable partition.** [done — abstract]
+
+Given an orbit-based equitable partition `P : EquitablePartition Γ (Fin 178)`
+indexing the 178 orbits of an order-25 X-action on Moore57, plus a designated
+"O_{178}" index `idx_178` (one of the 28 free orbits with trace 0), plus an
+embedding `i : Fin 27 → Fin 178` indexing the 27 other free orbits, the
+b vector is:
+
+  `b j := P.adjMatrix idx_178 (i_free j)`
+
+This abstracts the structural step "look up b_{178, j} entries from the
+quotient adjacency matrix".  Combined with Items 1, 2 (structural facts)
+and Items 4 (Lem 5(5) entry) below, it produces eq (7), (8). -/
+def prop3_item3_b_vector_from_partition
+    {ι : Type*} [Fintype ι]
+    (P : Moore57.Papers.MacajSiran2010.S3.EquitablePartition Γ ι)
+    (idx_178 : ι) (i_free : Fin 27 → ι) : Fin 27 → ℕ :=
+  fun j => P.adjMatrix idx_178 (i_free j)
+
+/-- **Item 4: Lem 5(5) at diagonal entry `(i, i)`.** [done]
+
+Direct consequence of `lem5_matrix_identity` at `i = j`:
+`(B²)_{i, i} = 56 + sᵢ - bᵢᵢ`.
+
+For `i = 178` (chosen free orbit), `sᵢ = 25` (orbit size), `bᵢᵢ = 0`
+(trace), giving `(B²)_{178, 178} = 56 + 25 - 0 = 81`. -/
+theorem prop3_item4_lem5_diagonal_entry
+    (hΓ : IsMoore57 Γ) {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (P : Moore57.Papers.MacajSiran2010.S3.EquitablePartition Γ ι)
+    (h_nonempty : ∀ k, (P.cell k).Nonempty) (i : ι) :
+    (∑ k : ι, P.adjMatrix i k * P.adjMatrix k i) + P.adjMatrix i i =
+      56 + P.cellSize i := by
+  have h := Moore57.Papers.MacajSiran2010.S3.lem5_matrix_identity hΓ P h_nonempty i i
+  simp [if_pos rfl] at h
+  omega
+
+/-- **Item 4 specialised: for chosen free orbit (`sᵢ = 25, bᵢᵢ = 0`),
+`(B²)_{i, i} = 81`.** [done — research]
+
+Combines `prop3_item4_lem5_diagonal_entry` with the specific values
+`sᵢ = 25` (size-25 orbit) and `bᵢᵢ = 0` (trace-0 orbit). -/
+theorem prop3_item4_b_squared_diagonal_eq_81
+    (hΓ : IsMoore57 Γ) {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (P : Moore57.Papers.MacajSiran2010.S3.EquitablePartition Γ ι)
+    (h_nonempty : ∀ k, (P.cell k).Nonempty) (i : ι)
+    (h_size : P.cellSize i = 25) (h_trace : P.adjMatrix i i = 0) :
+    ∑ k : ι, P.adjMatrix i k * P.adjMatrix k i = 81 := by
+  have h := prop3_item4_lem5_diagonal_entry hΓ P h_nonempty i
+  rw [h_size, h_trace] at h
+  omega
 
 /-- **Step 1 arithmetic core: orbit decomposition `50 + 100 + 28 = 178`.** [done]
 
