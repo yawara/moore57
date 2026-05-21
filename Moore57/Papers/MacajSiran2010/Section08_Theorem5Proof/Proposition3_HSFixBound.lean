@@ -516,6 +516,50 @@ theorem prop3_per_vertex_two_orbits
     · rw [Finset.card_union_of_disjoint h_disj, hO₁_card, hO₂_card, h_card]
   exact ⟨v₁, v₂, hv₁, hv₂_S, h_disj, h_union⟩
 
+/-! ### Sub-task C: trace-0 free orbit Classical chooser -/
+
+/-- **`prop3_choose_trace_0_free_orbit`: select `idx_178` + 27 other free orbits.**
+[done — Sub-task C]
+
+Given an indexing type `ι`, a free-orbit Finset (cardinality 28) and a
+non-empty subset of trace-0 free orbits, this theorem extracts:
+* `idx_178 : ι` — a chosen trace-0 free orbit (the `O_{178}` of the paper)
+* `i_free : Fin 27 → ι` — an injection enumerating the 27 other free orbits
+
+The chooser uses `Finset.equivFinOfCardEq` on `Free.erase idx_178`
+(cardinality 27) to obtain the `Fin 27 → ι` map.
+
+This is the abstract Classical-choose wrapper for the trace-0 zero-orbit
+selection step in paper §8 Prop 3 (Step 4 → choice of `O_{178}`). -/
+theorem prop3_choose_trace_0_free_orbit
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Free : Finset ι) (h_card : Free.card = 28)
+    (TraceZero : Finset ι) (h_sub : TraceZero ⊆ Free)
+    (h_ne : TraceZero.Nonempty) :
+    ∃ (idx_178 : ι) (i_free : Fin 27 → ι),
+      idx_178 ∈ TraceZero ∧
+      (∀ j : Fin 27, i_free j ∈ Free) ∧
+      (∀ j : Fin 27, i_free j ≠ idx_178) ∧
+      Function.Injective i_free := by
+  obtain ⟨idx_178, hidx⟩ := h_ne
+  have hidx_in_Free : idx_178 ∈ Free := h_sub hidx
+  have h_card_erase : (Free.erase idx_178).card = 27 := by
+    rw [Finset.card_erase_of_mem hidx_in_Free, h_card]
+  -- Use Finset.equivFinOfCardEq to get a bijection.
+  let e : Fin 27 ≃ (Free.erase idx_178) :=
+    ((Free.erase idx_178).equivFinOfCardEq h_card_erase).symm
+  let i_free : Fin 27 → ι := fun j => ((e j) : ι)
+  refine ⟨idx_178, i_free, hidx, ?_, ?_, ?_⟩
+  · intro j
+    have h := (e j).property
+    exact (Finset.mem_erase.mp h).2
+  · intro j
+    exact (Finset.mem_erase.mp (e j).property).1
+  · intro j₁ j₂ h
+    -- i_free j₁ = i_free j₂ ⟹ (e j₁ : ι) = (e j₂ : ι) ⟹ e j₁ = e j₂ ⟹ j₁ = j₂
+    have : e j₁ = e j₂ := Subtype.ext h
+    exact e.injective this
+
 /-- **`prop3_fix_N_orbits_count`: total fix-N orbit count = 100.** [done — Sub-task B]
 
 For `HSFixedData Γ σ` with `orderOf σ = 25`, the total number of σ-orbits
