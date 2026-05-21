@@ -614,3 +614,129 @@ theorem lem18_5group_fix_prime_conclusion
   · exact Or.inr (Or.inr (lem18_case3_conclusion_prime hΓ σ pow_5 efd))
 
 end Moore57.Papers.MacajSiran2010.S6
+
+namespace Moore57.Papers.MacajSiran2010.S6
+
+section FullDispatch
+
+universe u
+
+variable {W : Type u} [Fintype W] [DecidableEq W]
+variable {Δ : SimpleGraph W} [DecidableRel Δ.Adj]
+
+/-! ### Full dispatch (HS ⊕ Pentagon ⊕ Empty) for the §6 Lem 18 prime case
+
+Mirrors the §6 Lem 17 `FullDispatch` section pattern: combines the three
+fix-shape branches (Hoffman–Singleton, Pentagon, Empty) of the §6 Lem 18
+5-group trichotomy into a single paper-faithful divisibility statement
+`orderOf σ ∣ 125`.
+
+**Plan B note (carried over from the case-(N) prime-case wrappers).**
+Unlike Lem 17 (where `aut_order_three_SingletonOrPetersenSRG_unconditional`
+provides an unconditional shape dichotomy from σ^3 = 1 + smul_adj, so the
+only remaining input is `PetersenUniqueness`), Lem 18 currently has **no**
+analogous unconditional shape classification for σ^5 = 1.  Concretely,
+there is no `aut_order_five_SingletonOrHSOrEmpty_unconditional` Foundations
+theorem yet — the three fix shapes (HS, Pentagon, Empty) cannot be
+distinguished from the σ-data alone.
+
+Consequently, the cleanest unified Lem 18 paper-bound theorem must take the
+fix-shape dispatch (HS ⊕ Pentagon ⊕ Empty) as a `Prop` hypothesis
+`Lemma18FixShapeDispatch Γ σ`.  Once a Foundations-level
+`aut_order_five_*` shape classification lands (deferred, requires paper
+Lem 18 fix-shape constructor + an order-5 HS / Pentagon uniqueness Prop),
+the dispatch hypothesis can be discharged automatically and the unified
+theorem becomes truly unconditional on the prime case.
+
+Until then, the `_given_dispatch` form below is the unified paper-faithful
+packaging used by downstream `MainTheorem` wires (paralleling
+`lem17_3group_paper_bound_given_uniqueness`). -/
+
+/-- **Lemma 18 fix-shape dispatch Prop encoding (HS ⊕ Pentagon ⊕ Empty).**
+[done — Prop encoding]
+
+For σ a 5-group element acting as a graph automorphism of a Moore57 Γ
+with σ^5 = 1, the §6 Lem 18 trichotomy asserts that `Fix(σ)` is one of:
+* the Hoffman–Singleton subgraph (HS, witnessed by `HSFixedData Γ σ`),
+* a Pentagon (witnessed by `C5FixedData Γ σ`),
+* the empty graph (witnessed by `EmptyFixedData σ`).
+
+Packaged as a `Prop` so downstream chains can take it as a hypothesis
+without committing to a specific witness extractor.  This is the
+order-5 analogue of `PetersenUniqueness` for the Lem 17 dispatch, in
+the sense that it's the "missing classical input" that the Foundations
+layer would discharge once paper Lem 18 fix-shape classification is in
+place. -/
+def Lemma18FixShapeDispatch (Δ : SimpleGraph W) [DecidableRel Δ.Adj]
+    (σ : Equiv.Perm W) : Prop :=
+  (∃ (_hsfd : HSFixedData Δ σ) (_i : Fin 50), True) ∨
+  (∃ (_c5 : C5FixedData Δ σ) (_i : Fin 5), True) ∨
+  (∃ (_efd : EmptyFixedData σ), True)
+
+/-- **Lemma 18 full dispatch paper bound `orderOf σ ∣ 125` (combined upper).**
+[done — full wire, conditional on `Lemma18FixShapeDispatch`]
+
+The paper's §6 Lem 18 statement combines the three fix-shape branches under
+a single upper-bound divisor: `orderOf σ ∣ 125`.  In the prime case
+(σ^5 = 1), each branch delivers a sharper bound that divides 125:
+
+* case 1 (HS): `orderOf σ ∣ 25 ∣ 125` (sharpened ⟹ paper-stated),
+* case 2 (Pentagon): `orderOf σ ∣ 5 ∣ 125` (sharpened ⟹ paper-stated),
+* case 3 (Empty): `orderOf σ ∣ 125` (the case-3 conclusion itself).
+
+This is the cleanest single-divisor paper-faithful form of Lem 18 in the
+prime case, given the fix-shape dispatch — the order-5 analogue of
+`lem17_3group_paper_bound_given_uniqueness`.
+
+The `hne : σ ≠ 1` argument is included to match the Lem 17 signature
+(even though it's not directly used here, since each case-N conclusion
+trivially handles σ = 1). -/
+theorem lem18_5group_paper_bound_given_dispatch
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_5 : σ ^ 5 = 1) (_hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_dispatch : Lemma18FixShapeDispatch Δ σ) :
+    orderOf σ ∣ 125 := by
+  rcases lem18_5group_fix_prime_conclusion hΓ σ pow_5 smul_adj h_dispatch
+    with h1 | h2 | h3
+  · -- case 1 (HS): orderOf σ ∣ 25 ∣ 125.
+    exact dvd_trans h1 (by decide)
+  · -- case 2 (Pentagon): orderOf σ ∣ 5 ∣ 125.
+    exact dvd_trans h2 (by decide)
+  · -- case 3 (Empty): orderOf σ ∣ 125 directly.
+    exact h3
+
+/-- **Lemma 18 full dispatch Conclusion Prop encoding.**
+
+Encapsulates the combined paper-bound `orderOf σ ∣ 125` from the full
+dispatch as a `Prop`, paralleling `Lemma17FullDispatchConclusion` and the
+per-case `Lemma18Case1/2/3Conclusion` props.  Used by downstream Cor3 /
+MainTheorem dispatch chains when the per-case split is not needed. -/
+def Lemma18FullDispatchConclusion (σ : Equiv.Perm W) : Prop :=
+  orderOf σ ∣ 125
+
+/-- **Lemma 18 full dispatch via Conclusion encoding.** [done]
+
+Given the `Lemma18FullDispatchConclusion σ` Prop, conclude
+`orderOf σ ∣ 125`.  Trivial bridge — exposed for the Conclusion-Prop
+dispatch pattern. -/
+theorem lem18_full_dispatch_via_conclusion
+    (σ : Equiv.Perm W) (h_conclusion : Lemma18FullDispatchConclusion σ) :
+    orderOf σ ∣ 125 :=
+  h_conclusion
+
+/-- **Lemma 18 full dispatch Conclusion instance, given fix-shape
+dispatch.** [done — full wire, conditional on `Lemma18FixShapeDispatch`]
+
+Conclusion-Prop wrapper around `lem18_5group_paper_bound_given_dispatch`.
+Discharges `Lemma18FullDispatchConclusion σ` (= `orderOf σ ∣ 125`) from
+the prime-case inputs plus the fix-shape dispatch Prop. -/
+theorem lem18_5group_full_dispatch_conclusion_given_dispatch
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_5 : σ ^ 5 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_dispatch : Lemma18FixShapeDispatch Δ σ) :
+    Lemma18FullDispatchConclusion σ :=
+  lem18_5group_paper_bound_given_dispatch hΓ σ pow_5 hne smul_adj h_dispatch
+
+end FullDispatch
+
+end Moore57.Papers.MacajSiran2010.S6

@@ -2,6 +2,7 @@ import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition6_3and5
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition7_3andLarge
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition8_5andLarge
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma17_3Group
+import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma18_5Group
 import Moore57.Foundations.GraphTheory.AutSubgroup
 import Moore57.Foundations.GraphTheory.PetersenUniqueness
 import Mathlib.GroupTheory.SpecificGroups.Cyclic.Basic
@@ -525,5 +526,90 @@ theorem thm6_one_prime_branch_card_dvd_27_holds_of_prime_card_given_uniqueness
   exact h_ord_dvd_27
 
 end Lem17PrimeCardWire
+
+end Moore57.Papers.MacajSiran2010.S9
+
+/-! ### Lem 18 prime-card wire (per-σ witness; prime p=5, given fix-shape dispatch)
+
+Mirrors the Lem 17 prime-card wire above for the `p = 5` case, using the
+full §6 Lem 18 prime-case dispatch
+`lem18_5group_paper_bound_given_dispatch` from
+`Section06_PGroupsOverview.Lemma18_5Group` (`FullDispatch` section).
+
+The dispatch consumes the universe-polymorphic
+`Lemma18FixShapeDispatch Γ σ` Prop hypothesis (the fix-shape disjunction
+HS ⊕ Pentagon ⊕ Empty for the σ-generator) and produces the combined
+paper-bound `orderOf σ ∣ 125`.
+
+**Plan B note (Lem 18 vs Lem 17).** Lem 17 has an unconditional shape
+dichotomy at σ^3 = 1 (`aut_order_three_SingletonOrPetersenSRG_unconditional`)
+so its `_given_uniqueness` wire only needs the classical `PetersenUniqueness`
+Prop.  Lem 18 currently has no analogous unconditional shape classification
+for σ^5 = 1, so the prime-card wire here takes a Γ-level fix-shape
+dispatcher `h_dispatch` parameterised by σ — a "for any σ-generator of
+order 5, the fix shape is one of HS/Pentagon/Empty" predicate.  Once a
+Foundations-level `aut_order_five_*` shape classification lands, the
+dispatcher can be discharged automatically.
+
+The resulting wire requires:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 5` (paper input from Sylow + 5-group
+  classification — `|Aut(Γ)|` is the prime 5),
+* a Γ-level fix-shape dispatcher: for every order-5 σ-generator with the
+  Lem 18 prime-case data, `Lemma18FixShapeDispatch Γ σ` holds.
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 125`. -/
+
+namespace Moore57.Papers.MacajSiran2010.S9
+
+section Lem18PrimeCardWire
+
+universe u
+
+variable {V : Type u} [Fintype V] [DecidableEq V]
+  {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Theorem 6 1-prime branch wire (Lem 18, p=5) via prime card and
+fix-shape dispatch.** [done — full Lem 18 dispatch, conditional on
+`Lemma18FixShapeDispatch`]
+
+For `Nat.card (autSubgroup Γ) = 5`, extracts a σ-generator via
+`exists_aut_generator_of_prime_card` (giving `σ ≠ 1`, `σ^5 = 1`,
+`orderOf σ = 5`, `smul_adj`), then applies the full Lem 18 prime-case
+dispatch `lem18_5group_paper_bound_given_dispatch` to discharge
+`orderOf σ ∣ 125`, and lifts via `orderOf σ = 5` and `5 ∣ 125` to
+`Nat.card (autSubgroup Γ) ∣ 125`.
+
+Parallel to `thm6_one_prime_branch_card_dvd_27_holds_of_prime_card_given_uniqueness`
+for the `p = 5` case.  The fix-shape dispatcher hypothesis `h_dispatch`
+is the order-5 analogue of the `PetersenUniqueness` Prop used by Lem 17.
+
+The `h_dispatch` is given in Γ-level form (parameterised over arbitrary
+order-5 σ-generators with the Lem 18 prime-case data), so that it can be
+applied after σ-extraction; this matches the Foundations-level shape
+classification pattern (`aut_order_three_SingletonOrPetersenSRG_unconditional`
+takes σ and returns the dichotomy, rather than requiring per-σ instances
+upfront). -/
+theorem thm6_one_prime_branch_card_dvd_125_holds_of_prime_card_given_dispatch
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 5)
+    (h_dispatch :
+      ∀ σ : Equiv.Perm V, σ ^ 5 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma18FixShapeDispatch Γ σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 125 := by
+  obtain ⟨σ, hσ_mem, h_ord, hne, pow_5, smul_adj⟩ :=
+    exists_aut_generator_of_prime_card (Γ := Γ) (by decide : Nat.Prime 5) h_card
+  have h_dispatch_σ : Moore57.Papers.MacajSiran2010.S6.Lemma18FixShapeDispatch Γ σ :=
+    h_dispatch σ pow_5 hne smul_adj
+  have h_ord_dvd_125 : orderOf σ ∣ 125 :=
+    Moore57.Papers.MacajSiran2010.S6.lem18_5group_paper_bound_given_dispatch
+      hΓ σ pow_5 hne smul_adj h_dispatch_σ
+  -- Convert orderOf σ ∣ 125 to Nat.card ∣ 125 via h_card and h_ord.
+  rw [h_card]
+  have : (5 : ℕ) = orderOf σ := h_ord.symm
+  rw [this]
+  exact h_ord_dvd_125
+
+end Lem18PrimeCardWire
 
 end Moore57.Papers.MacajSiran2010.S9

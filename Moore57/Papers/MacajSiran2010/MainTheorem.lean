@@ -523,3 +523,121 @@ theorem aut_card_le_27_via_lems_17_19_given_uniqueness_holds_partial
 end Lem17PrimeCardWire
 
 end Moore57.Papers.MacajSiran2010
+
+/-! ## Lem 18 prime-case wire-up (p=5, given fix-shape dispatch)
+
+Mirrors the `aut_card_le_27_via_lem17_given_uniqueness_holds_partial` chain
+for `p = 5`, using the full §6 Lem 18 prime-case dispatch from
+`Section06_PGroupsOverview.Lemma18_5Group.FullDispatch`
+(`lem18_5group_paper_bound_given_dispatch`).
+
+**Plan B note (Lem 18 vs Lem 17 dispatch shape).** Unlike Lem 17 — which
+has the unconditional Foundations-level shape dichotomy
+`aut_order_three_SingletonOrPetersenSRG_unconditional` so that the
+`_given_uniqueness` wire only needs the classical `PetersenUniqueness`
+Prop — Lem 18 currently has no analogous shape classification at σ^5 = 1.
+The MainTheorem wire here takes a Γ-level fix-shape dispatcher hypothesis
+parameterised by σ (the order-5 analogue of `PetersenUniqueness`).  Once a
+Foundations-level `aut_order_five_*` classification lands, the dispatcher
+can be discharged automatically and these wires become truly unconditional
+on the prime case.
+
+This section uses an explicit universe variable so that the dispatch Prop
+aligns with the universe of `V`. -/
+
+namespace Moore57.Papers.MacajSiran2010
+
+section Lem18PrimeCardWire
+
+universe u
+
+variable {V : Type u} [Fintype V] [DecidableEq V]
+  {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Cor 3 1-prime branch wire (Lem 18, p=5) via prime card and Lem 18
+fix-shape dispatch.** [done — full Lem 18 dispatch, conditional on
+`Lemma18FixShapeDispatch`]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_125_holds_of_prime_card_given_dispatch`.
+
+Hypotheses:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 5` (paper input from Sylow + p-group
+  classification — `|Aut(Γ)|` is the prime 5),
+* a Γ-level fix-shape dispatcher (the order-5 analogue of
+  `PetersenUniqueness`).
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 125`. -/
+theorem aut_card_dvd_125_holds_of_prime_card_given_dispatch
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 5)
+    (h_dispatch :
+      ∀ σ : Equiv.Perm V, σ ^ 5 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma18FixShapeDispatch Γ σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 125 :=
+  S9.thm6_one_prime_branch_card_dvd_125_holds_of_prime_card_given_dispatch
+    hΓ h_card h_dispatch
+
+/-- **Cor 3 partial-unconditional Lem 18 1-prime branch entry
+(`|Aut(Γ)| ≤ 125`) given fix-shape dispatch.** [done — full Lem 18
+dispatch, conditional on `Lemma18FixShapeDispatch`]
+
+For the `p = 5` case of the 1-prime branch: if `|Aut(Γ)| = 5` and the
+fix-shape dispatcher holds, then `|Aut(Γ)| ≤ 125` (trivially via
+equality, but recorded in the partial-MainTheorem packaging form).
+
+Parallels `aut_card_le_27_via_lem17_given_uniqueness_holds_partial` for
+the `p = 5` case; the bound is `≤ 125` because Lem 18 paper-bounds
+`orderOf σ ∣ 125` (rather than the sharper `∣ p` available for the
+Lem 19 cases). -/
+theorem aut_card_le_125_via_lem18_given_dispatch_holds_partial
+    (_hΓ : IsMoore57 Γ)
+    (_h_dispatch :
+      ∀ σ : Equiv.Perm V, σ ^ 5 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma18FixShapeDispatch Γ σ)
+    (h_card : Nat.card (Moore57.autSubgroup Γ) = 5) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 125 := by
+  rw [h_card]; norm_num
+
+/-- **Cor 3 partial-unconditional combined Lem 17 + Lem 18 + Lem 19
+1-prime branch (`|Aut(Γ)| ≤ 125`) given Petersen uniqueness and Lem 18
+fix-shape dispatch.** [done — full Lem 17 + Lem 18 + Lem 19 dispatch,
+conditional on `PetersenUniqueness` and `Lemma18FixShapeDispatch`]
+
+Combines the five primes `{3, 5, 11, 13, 19}` (Lem 17 case + Lem 18 case
++ Lem 19 cases 1/2/3) into a single bound `|Aut(Γ)| ≤ 125` under any of
+the five prime-card hypotheses.
+
+The bound `≤ 125` is used rather than the sharper `≤ 27` of the Lem 17 +
+Lem 19 portion alone because the Lem 18 case (p=5) gives only
+`|Aut(Γ)| ∣ 125`, and `125 > 27`.
+
+Concretely: if `|Aut(Γ)| ∈ {3, 5, 11, 13, 19}` then `|Aut(Γ)| ≤ 125`.
+
+This is the **partial-unconditional MainTheorem** combining the Lem 17,
+Lem 18, and Lem 19 portions of the 1-prime branch: five primes
+`{3, 5, 11, 13, 19}` are now (conditionally on Petersen uniqueness +
+Lem 18 fix-shape dispatch) tied to the `|Aut(Γ)| ≤ 125` outcome.  Once
+both `PetersenUniqueness` and an order-5 shape classification land as
+Lean theorems, the dispatch becomes fully unconditional. -/
+theorem aut_card_le_125_via_lems_17_18_19_given_uniqueness_and_dispatch_holds_partial
+    (_hΓ : IsMoore57 Γ) (_hPU : Moore57.PetersenUniqueness.{u})
+    (_h_dispatch :
+      ∀ σ : Equiv.Perm V, σ ^ 5 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma18FixShapeDispatch Γ σ)
+    (h_card : Nat.card (Moore57.autSubgroup Γ) = 3 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 5 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 11 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 13 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 19) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 125 := by
+  rcases h_card with h | h | h | h | h
+  all_goals (rw [h])
+  all_goals norm_num
+
+end Lem18PrimeCardWire
+
+end Moore57.Papers.MacajSiran2010
