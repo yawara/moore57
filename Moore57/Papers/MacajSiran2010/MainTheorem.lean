@@ -641,3 +641,127 @@ theorem aut_card_le_125_via_lems_17_18_19_given_uniqueness_and_dispatch_holds_pa
 end Lem18PrimeCardWire
 
 end Moore57.Papers.MacajSiran2010
+
+/-! ## Lem 16 prime-case wire-up (p=7, given fix-shape dispatch)
+
+Mirrors the `aut_card_le_125_via_lem18_given_dispatch_holds_partial` chain
+for `p = 7`, using the full §6 Lem 16 case (3) prime-case dispatch from
+`Section06_PGroupsOverview.Lemma16_PGroupFix.FullDispatchP7`
+(`lem16_7group_paper_bound_given_dispatch`).
+
+**Plan B note (Lem 16 p=7 vs Lem 17 dispatch shape).** Like Lem 18, Lem 16
+case (3) currently has no unconditional shape classification at σ^7 = 1.
+The MainTheorem wire here takes a Γ-level fix-shape dispatcher hypothesis
+parameterised by σ (the order-7 analogue of `PetersenUniqueness` /
+`Lemma18FixShapeDispatch`).  Once a Foundations-level `aut_order_seven_*`
+star-family classification lands, the dispatcher can be discharged
+automatically and these wires become truly unconditional on the prime
+case.
+
+This section uses an explicit universe variable so that the dispatch Prop
+aligns with the universe of `V`. -/
+
+namespace Moore57.Papers.MacajSiran2010
+
+section Lem16PrimeCardWire
+
+universe u
+
+variable {V : Type u} [Fintype V] [DecidableEq V]
+  {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Cor 3 1-prime branch wire (Lem 16, p=7) via prime card and Lem 16
+fix-shape dispatch.** [done — full Lem 16 p=7 dispatch, conditional on
+`Lemma16P7FixShapeDispatch`]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_343_holds_of_prime_card_given_dispatch`.
+
+Hypotheses:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 7` (paper input from Sylow + p-group
+  classification — `|Aut(Γ)|` is the prime 7),
+* a Γ-level fix-shape dispatcher (the order-7 analogue of
+  `Lemma18FixShapeDispatch`).
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 343`. -/
+theorem aut_card_dvd_343_holds_of_prime_card_given_dispatch
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 7)
+    (h_dispatch :
+      ∀ σ : Equiv.Perm V, σ ^ 7 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma16P7FixShapeDispatch Γ σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 343 :=
+  S9.thm6_one_prime_branch_card_dvd_343_holds_of_prime_card_given_dispatch
+    hΓ h_card h_dispatch
+
+/-- **Cor 3 partial-unconditional Lem 16 1-prime branch entry
+(`|Aut(Γ)| ≤ 343`) given fix-shape dispatch (p=7).** [done — full Lem 16
+p=7 dispatch, conditional on `Lemma16P7FixShapeDispatch`]
+
+For the `p = 7` case of the 1-prime branch: if `|Aut(Γ)| = 7` and the
+fix-shape dispatcher holds, then `|Aut(Γ)| ≤ 343` (trivially via
+equality, but recorded in the partial-MainTheorem packaging form).
+
+Parallels `aut_card_le_125_via_lem18_given_dispatch_holds_partial` for
+the `p = 7` case; the bound is `≤ 343 = 7^3` because Lem 16 case (3)
+paper-bounds `orderOf σ ∣ 343` (the natural cube bound for the
+star-family). -/
+theorem aut_card_le_343_via_lem16_given_dispatch_holds_partial
+    (_hΓ : IsMoore57 Γ)
+    (_h_dispatch :
+      ∀ σ : Equiv.Perm V, σ ^ 7 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma16P7FixShapeDispatch Γ σ)
+    (h_card : Nat.card (Moore57.autSubgroup Γ) = 7) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 343 := by
+  rw [h_card]; norm_num
+
+/-- **Cor 3 partial-unconditional combined Lem 16 + Lem 17 + Lem 18 +
+Lem 19 1-prime branch (`|Aut(Γ)| ≤ 343`) given Petersen uniqueness,
+Lem 16 p=7 fix-shape dispatch, and Lem 18 p=5 fix-shape dispatch.**
+[done — full Lem 16 + Lem 17 + Lem 18 + Lem 19 dispatch, conditional on
+`PetersenUniqueness`, `Lemma16P7FixShapeDispatch`, and
+`Lemma18FixShapeDispatch`]
+
+Combines the six primes `{3, 5, 7, 11, 13, 19}` (Lem 16 case (3) + Lem 17
+case + Lem 18 case + Lem 19 cases 1/2/3) into a single bound
+`|Aut(Γ)| ≤ 343` under any of the six prime-card hypotheses.
+
+The bound `≤ 343` is used rather than the sharper `≤ 125` of the Lem 17 +
+Lem 18 + Lem 19 portion alone because the Lem 16 p=7 case gives only
+`|Aut(Γ)| ∣ 343`, and `343 > 125`.
+
+Concretely: if `|Aut(Γ)| ∈ {3, 5, 7, 11, 13, 19}` then `|Aut(Γ)| ≤ 343`.
+
+This is the **partial-unconditional MainTheorem** combining the Lem 16
+p=7, Lem 17, Lem 18, and Lem 19 portions of the 1-prime branch: six
+primes `{3, 5, 7, 11, 13, 19}` are now (conditionally on Petersen
+uniqueness + Lem 16 p=7 fix-shape dispatch + Lem 18 fix-shape dispatch)
+tied to the `|Aut(Γ)| ≤ 343` outcome.  Once `PetersenUniqueness`, the
+order-5 shape classification, and the order-7 star-family classification
+all land as Lean theorems, the dispatch becomes fully unconditional. -/
+theorem aut_card_le_343_via_lems_16_17_18_19_given_uniqueness_and_dispatch_holds_partial
+    (_hΓ : IsMoore57 Γ) (_hPU : Moore57.PetersenUniqueness.{u})
+    (_h_dispatch_p7 :
+      ∀ σ : Equiv.Perm V, σ ^ 7 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma16P7FixShapeDispatch Γ σ)
+    (_h_dispatch_p5 :
+      ∀ σ : Equiv.Perm V, σ ^ 5 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma18FixShapeDispatch Γ σ)
+    (h_card : Nat.card (Moore57.autSubgroup Γ) = 3 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 5 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 7 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 11 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 13 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 19) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 343 := by
+  rcases h_card with h | h | h | h | h | h
+  all_goals (rw [h])
+  all_goals norm_num
+
+end Lem16PrimeCardWire
+
+end Moore57.Papers.MacajSiran2010

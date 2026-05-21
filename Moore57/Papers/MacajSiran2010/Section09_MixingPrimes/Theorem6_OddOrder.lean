@@ -1,6 +1,7 @@
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition6_3and5
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition7_3andLarge
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition8_5andLarge
+import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma17_3Group
 import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma18_5Group
 import Moore57.Foundations.GraphTheory.AutSubgroup
@@ -611,5 +612,81 @@ theorem thm6_one_prime_branch_card_dvd_125_holds_of_prime_card_given_dispatch
   exact h_ord_dvd_125
 
 end Lem18PrimeCardWire
+
+end Moore57.Papers.MacajSiran2010.S9
+
+/-! ### Lem 16 prime-card wire (per-σ witness; prime p=7, given fix-shape dispatch)
+
+Mirrors the Lem 17 / Lem 18 prime-card wires above for the `p = 7` case,
+using the full §6 Lem 16 case (3) prime-case dispatch
+`lem16_7group_paper_bound_given_dispatch` from
+`Section06_PGroupsOverview.Lemma16_PGroupFix` (`FullDispatchP7` section).
+
+The dispatch consumes the universe-polymorphic
+`Lemma16P7FixShapeDispatch Γ σ` Prop hypothesis (the fix-shape input
+at the `l = 0` edge sub-case of star `K_{1, 1+7l}`) and produces the
+combined paper-bound `orderOf σ ∣ 343 = 7^3`.
+
+**Plan B note (Lem 16 p=7 vs Lem 17).** Like Lem 18, Lem 16 case (3)
+currently has no unconditional shape classification for σ^7 = 1, so the
+prime-card wire here takes a Γ-level fix-shape dispatcher `h_dispatch`
+parameterised by σ (the order-7 analogue of `PetersenUniqueness` /
+`Lemma18FixShapeDispatch`).  Once a Foundations-level
+`aut_order_seven_*` star-family classification lands, the dispatcher
+can be discharged automatically.
+
+The resulting wire requires:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 7` (paper input from Sylow + 7-group
+  classification — `|Aut(Γ)|` is the prime 7),
+* a Γ-level fix-shape dispatcher: for every order-7 σ-generator with the
+  Lem 16 case (3) prime-case data, `Lemma16P7FixShapeDispatch Γ σ` holds.
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 343`. -/
+
+namespace Moore57.Papers.MacajSiran2010.S9
+
+section Lem16PrimeCardWire
+
+universe u
+
+variable {V : Type u} [Fintype V] [DecidableEq V]
+  {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Theorem 6 1-prime branch wire (Lem 16, p=7) via prime card and
+fix-shape dispatch.** [done — full Lem 16 p=7 dispatch, conditional on
+`Lemma16P7FixShapeDispatch`]
+
+For `Nat.card (autSubgroup Γ) = 7`, extracts a σ-generator via
+`exists_aut_generator_of_prime_card` (giving `σ ≠ 1`, `σ^7 = 1`,
+`orderOf σ = 7`, `smul_adj`), then applies the full Lem 16 case (3)
+prime-case dispatch `lem16_7group_paper_bound_given_dispatch` to
+discharge `orderOf σ ∣ 343`, and lifts via `orderOf σ = 7` and
+`7 ∣ 343` to `Nat.card (autSubgroup Γ) ∣ 343`.
+
+Parallel to `thm6_one_prime_branch_card_dvd_125_holds_of_prime_card_given_dispatch`
+for the `p = 7` case.  The fix-shape dispatcher hypothesis `h_dispatch`
+is the order-7 analogue of `Lemma18FixShapeDispatch`. -/
+theorem thm6_one_prime_branch_card_dvd_343_holds_of_prime_card_given_dispatch
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 7)
+    (h_dispatch :
+      ∀ σ : Equiv.Perm V, σ ^ 7 = 1 → σ ≠ 1 →
+        (∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) →
+        Moore57.Papers.MacajSiran2010.S6.Lemma16P7FixShapeDispatch Γ σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 343 := by
+  obtain ⟨σ, hσ_mem, h_ord, hne, pow_7, smul_adj⟩ :=
+    exists_aut_generator_of_prime_card (Γ := Γ) (by decide : Nat.Prime 7) h_card
+  have h_dispatch_σ : Moore57.Papers.MacajSiran2010.S6.Lemma16P7FixShapeDispatch Γ σ :=
+    h_dispatch σ pow_7 hne smul_adj
+  have h_ord_dvd_343 : orderOf σ ∣ 343 :=
+    Moore57.Papers.MacajSiran2010.S6.lem16_7group_paper_bound_given_dispatch
+      hΓ σ pow_7 hne smul_adj h_dispatch_σ
+  -- Convert orderOf σ ∣ 343 to Nat.card ∣ 343 via h_card and h_ord.
+  rw [h_card]
+  have : (7 : ℕ) = orderOf σ := h_ord.symm
+  rw [this]
+  exact h_ord_dvd_343
+
+end Lem16PrimeCardWire
 
 end Moore57.Papers.MacajSiran2010.S9

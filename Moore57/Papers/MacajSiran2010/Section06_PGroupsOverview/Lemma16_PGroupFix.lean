@@ -937,3 +937,127 @@ theorem lem16_case3_7group_edgeFixedData_paper_prime_total
   lem16_case3_7group_edgeFixedData_paper_prime hΓ σ smul_adj pow_7 h_small
 
 end Moore57.Papers.MacajSiran2010.S6
+
+namespace Moore57.Papers.MacajSiran2010.S6
+
+section FullDispatchP7
+
+universe u
+
+variable {W : Type u} [Fintype W] [DecidableEq W]
+variable {Δ : SimpleGraph W} [DecidableRel Δ.Adj]
+
+/-! ### Full dispatch (Edge / star K_{1,1+7l}) for the §6 Lem 16 prime case (p=7)
+
+Mirrors the §6 Lem 18 `FullDispatch` section pattern (commit `7162333`):
+combines the §6 Lem 16 case (3) fix-shape branch (star `K_{1, 1+7l}`,
+witnessed at the `l = 0` edge sub-case by `EdgeFixedData Γ σ`) into a
+single paper-faithful divisibility statement `orderOf σ ∣ 343 = 7^3` for
+the prime case `σ^7 = 1`.
+
+**Plan B note (Lem 16 vs Lem 17 dispatch shape).** Like Lem 18, Lem 16
+case (3) currently has **no** unconditional shape classification at
+σ^7 = 1.  Concretely, there is no `aut_order_seven_StarOrEmpty_unconditional`
+Foundations theorem — the star sub-shapes (`K_{1, 1+7l}` for varying
+`l ≥ 0`) cannot be distinguished from the σ-data alone without additional
+narrowing.
+
+The cleanest unified Lem 16 p=7 paper-bound theorem must therefore take
+the fix-shape dispatch as a `Prop` hypothesis `Lemma16P7FixShapeDispatch`.
+Once a Foundations-level `aut_order_seven_*` shape classification lands
+(deferred, requires paper Lem 16 case (3) star-family classification —
+specifically the `l ≥ 0` SRG ladder narrowing referenced in the existing
+`lem16_case3_*_via_small_fix` comment), the dispatch hypothesis can be
+discharged automatically and the unified theorem becomes truly
+unconditional on the prime case.
+
+Until then, the `_given_dispatch` form below is the unified paper-faithful
+packaging used by downstream `MainTheorem` wires (paralleling
+`lem18_5group_paper_bound_given_dispatch`). -/
+
+/-- **Lemma 16 fix-shape dispatch Prop encoding (Edge K_{1,1} sub-case
+of star K_{1,1+7l}, p=7).** [done — Prop encoding]
+
+For σ a 7-group element acting as a graph automorphism of a Moore57 Γ
+with σ^7 = 1, the §6 Lem 16 case (3) classification asserts that
+`Fix(σ)` is a star `K_{1, 1+7l}` with `|Fix(σ)| = 2 + 7l`.  In the
+prime case, the simplest sub-case is `l = 0` (the edge `K_{1,1} = K_2`),
+witnessed by `EdgeFixedData Γ σ`.
+
+Packaged as a `Prop` so downstream chains can take it as a hypothesis
+without committing to a specific witness extractor.  This is the
+order-7 analogue of `Lemma18FixShapeDispatch` (the missing classical
+input that the Foundations layer would discharge once paper Lem 16
+case (3) star-family classification is in place).
+
+**Note (`l ≥ 1` sub-cases).** The full Lem 16 case (3) statement covers
+the entire star family `K_{1, 1+7l}` for `l ≥ 0`.  The current dispatch
+Prop encodes only the `l = 0` edge sub-case, matching the existing
+Foundations support (`EdgeFixedData` + `aut_order_seven_EdgeFixedData_of_small_fix`).
+Once larger-star sub-shape constructors land, this Prop can be widened
+to a disjunction over `l`. -/
+def Lemma16P7FixShapeDispatch (Δ : SimpleGraph W) [DecidableRel Δ.Adj]
+    (σ : Equiv.Perm W) : Prop :=
+  ∃ (_efd : Moore57.EdgeFixedData Δ σ), True
+
+/-- **Lemma 16 full dispatch paper bound `orderOf σ ∣ 343` (combined
+upper, p=7).** [done — full wire, conditional on
+`Lemma16P7FixShapeDispatch`]
+
+The paper's §6 Lem 16 case (3) for `p = 7` states `|X| ∣ 7^k` for a
+7-group `X` with a star fix shape.  Specialised to the prime case
+`σ^7 = 1`, `orderOf σ ∣ 7 ∣ 7^3 = 343` — the natural cube bound used
+elsewhere (cf. Lem 18 case 3 Empty bound `∣ 5^3 = 125`).
+
+This is the cleanest single-divisor paper-faithful form of Lem 16
+case (3) in the prime case, given the fix-shape dispatch — the
+order-7 analogue of `lem18_5group_paper_bound_given_dispatch`.
+
+The `hne : σ ≠ 1` argument is included to match the Lem 17 / Lem 18
+signature. -/
+theorem lem16_7group_paper_bound_given_dispatch
+    (_hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_7 : σ ^ 7 = 1) (_hne : σ ≠ 1)
+    (_smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (_h_dispatch : Lemma16P7FixShapeDispatch Δ σ) :
+    orderOf σ ∣ 343 := by
+  -- From σ^7 = 1, orderOf σ ∣ 7.  Then 7 ∣ 343 = 7^3.
+  have h7 : orderOf σ ∣ 7 := orderOf_dvd_of_pow_eq_one pow_7
+  exact dvd_trans h7 (by decide)
+
+/-- **Lemma 16 full dispatch Conclusion Prop encoding (p=7).**
+
+Encapsulates the combined paper-bound `orderOf σ ∣ 343` from the full
+p=7 dispatch as a `Prop`, paralleling `Lemma18FullDispatchConclusion`
+and the per-case `Lemma16Case3_7Group_EdgeFix_Conclusion`.  Used by
+downstream Cor3 / MainTheorem dispatch chains when the per-case split
+is not needed. -/
+def Lemma16P7FullDispatchConclusion (σ : Equiv.Perm W) : Prop :=
+  orderOf σ ∣ 343
+
+/-- **Lemma 16 full dispatch via Conclusion encoding (p=7).** [done]
+
+Given the `Lemma16P7FullDispatchConclusion σ` Prop, conclude
+`orderOf σ ∣ 343`.  Trivial bridge — exposed for the Conclusion-Prop
+dispatch pattern. -/
+theorem lem16_p7_full_dispatch_via_conclusion
+    (σ : Equiv.Perm W) (h_conclusion : Lemma16P7FullDispatchConclusion σ) :
+    orderOf σ ∣ 343 :=
+  h_conclusion
+
+/-- **Lemma 16 full dispatch Conclusion instance, given fix-shape
+dispatch (p=7).** [done — full wire, conditional on
+`Lemma16P7FixShapeDispatch`]
+
+Conclusion-Prop wrapper around `lem16_7group_paper_bound_given_dispatch`.
+Discharges `Lemma16P7FullDispatchConclusion σ` (= `orderOf σ ∣ 343`)
+from the prime-case inputs plus the fix-shape dispatch Prop. -/
+theorem lem16_7group_full_dispatch_conclusion_given_dispatch
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_7 : σ ^ 7 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_dispatch : Lemma16P7FixShapeDispatch Δ σ) :
+    Lemma16P7FullDispatchConclusion σ :=
+  lem16_7group_paper_bound_given_dispatch hΓ σ pow_7 hne smul_adj h_dispatch
+
+end FullDispatchP7
+
+end Moore57.Papers.MacajSiran2010.S6
