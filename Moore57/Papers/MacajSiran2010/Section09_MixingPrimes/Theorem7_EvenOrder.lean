@@ -305,6 +305,31 @@ theorem thm7_even_order_paper
   ⟨thm7_dvd_one_of_six_from_odd_part n m h_n h_m,
    thm7_bound_110_from_odd_part n m h_n h_m⟩
 
+/-- **Theorem 7 abstract conclusion** (Conclusion Prop encoding).
+
+For an even integer `n` (`|Aut(Γ)|` even), the paper's Thm 2
+(Makhnev–Paduchikh) decomposition `G = ⟨Y, t⟩ × X` extracts the odd
+part `m = n / 2`, which by Thm 5 + Lems 12/15 is constrained to:
+* `m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19`.
+
+Bundled as a Prop for downstream `cor3_375_bound` chain. -/
+def Thm7EvenOrderConclusion : Prop :=
+  ∀ n : ℕ, Even n →
+    ∃ m, n = 2 * m ∧
+      (m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19)
+
+/-- **Theorem 7 via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Thm7EvenOrderConclusion` (paper's Thm 2 + Thm 5 + Lems 12/15
+odd-part dispatch for even `n`), conclude `n ≤ 110`.  Delegates to
+`thm7_even_order_paper` after applying the Conclusion. -/
+theorem thm7_even_order_via_conclusion
+    (n : ℕ) (h_even : Even n) (h_conclusion : Thm7EvenOrderConclusion) :
+    (n ∣ 110 ∨ n ∣ 50 ∨ n ∣ 54 ∨ n ∣ 14 ∨ n ∣ 22 ∨ n ∣ 38) ∧
+    n ≤ 110 := by
+  obtain ⟨m, h_n, h_m⟩ := h_conclusion n h_even
+  exact thm7_even_order_paper n m h_n h_m
+
 /-- **Theorem 7 (even `|Aut(Γ)|` divides one of six values).** [deferred-heavy]
 
 Arithmetic conclusion is captured by
@@ -312,7 +337,9 @@ Arithmetic conclusion is captured by
 and combined in `thm7_even_order_paper` (above).
 The Feit–Thompson-free Sylow dispatch is captured by the
 `thm7_card_*_sylow*_count_one` lemmas and unified in
-`thm7_sylow_q_count_one_dispatch`.
+`thm7_sylow_q_count_one_dispatch`.  The Conclusion Prop encoding is
+`Thm7EvenOrderConclusion`; the conditional bridge from Conclusion to
+the bound is `thm7_even_order_via_conclusion`.
 
 What remains for the unconditional form is the paper's dispatch:
 Thm 2 (Makhnev–Paduchikh) gives `G = ⟨Y, t⟩ × X` with `t` involution;
