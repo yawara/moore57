@@ -253,6 +253,13 @@ theorem lem19_large_prime_pgroup_paper
     n ≤ 19 :=
   lem19_le_19_from_dispatch n h
 
+/-- **Lemma 19 abstract conclusion (`n ≤ 19` envelope).**
+
+Paper's structural conclusion packaged: for the cardinality `n` of a
+large-prime `p`-group acting on Γ, `n ≤ 19`. -/
+def Lemma19LargePrimeConclusion (n : ℕ) : Prop :=
+  n ≤ 19
+
 /-- **Lemma 19 (large-prime `p`-group classification).** [deferred-heavy]
 
 The full 5-case classification.  Arithmetic cores for cases (1), (2),
@@ -262,5 +269,14 @@ case requires the rank-2 elementary-abelian `Z₇ × Z₇`).
 
 Paper-faithful conditional form: `lem19_large_prime_pgroup_paper`. -/
 theorem lem19_large_prime_pgroup (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-- **Lemma 19 (paper-faithful conclusion instance).** [done — conditional]
+
+Re-states `lem19_large_prime_pgroup_paper` using the abstract conclusion
+Prop `Lemma19LargePrimeConclusion`. -/
+theorem lem19_large_prime_pgroup_conclusion
+    (n : ℕ) (h : n ∣ 13 ∨ n ∣ 19 ∨ n ∣ 11 ∨ n ∣ 7) :
+    Lemma19LargePrimeConclusion n :=
+  lem19_large_prime_pgroup_paper n h
 
 end Moore57.Papers.MacajSiran2010.S6

@@ -113,6 +113,15 @@ theorem lem6_central_inducedTrace_le_two
     inducedTrace Γ O ≤ 2 :=
   Moore57.subset_adjMovedSet_inducedTrace_le_two hΓ hx hO_subset hO_nonempty
 
+/-- **Lemma 6 (4) abstract conclusion (`Tr(O)² < |O|` for all orbits).**
+
+The paper's full claim: for any orbit `O` of size `≥ 2`, the induced
+trace satisfies `(inducedTrace Γ O)² < |O|`.  We package it as a
+proposition; the dispatcher handles all currently-proven cases. -/
+def Lemma6TraceSqLtSizeConclusion
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (O : Finset V) : Prop :=
+  (inducedTrace Γ O) ^ 2 < (O.card : ℚ)
+
 /-- **Lemma 6 (4) (`Tr(O)² < |O|`).** [deferred-heavy]
 
 Paper-stub kept for backwards compatibility; the proper-signature
@@ -422,5 +431,19 @@ theorem lem6_inducedTrace_sq_lt_card_dispatch
   · exact lem6_inducedTrace_sq_lt_card_of_card_eq_three hΓ h3
   · exact lem6_inducedTrace_sq_lt_card_of_card_eq_four hΓ h4
   · exact lem6_inducedTrace_sq_lt_card_of_card_ge_64 hΓ hO_nonempty hge
+
+/-- **Lemma 6 (4) (paper-faithful conditional).** [done — conditional]
+
+Proper-signature paper-faithful wrapper: given the orbit size constraint
+(`|O| ∈ {1, 2, 3, 4}` or `|O| ≥ 64`) which the dispatcher currently
+covers, conclude `Lemma6TraceSqLtSizeConclusion`.  Small orbits
+`5 ≤ |O| ≤ 63` remain deferred. -/
+theorem lem6_trace_sq_lt_size_paper
+    (hΓ : IsMoore57 Γ) {O : Finset V}
+    (hO_size : O.card = 1 ∨ O.card = 2 ∨ O.card = 3 ∨
+               O.card = 4 ∨ 64 ≤ O.card)
+    (hO_nonempty : O.Nonempty) :
+    Lemma6TraceSqLtSizeConclusion Γ O :=
+  lem6_inducedTrace_sq_lt_card_dispatch hΓ hO_size hO_nonempty
 
 end Moore57.Papers.MacajSiran2010.S3
