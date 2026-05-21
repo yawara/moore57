@@ -174,4 +174,102 @@ theorem prop3_step5_conclusion_holds : Proposition3Step5Conclusion := by
   exact prop3_arithmetic_core_no_partition_of_7_with_sq_31
     x1 x2 x3 x4 x5 x6 x7 h_sum h_sq
 
+/-- **Proposition 3 direct-form Diophantine bridge (paper-faithful).** [done — research]
+
+Paper §8 equations (7) and (8) state:
+* `∑_{i=151}^{177} b_{178,i} = 7` (eq 7, degree sum)
+* `∑_{i=151}^{177} b_{178,i}² = 31` (eq 8, derived from B² + B − 56I)
+
+These 27 non-negative integer variables admit no simultaneous solution
+— the §8 step 5 contradiction.  The proof reduces to the partition-
+counting form `prop3_arithmetic_core_no_partition_of_7_with_sq_31`:
+define `x_k := |{i : b i = k}|` for `k ∈ {1, ..., 7}`, derive the
+partition equations, and apply the arithmetic core.
+
+Note: `b i ≤ 7` is forced by `∑ b = 7` with non-negative integers,
+so each `b i ∈ {0, 1, 2, ..., 7}` and the partition variables `x_k`
+cover all relevant values. -/
+theorem prop3_no_solution_direct (b : Fin 27 → ℕ)
+    (h_sum : ∑ i, b i = 7) (h_sum_sq : ∑ i, (b i)^2 = 31) :
+    False := by
+  -- Each b i ≤ 7 (from non-neg + ∑ = 7)
+  have hb_le : ∀ i, b i ≤ 7 := by
+    intro i
+    have h_mem : b i ≤ ∑ j, b j :=
+      Finset.single_le_sum (f := b) (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
+    omega
+  -- Define x_k for k = 1, ..., 7
+  set x1 := (Finset.univ.filter fun i : Fin 27 => b i = 1).card with hx1
+  set x2 := (Finset.univ.filter fun i : Fin 27 => b i = 2).card with hx2
+  set x3 := (Finset.univ.filter fun i : Fin 27 => b i = 3).card with hx3
+  set x4 := (Finset.univ.filter fun i : Fin 27 => b i = 4).card with hx4
+  set x5 := (Finset.univ.filter fun i : Fin 27 => b i = 5).card with hx5
+  set x6 := (Finset.univ.filter fun i : Fin 27 => b i = 6).card with hx6
+  set x7 := (Finset.univ.filter fun i : Fin 27 => b i = 7).card with hx7
+  -- Bridge: ∑ i, b i = 1·x1 + 2·x2 + ... + 7·x7 (via partition)
+  -- We express ∑ i, b i = ∑ k ∈ range 8, k · |{i : b i = k}|
+  -- using ∀ i, b i ∈ range 8 (i.e., b i ≤ 7)
+  -- Express each b i and (b i)^2 as a sum over k ∈ range 8 of indicator·k (resp. k²)
+  have hb_eq : ∀ i, b i = ∑ k ∈ Finset.range 8, if b i = k then k else 0 := by
+    intro i
+    rw [Finset.sum_ite_eq]
+    simp [Finset.mem_range, Nat.lt_succ_of_le (hb_le i)]
+  have hb_sq_eq : ∀ i, (b i)^2 = ∑ k ∈ Finset.range 8, if b i = k then k^2 else 0 := by
+    intro i
+    rw [Finset.sum_ite_eq]
+    simp [Finset.mem_range, Nat.lt_succ_of_le (hb_le i)]
+  have h_partition_sum :
+      ∑ i, b i = x1 + 2 * x2 + 3 * x3 + 4 * x4 + 5 * x5 + 6 * x6 + 7 * x7 := by
+    -- Swap the sums and convert to k · x_k
+    rw [Finset.sum_congr rfl (fun i _ => hb_eq i), Finset.sum_comm]
+    have : ∀ k ∈ Finset.range 8,
+        ∑ i, (if b i = k then k else 0) =
+          k * (Finset.univ.filter fun i : Fin 27 => b i = k).card := by
+      intro k _
+      rw [← Finset.sum_filter]
+      simp [Finset.sum_const, Nat.mul_comm]
+    rw [Finset.sum_congr rfl this]
+    -- Unfold ∑ k ∈ range 8 = sum of 8 terms (k=0..7)
+    rw [show (8 : ℕ) = 7 + 1 from rfl, Finset.sum_range_succ, Finset.sum_range_succ,
+        Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+        Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+        Finset.sum_range_zero]
+    ring
+  have h_partition_sq :
+      ∑ i, (b i)^2 = x1 + 4 * x2 + 9 * x3 + 16 * x4 + 25 * x5 + 36 * x6 + 49 * x7 := by
+    rw [Finset.sum_congr rfl (fun i _ => hb_sq_eq i), Finset.sum_comm]
+    have : ∀ k ∈ Finset.range 8,
+        ∑ i, (if b i = k then k^2 else 0) =
+          k^2 * (Finset.univ.filter fun i : Fin 27 => b i = k).card := by
+      intro k _
+      rw [← Finset.sum_filter]
+      simp [Finset.sum_const, Nat.mul_comm]
+    rw [Finset.sum_congr rfl this]
+    rw [show (8 : ℕ) = 7 + 1 from rfl, Finset.sum_range_succ, Finset.sum_range_succ,
+        Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+        Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
+        Finset.sum_range_zero]
+    ring
+  -- Now apply the partition arithmetic core
+  have h_sum' : x1 + 2 * x2 + 3 * x3 + 4 * x4 + 5 * x5 + 6 * x6 + 7 * x7 = 7 := by
+    rw [← h_partition_sum]; exact h_sum
+  have h_sq' : x1 + 4 * x2 + 9 * x3 + 16 * x4 + 25 * x5 + 36 * x6 + 49 * x7 = 31 := by
+    rw [← h_partition_sq]; exact h_sum_sq
+  exact prop3_arithmetic_core_no_partition_of_7_with_sq_31
+    x1 x2 x3 x4 x5 x6 x7 h_sum' h_sq'
+
+/-- **Proposition 3 direct-form step 5 conclusion (paper-faithful)**. [done — research]
+
+The paper-faithful statement of paper §8 step 5: there is no
+non-negative integer assignment to 27 variables `b_i` with sum 7 and
+sum-of-squares 31.  This is the abstract version of
+`prop3_no_solution_direct` exposing the contradiction as a `Prop` def
+for downstream use. -/
+def Proposition3DirectStep5Conclusion : Prop :=
+  ¬ ∃ b : Fin 27 → ℕ, (∑ i, b i = 7) ∧ (∑ i, (b i)^2 = 31)
+
+theorem prop3_direct_step5_conclusion_holds : Proposition3DirectStep5Conclusion := by
+  rintro ⟨b, h_sum, h_sq⟩
+  exact prop3_no_solution_direct b h_sum h_sq
+
 end Moore57.Papers.MacajSiran2010.S8
