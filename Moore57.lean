@@ -369,6 +369,8 @@ import Moore57.D19OnMoore57.D19Core.CanonicalBranchCompactSplitBoundary
 import Moore57.D19OnMoore57.D19Core.ReflectionLabeledBranchCompactSplitBoundary
 import Moore57.D19OnMoore57.Final.CriterionPublic
 import Moore57.Moore57Graph.Aut.FixedSubgraphData
+import Moore57.Moore57Graph.Aut.OrderThreeCandidates
+import Moore57.Moore57Graph.Aut.OrderThreeShapeClassification
 import Moore57.Moore57Graph.Aut.OrderSevenCandidates
 import Moore57.Moore57Graph.Aut.OrderSevenEdgeFix
 import Moore57.Moore57Graph.Aut.OrderThirteenCandidates
