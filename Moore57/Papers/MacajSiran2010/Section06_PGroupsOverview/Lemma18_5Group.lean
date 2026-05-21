@@ -384,4 +384,75 @@ theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData_k_le_3_unconditional
     rw [hl, pow_mul, pow_pk, one_pow]
   exact orderOf_dvd_of_pow_eq_one h_pow
 
+/-! ### Prime-case `_via_semiRegular_unconditional` wrappers (Path B)
+
+For σ of prime order 5, the cyclic action is automatically semi-regular
+on every moved point (via `Moore57.aut_semiRegular_at_movedNeighbor_of_prime`).
+These wrappers eliminate the `hsemi` argument from the `_semiRegular`
+wrappers, making the Path B chain end-to-end paper-faithful for the
+prime case.
+
+The composite case (`σ^{5^k} = 1` with k ≥ 2) requires paper Prop 3 / Lem 22
+/ Prop 4 SG(625, 12) exclusion and remains deferred-heavy.
+-/
+
+/-- **Lemma 18 case (1) prime-case via semi-regular (fully unconditional).** [done — Path B]
+
+For σ a graph automorphism of Γ with σ^5 = 1 and `HSFixedData Γ σ`,
+`orderOf σ ∣ 25` follows via:
+1. prime-order semi-regular generator (`aut_semiRegular_at_movedNeighbor_of_prime`)
+2. C3.4 semi-regular orbit bridge for HS (`hs_orderOf_dvd_50_of_semiRegular`)
+3. arithmetic core (`lem18_case1_arithmetic_5group_dvd_50_implies_25`)
+
+No `hsemi` hypothesis is required.  This is the prime-case end-to-end Path B
+chain for HS-fix. -/
+theorem lem18_case1_orderOf_dvd_25_with_HSFixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (hsfd : HSFixedData Γ σ) (i : Fin 50)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 25 :=
+  lem18_case1_orderOf_dvd_25_with_HSFixedData_semiRegular
+    hΓ σ 1 (by rw [pow_one]; exact pow_5) hsfd i smul_adj
+    (Moore57.aut_semiRegular_at_movedNeighbor_of_prime
+      (Γ := Γ) σ 5 (by decide) pow_5 (hsfd.v i))
+
+/-- **Lemma 18 case (2) prime-case via semi-regular (fully unconditional).** [done — Path B]
+
+For σ a graph automorphism of Γ with σ^5 = 1 and `C5FixedData Γ σ`,
+`orderOf σ ∣ 5` follows trivially (orderOf σ ∣ 5).  The semi-regular
+path gives an alternative derivation through the C3.4 bridge
+(`c5_orderOf_dvd_55_of_semiRegular`, giving `orderOf σ ∣ 55`, sharpened
+to `∣ 5` since 55 = 5 · 11 and σ is a 5-group). -/
+theorem lem18_case2_orderOf_dvd_5_with_c5FixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (c5 : C5FixedData Γ σ) (i : Fin 5)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 5 :=
+  lem18_case2_orderOf_dvd_5_with_c5FixedData_semiRegular
+    hΓ σ 1 (by rw [pow_one]; exact pow_5) c5 i smul_adj
+    (Moore57.aut_semiRegular_at_movedNeighbor_of_prime
+      (Γ := Γ) σ 5 (by decide) pow_5 (c5.v i))
+
+/-- **Lemma 18 case (3) prime-case via semi-regular (fully unconditional).** [done — Path B]
+
+For σ a graph automorphism of Γ with σ^5 = 1 and `EmptyFixedData σ`,
+`orderOf σ ∣ 125` follows via:
+1. prime-order semi-regular generator on the full vertex set
+   (using `EmptyFixedData.no_fixed` and
+   `semiRegular_at_movedPoint_of_prime_orderOf`)
+2. C3.4 empty-fix bridge (`empty_orderOf_dvd_3250_of_semiRegular`,
+   giving `orderOf σ ∣ 3250`)
+3. arithmetic core (`lem18_case3_arithmetic_5group_dvd_3250`)
+
+No `hsemi` hypothesis is required. -/
+theorem lem18_case3_orderOf_dvd_125_with_emptyFixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_5 : σ ^ 5 = 1)
+    (efd : EmptyFixedData σ) :
+    orderOf σ ∣ 125 :=
+  lem18_case3_orderOf_dvd_125_with_emptyFixedData_semiRegular
+    hΓ σ 1 (by rw [pow_one]; exact pow_5) efd
+    (fun v k hkv =>
+      Moore57.semiRegular_at_movedPoint_of_prime_orderOf
+        σ 5 (by decide) pow_5 v (efd.no_fixed v) k hkv)
+
 end Moore57.Papers.MacajSiran2010.S6

@@ -1,5 +1,6 @@
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Foundations.GroupAction.SemiRegularOrbit
+import Moore57.Foundations.GroupAction.SemiRegularPrimeOrder
 
 set_option linter.unusedDecidableInType false
 set_option linter.unusedFintypeInType false
@@ -93,5 +94,40 @@ theorem orderOf_dvd_card_movedNeighbour_of_semiRegular
     orderOf σ ∣ (autMovedNeighborFinset Γ σ a).card :=
   orderOf_dvd_card_of_semiRegular σ (autMovedNeighborFinset Γ σ a)
     (autMovedNeighborFinset_σ_invariant σ smul_adj ha) hsemi
+
+/-- **Prime-order semi-regular bridge on `autMovedNeighborFinset`.**
+
+For `σ : Equiv.Perm V` of prime order `p` (`σ^p = 1`, `p` prime), the
+cyclic action of `⟨σ⟩` is automatically semi-regular on every moved
+neighbour `w ∈ autMovedNeighborFinset Γ σ a`.  No FixedData /
+structural hypothesis is required — the property follows from prime
+order alone, by `semiRegular_at_movedPoint_of_prime_orderOf`.
+
+This **generates** the `hsemi` argument required by
+`orderOf_dvd_card_movedNeighbour_of_semiRegular` for the prime case,
+removing the need to supply it as a separate hypothesis in
+Lem 17 / 18 prime-case wrappers. -/
+theorem aut_semiRegular_at_movedNeighbor_of_prime
+    (σ : Equiv.Perm V) (p : ℕ) (hp : Nat.Prime p) (hpp : σ ^ p = 1)
+    (a : V) :
+    ∀ w ∈ autMovedNeighborFinset Γ σ a,
+    ∀ k : ℕ, (σ ^ k) w = w → orderOf σ ∣ k := by
+  intro w hw
+  rw [mem_autMovedNeighborFinset] at hw
+  exact semiRegular_at_movedPoint_of_prime_orderOf σ p hp hpp w hw.2
+
+/-- **Combined prime-order bridge**: `σ^p = 1` (p prime) + fixed vertex
+`a` ⟹ `orderOf σ ∣ |N(a) \ Fix(σ)|`.
+
+Combines `aut_semiRegular_at_movedNeighbor_of_prime` with
+`orderOf_dvd_card_movedNeighbour_of_semiRegular`.  This is the
+fully-automatic prime-case bridge: no semi-regular hypothesis required. -/
+theorem orderOf_dvd_card_movedNeighbour_of_prime
+    (σ : Equiv.Perm V) (p : ℕ) (hp : Nat.Prime p) (hpp : σ ^ p = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    {a : V} (ha : σ a = a) :
+    orderOf σ ∣ (autMovedNeighborFinset Γ σ a).card :=
+  orderOf_dvd_card_movedNeighbour_of_semiRegular σ smul_adj ha
+    (aut_semiRegular_at_movedNeighbor_of_prime σ p hp hpp a)
 
 end Moore57

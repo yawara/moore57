@@ -345,6 +345,64 @@ theorem lem17_case2_orderOf_dvd_81_with_singletonFixedData_k_le_4_unconditional
     rw [hl, pow_mul, pow_pk, one_pow]
   exact orderOf_dvd_of_pow_eq_one h_pow
 
+/-! ### Prime-case `_via_semiRegular_unconditional` wrappers (Path B)
+
+These wrappers eliminate the `hsemi` argument from the
+`_semiRegular` wrappers by automatically deriving semi-regular from
+`σ^p = 1` (p prime) via `Moore57.aut_semiRegular_at_movedNeighbor_of_prime`.
+
+For the prime case, these are **fully unconditional** — no semi-regular
+hypothesis is required.  They demonstrate the Path B chain
+(prime-order ⟹ semi-regular ⟹ orderOf σ ∣ |N(a) \ Fix(σ)| ⟹ paper bound)
+end-to-end in Lean.
+
+The composite case (`σ^{3^k} = 1` with k ≥ 2) cannot use this bridge:
+σ^p may fix more vertices than σ, so semi-regularity fails.  Paper
+Lem 21 + Cor 2 (SG(81, 9) exclusion) is required there — see roadmap
+§8.1 and `plans/moore57_papers_implementation_plan.md` §1.
+-/
+
+/-- **Lemma 17 case (1) prime-case via semi-regular (fully unconditional).** [done — Path B]
+
+For σ a graph automorphism of Γ with σ^3 = 1 and `PetersenFixedData Γ σ`,
+the bound `orderOf σ ∣ 27` follows via:
+1. prime-order semi-regular generator (`aut_semiRegular_at_movedNeighbor_of_prime`)
+2. C3.4 semi-regular orbit bridge for Petersen (`petersen_orderOf_dvd_54_of_semiRegular`)
+3. arithmetic core (`lem17_case1_arithmetic_3group_dvd_54_implies_27`)
+
+No `hsemi` hypothesis is required — the chain is end-to-end paper-faithful
+for the prime case. -/
+theorem lem17_case1_orderOf_dvd_27_with_petersenFixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (pfd : PetersenFixedData Γ σ) (i : Fin 10)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 27 :=
+  lem17_case1_orderOf_dvd_27_with_petersenFixedData_semiRegular
+    hΓ σ 1 (by rw [pow_one]; exact pow_3) pfd i smul_adj
+    (Moore57.aut_semiRegular_at_movedNeighbor_of_prime
+      (Γ := Γ) σ 3 (by decide) pow_3 (pfd.v i))
+
+/-- **Lemma 17 case (2) prime-case via semi-regular (fully unconditional).** [done — Path B]
+
+For σ a graph automorphism of Γ with σ^3 = 1 and `SingletonFixedData σ`,
+the bound `orderOf σ ∣ 3` (sharper than paper's `∣ 81`) follows via:
+1. prime-order semi-regular generator on the full neighbourhood
+2. C3.4 semi-regular orbit bridge for Singleton
+   (`singleton_orderOf_dvd_57_of_semiRegular`, giving `orderOf σ ∣ 57`)
+3. arithmetic core (`lem17_case2_arithmetic_3group_dvd_57_implies_3`)
+
+The sharpening to `∣ 3` (vs paper's `∣ 81`) comes from `57 = 3 · 19`:
+since `orderOf σ ∣ 3^k` and `orderOf σ ∣ 57`, `orderOf σ ∣ gcd(3^k, 57) = 3`. -/
+theorem lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (sfd : SingletonFixedData σ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 3 :=
+  lem17_case2_orderOf_dvd_3_with_singletonFixedData_semiRegular
+    hΓ σ 1 (by rw [pow_one]; exact pow_3) sfd smul_adj
+    (Moore57.aut_semiRegular_at_movedNeighbor_of_prime
+      (Γ := Γ) σ 3 (by decide) pow_3 sfd.v)
+
 /-- **Lemma 17 (3-group fix is Petersen or singleton).** [deferred-heavy]
 
 The full case classification (Fix shape ∈ {Petersen, singleton} for any

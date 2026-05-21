@@ -62,13 +62,20 @@ MS 2010 §6 Lem 21 (`Fix(σ^l) = Fix(σ)`)。
 - [x] backward-compat True-stub も保持
 
 ### 1.3 Semi-regular hypothesis generator
-- [ ] Lem 21 を入力に、Lem 17/18 wrapper の `h_semi_regular : orderOf σ ∣ 54`
-  を **生成** する形の補題:
-  ```
-  theorem semiRegular_orderOf_dvd_complement
-      (h : <Lem 21 hypotheses>) : orderOf σ ∣ |N(a) \ Fix(σ)|
-  ```
-- [ ] `Moore57Graph/Aut/SemiRegularComplement.lean` (既存、C3.4) を拡張
+- [x] **prime case 完了 (Path B)**: `Foundations/GroupAction/SemiRegularPrimeOrder.lean`
+  新規 + `SemiRegularComplement.lean` 拡張:
+  - `semiRegular_at_movedPoint_of_prime_orderOf`: σ^p = 1 (p prime)
+    + σ w ≠ w ⟹ σ^k w = w → orderOf σ ∣ k. Mathlib
+    `Equiv.Perm.support_pow_coprime` 経由で hand-roll。
+  - `aut_semiRegular_at_movedNeighbor_of_prime`: graph-aut bridge
+    on `autMovedNeighborFinset`。
+  - `orderOf_dvd_card_movedNeighbour_of_prime`: combined bridge
+    (σ^p = 1 + fixed `a` ⟹ orderOf σ ∣ |N(a) \ Fix(σ)|, no hsemi)。
+- [x] Lem 17 (case 1, 2) + Lem 18 (case 1, 2, 3) の各 `_prime_via_semiRegular_unconditional`
+  wrapper: σ^p = 1 + FixedData + smul_adj のみから paper bound を導出
+  (hsemi は internal で自動生成)。
+- [ ] **composite case (k ≥ 2) は依然 deferred**: σ^p が σ より多くを固定し得る
+  ため、paper Lem 21 + Cor 2 / Prop 3 / Lem 22 / Prop 4 が必要 (deferred-heavy)。
 
 ### 1.4 Lem 17 case (1) 真の unconditional wrapper
 - [x] `Moore57/Papers/MacajSiran2010/Section06_PGroupsOverview/Lemma17_3Group.lean`:
