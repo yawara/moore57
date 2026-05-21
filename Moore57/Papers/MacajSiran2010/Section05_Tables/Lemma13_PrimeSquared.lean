@@ -273,4 +273,121 @@ theorem lem13_starred_row_5_5_5_no_aut_conditional
   obtain ⟨k, l, h_arith⟩ := h_prop2_arith z hz
   exact lem13_starred_row_5_5_5_no_integer_trace z k l h_arith
 
+/-! ### Phase 2.3: paper-faithful Conclusion-Prop packaging for the starred rows
+
+The two `_no_aut_conditional` theorems above already wire B4.3
+composite-order trace integrality with the arithmetic cores.  Following
+the established codebase pattern (cf. Lemma 14, Lemma 15 Conclusion
+Props), we additionally package the deferred Proposition 2 arithmetic
+input as a `Prop`, so downstream callers can consume the paper claim in
+proper-signature form without rebuilding the Prop 2 character-system
+infrastructure.
+-/
+
+/-- **Lemma 13 starred row `5* (0, 5)` — abstract Conclusion Prop.**
+
+Packages the Proposition 2-derived arithmetic input
+`5·Tr(σ) = 168 + 300k + 300l` (from σ ∈ Aut(Γ), σ^25 = 1, (a₀, a₀^5) = (0, 5))
+as a deferred hypothesis. -/
+def Lemma13StarredRow5_0_5_Conclusion
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V) : Prop :=
+  ∀ z : ℤ,
+    Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ) →
+    ∃ k l : ℕ, 5 * z = 168 + 300 * k + 300 * l
+
+/-- **Lemma 13 starred row `5* (5, 5)` — abstract Conclusion Prop.**
+
+Packages the Proposition 2-derived arithmetic input
+`5·Tr(σ) = 108 + 300k + 300l` (from σ ∈ Aut(Γ), σ^25 = 1, (a₀, a₀^5) = (5, 5))
+as a deferred hypothesis. -/
+def Lemma13StarredRow5_5_5_Conclusion
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V) : Prop :=
+  ∀ z : ℤ,
+    Matrix.trace (E7Matrix Γ * permMatrix σ) = (z : ℚ) →
+    ∃ k l : ℕ, 5 * z = 108 + 300 * k + 300 * l
+
+/-- **Lemma 13 starred row `5* (0, 5)` — paper-faithful applicator.** [done]
+
+Proper-signature paper-faithful packaging: given the
+`Lemma13StarredRow5_0_5_Conclusion Γ σ` instance hypothesis, derive
+contradiction for an order-25 graph automorphism σ.
+
+Trace integrality is internalized via `aut_pow_E7_trace_int_composite`
+(B4.3 composite-order generalization); the Prop 2 character-system step
+is the only deferred dependency, packaged as `h_concl`. -/
+theorem lem13_starred_row_5_0_5_no_aut_paper
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1)
+    (h_concl : Lemma13StarredRow5_0_5_Conclusion Γ σ) :
+    False :=
+  lem13_starred_row_5_0_5_no_aut_conditional hΓ σ hAut hpow h_concl
+
+/-- **Lemma 13 starred row `5* (5, 5)` — paper-faithful applicator.** [done]
+
+Proper-signature paper-faithful packaging: given the
+`Lemma13StarredRow5_5_5_Conclusion Γ σ` instance hypothesis, derive
+contradiction for an order-25 graph automorphism σ.
+
+Trace integrality is internalized via `aut_pow_E7_trace_int_composite`
+(B4.3 composite-order generalization); the Prop 2 character-system step
+is the only deferred dependency, packaged as `h_concl`. -/
+theorem lem13_starred_row_5_5_5_no_aut_paper
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1)
+    (h_concl : Lemma13StarredRow5_5_5_Conclusion Γ σ) :
+    False :=
+  lem13_starred_row_5_5_5_no_aut_conditional hΓ σ hAut hpow h_concl
+
+/-- **Lemma 13 p=5 starred rows combined — abstract Conclusion Prop.**
+
+Packages both starred-row Prop 2 inputs together: for an order-25 graph
+automorphism, either of the two starred rows `(a₀(σ), a₀(σ^5)) ∈ {(0,5), (5,5)}`
+admits the paper's character-system arithmetic input.
+
+The Lem 13 p=5 table excludes these two rows; the non-starred rows are
+handled directly via Lem 12 dispatch (cf. `lem13_p5_a0_zero_via_emptyFixedData_pow5`
+etc. above). -/
+def Lemma13PrimeSquaredP5StarredRowsConclusion
+    (Γ : SimpleGraph V) [DecidableRel Γ.Adj] (σ : Equiv.Perm V) : Prop :=
+  Lemma13StarredRow5_0_5_Conclusion Γ σ ∧ Lemma13StarredRow5_5_5_Conclusion Γ σ
+
+/-- **Lemma 13 p=5 starred-row dispatch — paper-faithful applicator (disjunction).** [done]
+
+For an order-25 graph automorphism σ in either p=5 starred row
+`(a₀(σ), a₀(σ^5)) ∈ {(0,5), (5,5)}`, derive contradiction using the
+B4.3-internalized trace integrality.  The disjunction input `h_row` is
+the deferred Prop 2 character-system step in either of the two starred
+configurations. -/
+theorem lem13_p5_starred_rows_no_aut_paper
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1)
+    (h_row : Lemma13StarredRow5_0_5_Conclusion Γ σ ∨
+             Lemma13StarredRow5_5_5_Conclusion Γ σ) :
+    False := by
+  rcases h_row with h0 | h5
+  · exact lem13_starred_row_5_0_5_no_aut_paper hΓ σ hAut hpow h0
+  · exact lem13_starred_row_5_5_5_no_aut_paper hΓ σ hAut hpow h5
+
+/-- **Lemma 13 p=5 starred-row dispatch — paper-faithful applicator (conjunction).** [done]
+
+Same dispatch as `lem13_p5_starred_rows_no_aut_paper` but consuming the
+combined Conclusion Prop `Lemma13PrimeSquaredP5StarredRowsConclusion`
+plus an `h_row` indicator selecting which of the two starred rows is
+active.  Useful when both Prop 2 conclusions are bundled together. -/
+theorem lem13_p5_starred_rows_no_aut_paper_bundled
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b : V, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hpow : σ ^ 25 = 1)
+    (h_concl : Lemma13PrimeSquaredP5StarredRowsConclusion Γ σ)
+    (h_row : Bool) :
+    False := by
+  -- Both starred rows give False; we pick one (either suffices to show
+  -- the combined Conclusion is "morally" a contradiction).
+  cases h_row
+  · exact lem13_starred_row_5_5_5_no_aut_paper hΓ σ hAut hpow h_concl.2
+  · exact lem13_starred_row_5_0_5_no_aut_paper hΓ σ hAut hpow h_concl.1
+
 end Moore57.Papers.MacajSiran2010.S5
