@@ -1,6 +1,7 @@
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition6_3and5
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition7_3andLarge
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition8_5andLarge
+import Moore57.Foundations.GraphTheory.AutSubgroup
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -176,5 +177,176 @@ What remains for the unconditional form is the paper's dispatch:
 Feit–Thompson solvability + Philip Hall subgroups for the 2-prime case,
 and Lemma 15 for the 3-prime case exclusion. -/
 theorem thm6_odd_order (hΓ : IsMoore57 Γ) : True := by trivial
+
+/-! ## 1-prime branch Conclusion encoding and Lem 19 unconditional wiring
+
+The §9 Thm 6 case split is `1-prime ∨ 2-prime`:
+* 2-prime branch (Props 6/7/8): packaged as `Thm6OddOrderConclusion`.
+* 1-prime branch (Lems 16/17/18/19): `n ∣ {27, 125, 49, 11, 13, 19}`.
+
+This section adds the 1-prime Conclusion encoding `Thm6OnePrimeConclusion`,
+the combined `Thm6OddOrderConclusionWithOnePrime`, and the corresponding
+bridge to the seven-disjunction / `n ≤ 375` bound.
+
+Additionally, the Lem 19 unconditional discharges for primes `{11, 13, 19}`
+are wired here at the **per-σ witness** level: given a σ-witness in
+`autSubgroup Γ` (`σ^p = 1`) whose cyclic action exhausts the autSubgroup
+(`Nat.card = orderOf σ`), Lem 19 unconditional gives `n ∣ p` for
+`p ∈ {11, 13, 19}`.
+
+The "cyclic action exhausts the autSubgroup" piece is the paper-deferred
+Sylow + Hall + Feit-Thompson dispatch input.  Until that's formalised,
+the witness-style wire stays conditional on `Nat.card = orderOf σ`. -/
+
+/-- **Theorem 6 1-prime branch Conclusion** (Conclusion Prop encoding).
+
+For an odd integer `n` (`|Aut(Γ)|` odd), the paper's 1-prime case
+(Lems 16/17/18/19) gives `n ∣ p^k` for `p ∈ {3, 5, 7, 11, 13, 19}`
+with `p^k ∈ {27, 125, 49, 11, 13, 19}` (Lem 4 / Lem 16 prime-power
+ladder for p ≤ 7; Lem 19 cases 1-3 for p ∈ {11, 13, 19}).
+
+Bundled as a Prop for downstream dispatch — parallels
+`Thm6OddOrderConclusion` (the 2-prime branch). -/
+def Thm6OnePrimeConclusion : Prop :=
+  ∀ n : ℕ, Odd n →
+    (n ∣ 27 ∨ n ∣ 125 ∨ n ∣ 49 ∨ n ∣ 11 ∨ n ∣ 13 ∨ n ∣ 19)
+
+/-- **Theorem 6 combined Conclusion (1-prime ∨ 2-prime)** [done].
+
+Packages both Conclusion encodings into the disjunction structure
+expected by `thm6_dvd_one_of_seven_from_props_and_one_prime`.  For each
+odd `n`, either the 1-prime branch fires (`n ∣ p^k` for one of the six
+prime-power values) or the 2-prime branch fires (Props 6/7/8). -/
+def Thm6OddOrderConclusionWithOnePrime : Prop :=
+  ∀ n : ℕ, Odd n →
+    ((n ∣ 27 ∨ n ∣ 125 ∨ n ∣ 49 ∨ n ∣ 11 ∨ n ∣ 13 ∨ n ∣ 19) ∨
+     ((n ∣ 135 ∨ n ∣ 375) ∨
+      (n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171) ∨
+      (n ∣ 35 ∨ n ∣ 275)))
+
+/-- **Combined Conclusion from 1-prime Conclusion alone.** [done]
+
+Given the 1-prime Conclusion, the combined Conclusion holds via the
+left disjunct (2-prime branch unused).  Companion of
+`thm6_odd_order_conclusion_with_one_prime_of_two_prime`. -/
+theorem thm6_odd_order_conclusion_with_one_prime_of_one_prime
+    (h_one : Thm6OnePrimeConclusion) :
+    Thm6OddOrderConclusionWithOnePrime :=
+  fun n h_odd => Or.inl (h_one n h_odd)
+
+/-- **Combined Conclusion from 2-prime alone (1-prime trivially false).** [done]
+
+Specialization: if the 2-prime Conclusion holds, the combined Conclusion
+holds (1-prime branch unused).  Useful as a bridge from the existing
+`Thm6OddOrderConclusion` chain. -/
+theorem thm6_odd_order_conclusion_with_one_prime_of_two_prime
+    (h_two : Thm6OddOrderConclusion) :
+    Thm6OddOrderConclusionWithOnePrime :=
+  fun n h_odd => Or.inr (h_two n h_odd)
+
+/-- **Theorem 6 via combined Conclusion (1-prime + 2-prime).** [done]
+
+Given the combined `Thm6OddOrderConclusionWithOnePrime` (the paper's
+1-prime ∨ 2-prime case split for odd `n`), conclude `n ≤ 375` and that
+`n` divides one of the seven Theorem 6 entries.  Delegates to
+`thm6_dvd_one_of_seven_from_props_and_one_prime` for the disjunction
+and `thm6_bound_375_from_props` for the bound (the latter via case
+analysis on the 1-prime branch). -/
+theorem thm6_odd_order_via_conclusion_with_one_prime
+    (n : ℕ) (h_odd : Odd n) (h_conclusion : Thm6OddOrderConclusionWithOnePrime) :
+    (n ∣ 171 ∨ n ∣ 39 ∨ n ∣ 275 ∨ n ∣ 147 ∨ n ∣ 35 ∨ n ∣ 375 ∨ n ∣ 135)
+    ∧ n ≤ 375 := by
+  have h_dispatch := h_conclusion n h_odd
+  refine ⟨thm6_dvd_one_of_seven_from_props_and_one_prime n h_dispatch, ?_⟩
+  -- bound by 375 via case analysis on `1-prime ∨ 2-prime`.
+  rcases h_dispatch with h_one | h_two
+  · rcases h_one with h | h | h | h | h | h
+    · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 27) h; omega
+    · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 125) h; omega
+    · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 49) h; omega
+    · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 11) h; omega
+    · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 13) h; omega
+    · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 19) h; omega
+  · exact thm6_bound_375_from_props n h_two
+
+/-! ### Lem 19 unconditional wire (per-σ witness; primes 11/13/19)
+
+These wires take a σ-witness in `autSubgroup Γ` plus a *cyclic-exhaust*
+hypothesis (`Nat.card (autSubgroup Γ) = orderOf σ`) — the latter being
+the paper-deferred Sylow + cyclic-group-of-prime-order input — and
+discharge the relevant `n ∣ p` 1-prime branch entry for
+`p ∈ {11, 13, 19}` via the unconditional Lem 19 case 1/2/3 theorems
+already proven in `Lemma19_LargePrime.lean` and
+`Moore57.aut_order_thirteen_EmptyFixedData_unconditional` (for p=13).
+
+The witness signature mirrors the §6 Lem 19 case 1/2/3 prime-case
+unconditional theorems exactly: `σ ≠ 1` + `σ^p = 1` + `smul_adj`. -/
+
+/-- **Theorem 6 1-prime branch wire (Lem 19 case 3, p=11)** via σ-witness.
+[done — unconditional Lem 19 case 3]
+
+Given:
+* `IsMoore57 Γ`,
+* a witness σ ∈ `autSubgroup Γ` with `σ^11 = 1`, `σ ≠ 1` (the paper's
+  "Aut(Γ) is an 11-group" input, specialised to a generator),
+* the cyclic-exhaust hypothesis `Nat.card (autSubgroup Γ) = orderOf σ`
+  (paper-deferred: Aut(Γ) being a prime-order p-group ⟹ cyclic ⟹ this
+  equality holds for any generator σ),
+
+conclude `Nat.card (autSubgroup Γ) ∣ 11`.  The Lem 19 case 3
+unconditional theorem `lem19_case3_orderOf_dvd_11_prime_unconditional`
+discharges `orderOf σ ∣ 11`, and the cyclic-exhaust hypothesis upgrades
+this to `Nat.card (autSubgroup Γ) ∣ 11`. -/
+theorem thm6_one_prime_branch_card_dvd_11_via_lem19_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_11 : σ ^ 11 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_cyclic_exhaust : Nat.card (Moore57.autSubgroup Γ) = orderOf σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 11 := by
+  rw [h_cyclic_exhaust]
+  exact S6.lem19_case3_orderOf_dvd_11_prime_unconditional hΓ σ pow_11 hne smul_adj
+
+/-- **Theorem 6 1-prime branch wire (Lem 19 case 2, p=19)** via σ-witness.
+[done — unconditional Lem 19 case 2]
+
+Parallel to `thm6_one_prime_branch_card_dvd_11_via_lem19_unconditional`,
+for the `p = 19` case (Lem 19 case 2, singleton fix).  Discharges
+`orderOf σ ∣ 19` via `lem19_case2_orderOf_dvd_19_prime_unconditional`
+and upgrades to `Nat.card (autSubgroup Γ) ∣ 19` via the cyclic-exhaust
+hypothesis. -/
+theorem thm6_one_prime_branch_card_dvd_19_via_lem19_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_cyclic_exhaust : Nat.card (Moore57.autSubgroup Γ) = orderOf σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 19 := by
+  rw [h_cyclic_exhaust]
+  exact S6.lem19_case2_orderOf_dvd_19_prime_unconditional hΓ σ pow_19 hne smul_adj
+
+/-- **Theorem 6 1-prime branch wire (Lem 19 case 1, p=13)** via σ-witness.
+[done — unconditional Lem 19 case 1 via
+`aut_order_thirteen_EmptyFixedData_unconditional`]
+
+Parallel to the `p = 11` and `p = 19` wires, for the `p = 13` case
+(Lem 19 case 1, empty fix).  Uses the foundations-level unconditional
+`EmptyFixedData` constructor
+`Moore57.aut_order_thirteen_EmptyFixedData_unconditional` (no
+fix-emptiness hypothesis required) plus the case 1 prime-via-semiRegular
+bridge to discharge `orderOf σ ∣ 13`, then upgrades to
+`Nat.card (autSubgroup Γ) ∣ 13` via the cyclic-exhaust hypothesis. -/
+theorem thm6_one_prime_branch_card_dvd_13_via_lem19_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_13 : σ ^ 13 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_cyclic_exhaust : Nat.card (Moore57.autSubgroup Γ) = orderOf σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 13 := by
+  rw [h_cyclic_exhaust]
+  -- Construct EmptyFixedData unconditionally (no fix-count hypothesis).
+  have efd : Moore57.EmptyFixedData σ :=
+    Moore57.aut_order_thirteen_EmptyFixedData_unconditional
+      hΓ σ smul_adj pow_13 hne
+  -- Dispatch through the case 1 prime-via-semiRegular bridge.
+  exact S6.lem19_case1_orderOf_dvd_13_with_emptyFixedData_prime_via_semiRegular
+    hΓ σ pow_13 efd
 
 end Moore57.Papers.MacajSiran2010.S9

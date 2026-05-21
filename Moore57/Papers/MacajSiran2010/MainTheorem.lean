@@ -213,4 +213,145 @@ theorem aut_card_le_375_via_thm_conclusions
     (cor3_odd_dispatch_of_thm6_conclusion h_thm6)
     (cor3_even_oddpart_of_thm7_conclusion h_thm7)
 
+/-! ## 1-prime branch wire-up (Lem 19 unconditional for primes 11/13/19)
+
+The §9 Thm 6 odd-order case split is `1-prime ∨ 2-prime`.  The §9
+`Thm6OddOrderConclusion` captures only the 2-prime branch (Props 6/7/8);
+the 1-prime branch (Lems 16/17/18/19) is exposed separately as
+`S9.Thm6OnePrimeConclusion`.
+
+The combined `S9.Thm6OddOrderConclusionWithOnePrime` carries both
+branches as a single Prop, parallel to the existing
+`Thm6OddOrderConclusion` chain but admitting the 1-prime disjunct.
+
+The Lem 19 unconditional discharges for primes `{11, 13, 19}` are wired
+here at the **per-Γ + witness** level: given a σ-witness in
+`autSubgroup Γ` (`σ^p = 1`, `σ ≠ 1`, `smul_adj`) plus the paper-deferred
+cyclic-exhaust hypothesis `Nat.card (autSubgroup Γ) = orderOf σ`, the
+§6 unconditional Lem 19 case 1/2/3 theorems discharge `|Aut(Γ)| ∣ p`
+for `p ∈ {11, 13, 19}`. -/
+
+/-- **1-prime branch dispatch Conclusion** (Tier 2 + 1-prime encoding).
+
+Per-Γ specialisation of `S9.Thm6OnePrimeConclusion` at
+`n = Nat.card (autSubgroup Γ)`: if `|Aut(Γ)|` is odd, then it divides
+one of the six 1-prime branch entries `{27, 125, 49, 11, 13, 19}`. -/
+def Cor3OnePrimeConclusion (Γ : SimpleGraph V) [DecidableRel Γ.Adj] : Prop :=
+  Odd (Nat.card (Moore57.autSubgroup Γ)) →
+    (Nat.card (Moore57.autSubgroup Γ) ∣ 27 ∨
+     Nat.card (Moore57.autSubgroup Γ) ∣ 125 ∨
+     Nat.card (Moore57.autSubgroup Γ) ∣ 49 ∨
+     Nat.card (Moore57.autSubgroup Γ) ∣ 11 ∨
+     Nat.card (Moore57.autSubgroup Γ) ∣ 13 ∨
+     Nat.card (Moore57.autSubgroup Γ) ∣ 19)
+
+/-- **Bridge: `Thm6OnePrimeConclusion ⟹ Cor3OnePrimeConclusion`**. [done]
+
+Specialisation of the `∀ n, Odd n → ...` per-theorem encoding to
+`n = Nat.card (autSubgroup Γ)`.  Parallel to
+`cor3_odd_dispatch_of_thm6_conclusion`. -/
+theorem cor3_one_prime_of_thm6_one_prime_conclusion
+    (h : S9.Thm6OnePrimeConclusion) : Cor3OnePrimeConclusion Γ :=
+  fun h_odd => h _ h_odd
+
+/-- **Combined 1-prime + 2-prime dispatch from per-theorem encoding.** [done]
+
+Given the combined `S9.Thm6OddOrderConclusionWithOnePrime`, specialise
+to `n = Nat.card (autSubgroup Γ)` and split into per-Γ
+`Cor3OddDispatchConclusion ∨ Cor3OnePrimeConclusion`-style content.
+
+The output flattens the disjunction into the standard
+`Cor3OddDispatchConclusion Γ`, by observing that the 1-prime branch
+values `{27, 125, 49, 11, 13, 19}` each divide one of the seven Thm 6
+entries (cf. `S9.thm6_dvd_one_of_seven_from_props_and_one_prime`).
+The output is the form expected by `aut_card_le_375_via_conclusions`. -/
+theorem cor3_odd_dispatch_of_thm6_with_one_prime_conclusion
+    (h : S9.Thm6OddOrderConclusionWithOnePrime) : Cor3OddDispatchConclusion Γ := by
+  intro h_odd
+  have h_disp := h _ h_odd
+  rcases h_disp with h_one | h_two
+  · -- 1-prime branch: rewrite each entry as a divisor of the Cor3 list.
+    -- The Cor3OddDispatchConclusion's branches are
+    --   (n ∣ 135 ∨ n ∣ 375) [Prop 6 cap], (147/39/171), (35/275).
+    -- 27 ∣ 135, 125 ∣ 375, 49 ∣ 147, 11 ∣ 275, 13 ∣ 39, 19 ∣ 171.
+    rcases h_one with h | h | h | h | h | h
+    · left; left; exact dvd_trans h (by decide)
+    · left; right; exact dvd_trans h (by decide)
+    · right; left; left; exact dvd_trans h (by decide)
+    · right; right; right; exact dvd_trans h (by decide)
+    · right; left; right; left; exact dvd_trans h (by decide)
+    · right; left; right; right; exact dvd_trans h (by decide)
+  · exact h_two
+
+/-- **Main theorem via combined 1-prime + 2-prime Conclusion**. [done]
+
+Same bound as `aut_card_le_375_via_thm_conclusions`, parameterised on
+the combined `S9.Thm6OddOrderConclusionWithOnePrime` (which also admits
+the 1-prime branch) instead of the 2-prime-only `Thm6OddOrderConclusion`. -/
+theorem aut_card_le_375_via_thm_conclusions_with_one_prime
+    (hΓ : IsMoore57 Γ)
+    (h_thm6 : S9.Thm6OddOrderConclusionWithOnePrime)
+    (h_thm7 : S9.Thm7EvenOrderConclusion) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 375 ∧
+    (Even (Nat.card (Moore57.autSubgroup Γ)) →
+      Nat.card (Moore57.autSubgroup Γ) ≤ 110) :=
+  aut_card_le_375_via_conclusions hΓ
+    (cor3_odd_dispatch_of_thm6_with_one_prime_conclusion h_thm6)
+    (cor3_even_oddpart_of_thm7_conclusion h_thm7)
+
+/-! ### Lem 19 unconditional per-Γ wires (primes 11/13/19) -/
+
+/-- **Cor 3 1-prime branch wire (Lem 19 case 3, p=11)** via σ-witness.
+[done — unconditional Lem 19 case 3]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_11_via_lem19_unconditional` — given
+a σ-witness in `autSubgroup Γ` with `σ^11 = 1, σ ≠ 1, smul_adj` plus
+the cyclic-exhaust hypothesis `Nat.card (autSubgroup Γ) = orderOf σ`,
+conclude `Nat.card (autSubgroup Γ) ∣ 11` via Lem 19 case 3 unconditional. -/
+theorem aut_card_dvd_11_via_lem19_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_11 : σ ^ 11 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_cyclic_exhaust : Nat.card (Moore57.autSubgroup Γ) = orderOf σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 11 :=
+  S9.thm6_one_prime_branch_card_dvd_11_via_lem19_unconditional
+    hΓ σ pow_11 hne smul_adj h_cyclic_exhaust
+
+/-- **Cor 3 1-prime branch wire (Lem 19 case 2, p=19)** via σ-witness.
+[done — unconditional Lem 19 case 2]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_19_via_lem19_unconditional` — given
+a σ-witness in `autSubgroup Γ` with `σ^19 = 1, σ ≠ 1, smul_adj` plus
+the cyclic-exhaust hypothesis `Nat.card (autSubgroup Γ) = orderOf σ`,
+conclude `Nat.card (autSubgroup Γ) ∣ 19` via Lem 19 case 2 unconditional. -/
+theorem aut_card_dvd_19_via_lem19_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_19 : σ ^ 19 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_cyclic_exhaust : Nat.card (Moore57.autSubgroup Γ) = orderOf σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 19 :=
+  S9.thm6_one_prime_branch_card_dvd_19_via_lem19_unconditional
+    hΓ σ pow_19 hne smul_adj h_cyclic_exhaust
+
+/-- **Cor 3 1-prime branch wire (Lem 19 case 1, p=13)** via σ-witness.
+[done — unconditional Lem 19 case 1 via
+`Moore57.aut_order_thirteen_EmptyFixedData_unconditional`]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_13_via_lem19_unconditional` — given
+a σ-witness in `autSubgroup Γ` with `σ^13 = 1, σ ≠ 1, smul_adj` plus
+the cyclic-exhaust hypothesis `Nat.card (autSubgroup Γ) = orderOf σ`,
+conclude `Nat.card (autSubgroup Γ) ∣ 13` via Lem 19 case 1 unconditional
+(no fix-emptiness hypothesis required). -/
+theorem aut_card_dvd_13_via_lem19_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_13 : σ ^ 13 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_cyclic_exhaust : Nat.card (Moore57.autSubgroup Γ) = orderOf σ) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 13 :=
+  S9.thm6_one_prime_branch_card_dvd_13_via_lem19_unconditional
+    hΓ σ pow_13 hne smul_adj h_cyclic_exhaust
+
 end Moore57.Papers.MacajSiran2010
