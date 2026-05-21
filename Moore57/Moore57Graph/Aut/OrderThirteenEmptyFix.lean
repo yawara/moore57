@@ -1,5 +1,6 @@
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
 import Moore57.Moore57Graph.Aut.FixedCount
+import Moore57.Moore57Graph.Aut.OrderThirteenCandidates
 
 /-!
 # Construction of `EmptyFixedData` for an order-13 Moore57 automorphism
@@ -16,33 +17,34 @@ that, given the geometric fix-emptiness fact `fixedVertexCount σ = 0`,
 packages it as a `EmptyFixedData σ` structure (the input expected by the
 §6 Lem 19 case (1) chain).
 
-## Status: partial unconditional
+Additionally, the file exposes the **unconditional**
+`aut_order_thirteen_EmptyFixedData_unconditional` which derives
+`EmptyFixedData σ` directly from `σ^13 = 1 ∧ σ ≠ 1 ∧ smul_adj` using the
+shape-classification ladder in `OrderThirteenCandidates.lean`.
 
-The full unconditional derivation of `fixedVertexCount σ = 0` from
-`σ^13 = 1 ∧ σ ≠ 1` requires the structural Fix-shape classification chain
-(rule out singleton / pentagon / Petersen / HS / star / edge cases via
-mod-13 constraints on `|N(a) ∩ Fix|` ≡ 5).  The mod-13 modular constraint
-machinery is already available
-(`aut_fixedVertexCount_modEq_zero_of_pow_thirteen_pow` and friends in
-`FixedCount.lean` / `NeighborMod.lean`), but the shape-exclusion ladder
-(`|Fix(σ)| < 13` ⟹ `|Fix(σ)| = 0`) is **not yet** in Foundations.
+## Status: BOTH conditional and unconditional constructors exposed
 
-This file therefore exposes the **conditional constructor** taking
-`fixedVertexCount σ = 0` as input.  Mirrors the role of
-`aut_order_eleven_C5FixedData` (in `OrderElevenIsC5.lean`) which derives
-the order-11 pentagon-fix `C5FixedData` structure unconditionally.
+* `aut_order_thirteen_EmptyFixedData` — conditional on
+  `fixedVertexCount σ = 0` (legacy entry point).  Preserved for
+  backward compatibility.
+* `aut_order_thirteen_EmptyFixedData_unconditional` — derives
+  `fixedVertexCount σ = 0` itself via the SRG-shape ladder
+  (`aut_order_thirteen_fixedVertexCount_eq_zero` in
+  `OrderThirteenCandidates.lean`), giving a true unconditional
+  Lem 19 case (1) `EmptyFixedData` discharge.
 
 ## Design parallel
 
-| File                          | Output            | Status         |
-|-------------------------------|-------------------|----------------|
-| `OrderElevenIsC5.lean`        | `C5FixedData`     | unconditional  |
-| `OrderThirteenEmptyFix.lean`  | `EmptyFixedData`  | conditional    |
+| File                          | Output            | Status              |
+|-------------------------------|-------------------|---------------------|
+| `OrderElevenIsC5.lean`        | `C5FixedData`     | unconditional       |
+| `OrderThirteenEmptyFix.lean`  | `EmptyFixedData`  | both forms exposed  |
 
-When the §2 / §6 shape-classification chain matures (paper Lem 4 / 16
-case (1) ⟹ `fixedVertexCount σ = 0` for the 13-prime case
-unconditionally), this constructor immediately upgrades to unconditional
-without any signature change at the consumer side.
+The mod-13 modular constraint machinery is already available
+(`aut_fixedVertexCount_modEq_zero_of_pow_thirteen_pow` and friends in
+`FixedCount.lean` / `NeighborMod.lean`).  The shape-exclusion ladder
+(`|Fix(σ)| > 0` ⟹ contradiction) is now in
+`OrderThirteenCandidates.lean`.
 -/
 
 namespace Moore57
@@ -138,5 +140,42 @@ noncomputable def aut_order_thirteen_EmptyFixedData_of_small_fix
     rw [Nat.ModEq] at hmod
     omega
   exact aut_order_thirteen_EmptyFixedData hΓ σ smul_adj pow_thirteen hne h_count_zero
+
+/-! ### Truly unconditional discharge (Lem 19 case (1))
+
+The conditional constructor `aut_order_thirteen_EmptyFixedData` requires
+`fixedVertexCount σ = 0` to be supplied as a hypothesis.  The
+unconditional discharge below derives `fixedVertexCount σ = 0` from
+`σ^13 = 1, σ ≠ 1, smul_adj` itself, via the SRG shape-classification
+ladder in `OrderThirteenCandidates.lean`.
+
+Logical chain (see `aut_order_thirteen_fixedVertexCount_eq_zero`):
+
+* If `0 < |Fix(σ)|`, the σ-fixed induced graph `H` is `IsStrongZeroOne`,
+  and (by star-case exclusion) regular with some degree `k`.
+* Hoffman-Singleton classification: `k ∈ {0, 1, 2, 3, 7, 57}`.
+* Combined with `|Fix| = k² + 1 ≡ 0 (mod 13)` and `σ ≠ 1` excluding
+  `k = 57`, all six classification cases contradict mod-13.
+* Hence `0 < |Fix(σ)|` is impossible, so `|Fix(σ)| = 0`. -/
+
+/-- **Truly unconditional Lem 19 case (1) `EmptyFixedData` constructor.** [done]
+
+Given:
+* `hΓ : IsMoore57 Γ` (host graph is a Moore57 graph),
+* `σ : Equiv.Perm V` with `σ^13 = 1` and `σ ≠ 1`,
+* `smul_adj` (σ is a graph automorphism),
+
+produce `EmptyFixedData σ` **without** any fix-emptiness hypothesis.
+Subsumes `aut_order_thirteen_EmptyFixedData` (which is preserved as a
+legacy conditional API).  Mirrors the role of `aut_order_eleven_C5FixedData`
+in `OrderElevenIsC5.lean` (which derives `|Fix(σ)| = 5` unconditionally
+for the 11-prime case). -/
+noncomputable def aut_order_thirteen_EmptyFixedData_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_thirteen : σ ^ 13 = 1) (hne : σ ≠ 1) :
+    EmptyFixedData σ :=
+  emptyFixedData_of_fixedVertexCount_eq_zero σ
+    (aut_order_thirteen_fixedVertexCount_eq_zero hΓ σ smul_adj pow_thirteen hne)
 
 end Moore57
