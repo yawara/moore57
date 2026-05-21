@@ -140,4 +140,22 @@ theorem main_fix_X_cases_card_le_55
   · have := Nat.le_of_dvd (by norm_num : (0 : ℕ) < 25) h; omega
   · omega
 
+/-- **Main theorem (3) (paper-faithful conditional `|X|` dispatch).** [done]
+
+Proper-signature paper-faithful packaging of the `|X|` bound: given the
+paper's four-way dispatch for `Fix(X)` shape and `(|Y|, |X|)` pair
+(star, pentagon, Petersen, Hoffman-Singleton cases), conclude
+`|X| ≤ 55`.
+
+Delegates to `main_fix_X_cases_card_le_55`. -/
+theorem main_fix_X_cases_paper
+    (X Y : ℕ)
+    (h_dispatch :
+      (Y = 1 ∧ X = 7) ∨
+      (Y ∣ 5 ∧ X ∣ 55) ∨
+      (Y ∣ 3 ∧ X ∣ 27) ∨
+      ((Y ∣ 5 ∨ Y ∣ 7) ∧ X ∣ 25)) :
+    X ≤ 55 :=
+  main_fix_X_cases_card_le_55 X Y h_dispatch
+
 end Moore57.Papers.MakhnevPaduchikh2001
