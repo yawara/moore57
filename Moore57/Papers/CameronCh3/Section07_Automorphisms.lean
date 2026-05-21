@@ -114,6 +114,22 @@ In the Moore57 formalisation this case is structurally excluded by
 arises. -/
 theorem step3_58_star_or_56_star : True := by trivial
 
+/-- **Step 3 (paper-faithful, Moore57 structural elimination).** [done]
+
+Proper-signature paper-faithful packaging: in the Moore57 setting, the
+"58-star vs 50-Moore-subgraph" alternative collapses to "always 56-star",
+because every non-trivial involution interchanges an adjacent pair (by
+`aut_involution_exists_adjacent_moved`).
+
+Given the involution hypothesis, conclude `|Fix(σ)| = 56`. This skips
+both alternatives of Cameron's Step 3 by structurally eliminating the
+non-adjacent-moved case. -/
+theorem step3_58_star_or_56_star_paper (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (hAut : ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b))
+    (hinv : Function.Involutive σ) (hne : σ ≠ 1) :
+    fixedVertexCount σ = 56 :=
+  aut_involution_fixedVertexCount_eq_56 hΓ σ hAut hinv hne
+
 /-- **Step 4 (character argument eliminates 58-star case).** [deferred-heavy]
 
 The character value on the `−8`-eigenspace for an involution with
@@ -221,5 +237,20 @@ theorem step5_moore57_involution_sign
   rw [h1597]
   -- Goal: (-1 : ℤˣ)^1597 = -1
   exact Odd.neg_one_pow (by decide : Odd 1597)
+
+/-- **Step 5 (paper-faithful sign-of-involution).** [done]
+
+Proper-signature paper-faithful packaging of the core arithmetic of
+Step 5: every non-trivial Moore57 involution has odd sign (`sign σ = -1`).
+
+The Step 5 contradiction chain proceeds by combining this sign result
+with vertex-transitivity (`4 ∣ |Aut(Γ)| ⇒ ∃ involution in Aut ∩ A_{3250}`)
+— the contradiction is "every involution is odd, so none lies in the
+alternating subgroup". Delegates to `step5_moore57_involution_sign`. -/
+theorem step5_parity_contradiction_paper
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (hσ : σ ^ 2 = 1) (hne : σ ≠ 1)
+    (hAut : ∀ a b, Γ.Adj a b ↔ Γ.Adj (σ a) (σ b)) :
+    Equiv.Perm.sign σ = -1 :=
+  step5_moore57_involution_sign hΓ σ hσ hne hAut
 
 end Moore57.Papers.CameronCh3
