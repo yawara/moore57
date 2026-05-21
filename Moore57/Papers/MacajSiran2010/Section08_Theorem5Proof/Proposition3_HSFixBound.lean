@@ -886,4 +886,28 @@ theorem prop3_hs_fix_bound_via_steps_1_to_4
   prop3_hs_fix_bound_with_hsFixedData_semiRegular hΓ σ k pow_pk hsfd i smul_adj hsemi
     (prop3_no_order_25_via_steps_1_to_4 σ hsfd h_steps)
 
+/-- **Sub-task D alternative bridge**: `orderOf σ ≠ 25` directly from
+structural inputs (no `Proposition3Step1To4Conclusion` premise).
+
+Uses `prop3_step1_to_4_witness_b_from_structural` (Sub-task D bridge)
+combined with `prop3_no_solution_direct` (no-b-vector lemma).
+
+This provides an alternative pipeline that avoids needing to witness
+`Proposition3Step1To4Conclusion Γ` directly. The structural inputs are
+the *substantive* paper §8 Step 1-4 outputs (free orbits, trace-0 subset,
+b function, eq(7) sum, eq(8) sum-of-squares). -/
+theorem prop3_no_order_25_via_structural
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Free : Finset ι) (h_card : Free.card = 28)
+    (TraceZero : Finset ι) (h_sub : TraceZero ⊆ Free) (h_ne : TraceZero.Nonempty)
+    (b_fn : ι → ℕ)
+    (h_sum : ∀ idx ∈ TraceZero, (Free.erase idx).sum b_fn = 7)
+    (h_sum_sq : ∀ idx ∈ TraceZero,
+                (Free.erase idx).sum (fun i => (b_fn i)^2) = 31) :
+    False := by
+  obtain ⟨b, h_sum_b, h_sq_b⟩ :=
+    prop3_step1_to_4_witness_b_from_structural Free h_card TraceZero h_sub h_ne
+      b_fn h_sum h_sum_sq
+  exact prop3_no_solution_direct b h_sum_b h_sq_b
+
 end Moore57.Papers.MacajSiran2010.S8
