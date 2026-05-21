@@ -551,6 +551,49 @@ noncomputable def freeOrbits (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
   unfold freeOrbits
   simp
 
+/-- **Fix-singleton orbit predicate**: cell = `{a}` for some σ-fixed `a`.
+
+These are the 50 size-1 orbits (one per σ-fixed vertex). -/
+def isFixSingletonOrbit (σ : Equiv.Perm V) (c : Moore57.orbitClass σ) : Prop :=
+  ∃ a : V, σ a = a ∧ Moore57.orbitClass.cell σ c = {a}
+
+noncomputable instance isFixSingletonOrbit_decidable (σ : Equiv.Perm V)
+    (c : Moore57.orbitClass σ) : Decidable (isFixSingletonOrbit σ c) :=
+  Classical.dec _
+
+/-- **Fix-N orbit predicate**: cell has size 25 and is contained in `N(a)`
+for some σ-fixed vertex `a`.
+
+These are the 100 size-25 orbits attached to fixed vertices (each fixed
+vertex contributes 2 such orbits, paper §8 Prop 3 Step 1 + Item 2). -/
+def isFixNOrbit (σ : Equiv.Perm V) (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
+    (c : Moore57.orbitClass σ) : Prop :=
+  (Moore57.orbitClass.cell σ c).card = 25 ∧
+  ∃ a : V, σ a = a ∧ ∀ v ∈ Moore57.orbitClass.cell σ c, Γ.Adj a v
+
+noncomputable instance isFixNOrbit_decidable (σ : Equiv.Perm V) (Γ : SimpleGraph V)
+    [DecidableRel Γ.Adj] (c : Moore57.orbitClass σ) :
+    Decidable (isFixNOrbit σ Γ c) := Classical.dec _
+
+/-- **The Finset of fix-singleton orbit classes.** -/
+noncomputable def fixSingletonOrbits (σ : Equiv.Perm V) :
+    Finset (Moore57.orbitClass σ) :=
+  (Finset.univ : Finset (Moore57.orbitClass σ)).filter (isFixSingletonOrbit σ)
+
+/-- **The Finset of fix-N orbit classes.** -/
+noncomputable def fixNOrbits (Γ : SimpleGraph V) [DecidableRel Γ.Adj]
+    (σ : Equiv.Perm V) : Finset (Moore57.orbitClass σ) :=
+  (Finset.univ : Finset (Moore57.orbitClass σ)).filter (isFixNOrbit σ Γ)
+
+@[simp] theorem mem_fixSingletonOrbits {σ : Equiv.Perm V}
+    {c : Moore57.orbitClass σ} :
+    c ∈ fixSingletonOrbits σ ↔ isFixSingletonOrbit σ c := by
+  unfold fixSingletonOrbits; simp
+
+@[simp] theorem mem_fixNOrbits {σ : Equiv.Perm V} {c : Moore57.orbitClass σ} :
+    c ∈ fixNOrbits Γ σ ↔ isFixNOrbit σ Γ c := by
+  unfold fixNOrbits; simp
+
 /-! ### Sub-task C: trace-0 free orbit Classical chooser -/
 
 /-- **`prop3_choose_trace_0_free_orbit`: select `idx_178` + 27 other free orbits.**
