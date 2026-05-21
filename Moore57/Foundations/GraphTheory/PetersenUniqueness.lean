@@ -1,4 +1,5 @@
 import Moore57.Foundations.GraphTheory.PetersenGraph
+import Moore57.Foundations.GraphTheory.SRGPredicates
 
 /-!
 # Petersen uniqueness (statement-only, classical theorem)
@@ -142,5 +143,36 @@ theorem isSRGWith_10_3_0_1_edge_count
       _ = 30 := by rw [hcard]
   rw [h30] at hsum
   omega
+
+/-- **Unpacker: `PetersenUniqueness` + Petersen-like → explicit isomorphism.**
+
+If `PetersenUniqueness` holds and `G` is a Petersen-like graph on `α`,
+then there is a graph isomorphism `G ≃g petersenGraph`.  This is a
+trivial unpacker: the `PetersenUniqueness` Prop *is* the family of
+such isomorphism witnesses, so this lemma just routes the
+`IsPetersenLike` predicate through.
+
+Use case: downstream files that already have an `IsPetersenLike`
+hypothesis can apply this to obtain the canonical bridge to the
+explicit `petersenGraph` without re-deriving the `IsSRGWith 10 3 0 1`
+form. -/
+theorem PetersenUniqueness.of_isPetersenLike
+    (h : PetersenUniqueness.{u}) {α : Type u} [Fintype α] [DecidableEq α]
+    (G : SimpleGraph α) [DecidableRel G.Adj]
+    (hG : IsPetersenLike G) : Nonempty (G ≃g petersenGraph) :=
+  h G hG
+
+/-- **Self-bridging: `PetersenUniqueness` on `petersenGraph` yields the
+identity isomorphism class.**
+
+A degenerate consequence: `petersenGraph` is Petersen-like (its own
+`isSRG` proof), so any `PetersenUniqueness` instance applied to it
+gives `Nonempty (petersenGraph ≃g petersenGraph)`, witnessed by
+`Iso.refl`.  Subsumed by `apply_self`, but recorded in
+`IsPetersenLike` form for symmetry with `of_isPetersenLike`. -/
+theorem PetersenUniqueness.refl_via_isPetersenLike
+    (h : PetersenUniqueness.{0}) :
+    Nonempty (petersenGraph ≃g petersenGraph) :=
+  h.of_isPetersenLike petersenGraph petersenGraph_isPetersenLike
 
 end Moore57

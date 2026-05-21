@@ -2,6 +2,7 @@ import Moore57.Foundations.GraphTheory.PetersenGraph
 import Moore57.Foundations.GraphTheory.PetersenUniqueness
 import Moore57.Foundations.GraphTheory.SRGPredicates
 import Mathlib.Combinatorics.SimpleGraph.StronglyRegular
+import Mathlib.Combinatorics.SimpleGraph.Clique
 
 /-!
 # Auxiliary structural lemmas for SRG `(10, 3, 0, 1)` graphs
@@ -227,6 +228,178 @@ theorem IsPetersenLike.compl_degree
   have := hcompl_reg v
   -- this : Gᶜ.degree v = 10 - 3 - 1 = 6.
   omega
+
+/-! ### Bose 1963 structural lemmas (toward `PetersenUniqueness`)
+
+This block adds combinatorial structure heading toward Bose 1963's
+enumeration of `(10, 3, 0, 1)`-SRGs.  The lemmas package neighbourhood
+shape, complement parameters, and Moore-property refinements that are
+the standard scaffolding for a direct uniqueness proof.
+
+Each lemma is a pure consequence of the four SRG parameters
+`(n, k, ℓ, μ) = (10, 3, 0, 1)` plus the `IsPetersenLike` predicate;
+none require the (still-open) `PetersenUniqueness` hypothesis. -/
+
+/-- **No third vertex lies on a triangle through a given edge** (`λ = 0`).
+
+The "edge-witness" form of triangle-freeness: for any edge `{v, w}`,
+no other vertex `z` is simultaneously adjacent to both `v` and `w`. -/
+theorem IsPetersenLike.no_triangle_through_edge
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    ∀ z : V, ¬ (G.Adj v z ∧ G.Adj w z) := by
+  intro z ⟨hvz, hwz⟩
+  exact h.triangleFree v z w hvz hwz.symm hadj
+
+/-- **Unique common-neighbour witness for non-adjacent pairs** (`μ = 1`
+sharpened).
+
+Compared to `exists_unique_commonNeighbor`, this packages the witness
+together with the uniqueness statement as a `Subsingleton`/finset-level
+statement: the `commonNeighbors` finset has cardinality exactly one. -/
+theorem IsPetersenLike.adj_pair_unique_commonNeighbor
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hne : v ≠ w) (hadj : ¬G.Adj v w) :
+    ∃! z, G.Adj v z ∧ G.Adj w z :=
+  h.exists_unique_commonNeighbor v w hne hadj
+
+/-- **Each vertex's open neighbour-finset has exactly 3 elements.**
+
+This is the finset form of `degree_eq_three`, more directly usable for
+neighbourhood-based counting arguments. -/
+theorem IsPetersenLike.neighborFinset_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) (v : V) : (G.neighborFinset v).card = 3 := by
+  have hdeg : G.degree v = 3 := h.regular v
+  rw [SimpleGraph.card_neighborFinset_eq_degree, hdeg]
+
+/-- **The open neighbourhood of any vertex is an independent set.**
+
+This is a structural consequence of `λ = 0`: if `x, y ∈ N(v)` were
+adjacent, the triple `v, x, y` would form a triangle. -/
+theorem IsPetersenLike.neighborhood_is_independent
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) (v : V) :
+    G.IsIndepSet (G.neighborSet v) := by
+  intro x hx y hy _hxy hadj_xy
+  rw [SimpleGraph.mem_neighborSet] at hx hy
+  exact h.triangleFree v x y hx hadj_xy hy
+
+/-- **The set of "strangers" of a vertex has cardinality 6.**
+
+For any `v : V`, the set of vertices that are neither `v` itself nor
+a neighbour of `v` has cardinality `10 - 1 - 3 = 6`.  This is the
+"non-neighbour count" appearing in Bose 1963's enumeration: each
+vertex sees 3 neighbours and 6 strangers (with itself excluded). -/
+theorem IsPetersenLike.non_neighborhood_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) (v : V) :
+    ((Finset.univ : Finset V) \ (insert v (G.neighborFinset v))).card = 6 := by
+  classical
+  have hcard : Fintype.card V = 10 := h.card
+  have hcard_univ : (Finset.univ : Finset V).card = 10 := by
+    rw [Finset.card_univ]; exact hcard
+  have hndeg : (G.neighborFinset v).card = 3 := h.neighborFinset_card v
+  have hv_nmem : v ∉ G.neighborFinset v := SimpleGraph.notMem_neighborFinset_self G v
+  have hins :
+      (insert v (G.neighborFinset v)).card = 4 := by
+    rw [Finset.card_insert_of_notMem hv_nmem, hndeg]
+  have hsub : insert v (G.neighborFinset v) ⊆ (Finset.univ : Finset V) := by
+    intro _ _; exact Finset.mem_univ _
+  rw [Finset.card_sdiff_of_subset hsub]
+  omega
+
+/-- **Every pair of vertices is at distance `≤ 2`** (alternative form).
+
+This is `adj_or_commonNeighbor` recast in the constructive `∃ z, ...`
+form for the non-adjacent case, with `Or` direction flattened. -/
+theorem IsPetersenLike.distance_le_2
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) (v w : V) (hne : v ≠ w) :
+    G.Adj v w ∨ ∃ z, z ≠ v ∧ z ≠ w ∧ G.Adj v z ∧ G.Adj w z := by
+  rcases h.adj_or_commonNeighbor v w hne with hvw | ⟨z, hvz, hwz⟩
+  · exact Or.inl hvw
+  · refine Or.inr ⟨z, ?_, ?_, hvz, hwz⟩
+    · intro heq; subst heq; exact (G.irrefl hvz).elim
+    · intro heq; subst heq; exact (G.irrefl hwz).elim
+
+/-- **Non-adjacent pair: exactly one `2`-path between them.**
+
+For distinct non-adjacent `v, w`, the number of common neighbours
+(= number of `2`-paths from `v` to `w`) is exactly 1.  This is the
+finset form of `μ = 1`. -/
+theorem IsPetersenLike.non_neighbor_2path_count
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hne : v ≠ w) (hadj : ¬G.Adj v w) :
+    Fintype.card (G.commonNeighbors v w) = 1 :=
+  h.mu_one v w hne hadj
+
+/-- **Complement parameters: `IsSRGWith 10 6 3 4`.**
+
+The complement of a Petersen-like graph is the complement
+strongly-regular graph with parameters `(10, 6, 3, 4)` (this is the
+triangular graph `T(5)` / Johnson `J(5, 2)`).  Follows by
+specialising `IsSRGWith.compl` to `(n, k, ℓ, μ) = (10, 3, 0, 1)`. -/
+theorem IsPetersenLike.compl_isSRGWith
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) :
+    Gᶜ.IsSRGWith 10 6 3 4 := by
+  classical
+  have hcompl := h.compl
+  -- `IsSRGWith.compl` gives `Gᶜ.IsSRGWith n (n - k - 1) (n - (2 * k - μ) - 2) (n - (2 * k - ℓ))`.
+  -- With `(n, k, ℓ, μ) = (10, 3, 0, 1)`: `(10 - 3 - 1, 10 - (6 - 1) - 2, 10 - 6) = (6, 3, 4)`.
+  -- The arithmetic is definitional, but we rewrite to expose the numerals.
+  -- `n - (2 * k - μ) - 2 = 10 - (6 - 1) - 2 = 10 - 5 - 2 = 3`.
+  -- `n - (2 * k - ℓ) = 10 - 6 = 4`.
+  exact hcompl
+
+/-- **Complement edge count: 30 edges.**
+
+A Petersen-like graph has 15 edges out of `C(10, 2) = 45`; its
+complement has `45 - 15 = 30` edges.  Direct via `compl_isSRGWith`
+and the degree-sum formula on the complement. -/
+theorem IsPetersenLike.complement_edgeFinset_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) :
+    Gᶜ.edgeFinset.card = 30 := by
+  classical
+  have hcompl : Gᶜ.IsSRGWith 10 6 3 4 := h.compl_isSRGWith
+  have hcard : Fintype.card V = 10 := hcompl.card
+  have hreg : ∀ v : V, Gᶜ.degree v = 6 := hcompl.regular
+  have hsum := Gᶜ.sum_degrees_eq_twice_card_edges
+  have h60 : ∑ v : V, Gᶜ.degree v = 60 := by
+    calc ∑ v : V, Gᶜ.degree v
+        = ∑ _v : V, 6 := Finset.sum_congr rfl (fun v _ => hreg v)
+      _ = Fintype.card V * 6 := by
+          rw [Finset.sum_const, Finset.card_univ]; ring
+      _ = 60 := by rw [hcard]
+  rw [h60] at hsum
+  omega
+
+/-- **Total edge budget: `|E(G)| + |E(Gᶜ)| = 45`.**
+
+A clean reformulation of "`G` and its complement partition the edges
+of the complete graph on 10 vertices."  Follows from
+`edgeFinset_card = 15` and `complement_edgeFinset_card = 30`. -/
+theorem IsPetersenLike.edges_partition
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) :
+    G.edgeFinset.card + Gᶜ.edgeFinset.card = 45 := by
+  rw [h.edgeFinset_card, h.complement_edgeFinset_card]
+
+/-- **The full vertex set decomposes as `{v} ⊔ N(v) ⊔ strangers(v)`.**
+
+For each vertex `v`, the finset `univ` is the disjoint union of
+`{v}`, the open neighbourhood `N(v)`, and the strangers
+(non-neighbours other than `v`).  This is the Bose 1963 vertex
+partition used in the enumeration.  We package the cardinality
+identity `1 + 3 + 6 = 10`. -/
+theorem IsPetersenLike.vertex_partition_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) (v : V) :
+    1 + (G.neighborFinset v).card +
+      ((Finset.univ : Finset V) \ (insert v (G.neighborFinset v))).card = 10 := by
+  rw [h.neighborFinset_card v, h.non_neighborhood_card v]
 
 /-! ### Petersen-like graphs satisfy the same properties on `Fin 10` -/
 
