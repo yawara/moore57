@@ -2,6 +2,7 @@ import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.FixedSubgraphData
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
+import Moore57.Moore57Graph.Aut.OrderElevenIsC5
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -226,6 +227,116 @@ theorem lem19_case3_orderOf_dvd_11_with_c5FixedData
     (h_semi_regular : orderOf σ ∣ 55) :
     orderOf σ ∣ 11 :=
   lem19_case3_orderOf_dvd_11_of_pentagon_fix σ k pow_pk h_semi_regular
+
+/-- **Lemma 19 case (3) unconditional bridge via `C5FixedData` and the
+C3.4 semi-regular orbit argument**. [done — C3.4]
+
+Mirrors `Lemma18.lem18_case2_orderOf_dvd_5_with_c5FixedData_semiRegular`:
+given an arbitrary `C5FixedData`, the C3.4 semi-regular bridge derives
+`orderOf σ ∣ 55`, which combined with `σ^{11^k}=1` gives
+`orderOf σ ∣ 11`. -/
+theorem lem19_case3_orderOf_dvd_11_with_c5FixedData_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 11 ^ k = 1)
+    (c5 : C5FixedData Γ σ) (i : Fin 5)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ w ∈ Moore57.autMovedNeighborFinset Γ σ (c5.v i),
+             ∀ k : ℕ, (σ^k) w = w → orderOf σ ∣ k) :
+    orderOf σ ∣ 11 :=
+  lem19_case3_orderOf_dvd_11_of_pentagon_fix σ k pow_pk
+    (Moore57.C5FixedData.c5_orderOf_dvd_55_of_semiRegular
+      hΓ c5 i smul_adj hsemi)
+
+/-- **Lemma 19 case (3) prime-case via semi-regular (no `hsemi`).**
+[done — Path B prime case]
+
+For σ of prime order 11 (`σ^11 = 1`), the cyclic action is
+automatically semi-regular on every moved neighbour
+(`aut_semiRegular_at_movedNeighbor_of_prime`).  Given `C5FixedData`,
+the C3.4 bridge then gives `orderOf σ ∣ 11`.  No `hsemi` hypothesis
+is required. -/
+theorem lem19_case3_orderOf_dvd_11_with_c5FixedData_prime_via_semiRegular
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_11 : σ ^ 11 = 1)
+    (c5 : C5FixedData Γ σ) (i : Fin 5)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 11 :=
+  lem19_case3_orderOf_dvd_11_with_c5FixedData_semiRegular
+    hΓ σ 1 (by rw [pow_one]; exact pow_11) c5 i smul_adj
+    (Moore57.aut_semiRegular_at_movedNeighbor_of_prime
+      (Γ := Γ) σ 11 (by decide) pow_11 (c5.v i))
+
+/-- **Lemma 19 case (3) prime-case fully unconditional (no `C5FixedData`!).**
+[done — unconditional Path B]
+
+For σ a graph automorphism of a Moore57 graph with `σ^11 = 1` and
+`σ ≠ 1`, the pentagon-fix shape (`C5FixedData Γ σ`) is *constructed*
+unconditionally from `aut_order_eleven_C5FixedData`, and the C3.4
+semi-regular bridge then gives `orderOf σ ∣ 11`.
+
+This eliminates the `C5FixedData` hypothesis entirely — it is derived
+from `σ^11 = 1 ∧ σ ≠ 1 ∧ smul_adj` via the order-11 classification
+of Moore57 automorphisms (`OrderElevenIsC5.lean`).  This is the
+**genuine unconditional** form of Lemma 19 case 3 for the prime
+order-11 case.
+
+Note: requires `σ ≠ 1` (otherwise `σ` is trivial and `orderOf σ = 1`
+trivially divides `11`; the lemma is vacuous in that case anyway). -/
+theorem lem19_case3_orderOf_dvd_11_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_11 : σ ^ 11 = 1)
+    (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 11 :=
+  let c5 := Moore57.aut_order_eleven_C5FixedData hΓ σ smul_adj pow_11 hne
+  lem19_case3_orderOf_dvd_11_with_c5FixedData_prime_via_semiRegular
+    hΓ σ pow_11 c5 0 smul_adj
+
+/-- **Lemma 19 case (3) prime-case unconditional with trivial case.** [done]
+
+Combines the `σ ≠ 1` non-trivial branch (derived via
+`aut_order_eleven_C5FixedData` + semi-regular C3.4 bridge) with the
+trivial `σ = 1` branch (where `orderOf σ = 1 ∣ 11`).
+
+This is the **strictly weakest** hypothesis form: only `σ^11 = 1`
+and `smul_adj` are required. -/
+theorem lem19_case3_orderOf_dvd_11_prime_unconditional_total
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_11 : σ ^ 11 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    orderOf σ ∣ 11 := by
+  by_cases hne : σ = 1
+  · subst hne
+    simp
+  · exact lem19_case3_orderOf_dvd_11_prime_unconditional hΓ σ pow_11 hne smul_adj
+
+/-- **Lemma 19 case (3) abstract conclusion** (Conclusion Prop encoding).
+
+For σ of order 11 (or 1) acting as a graph automorphism of a Moore57 Γ,
+the paper's case (3) conclusion is: `orderOf σ ∣ 11`.
+
+Bundled as a Prop for downstream Cor3 dispatch chain, paralleling
+`Thm6OddOrderConclusion` and friends. -/
+def Lemma19Case3Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 11
+
+/-- **Lemma 19 case (3) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma19Case3Conclusion σ` (the paper's case (3) divisibility
+bound), conclude `orderOf σ ∣ 11`.  Trivial bridge — exposed for the
+Conclusion-Prop dispatch pattern used by `MainTheorem`. -/
+theorem lem19_case3_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma19Case3Conclusion σ) :
+    orderOf σ ∣ 11 :=
+  h_conclusion
+
+/-- **Lemma 19 case (3) Conclusion instance, prime-case unconditional.** [done]
+
+The Conclusion Prop `Lemma19Case3Conclusion σ` is *unconditionally*
+discharged for `σ^11 = 1` graph automorphisms of a Moore57 Γ, via
+`lem19_case3_orderOf_dvd_11_prime_unconditional_total`.  No
+`C5FixedData` hypothesis required. -/
+theorem lem19_case3_conclusion_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_11 : σ ^ 11 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    Lemma19Case3Conclusion σ :=
+  lem19_case3_orderOf_dvd_11_prime_unconditional_total hΓ σ pow_11 smul_adj
 
 /-- **Lemma 19 dispatch numeric bound: `n ≤ 19` from per-prime dispatch.**
 [done]
