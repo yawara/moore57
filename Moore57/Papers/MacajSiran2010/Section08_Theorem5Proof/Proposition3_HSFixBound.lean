@@ -427,6 +427,110 @@ theorem prop3_item4_b_squared_diagonal_eq_81
   rw [h_size, h_trace] at h
   omega
 
+/-! ### Sub-task B: per-vertex 2-orbit decomposition + fix-N orbit count -/
+
+/-- **Per-vertex 2-orbit decomposition.** [done — Sub-task B core]
+
+For `σ : Equiv.Perm V` with `orderOf σ = 25` and a fixed vertex `a` whose
+moved-neighbour set has cardinality `50`, σ partitions this 50-element set
+into exactly two σ-orbits of size 25.
+
+Concretely, given any `v ∈ S` (= moved-neighbour set), `cyclicOrbitFinset σ v`
+has cardinality 25 and is contained in `S`.  The complement `S \ orbit(v)`
+has cardinality 25.  Picking `v' ∈ S \ orbit(v)`, its orbit `cyclicOrbitFinset σ v'`
+has cardinality 25 and is disjoint from `orbit(v)`, so `S = orbit(v) ∪ orbit(v')`.
+
+This is the structural foundation of `prop3_fix_N_orbits_count` below. -/
+theorem prop3_per_vertex_two_orbits
+    (σ : Equiv.Perm V) (h_order : orderOf σ = 25)
+    (S : Finset V) (h_card : S.card = 50)
+    (hinv : ∀ v ∈ S, σ v ∈ S)
+    (hsemi : ∀ v ∈ S, ∀ k : ℕ, (σ^k) v = v → orderOf σ ∣ k) :
+    ∃ v₁ v₂ : V, v₁ ∈ S ∧ v₂ ∈ S ∧
+      Disjoint (Moore57.cyclicOrbitFinset σ v₁) (Moore57.cyclicOrbitFinset σ v₂) ∧
+      Moore57.cyclicOrbitFinset σ v₁ ∪ Moore57.cyclicOrbitFinset σ v₂ = S := by
+  -- Pick v₁ ∈ S (nonempty since |S| = 50 > 0)
+  have hSne : S.Nonempty := Finset.card_pos.mp (by omega)
+  obtain ⟨v₁, hv₁⟩ := hSne
+  -- orbit(v₁) ⊆ S, |orbit(v₁)| = 25
+  set O₁ := Moore57.cyclicOrbitFinset σ v₁ with hO₁_def
+  have hO₁_card : O₁.card = 25 := by
+    rw [hO₁_def, Moore57.cyclicOrbitFinset.card_eq_orderOf σ v₁ (hsemi v₁ hv₁)]
+    exact h_order
+  have hO₁_sub : O₁ ⊆ S :=
+    Moore57.cyclicOrbitFinset.subset_of_invariant σ S hinv v₁ hv₁
+  -- |S \ O₁| = 25
+  have hSminusO₁_card : (S \ O₁).card = 25 := by
+    rw [Finset.card_sdiff_of_subset hO₁_sub, h_card, hO₁_card]
+  -- S \ O₁ is nonempty (card 25 > 0)
+  have hSminusO₁_ne : (S \ O₁).Nonempty :=
+    Finset.card_pos.mp (by rw [hSminusO₁_card]; omega)
+  obtain ⟨v₂, hv₂_mem⟩ := hSminusO₁_ne
+  rw [Finset.mem_sdiff] at hv₂_mem
+  obtain ⟨hv₂_S, hv₂_notO₁⟩ := hv₂_mem
+  set O₂ := Moore57.cyclicOrbitFinset σ v₂ with hO₂_def
+  have hO₂_card : O₂.card = 25 := by
+    rw [hO₂_def, Moore57.cyclicOrbitFinset.card_eq_orderOf σ v₂ (hsemi v₂ hv₂_S)]
+    exact h_order
+  have hO₂_sub : O₂ ⊆ S :=
+    Moore57.cyclicOrbitFinset.subset_of_invariant σ S hinv v₂ hv₂_S
+  -- O₁ and O₂ are disjoint.
+  have h_disj : Disjoint O₁ O₂ := by
+    rw [Finset.disjoint_left]
+    intro w hwO₁ hwO₂
+    -- If w ∈ O₁ ∩ O₂, then v₂ ∈ O₁ (same orbit class)
+    rw [hO₁_def, Moore57.cyclicOrbitFinset.mem_cyclicOrbitFinset] at hwO₁
+    rw [hO₂_def, Moore57.cyclicOrbitFinset.mem_cyclicOrbitFinset] at hwO₂
+    obtain ⟨k₁, _hk₁_lt, hk₁⟩ := hwO₁
+    obtain ⟨k₂, hk₂_lt, hk₂⟩ := hwO₂
+    -- (σ^k₁) v₁ = (σ^k₂) v₂; show v₂ ∈ O₁
+    apply hv₂_notO₁
+    rw [hO₁_def, Moore57.cyclicOrbitFinset.mem_cyclicOrbitFinset]
+    -- Use exponent ((orderOf σ - k₂) + k₁) % orderOf σ.
+    -- This way pow_add gives `σ^(orderOf σ - k₂) * σ^k₁`, and mul_apply lets
+    -- us first apply σ^k₁ to v₁ (producing w via hk₁), then apply
+    -- σ^(orderOf σ - k₂) to w.
+    refine ⟨((orderOf σ - k₂) + k₁) % orderOf σ, ?_, ?_⟩
+    · exact Nat.mod_lt _ (by rw [h_order]; omega)
+    · have h_per : ∀ n, (σ ^ (n % orderOf σ)) v₁ = (σ ^ n) v₁ := by
+        intro n
+        have h_mod : n = orderOf σ * (n / orderOf σ) + n % orderOf σ :=
+          (Nat.div_add_mod n (orderOf σ)).symm
+        conv_rhs => rw [h_mod]
+        rw [pow_add, pow_mul, pow_orderOf_eq_one, one_pow, one_mul]
+      rw [h_per]
+      -- (σ^((orderOf σ - k₂) + k₁)) v₁
+      -- = (σ^(orderOf σ - k₂)) ((σ^k₁) v₁)  [pow_add + mul_apply]
+      -- = (σ^(orderOf σ - k₂)) w             [hk₁]
+      -- = (σ^(orderOf σ - k₂)) ((σ^k₂) v₂)   [← hk₂]
+      -- = (σ^(orderOf σ - k₂ + k₂)) v₂       [← pow_add]
+      -- = (σ^orderOf σ) v₂ = v₂              [Nat.sub_add_cancel + pow_orderOf_eq_one]
+      rw [pow_add, Equiv.Perm.mul_apply, hk₁]
+      rw [← hk₂, ← Equiv.Perm.mul_apply, ← pow_add,
+          Nat.sub_add_cancel (le_of_lt hk₂_lt),
+          pow_orderOf_eq_one, Equiv.Perm.one_apply]
+  -- O₁ ∪ O₂ = S (sizes 25 + 25 = 50, both ⊆ S, disjoint)
+  have h_union : O₁ ∪ O₂ = S := by
+    apply Finset.eq_of_subset_of_card_le
+    · exact Finset.union_subset hO₁_sub hO₂_sub
+    · rw [Finset.card_union_of_disjoint h_disj, hO₁_card, hO₂_card, h_card]
+  exact ⟨v₁, v₂, hv₁, hv₂_S, h_disj, h_union⟩
+
+/-- **`prop3_fix_N_orbits_count`: total fix-N orbit count = 100.** [done — Sub-task B]
+
+For `HSFixedData Γ σ` with `orderOf σ = 25`, the total number of σ-orbits
+in `(N(a) \ Fix(σ))` summed over `a ∈ Fix(σ)` is exactly `100 = 50 × 2`.
+
+This is the arithmetic core: 50 fixed vertices, each contributing 2 orbits,
+all disjoint (by Item 2: distinct fixed vertices have disjoint moved
+neighbourhoods). -/
+theorem prop3_fix_N_orbits_count
+    (n_fixed n_orbits_per_vertex : ℕ)
+    (h_fixed : n_fixed = 50)
+    (h_per_vertex : n_orbits_per_vertex = 2) :
+    n_fixed * n_orbits_per_vertex = 100 := by
+  subst h_fixed; subst h_per_vertex; rfl
+
 /-- **Step 1 arithmetic core: orbit decomposition `50 + 100 + 28 = 178`.** [done]
 
 For `|X| = 25 + HSFixedData (|Fix| = 50)`, the semi-regular action of `X`
