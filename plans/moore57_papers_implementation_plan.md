@@ -235,37 +235,294 @@ row が conditional unstub に到達**。
 
 ---
 
-## 4. Path C: Cor 3 climbing (planning only) ~ planning document
+## 4. Path C: Cor 3 climbing — dependency tree concrete-ization
 
-Cor 3 (= `|Aut(Γ)| ≤ 375`) から逆算する。 これは Tier A 投資を見送る前提で、
-「achievable subgoal」を identify する planning 作業 (Lean コード変更なし)。
+Cor 3 (= `|Aut(Γ)| ≤ 375`) から逆算した **具体的 dependency tree**。
+Tier A (SG(81,9) / SG(625,12) uniqueness, 25 群 enumeration) を見送る前提で
+"achievable subgoal" を identify する planning 作業 (Lean コード変更なし)。
 
-### 4.1 Thm 6 (odd) 経路の dependency tree
-- [ ] `cor3_bound_from_props_and_oddpart` (proven) → `Odd n` 仮定で
-  Props 6/7/8 dispatch 必要
-- [ ] Prop 6 (3, 5) unconditional 化に必要な True-stub の最小集合
-- [ ] Prop 7 (3, q≥7) 各 q
-- [ ] Prop 8 (5, q≥7) 各 q
-- [ ] Lem 26 (p ≤ 5 or q ≤ 5) — Sylow + Mathlib
+### 4.0 Top-level chain (already proven, conditional)
 
-### 4.2 Thm 7 (even) 経路の dependency tree
-- [ ] Thm 7 dispatch unconditional 化
-- [ ] |G| = 110 = 2·5·11 case (E4.0 proven、unconditional 化 path 確認)
-- [ ] |G| = 50, 54, 14, 22, 38 各 case
+```
+cor3_375_bound (hΓ : IsMoore57 Γ) : True
+  ← cor3_bound_from_props_and_oddpart                   [proven, conditional]
+       (Section09/Corollary3_375Bound.lean:132)
+        ← thm6_bound_375_from_props                     [proven, conditional]
+            (Section09/Theorem6_OddOrder.lean:72)
+        ← thm7_bound_110_from_odd_part                  [proven, conditional]
+            (Section09/Theorem7_EvenOrder.lean:66)
+```
 
-### 4.3 Thm 4 / Thm 5 経路 (Tier A 経由)
-- [ ] Thm 4 = 3-group bound: Cor 2 (SG(81,9)) 必須 → Tier A 投資非推奨
-- [ ] Thm 5 = 5-group bound: Lem 22 (SG(625,12)) 必須 → 同上
-- [ ] 代替経路があるか調査 (Path B (Lem 21) で部分的に bypass 可能か?)
+**鍵となる事実**: arithmetic backbone は全て proven。 残る True-stub は
+"`hΓ : IsMoore57 Γ` から hypothesis dispatch を引き出す bridge" のみ。
+具体的に必要なのは:
 
-### 4.4 最小 achievable subgoal の特定
-- [ ] Tier A 経由抜きで Cor 3 unconditional 化が無理なら、achievable な
-  subgoal (例: `|Aut(Γ)| ≤ 375 conditional on no_3group_order_81 ∧ no_5group_order_625`)
-  の paper-faithful な statement を整理
-- [ ] このとき hypothesis として何を Prop def に encode するかを決定
+- **odd branch**: `Odd (Nat.card (autSubgroup Γ)) → Props 6/7/8 dispatch`
+- **even branch**: `Even (Nat.card (autSubgroup Γ)) → ∃ m, ... ∧ Thm-7 odd-part dispatch`
 
-**完了条件**: `plans/moore57_cor3_path_analysis.md` (新規) として保存。
-Lean コード変更ゼロ。
+### 4.1 §4.1 Thm 6 (odd) 経路の dependency tree
+
+**Top True-stub**: `S9.thm6_odd_order (hΓ : IsMoore57 Γ) : True`
+(Section09/Theorem6_OddOrder.lean:150)
+
+**必要 dispatch hypothesis (consumed by `thm6_bound_375_from_props`)**:
+```
+n = Nat.card (autSubgroup Γ), n odd ⟹
+   (n ∣ 135 ∨ n ∣ 375)                            -- Prop 6 (3, 5) 経由
+ ∨ (n ∣ 147 ∨ n ∣ 39 ∨ n ∣ 171)                   -- Prop 7 (3, q∈{7,13,19}) 経由
+ ∨ (n ∣ 35 ∨ n ∣ 275)                             -- Prop 8 (5, q∈{7,11}) 経由
+```
+
+**Single-prime fallback** (Lems 16-19; ≤ |G| ≤ 27,125,49,11,13,19 各 p^k):
+`thm6_dvd_one_of_seven_from_props_and_one_prime` (proven)
+が 1-prime branch を absorb 済 — 個別 p の divisibility は all-cases-covered。
+
+#### 4.1.A Minimum True-stub 集合 (Prop 6 unconditional 化)
+
+**File**: `Section09_MixingPrimes/Proposition6_3and5.lean`
+**Top True-stub**: `prop6_3_and_5 : True := by trivial` (line 241)
+
+**Necessary True-stub chain (Prop 6, p=3, q=5 dispatch)**:
+
+| Stub name                                          | File                                                | Status         | Required infra                                                |
+|----------------------------------------------------|-----------------------------------------------------|----------------|---------------------------------------------------------------|
+| `prop6_3_and_5` (top)                              | Section09/Proposition6_3and5.lean:241                | True-stub      | dispatch (a, b) extraction from `hΓ`                          |
+| `lem17_3group_fix` (Fix shape)                     | Section06/Lemma17_3Group.lean:415                   | True-stub      | Path B Lem 21 (composite-order), Tier A Cor 2                 |
+| `lem18_5group_fix` (Fix shape)                     | Section06/Lemma18_5Group.lean:`*_5group_fix`        | True-stub      | Path B Lem 21 (composite-order), Tier A Lem 22                |
+| `cor2_smallGroup_81_9` (Cor 2)                     | Section07/Corollary2_SmallGroup81_9.lean:46         | True-stub      | Tier A1.2 (15 群 enumeration)                                 |
+| `lem22_smallGroup_625_12` (Lem 22)                 | Section08/Lemma22_SmallGroup625_12.lean:133         | True-stub      | Tier A3 (10 群 enumeration)                                   |
+
+**Minimum True-stub Set (Prop 6, deepest level)**: 5 件
+- `cor2_smallGroup_81_9` (Tier A1.2 dependent — 投資非推奨)
+- `lem22_smallGroup_625_12` (Tier A3 dependent — 投資非推奨)
+- `lem17_3group_fix` (Fix-shape case analysis; Path B Lem 21 composite-order 経由)
+- `lem18_5group_fix` (同上)
+- `prop6_3_and_5` (case dispatch wrapper)
+
+#### 4.1.B Minimum True-stub 集合 (Prop 7 unconditional 化)
+
+**File**: `Section09_MixingPrimes/Proposition7_3andLarge.lean`
+**Top True-stub**: `prop7_3_and_large : True := by trivial` (line 241)
+
+| Stub name                                          | File                                                | Status         | Required                                                      |
+|----------------------------------------------------|-----------------------------------------------------|----------------|---------------------------------------------------------------|
+| `prop7_3_and_large` (top)                          | Section09/Proposition7_3andLarge.lean:241            | True-stub      | dispatch (a, b, q) extraction                                 |
+| `lem17_3group_fix`                                 | (上記)                                              | True-stub      | (上記)                                                        |
+| `lem19_large_prime_pgroup`                         | Section06/Lemma19_LargePrime.lean:264                | True-stub      | Lem 16 Fix-shape (proven `_paper`)                            |
+| `lem20_*` (Lem 20 conjugate-fix)                   | Section06/Lemma20_ConjugateFix.lean (proven helpers) | Helpers proven | —                                                             |
+
+**Sylow infra proven**: `prop7_q{7,13,19}_sylow{7,13,19}_normal` (Mathlib).
+
+**Minimum True-stub Set (Prop 7)**: 3 件 (Prop 6 と一部共通)
+- `prop7_3_and_large` (case dispatch wrapper)
+- `lem17_3group_fix` (共通)
+- `lem19_large_prime_pgroup` (q ∈ {7,13,19} bound, 比較的軽い)
+
+#### 4.1.C Minimum True-stub 集合 (Prop 8 unconditional 化)
+
+**File**: `Section09_MixingPrimes/Proposition8_5andLarge.lean`
+**Top True-stub**: `prop8_5_and_large : True := by trivial` (line 214)
+
+| Stub name                                          | File                                                | Status         | Required                                                      |
+|----------------------------------------------------|-----------------------------------------------------|----------------|---------------------------------------------------------------|
+| `prop8_5_and_large` (top)                          | Section09/Proposition8_5andLarge.lean:214            | True-stub      | dispatch (a, b, q) extraction                                 |
+| `lem18_5group_fix`                                 | (上記)                                              | True-stub      | (上記)                                                        |
+| `lem19_large_prime_pgroup`                         | (上記)                                              | True-stub      | (上記)                                                        |
+| `lem26_small_prime` (p ≤ 5 ∨ q ≤ 5)                | Section09/Lemma26_SmallPrime.lean:205                | True-stub      | `_paper` conditional 既存 (h_paper_geom 抽出)                 |
+
+**Sylow infra proven**: `prop8_q{7,11}_sylow{5,7,11}_normal` (Mathlib).
+**Order22 (q=11 boundary)**: `Moore57.Order22OnMoore57.NoGo` (proven, separate lane).
+
+**Minimum True-stub Set (Prop 8)**: 4 件 (一部共通)
+- `prop8_5_and_large`
+- `lem18_5group_fix` (共通)
+- `lem19_large_prime_pgroup` (共通)
+- `lem26_small_prime` (`_paper` conditional 既存)
+
+#### 4.1.D Lem 26 (p ≤ 5 ∨ q ≤ 5) status
+
+Already has `_paper` conditional (proven): `lem26_small_prime_paper`
+(Section09/Lemma26_SmallPrime.lean:177) taking 3 hypotheses:
+* `h_p_in, h_q_in` : prime ∈ {3,5,7,11,13,19}
+* `h_paper_geom` : 5-pair geometric reduction (Sylow + Lem 19 + Fix-shape)
+* `h_seven_nineteen_geom` : (7,19) ⇒ closed-neighbourhood fix + a₁ ≥ 21
+
+**Top-stub gap**: `h_paper_geom` の自動生成は paper §9 (Sylow + Lem 25 +
+Lem 19 case structure) 全形が必要。 `h_seven_nineteen_geom` extraction は
+別タスク (Lem 19 case 4/5 の geometric content). いずれも middle-weight,
+Tier A 非依存。
+
+### 4.2 §4.2 Thm 7 (even) 経路の dependency tree
+
+**Top True-stub**: `S9.thm7_even_order (hΓ : IsMoore57 Γ) : True`
+(Section09/Theorem7_EvenOrder.lean:320)
+
+**必要 dispatch hypothesis (consumed by `thm7_bound_110_from_odd_part`)**:
+```
+n = Nat.card (autSubgroup Γ), n even ⟹
+  ∃ m, n = 2*m ∧ (m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19)
+```
+
+**Sylow infra (Feit-Thompson-free)**: 全 6 cases (110, 50, 54, 14, 22, 38) で
+`thm7_card_*_sylow*_normal` Mathlib-lifted lemma が proven。
+(Section09/Theorem7_EvenOrder.lean:199-290)
+
+#### 4.2.A 各 even-order case dispatch (geometric content の要求)
+
+| `|G|` | factorization     | Fix-shape / Geometric input                              | Required True-stub               |
+|-------|-------------------|-----------------------------------------------------------|----------------------------------|
+| 110   | 2·5·11            | Z₅₅ ⋊ Z₂; Order22 boundary                                | `thm2_makhnev_paduchikh` (MP)    |
+| 50    | 2·5²              | Z₂₅ ⋊ Z₂; HS or pentagon Fix                             | `thm5_final` (= Thm 5)           |
+| 54    | 2·3³              | Z₂₇ ⋊ Z₂                                                  | `thm4_final` (= Thm 4)           |
+| 14    | 2·7               | Z₇ ⋊ Z₂                                                   | `lem19_large_prime_pgroup`       |
+| 22    | 2·11              | Z₁₁ ⋊ Z₂; Order22OnMoore57 case                          | `lem19_large_prime_pgroup`       |
+| 38    | 2·19              | Z₁₉ ⋊ Z₂                                                   | `lem19_large_prime_pgroup`       |
+
+**Minimum True-stub Set (Thm 7, geometric)**: 4 件
+- `thm7_even_order` (dispatch extraction)
+- `thm2_makhnev_paduchikh` (MP 2001 main theorem, Section02; current Y ≤ 57 dispatch is True-stub)
+- `thm4_final` / `thm5_final` (上記 4.1 と共通)
+- `lem19_large_prime_pgroup` (4.1 と共通)
+
+**Note**: `thm2_makhnev_paduchikh` は **Tier A 非依存**: MP 2001 paper-faithful
+work で進められる位置にある (`Moore57.Papers.MakhnevPaduchikh2001` 下に
+別 paper として scope 化済)。
+
+### 4.3 §4.3 Tier A 代替経路の調査 (= Thm 4 / Thm 5 不要化)
+
+#### 4.3.A 現状の Tier A 依存箇所
+
+**Thm 4 (3-group ≤ 27)** dispatch hypothesis:
+```
+n ∣ 27 ∨ n ∣ 81   ∧   n ≠ 81
+```
+- `n ∣ 27 ∨ n ∣ 81`: Lem 17 case (1) Petersen-fix / case (2) Singleton-fix で出る
+- `n ≠ 81`: **Cor 2 (SG(81,9) uniqueness)** が必要 → Tier A1.2
+
+**Thm 5 (5-group ≤ 125)** dispatch hypothesis:
+```
+n ∣ 5 ∨ n ∣ 25 ∨ n ∣ 125
+```
+- 3-case dispatch (HS / pentagon / empty Fix)
+- `n ≠ 625` implicit: case (3) empty Fix で `≤ 125` bound が paper Lem 22 +
+  Prop 4 + Prop 5 で確定。 **Lem 22 (SG(625,12) uniqueness)** が必要 → Tier A3.
+
+#### 4.3.B Bypass の可能性 (Path B Lem 21 で部分的 bypass か?)
+
+**判定**: **不可** (重要負の結論)。
+
+理由:
+1. Path B Lem 21 (`Fix(σ^l) = Fix(σ)`) は **prime-power の k=1 (prime case)**
+   までしか proper unstub できていない (`semiRegular` 経由)。
+2. 一般 `l` で `Fix(σ^l) = Fix(σ)` は **真でない** (`⊇` のみ); Lem 17 case 2
+   の composite-order σ ∈ SG(81, 9) は σ³ で fix が増える可能性が残る。
+3. paper Lem 21 は **cyclic Z₉ × Z₃ shared subgroup** の構造的補題で、
+   一般化 Mathlib API は存在しない (`feedback_generalize_theorems.md`
+   ベースで hand-roll が必要だが SG(81, 9) の specific 構造を経由する)。
+4. paper Lem 22 は SG(625, 12) Heis × Z₅ 構造の **具体的計算**
+   (`b_{1j}` 行 + 27 自由度 → 整数解非存在) が本質。
+
+**Bypass 不可結論**: Thm 4 / Thm 5 の unconditional 化には Tier A1.2 / A3
+(15 群 + 10 群 enumeration) のいずれかが本質的に必要。
+
+#### 4.3.C 半分 bypass (Thm 4 でのみ可能性)
+
+**Thm 4 case (1) Petersen-fix**: `n ∣ 27` (= |X| ≤ 27) は **Cor 2 不要**で出る。
+case (1) のみ active な場合 (i.e., `Fix(X) = Petersen` が論証されている場合) は
+unconditional path がある。
+
+しかし Fix-shape case analysis 自体が `lem17_3group_fix` (True-stub) を経由し、
+case (2) Singleton-fix の可能性を排除するには Cor 2 を経由する。
+**実質的 bypass にはならない**。
+
+### 4.4 §4.4 最小 achievable subgoal の特定
+
+Tier A 投資見送りでは **完全 unconditional** `cor3_375_bound` は到達不可。
+ただし、以下の **3 段階の achievable subgoal** が identify される。
+
+#### Tier 1: 完全 conditional (現状 done)
+
+`aut_card_le_375_paper` (MainTheorem.lean:114) — **proven** conditional bound
+with explicit `(h_odd_props, h_even_oddpart)` hypotheses. Tier A 不要、
+Path B / B4.3 / C3.x ともに不要、純 arithmetic。
+
+#### Tier 2: Partial unconditional via `Conclusion` Prop encoding
+
+各 True-stub の `*Conclusion : Prop` def を **expand** して、`hΓ : IsMoore57 Γ`
+から各 conclusion を `[axiom]` として encoded、 中間 lemma 群を全て unstub する。
+
+**Achievable subgoal**: `aut_card_le_375_via_conclusions`
+```lean
+theorem aut_card_le_375_via_conclusions
+    (hΓ : IsMoore57 Γ)
+    (h_cor2 : Cor2SG819Conclusion)      -- Tier A1.2 axiomatized
+    (h_lem22 : Lem22SG625Conclusion)    -- Tier A3 axiomatized
+    (h_mp01  : Theorem2MPConclusion)    -- MP 2001 axiomatized
+    (h_lem17_fix : Lem17FixShapeConclusion)   -- Lem 21 + Cor 2 axiomatized
+    (h_lem18_fix : Lem18FixShapeConclusion)   -- Lem 22 axiomatized
+    (h_lem26 : Lem26SmallPrimeConclusion)     -- Sylow + paper geom
+    (h_prop4 : Prop4SG625ExclConclusion)      -- Tier A4 axiomatized
+    (h_prop5 : Prop5OrbitSize125Conclusion)   -- proven backbone
+    : Nat.card (autSubgroup Γ) ≤ 375 ∧
+      (Even (Nat.card (autSubgroup Γ)) → Nat.card (autSubgroup Γ) ≤ 110)
+```
+
+8 個の `Conclusion` def を追加した上で `cor3_375_bound_via_autSubgroup` を
+適用するだけ。 **新規 Lean infra なし**、True-stub の `Conclusion` encoding 化
++ wiring。 **見積 1-2 commits**.
+
+#### Tier 3: 部分 unconditional (Prop 6/7/8 prime case)
+
+Path B `_prime_via_semiRegular` wrappers 経由で、`|X|` が **prime** な場合
+(= |X| ∈ {3, 5, 7, 11, 13, 19}) のみ Cor 3 が unconditional 化:
+
+**Achievable subgoal**: `aut_card_le_375_for_prime_order_aut_subgroup`
+```lean
+theorem aut_card_le_375_for_prime_order_aut_subgroup
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (h_aut : σ ∈ Moore57.autSubgroup Γ)
+    (h_prime_order : Nat.Prime (orderOf σ)) :
+    orderOf σ ≤ 19 -- = max prime in Moore57 prime set
+```
+
+これは Path B + Lem 16-19 の prime-case wrappers + Lem 26 prime-case で
+**完全 unconditional**。 ただし `|Aut(Γ)| ≤ 375` には到達しない (これは
+|Aut(Γ)| の **structure** が必要)。
+
+#### Tier 4: 全パス unconditional (current goal, Tier A 必須)
+
+**結論**: Tier A1.2 (15-group enumeration) と Tier A3 (10-group enumeration)
+の **少なくとも一方**を完遂しない限り、`cor3_375_bound` の True-stub →
+proper signature 化は **不可能**。
+
+両方とも `native_decide` ベースで proof は **計算可能** (個別群構築は重い
+~100-200 LOC × 25 件)。 ROI 評価:
+
+- A1.2 完遂 ⟹ Thm 4 unconditional ⟹ `lem17_3group_fix` unstub 経路が開く
+- A3 完遂 ⟹ Thm 5 unconditional ⟹ `lem18_5group_fix` unstub 経路が開く
+- 両方完遂 + MP 2001 work ⟹ `cor3_375_bound` を **完全 unconditional** 化
+
+**推奨**: Tier 2 (conditional via `Conclusion`) を当面の goal とし、 Tier A
+の **15-group enumeration** (A1.2) のみ将来作業候補に格上げ
+(Thm 4 unconditional だけで Section 09 odd branch の半分が unstub される)。
+
+### 4.5 推奨実行順序 (Path C 内)
+
+1. **§4.4 Tier 2 (Conclusion-encoded conditional)** — 1-2 commits、
+   既存 `*Conclusion : Prop` defs (B-final で導入済) を拡張するだけ
+2. **MP 2001 Y ≤ 57 dispatch** (`thm2_makhnev_paduchikh_decomposition_paper`)
+   の bottom-up unconditional 化 — Thm 7 even branch の 4 cases (50, 54, 14,
+   22, 38) を unstub するための前提
+3. **Lem 19 (large prime p-group fix shape)** unconditional 化
+   — Lem 16 `_paper` 経由 (既存)、Prop 7/8/Thm 7 で共通利用
+4. **Lem 26 `h_paper_geom` 自動生成** — `paper §9 Sylow + Lem 25 + Lem 19
+   case structure` の Lean 化、 Prop 8 unconditional 化に直結
+5. **(Tier A 投資判断)**: Thm 4 / Thm 5 / `cor3_375_bound` の完全 unconditional
+   化のみが目的なら A1.2 (Thm 4 経由 odd branch 半分) 着手検討
+
+**完了条件**: 上記 §4.1-4.4 が "TBD / [ ]" レベルから具体 theorem 名 +
+file location + minimum True-stub set + achievable subgoal 階層に到達 —
+**達成 (本セッション)**。 Lean コード変更ゼロ (planning only)。
 
 ---
 
@@ -286,11 +543,15 @@ Lean コード変更ゼロ。
    ~3-4 commits
 2. **Path A** (B4.3 Step 5-6 wire-up) — B4.3 完結、~2 commits
 3. **Path D** (True-stub audit harvest) — Path B/A 完了後の cleanup、~1-2 commits
-4. **Path C** (Cor 3 climbing planning) — Path B 完了後に状態を見て判断
+4. **Path C** (Cor 3 climbing planning) — **本セッションで dependency tree
+   具体化済**。 §4.1-4.4 に minimum True-stub set + achievable subgoal 階層
+   identify 済。 次の Lean 作業候補は §4.5 順序参照 (Tier 2 conditional via
+   Conclusion encoding が最低 ROI)。
 
 合計見積もり: 6-9 commits で Papers/ の主要不足分が片付く見込み。
-Tier A 投資を見送る限り Cor 3 unconditional は依然遠いが、Thm 6 経路の
-unconditional 化は手の届く範囲。
+Tier A 投資を見送る限り `cor3_375_bound` 完全 unconditional は不可
+(§4.3.B 負の結論)、 ただし Tier 2 conditional は achievable (§4.4)。
+Thm 6 経路の **odd-branch prime-case** だけは Path B 経由で unconditional。
 
 ---
 

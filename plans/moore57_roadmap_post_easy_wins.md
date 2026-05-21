@@ -979,6 +979,32 @@ paper-level の **本当の** ボトルネック (2026-05-21 深夜):
   Tier B (character bridge + composite-order trace integrality)。
   paper-faithful な統合は別タスクだが、building block 不足ではない。
 
+### 8.2 Path C (Cor 3 climbing) concrete dependency tree (2026-05-21 深夜)
+
+`plans/moore57_papers_implementation_plan.md` §4 で Path C を **planning
+skeleton から具体的 dependency tree に展開済**。 主要結論:
+
+* **Cor 3 dispatch hypothesis** は arithmetic core で全て proven
+  (`cor3_bound_from_props_and_oddpart`); 残る True-stub は
+  `hΓ : IsMoore57 Γ` から dispatch を抽出する bridge のみ。
+* **Minimum True-stub set (per Prop)**:
+  - Prop 6 (3, 5): 5 件 (うち 2 件は Tier A 依存 — Cor 2 / Lem 22)
+  - Prop 7 (3, q∈{7,13,19}): 3 件 (Tier A 非依存; Lem 19 主要)
+  - Prop 8 (5, q∈{7,11}): 4 件 (Tier A 非依存; Lem 26 主要)
+  - Thm 7 (even): 4 件 (うち 1 件は MP 2001 paper-faithful 化)
+* **Tier A 完全 bypass は不可** (§4.3.B): Thm 4 unconditional には
+  `cor2_smallGroup_81_9` (A1.2 15 群)、 Thm 5 unconditional には
+  `lem22_smallGroup_625_12` (A3 10 群) のいずれかが本質的に必要。
+  Path B Lem 21 (prime-case のみ) でも composite-order σ ∈ SG(81,9) には
+  到達しない。
+* **3 段階 achievable subgoal**:
+  - Tier 1: 完全 conditional `aut_card_le_375_paper` — **proven**
+  - Tier 2: `Conclusion` Prop encoding 経由 partial unconditional — **1-2 commits**
+  - Tier 3: prime-case 限定 (`orderOf σ ≤ 19` for prime-order σ) — Path B 経由
+  - Tier 4: 完全 unconditional — Tier A 必須
+
+詳細は `plans/moore57_papers_implementation_plan.md` §4.1-4.5 参照。
+
 ---
 
 ## 9. 関連メモリ
