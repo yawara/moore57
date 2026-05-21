@@ -59,6 +59,7 @@ open SimpleGraph
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 set_option linter.unusedSectionVars false
+set_option linter.unusedDecidableInType false
 
 /-- **Strangers of a vertex.**
 
@@ -473,5 +474,270 @@ theorem IsPetersenLike.strangers_eq_partnersOf_w_union_rest
   -- `(G.neighborFinset v).biUnion f = f w ∪ ((neighborFinset v).erase w).biUnion f`.
   conv_lhs => rw [← Finset.insert_erase hw_mem]
   rw [Finset.biUnion_insert]
+
+/-! ### Tier 1: 5-cycle existence through any edge -/
+
+/-- **The "other neighbours" finset `N(v) \ {w}` has cardinality 2** for any
+edge endpoint `w`. -/
+theorem IsPetersenLike.neighborFinset_erase_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    ((G.neighborFinset v).erase w).card = 2 := by
+  have hw_mem : w ∈ G.neighborFinset v :=
+    IsPetersenLike.edge_endpoint_mem_neighborFinset hadj
+  rw [Finset.card_erase_of_mem hw_mem, h.neighborFinset_card v]
+
+/-- **`w ∉ partnersOf G v x` for `x ∈ N(v) \ {w}` and `(v, w)` an edge** (no
+triangle through `(v, w)`).
+
+If `w ∈ partnersOf G v x = N(x) \ {v}`, then `G.Adj x w`, combined with
+`G.Adj v x` and `G.Adj v w`, gives a triangle `v - x - w` through the
+edge `(v, w)`, contradicting `λ = 0`. -/
+theorem IsPetersenLike.edge_w_notMem_partnersOf
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w x : V}
+    (hadj_vw : G.Adj v w) (hadj_vx : G.Adj v x) (_hxw : x ≠ w) :
+    w ∉ partnersOf G v x := by
+  intro hw_mem
+  rw [mem_partnersOf_iff] at hw_mem
+  obtain ⟨_, hxw_adj⟩ := hw_mem
+  exact h.no_triangle_through_edge hadj_vw x ⟨hadj_vx, hxw_adj.symm⟩
+
+/-- **For an edge endpoint `x ∈ N(v) \ {w}`, `partnersOf G v x` lies inside
+`strangers G v` and avoids `w`** (so any partner is also distinct from `w`).
+-/
+theorem IsPetersenLike.partnersOf_subset_strangers_erase_w
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w x : V}
+    (hadj_vw : G.Adj v w) (hadj_vx : G.Adj v x) (hxw : x ≠ w) :
+    partnersOf G v x ⊆ (strangers G v).erase w := by
+  intro y hy
+  rw [Finset.mem_erase]
+  refine ⟨?_, h.partnersOf_subset_strangers hadj_vx hy⟩
+  intro heq
+  subst heq
+  exact h.edge_w_notMem_partnersOf hadj_vw hadj_vx hxw hy
+
+/-- **Existence of a non-`w` neighbour of `v`** (for an edge `(v, w)`).
+
+Since `|N(v) \ {w}| = 2 > 0`, there exists `x ∈ N(v)` with `x ≠ w`. -/
+theorem IsPetersenLike.exists_other_neighbor
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    ∃ x, G.Adj v x ∧ x ≠ w := by
+  have hcard : ((G.neighborFinset v).erase w).card = 2 :=
+    h.neighborFinset_erase_card hadj
+  have hnonempty : ((G.neighborFinset v).erase w).Nonempty := by
+    rw [← Finset.card_pos]; omega
+  obtain ⟨x, hx⟩ := hnonempty
+  rw [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hx
+  exact ⟨x, hx.2, hx.1⟩
+
+/-- **Existence of a 3-path `v - x - y` extending edge `(v, w)` to a non-`w`
+neighbour of `v`.**
+
+For edge `(v, w)`, there exist `x, y` with `Adj v x ∧ Adj x y ∧ x ≠ w ∧
+y ∈ strangers G v ∧ y ≠ w`.  The vertex `y` lies in `partnersOf G v x`
+(so adjacent to `x`, distinct from `v`), and avoids `w` because `w` would
+form a triangle through edge `(v, w)`. -/
+theorem IsPetersenLike.exists_3path_avoiding_w
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    ∃ x y, G.Adj v x ∧ G.Adj x y ∧ x ≠ w ∧ x ≠ v ∧
+           y ∈ strangers G v ∧ y ≠ w ∧ y ≠ v ∧ y ≠ x := by
+  obtain ⟨x, hadj_vx, hxw⟩ := h.exists_other_neighbor hadj
+  have hxv : x ≠ v := fun heq => by subst heq; exact (G.irrefl hadj_vx).elim
+  -- `partnersOf G v x` has cardinality 2; pick any partner `y`.
+  have hcard : (partnersOf G v x).card = 2 := h.partnersOf_card hadj_vx
+  have hnonempty : (partnersOf G v x).Nonempty := by
+    rw [← Finset.card_pos]; omega
+  obtain ⟨y, hy⟩ := hnonempty
+  have hy_stranger : y ∈ strangers G v := h.partnersOf_subset_strangers hadj_vx hy
+  have hyw : y ≠ w := by
+    intro heq
+    subst heq
+    exact h.edge_w_notMem_partnersOf hadj hadj_vx hxw hy
+  rw [mem_partnersOf_iff] at hy
+  obtain ⟨hyv, hxy⟩ := hy
+  have hyx : y ≠ x := fun heq => by subst heq; exact (G.irrefl hxy).elim
+  refine ⟨x, y, hadj_vx, hxy, hxw, hxv, hy_stranger, hyw, hyv, hyx⟩
+
+/-- **No 4-cycle through an edge** (specialised form of `no_C4`).
+
+For an edge `(v, w)` and a 3-path `v - x - y` with `x ≠ w` and `y ≠ v`,
+the vertex `y` is **not** adjacent to `w`: otherwise `v - x - y - w - v`
+would be a 4-cycle.  Requires `y ≠ x` (irreflexivity guarantees this if
+`Adj x y`) and `v ≠ y` (since `y ∈ strangers G v`). -/
+theorem IsPetersenLike.no_adj_y_w_of_3path
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w x y : V}
+    (hadj_vw : G.Adj v w) (hadj_vx : G.Adj v x) (hadj_xy : G.Adj x y)
+    (hxw : x ≠ w) (hyv : y ≠ v) :
+    ¬ G.Adj y w := by
+  intro hadj_yw
+  -- 4-cycle `v - x - y - w - v` with `v ≠ y` and `x ≠ w`.
+  -- The `no_C4` lemma signature: `a ≠ c → b ≠ d → ...` for `a - b - c - d - a`.
+  -- Here `(a, b, c, d) = (v, x, y, w)`, so `a ≠ c` is `v ≠ y` and `b ≠ d` is `x ≠ w`.
+  exact h.no_C4 v x y w (Ne.symm hyv) hxw hadj_vx hadj_xy hadj_yw hadj_vw.symm
+
+/-- **5-cycle existence through any edge** (the main Tier 1 milestone).
+
+For any edge `(v, w)` of a Petersen-like graph, there is a 5-cycle
+`v - x - y - z - w - v` (formally: vertices `x, y, z` together with
+adjacencies and the 13 pairwise-distinctness conditions).
+
+**Construction.**
+1. Pick `x ∈ N(v) \ {w}` (`|N(v) \ {w}| = 2`).
+2. Pick `y ∈ partnersOf G v x` (so `Adj x y` and `y ∈ strangers G v`,
+   in particular `y ≠ v ∧ ¬ Adj v y`).  Also `y ≠ w` (otherwise
+   triangle).
+3. By `no_C4`, `¬ Adj y w`.  By `μ = 1`, there is a unique `z` with
+   `Adj y z ∧ Adj w z`.
+4. Distinctness:
+   * `z ≠ v` (else `Adj v y`, contradicting `y ∈ strangers G v`);
+   * `z ≠ x` (else `Adj v x ∧ Adj w x ∧ Adj v w` triangle);
+   * `z ≠ y, z ≠ w` (irreflexivity).
+-/
+theorem IsPetersenLike.exists_5cycle_through_edge
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hvw : G.Adj v w) :
+    ∃ x y z, G.Adj v x ∧ G.Adj x y ∧ G.Adj y z ∧ G.Adj z w ∧
+             x ≠ v ∧ x ≠ w ∧ y ≠ v ∧ y ≠ w ∧ z ≠ v ∧ z ≠ w ∧
+             x ≠ y ∧ x ≠ z ∧ y ≠ z := by
+  -- Step 1-2: extending 3-path `v - x - y` avoiding `w`.
+  obtain ⟨x, y, hadj_vx, hadj_xy, hxw, hxv, hy_stranger, hyw, hyv, hyx⟩ :=
+    h.exists_3path_avoiding_w hvw
+  -- `y ∈ strangers G v`, so `¬ Adj v y`.
+  rw [mem_strangers_iff] at hy_stranger
+  obtain ⟨_, hvy_nadj⟩ := hy_stranger
+  -- Step 3: `¬ Adj y w` by `no_C4`.
+  have hyw_nadj : ¬ G.Adj y w := h.no_adj_y_w_of_3path hvw hadj_vx hadj_xy hxw hyv
+  -- By `μ = 1`, unique `z` adjacent to both `y` and `w`.
+  obtain ⟨z, ⟨hadj_yz, hadj_wz⟩, _⟩ :=
+    h.exists_unique_commonNeighbor y w hyw hyw_nadj
+  -- Step 4: distinctness.
+  have hzy : z ≠ y := fun heq => by subst heq; exact (G.irrefl hadj_yz).elim
+  have hzw : z ≠ w := fun heq => by subst heq; exact (G.irrefl hadj_wz).elim
+  have hzv : z ≠ v := by
+    intro heq
+    subst heq
+    -- `G.Adj y z = G.Adj y v` and `¬ G.Adj v y` gives contradiction.
+    exact hvy_nadj hadj_yz.symm
+  have hzx : z ≠ x := by
+    intro heq
+    -- `heq : z = x`.  Then `Adj w z = Adj w x`.  Triangle `v - x - w`.
+    rw [heq] at hadj_wz
+    exact h.triangleFree v x w hadj_vx hadj_wz.symm hvw
+  refine ⟨x, y, z, hadj_vx, hadj_xy, hadj_yz, hadj_wz.symm,
+          hxv, hxw, hyv, hyw, hzv, hzw, hyx.symm, hzx.symm, hzy.symm⟩
+
+/-! ### Tier 2: K_{3,3}-minus-matching scaffolding
+
+For an edge `(v, w)`, the "bipartite remainder" is the structure between
+`N(v) \ {w}` (2 vertices) and `N(w) \ {v}` (2 vertices), together with
+the 4 strangers attached to each side via the partner indices.  The full
+K_{3,3}-minus-perfect-matching identification is the central Bose 1963
+incidence; here we record the **basic structural facts** that pave the
+way:
+
+* `N(v) \ {w}` and `N(w) \ {v}` both have cardinality 2 (degree-3 graph);
+* The two sides are disjoint (`λ = 0` on edge `(v, w)`);
+* `partnersOf G v w = N(w) \ {v}` and `partnersOf G w v = N(v) \ {w}`
+  (definitional restatement: both sides of the bipartite incidence are
+  partner pairs in the strangers-partition sense from the *other*
+  endpoint).
+
+The full edge-by-edge K_{3,3}-minus-matching identification (which edges
+are present/absent between the two sides) is deferred. -/
+
+/-- **`N(w) \ {v}` has cardinality 2** for an edge `(v, w)`.
+
+This is `partnersOf_card` applied to `partnersOf G w v` — the "other"
+side of the bipartite incidence (looking at `w`'s non-`v` neighbours
+instead of `v`'s non-`w` neighbours). -/
+theorem IsPetersenLike.partnersOf_w_v_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    (partnersOf G w v).card = 2 :=
+  h.partnersOf_card hadj.symm
+
+/-- **`N(v) \ {w}` and `N(w) \ {v}` are disjoint** (`λ = 0` on edge `(v, w)`).
+
+If `x` lies in both, then `x ∈ N(v) ∩ N(w)` is a common neighbour of
+adjacent vertices `v, w`, contradicting `λ = 0`. -/
+theorem IsPetersenLike.bipartite_sides_disjoint
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    Disjoint ((G.neighborFinset v).erase w) ((G.neighborFinset w).erase v) := by
+  rw [Finset.disjoint_left]
+  intro x hx_v hx_w
+  rw [Finset.mem_erase, SimpleGraph.mem_neighborFinset] at hx_v hx_w
+  exact h.no_triangle_through_edge hadj x ⟨hx_v.2, hx_w.2⟩
+
+/-- **`partnersOf G v w = (G.neighborFinset w).erase v`** (definitional
+restatement).
+
+This is the "right side" of the K_{3,3} bipartite description: the
+non-`v` neighbours of `w`.  Already definitional, but recorded as a
+named lemma for downstream pattern matching. -/
+theorem IsPetersenLike.partnersOf_eq_neighborFinset_erase
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (v z : V) :
+    partnersOf G v z = (G.neighborFinset z).erase v := rfl
+
+/-- **For each non-`w` neighbour `z` of `v`, `partnersOf G v z` is a 2-element
+subset of `strangers G v` disjoint from `partnersOf G v w`.**
+
+Combines `partnersOf_card`, `partnersOf_subset_strangers`, and
+`partnersOf_disjoint`.  Reformulates the Bose 1963 incidence at the
+"non-`w`" neighbours of `v`. -/
+theorem IsPetersenLike.partnersOf_nonw_disjoint_w
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w z : V}
+    (hadj_vw : G.Adj v w) (hadj_vz : G.Adj v z) (hzw : z ≠ w) :
+    (partnersOf G v z).card = 2 ∧
+    partnersOf G v z ⊆ strangers G v ∧
+    Disjoint (partnersOf G v z) (partnersOf G v w) :=
+  ⟨h.partnersOf_card hadj_vz, h.partnersOf_subset_strangers hadj_vz,
+   h.partnersOf_disjoint hadj_vz hadj_vw hzw⟩
+
+/-- **The `w`-side partner pair: 2-element subset of strangers.**
+
+Combines `partnersOf_card` and `partnersOf_subset_strangers` at
+`z = w`.  This exposes the "right side" `N(w) \ {v}` of the bipartite
+K_{3,3}-minus-matching as a 2-element pair of strangers. -/
+theorem IsPetersenLike.partnersOf_w_pair
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    (partnersOf G v w).card = 2 ∧ partnersOf G v w ⊆ strangers G v :=
+  ⟨h.partnersOf_card hadj, h.partnersOf_subset_strangers hadj⟩
+
+/-- **The bipartite-side carrier `N(v) \ {w}` is exactly `partnersOf G w v`
+restricted by membership in `N(v)`** (= the same thing in disguise).
+
+In symbols: `(G.neighborFinset v).erase w = partnersOf G w v ∩ G.neighborFinset v`.
+Actually more directly, both sides equal `{x : V | G.Adj v x ∧ x ≠ w}`.
+This characterises the "left side" of the K_{3,3}-bipartite incidence. -/
+theorem IsPetersenLike.neighborFinset_erase_w_eq
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {v w : V} :
+    (G.neighborFinset v).erase w =
+      (G.neighborFinset v).filter (fun x => x ≠ w) := by
+  ext x
+  rw [Finset.mem_erase, Finset.mem_filter]
+  exact and_comm
+
+/-- **5-cycle existence on `petersenGraph`** (smoke test: the existence
+theorem applies to the explicit `petersenGraph`).
+
+Sanity check that `exists_5cycle_through_edge` works on the canonical
+`petersenGraph`.  Records the trivial application. -/
+theorem petersenGraph_exists_5cycle_through_edge
+    {v w : Fin 10} (hvw : petersenGraph.Adj v w) :
+    ∃ x y z, petersenGraph.Adj v x ∧ petersenGraph.Adj x y ∧
+             petersenGraph.Adj y z ∧ petersenGraph.Adj z w ∧
+             x ≠ v ∧ x ≠ w ∧ y ≠ v ∧ y ≠ w ∧ z ≠ v ∧ z ≠ w ∧
+             x ≠ y ∧ x ≠ z ∧ y ≠ z :=
+  petersenGraph_isPetersenLike.exists_5cycle_through_edge hvw
 
 end Moore57
