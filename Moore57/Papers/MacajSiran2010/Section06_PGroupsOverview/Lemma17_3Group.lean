@@ -2,6 +2,7 @@ import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma16_PGroupFix
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.PetersenFixedData
 import Moore57.Moore57Graph.Aut.SingletonAndEmptyFixedData
+import Moore57.Moore57Graph.Aut.OrderNineteenSingletonFix
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -454,5 +455,229 @@ theorem lem17_3group_fix_paper
   · right
     exact lem17_case2_orderOf_dvd_81_with_singletonFixedData_k_le_4_unconditional
       hΓ σ k hk hpow sfd smul_adj
+
+/-! ## Lemma 17 case (2) [3-group, singleton fix] Path B prime-case wrappers
+
+Mirrors the §6 Lem 19 case (2) Path B chain (commits `0d969af`, `902cf19`):
+provides `_prime_with_fix_count_one` and `_prime_via_small_fix` Conclusion
+instances for the singleton-fix branch of Lem 17.
+
+Unlike Lem 19 case (2), the 3-group case is **not** fully unconditional
+on `σ^3 = 1` alone — the Petersen-fix alternative (case 1) is a genuine
+branch that cannot be ruled out without the deeper paper Lem 21 + Cor 2
+chain (SG(81, 9) exclusion).  Hence no `aut_order_three_SingletonFixedData`
+constructor exists in Foundations; the `_with_fix_count_one` and
+`_via_small_fix` forms below are the strongest unconditional Conclusion
+instances available without that chain.
+
+The chain is:
+1. `singletonFixedData_of_fixedVertexCount_eq_one` constructs the
+   `SingletonFixedData σ` from `fixedVertexCount σ = 1`
+   (or from `fixedVertexCount σ ≤ 3` via mod-3 narrowing,
+   `lem16_case2_3group_fix_singleton_if_small`).
+2. `lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular`
+   (already proven above) gives `orderOf σ ∣ 3` from σ^3 = 1 + sfd.
+-/
+
+/-- **Lemma 17 case (2) prime-case with explicit `fixedVertexCount σ = 1`.**
+[done — Path B, prime case]
+
+Given the §6 case-(2) fix-singleton fact `fixedVertexCount σ = 1`,
+construct `SingletonFixedData σ` via
+`singletonFixedData_of_fixedVertexCount_eq_one` and dispatch through
+`lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular`.
+
+This is parallel to `lem19_case2_orderOf_dvd_19_prime_with_fix_count_one`
+for the 19-prime singleton case.  The fix-singleton input is the
+paper-asserted Lem 17 case (2) shape; in the 3-group case it is not
+derivable from `σ^3 = 1` alone (since the Petersen-fix case 1 is also
+possible — see paper Lem 17). -/
+theorem lem17_case2_orderOf_dvd_3_prime_with_fix_count_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_fix_one : Moore57.fixedVertexCount σ = 1) :
+    orderOf σ ∣ 3 :=
+  let sfd := Moore57.singletonFixedData_of_fixedVertexCount_eq_one σ h_fix_one
+  lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular
+    hΓ σ pow_3 sfd smul_adj
+
+/-- **Lemma 17 case (2) prime-case via small-fix narrowing.**
+[done — Path B, prime case]
+
+Given `fixedVertexCount σ ≤ 3` (the §6 Lem 16 case (2) shape-narrowing
+input via `lem16_case2_3group_fix_singleton_if_small`), the mod-3
+constraint `fixedVertexCount σ ≡ 1 [MOD 3]` forces
+`fixedVertexCount σ = 1`, and the previous variant applies.
+
+Mirrors `lem19_case2_orderOf_dvd_19_prime_via_small_fix` for the
+19-prime case.  The `≤ 3` small-fix narrowing is the cleanest
+"tip-of-the-iceberg" of the §6 shape-classification chain: once the
+chain narrows `Fix(σ)` to `≤ 3` vertices for `σ^3 = 1`, the mod-3
+arithmetic forces singleton (`= 1`) and the rest is mechanical. -/
+theorem lem17_case2_orderOf_dvd_3_prime_via_small_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_small : Moore57.fixedVertexCount σ ≤ 3) :
+    orderOf σ ∣ 3 := by
+  have h_fix_one : Moore57.fixedVertexCount σ = 1 := by
+    exact lem16_case2_3group_fix_singleton_if_small hΓ σ 1
+      (by simpa using pow_3) h_small
+  exact lem17_case2_orderOf_dvd_3_prime_with_fix_count_one hΓ σ pow_3
+    smul_adj h_fix_one
+
+/-! ### Per-case Conclusion Prop encoding (paper-faithful dispatch)
+
+Decomposition of the existing `Lemma17ThreeGroupFixConclusion` (which
+packages both branches as a disjunction) into per-case Conclusion Props,
+paralleling `Lemma19Case1Conclusion`, `Lemma19Case2Conclusion`,
+`Lemma19Case3Conclusion`.
+
+* `Lemma17Case1Conclusion σ := orderOf σ ∣ 27` — Petersen branch.
+* `Lemma17Case2Conclusion σ := orderOf σ ∣ 3`  — singleton branch
+  (sharper than paper's `∣ 81` due to C3.4 `57 = 3·19`).
+
+The original `Lemma17ThreeGroupFixConclusion` is preserved for
+backward-compat callers. -/
+
+/-- **Lemma 17 case (1) abstract conclusion** (Conclusion Prop encoding).
+
+For σ of order dividing `3^k` (k ≤ 3) acting as a graph automorphism of a
+Moore57 Γ with Petersen-fix shape (`PetersenFixedData Γ σ`), the paper's
+case (1) conclusion is: `orderOf σ ∣ 27`.
+
+Bundled as a Prop for downstream Cor3 / MainTheorem dispatch chain,
+paralleling `Lemma19Case3Conclusion`. -/
+def Lemma17Case1Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 27
+
+/-- **Lemma 17 case (1) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma17Case1Conclusion σ` (the paper's case (1) divisibility
+bound), conclude `orderOf σ ∣ 27`.  Trivial bridge — exposed for the
+Conclusion-Prop dispatch pattern used by `MainTheorem`. -/
+theorem lem17_case1_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma17Case1Conclusion σ) :
+    orderOf σ ∣ 27 :=
+  h_conclusion
+
+/-- **Lemma 17 case (1) Conclusion instance, prime-case with PetersenFixedData.**
+[done — Path B, prime case]
+
+The Conclusion Prop `Lemma17Case1Conclusion σ` is discharged for
+`σ^3 = 1` graph automorphisms of a Moore57 Γ that satisfy the paper
+case-(1) Petersen-fix shape (`PetersenFixedData Γ σ`).  No additional
+hypothesis required — the prime-case bound `orderOf σ ∣ 3 ∣ 27` follows
+trivially from `σ^3 = 1`.
+
+This is parallel to `lem19_case1_conclusion_prime_with_fix_count_zero`,
+with the difference that the 3-prime case-(1) shape input remains the
+explicit `PetersenFixedData` (no `aut_order_three_PetersenFixedData`
+constructor exists in Foundations, since the Petersen-vs-singleton
+classification for the 3-group is the genuine content of Lem 17). -/
+theorem lem17_case1_conclusion_prime_with_petersenFixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (pfd : PetersenFixedData Γ σ) (i : Fin 10)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    Lemma17Case1Conclusion σ :=
+  lem17_case1_orderOf_dvd_27_with_petersenFixedData_prime_unconditional
+    hΓ σ pow_3 pfd i smul_adj
+
+/-- **Lemma 17 case (2) abstract conclusion** (Conclusion Prop encoding).
+
+For σ of order dividing `3^k` acting as a graph automorphism of a Moore57
+Γ with singleton-fix shape (`SingletonFixedData σ`), the paper-stated
+bound is `orderOf σ ∣ 81`; the C3.4 semi-regular bridge sharpens this to
+`orderOf σ ∣ 3` for the prime case (since `57 = 3 · 19`, `gcd(3^k, 57) = 3`).
+
+We adopt the sharper `orderOf σ ∣ 3` for the Conclusion Prop, paralleling
+`Lemma19Case2Conclusion σ := orderOf σ ∣ 19` (the prime divisor). -/
+def Lemma17Case2Conclusion (σ : Equiv.Perm V) : Prop :=
+  orderOf σ ∣ 3
+
+/-- **Lemma 17 case (2) via Conclusion encoding (paper-faithful).** [done]
+
+Given the `Lemma17Case2Conclusion σ` (the sharpened case (2) divisibility
+bound), conclude `orderOf σ ∣ 3`.  Trivial bridge — exposed for the
+Conclusion-Prop dispatch pattern used by `MainTheorem`. -/
+theorem lem17_case2_via_conclusion
+    (σ : Equiv.Perm V) (h_conclusion : Lemma17Case2Conclusion σ) :
+    orderOf σ ∣ 3 :=
+  h_conclusion
+
+/-- **Lemma 17 case (2) via Conclusion encoding, paper-stated `∣ 81` form.**
+[done]
+
+Weaker form of `lem17_case2_via_conclusion` that exposes the
+paper-stated bound `orderOf σ ∣ 81` (rather than the sharper `∣ 3`).
+Useful when interoperating with the original `Lemma17ThreeGroupFixConclusion`
+disjunction which uses `∣ 81` for the singleton branch. -/
+theorem lem17_case2_via_conclusion_paper
+    (σ : Equiv.Perm V) (h_conclusion : Lemma17Case2Conclusion σ) :
+    orderOf σ ∣ 81 :=
+  dvd_trans h_conclusion (by decide)
+
+/-- **Lemma 17 case (2) Conclusion instance, prime-case with `SingletonFixedData`.**
+[done — Path B, prime case]
+
+The Conclusion Prop `Lemma17Case2Conclusion σ` is discharged for
+`σ^3 = 1` graph automorphisms of a Moore57 Γ that satisfy the paper
+case-(2) singleton-fix shape (`SingletonFixedData σ`).
+
+This is the strongest unconditional discharge available without an
+`aut_order_three_SingletonFixedData` Foundations constructor (which
+cannot be added unconditionally because the Petersen-fix case 1 is a
+genuine alternative branch in Lem 17). -/
+theorem lem17_case2_conclusion_prime_with_singletonFixedData
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (sfd : SingletonFixedData σ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w)) :
+    Lemma17Case2Conclusion σ :=
+  lem17_case2_orderOf_dvd_3_with_singletonFixedData_prime_via_semiRegular
+    hΓ σ pow_3 sfd smul_adj
+
+/-- **Lemma 17 case (2) Conclusion instance, prime-case with explicit fix-singleton.**
+[done — Path B, prime case]
+
+Variant that exposes `fixedVertexCount σ = 1` as an explicit hypothesis,
+constructing `SingletonFixedData σ` internally via
+`singletonFixedData_of_fixedVertexCount_eq_one`.  Mirrors
+`lem19_case2_conclusion_prime_with_fix_count_one`. -/
+theorem lem17_case2_conclusion_prime_with_fix_count_one
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_fix_one : Moore57.fixedVertexCount σ = 1) :
+    Lemma17Case2Conclusion σ :=
+  lem17_case2_orderOf_dvd_3_prime_with_fix_count_one hΓ σ pow_3 smul_adj
+    h_fix_one
+
+/-- **Lemma 17 case (2) Conclusion instance, prime-case via small-fix.**
+[done — Path B, prime case]
+
+Variant that exposes `fixedVertexCount σ ≤ 3` as the small-fix
+narrowing input (which mod-3 narrows to `= 1`, then dispatches as
+above).  Mirrors `lem19_case2_orderOf_dvd_19_prime_via_small_fix` at the
+Conclusion-Prop level. -/
+theorem lem17_case2_conclusion_prime_via_small_fix
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_small : Moore57.fixedVertexCount σ ≤ 3) :
+    Lemma17Case2Conclusion σ :=
+  lem17_case2_orderOf_dvd_3_prime_via_small_fix hΓ σ pow_3 smul_adj h_small
+
+/-- **Lemma 17 per-case Conclusion ⟹ original disjunction Conclusion.** [done]
+
+Combines `Lemma17Case1Conclusion` (`orderOf σ ∣ 27`, Petersen branch) and
+`Lemma17Case2Conclusion` (`orderOf σ ∣ 3`, singleton branch, sharpened)
+into the original `Lemma17ThreeGroupFixConclusion` disjunction
+(`orderOf σ ∣ 27 ∨ orderOf σ ∣ 81`).
+
+The case-2 sharper bound `∣ 3 ⟹ ∣ 81` is discharged via `dvd_trans`. -/
+theorem lem17_per_case_to_three_group_fix_conclusion
+    (σ : Equiv.Perm V)
+    (h_per_case : Lemma17Case1Conclusion σ ∨ Lemma17Case2Conclusion σ) :
+    Lemma17ThreeGroupFixConclusion σ := by
+  rcases h_per_case with h1 | h2
+  · exact Or.inl h1
+  · exact Or.inr (lem17_case2_via_conclusion_paper σ h2)
 
 end Moore57.Papers.MacajSiran2010.S6
