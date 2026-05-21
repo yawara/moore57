@@ -29,6 +29,7 @@ import Moore57.D19OnMoore57.Action.FixedPointBasics
 import Moore57.Foundations.GroupAction.FixedPoints
 import Moore57.Foundations.GroupAction.InvolutionParity
 import Moore57.Foundations.GroupAction.FixedPointConjugacy
+import Moore57.Foundations.GroupAction.OrbitEquitablePartition
 import Moore57.Foundations.GraphTheory.AdjacentMovedCount
 import Moore57.Foundations.GraphTheory.AutSubgroup
 import Moore57.Foundations.GraphTheory.InducedTrace
