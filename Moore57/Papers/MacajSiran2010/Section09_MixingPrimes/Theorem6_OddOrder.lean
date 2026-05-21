@@ -1,7 +1,9 @@
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition6_3and5
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition7_3andLarge
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition8_5andLarge
+import Moore57.Papers.MacajSiran2010.Section06_PGroupsOverview.Lemma17_3Group
 import Moore57.Foundations.GraphTheory.AutSubgroup
+import Moore57.Foundations.GraphTheory.PetersenUniqueness
 import Mathlib.GroupTheory.SpecificGroups.Cyclic.Basic
 
 set_option linter.unusedSectionVars false
@@ -461,5 +463,67 @@ theorem thm6_one_prime_branch_card_dvd_13_holds_of_prime_card
     exists_aut_generator_of_prime_card (Γ := Γ) (by decide : Nat.Prime 13) h_card
   exact thm6_one_prime_branch_card_dvd_13_via_lem19_unconditional
     hΓ σ pow_13 hne smul_adj (by rw [h_card, h_ord])
+
+end Moore57.Papers.MacajSiran2010.S9
+
+/-! ### Lem 17 unconditional wire (per-σ witness; prime p=3, given uniqueness)
+
+Mirrors the Lem 19 wires above for the `p = 3` case, using the full Lem 17
+prime-case dispatch `lem17_3group_paper_bound_given_uniqueness` from
+`Section06_PGroupsOverview.Lemma17_3Group`.  The dispatch consumes the
+universe-polymorphic `PetersenUniqueness` Prop hypothesis (Bose 1963 /
+Hoffman–Singleton 1960) as input, and dispatches between case 1 (Petersen
+fix) and case 2 (singleton fix) automatically, producing the combined
+paper-bound `orderOf σ ∣ 27`.
+
+The resulting wire requires:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 3` (paper input from Sylow + 3-group
+  classification — `|Aut(Γ)|` is the prime 3),
+* `PetersenUniqueness` (the classical theorem; once landed as a Lean
+  theorem, this hypothesis is dischargeable).
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 27`.
+
+The theorem lives in a universe-polymorphic section so that
+`PetersenUniqueness.{u}` aligns with the universe of `V`. -/
+
+namespace Moore57.Papers.MacajSiran2010.S9
+
+section Lem17PrimeCardWire
+
+universe u
+
+variable {V : Type u} [Fintype V] [DecidableEq V]
+  {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Theorem 6 1-prime branch wire (Lem 17, p=3) via prime card and
+Petersen uniqueness.** [done — full Lem 17 dispatch, conditional on
+`PetersenUniqueness`]
+
+For `Nat.card (autSubgroup Γ) = 3`, extracts a σ-generator via
+`exists_aut_generator_of_prime_card` (giving `σ ≠ 1`, `σ^3 = 1`,
+`orderOf σ = 3`, `smul_adj`), then applies the full Lem 17 prime-case
+dispatch `lem17_3group_paper_bound_given_uniqueness` to discharge
+`orderOf σ ∣ 27`, and lifts via `orderOf σ = 3 = Nat.card` to
+`Nat.card (autSubgroup Γ) ∣ 27`.
+
+Parallel to `thm6_one_prime_branch_card_dvd_11_holds_of_prime_card` for
+the `p = 3` case, conditional on `PetersenUniqueness`. -/
+theorem thm6_one_prime_branch_card_dvd_27_holds_of_prime_card_given_uniqueness
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 3)
+    (hPU : Moore57.PetersenUniqueness.{u}) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 27 := by
+  obtain ⟨σ, hσ_mem, h_ord, hne, pow_3, smul_adj⟩ :=
+    exists_aut_generator_of_prime_card (Γ := Γ) (by decide : Nat.Prime 3) h_card
+  have h_ord_dvd_27 : orderOf σ ∣ 27 :=
+    S6.lem17_3group_paper_bound_given_uniqueness hΓ σ pow_3 hne smul_adj hPU
+  -- Convert orderOf σ ∣ 27 to Nat.card ∣ 27 via h_card and h_ord.
+  rw [h_card]
+  have : (3 : ℕ) = orderOf σ := h_ord.symm
+  rw [this]
+  exact h_ord_dvd_27
+
+end Lem17PrimeCardWire
 
 end Moore57.Papers.MacajSiran2010.S9

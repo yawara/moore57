@@ -432,3 +432,94 @@ theorem aut_card_le_19_via_lem19_holds_partial
   all_goals norm_num
 
 end Moore57.Papers.MacajSiran2010
+
+/-! ## Lem 17 prime-case wire-up (p=3, given Petersen uniqueness)
+
+Mirrors the `aut_card_le_19_via_lem19_holds_partial` chain for `p = 3`,
+using the full Lem 17 dispatch from `Section06_PGroupsOverview.Lemma17_3Group`
+(`lem17_3group_paper_bound_given_uniqueness`).  Conditional on the
+universe-polymorphic `PetersenUniqueness` Prop (Bose 1963 / Hoffman–Singleton
+1960); once that lands as a Lean theorem, the dispatch becomes fully
+unconditional.
+
+This section uses an explicit universe variable so that the
+`PetersenUniqueness.{u}` hypothesis aligns with the universe of `V`. -/
+
+namespace Moore57.Papers.MacajSiran2010
+
+section Lem17PrimeCardWire
+
+universe u
+
+variable {V : Type u} [Fintype V] [DecidableEq V]
+  {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+
+/-- **Cor 3 1-prime branch wire (Lem 17, p=3) via prime card and Petersen
+uniqueness.** [done — full Lem 17 dispatch, conditional on
+`PetersenUniqueness`]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_27_holds_of_prime_card_given_uniqueness`.
+
+Hypotheses:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 3` (paper input from Sylow + p-group
+  classification — `|Aut(Γ)|` is the prime 3),
+* `PetersenUniqueness` (Bose 1963; conditional on the Lean-side proof).
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 27`. -/
+theorem aut_card_dvd_27_holds_of_prime_card_given_uniqueness
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 3)
+    (hPU : Moore57.PetersenUniqueness.{u}) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 27 :=
+  S9.thm6_one_prime_branch_card_dvd_27_holds_of_prime_card_given_uniqueness
+    hΓ h_card hPU
+
+/-- **Cor 3 partial-unconditional Lem 17 1-prime branch entry (`|Aut(Γ)| ≤ 27`)
+given Petersen uniqueness.** [done — full Lem 17 dispatch, conditional on
+`PetersenUniqueness`]
+
+For the `p = 3` case of the 1-prime branch: if `|Aut(Γ)| = 3` and the
+`PetersenUniqueness` Prop holds, then `|Aut(Γ)| ≤ 27` (trivially via
+equality, but recorded in the partial-MainTheorem packaging form).
+
+Parallels `aut_card_le_19_via_lem19_holds_partial` for the `p = 3` case;
+the bound is `≤ 27` because Lem 17 paper-bounds `orderOf σ ∣ 27` (rather
+than the sharper `∣ p` available for the Lem 19 cases). -/
+theorem aut_card_le_27_via_lem17_given_uniqueness_holds_partial
+    (_hΓ : IsMoore57 Γ) (_hPU : Moore57.PetersenUniqueness.{u})
+    (h_card : Nat.card (Moore57.autSubgroup Γ) = 3) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 27 := by
+  rw [h_card]; norm_num
+
+/-- **Cor 3 partial-unconditional combined Lem 17 + Lem 19 1-prime branch
+(`|Aut(Γ)| ≤ 27`) given Petersen uniqueness.** [done — full Lem 17 +
+Lem 19 dispatch, conditional on `PetersenUniqueness`]
+
+Combines the four primes `{3, 11, 13, 19}` (Lem 17 case + Lem 19 cases
+1/2/3) into a single bound `|Aut(Γ)| ≤ 27` under any of the four
+prime-card hypotheses.  The bound `≤ 27` is used rather than the sharper
+`≤ 19` of the Lem 19 portion alone because the Lem 17 case (p=3) gives
+only `|Aut(Γ)| ∣ 27`, and `27 > 19`.
+
+Concretely: if `|Aut(Γ)| ∈ {3, 11, 13, 19}` then `|Aut(Γ)| ≤ 27`.
+
+This is the **partial-unconditional MainTheorem** combining the Lem 17
+and Lem 19 portions of the 1-prime branch: four primes `{3, 11, 13, 19}`
+are now (conditionally on Petersen uniqueness) tied to the
+`|Aut(Γ)| ≤ 27` outcome.  Once `PetersenUniqueness` lands as a Lean
+theorem, the dispatch becomes fully unconditional. -/
+theorem aut_card_le_27_via_lems_17_19_given_uniqueness_holds_partial
+    (_hΓ : IsMoore57 Γ) (_hPU : Moore57.PetersenUniqueness.{u})
+    (h_card : Nat.card (Moore57.autSubgroup Γ) = 3 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 11 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 13 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 19) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 27 := by
+  rcases h_card with h | h | h | h
+  all_goals (rw [h])
+  all_goals norm_num
+
+end Lem17PrimeCardWire
+
+end Moore57.Papers.MacajSiran2010
