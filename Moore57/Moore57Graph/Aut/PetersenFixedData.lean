@@ -1,6 +1,8 @@
 import Moore57.Foundations.GraphTheory.PetersenGraph
+import Moore57.Foundations.GraphTheory.PetersenUniqueness
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.SemiRegularComplement
+import Moore57.Moore57Graph.Aut.InducedSubgraph
 import Moore57.Moore57Graph.Moore57Definition
 import Moore57.Foundations.GroupAction.FixedPoints
 
@@ -239,5 +241,106 @@ theorem petersen_orderOf_dvd_54_of_semiRegular
     σ smul_adj (h.v_fixed i) hsemi
 
 end PetersenFixedData
+
+/-! ## Conditional bridge from `IsSRGWith 10 3 0 1` to `PetersenFixedData`
+
+The §6 Lem 17 case (1) shape dispatch (`OrderThreeShapeClassification.lean`,
+`aut_order_three_SingletonOrPetersenSRG_unconditional`) produces
+`IsSRGWith 10 3 0 1` on the σ-fixed induced subgraph, **not** an explicit
+`PetersenFixedData`.  Promoting from the SRG signature to
+`PetersenFixedData` requires a graph isomorphism to the explicit
+`petersenGraph`, i.e., the Petersen uniqueness theorem.
+
+The constructor `petersenFixedData_of_iso_to_petersen` below performs this
+promotion **given an explicit graph isomorphism**.  The full conditional
+dispatch consumes `PetersenUniqueness` (from
+`Moore57.Foundations.GraphTheory.PetersenUniqueness`) to extract such an
+isomorphism non-canonically.
+-/
+
+/-- **`PetersenFixedData` from an explicit iso to the explicit `petersenGraph`.**
+
+Given:
+* `Γ` a graph and `σ` a permutation,
+* `smul_adj` (σ is a graph automorphism — actually unused here, but kept
+  in the API surface for symmetry with §6 Lem 17 dispatch entry points),
+* a graph isomorphism
+  `φ : autFixedInducedGraph Γ σ ≃g petersenGraph`,
+
+construct the `PetersenFixedData Γ σ` structure.  The 10 vertices are
+extracted from `φ.symm` (i.e., the inverse iso sends `Fin 10` indices
+back to vertices of `fixedVertexSet σ`, then projected to `V`).
+
+This is the **non-canonical** part of the bridge: distinct isomorphisms
+yield distinct `PetersenFixedData` records (differing by the
+`Aut(petersenGraph) = S_5` choice). -/
+noncomputable def petersenFixedData_of_iso_to_petersen
+    [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] {σ : Equiv.Perm V}
+    (φ : autFixedInducedGraph Γ σ ≃g petersenGraph) :
+    PetersenFixedData Γ σ where
+  v i := (φ.symm i : V)
+  v_injective := by
+    intro i j hij
+    -- `φ.symm i = φ.symm j` as elements of `V` ⟹ as `fixedVertexSet σ`
+    -- (Subtype.ext) ⟹ as `Fin 10` (φ.symm injective).
+    have hsub : φ.symm i = φ.symm j := Subtype.ext hij
+    exact φ.symm.injective hsub
+  v_fixed i := (φ.symm i).property
+  span x hx := by
+    -- Every σ-fixed `x : V` lies in `fixedVertexSet σ`, so `φ ⟨x, hx⟩ : Fin 10`
+    -- pulls back to `x` via `φ.symm`.
+    refine ⟨φ ⟨x, hx⟩, ?_⟩
+    -- `(φ.symm (φ ⟨x, hx⟩) : V) = (⟨x, hx⟩ : fixedVertexSet σ).val = x`
+    have hroundtrip : φ.symm (φ ⟨x, hx⟩) = (⟨x, hx⟩ : fixedVertexSet σ) :=
+      φ.symm_apply_apply ⟨x, hx⟩
+    -- Project to V.
+    have : (φ.symm (φ ⟨x, hx⟩) : V) = x := by
+      rw [hroundtrip]
+    exact this.symm
+  induced_adj_iff i j := by
+    -- `Γ.Adj (φ.symm i) (φ.symm j)` ⇔ `(autFixedInducedGraph Γ σ).Adj (φ.symm i) (φ.symm j)`
+    -- ⇔ (via φ.map_adj_iff) `petersenGraph.Adj i j`.
+    have hsub :
+        (autFixedInducedGraph Γ σ).Adj (φ.symm i) (φ.symm j)
+          ↔ Γ.Adj (φ.symm i : V) (φ.symm j : V) :=
+      autFixedInducedGraph_adj σ
+    have hiso : petersenGraph.Adj i j ↔
+        (autFixedInducedGraph Γ σ).Adj (φ.symm i) (φ.symm j) := by
+      have := φ.symm.map_adj_iff (v := i) (w := j)
+      simpa using this.symm
+    rw [← hsub, ← hiso]
+
+/-- **Conditional `PetersenFixedData` constructor via Petersen uniqueness.**
+
+Given:
+* `hΓ : IsMoore57 Γ`,
+* `σ` an automorphism (`smul_adj`) with `IsSRGWith 10 3 0 1` on its
+  σ-fixed induced subgraph,
+* the Petersen uniqueness Prop (`PetersenUniqueness` —
+  `Moore57.Foundations.GraphTheory.PetersenUniqueness`),
+
+produce `PetersenFixedData Γ σ`.
+
+The construction extracts a (non-canonical) iso from the uniqueness Prop
+via `Classical.choice`, then delegates to
+`petersenFixedData_of_iso_to_petersen`.
+
+This is the **paper-conditional** part of the §6 Lem 17 case (1) bridge:
+given Petersen uniqueness, the SRG-signature output of
+`aut_order_three_SingletonOrPetersenSRG_unconditional` can be promoted to
+the full `PetersenFixedData` structure consumed by the Lem 17 case (1)
+arithmetic dispatch. -/
+noncomputable def petersenFixedData_of_isSRGWith_given_uniqueness
+    [Fintype V] [DecidableEq V]
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj] {σ : Equiv.Perm V}
+    (h_unique : PetersenUniqueness)
+    (h_srg : (autFixedInducedGraph Γ σ).IsSRGWith 10 3 0 1) :
+    PetersenFixedData Γ σ :=
+  letI : Fintype (fixedVertexSet σ) := fixedVertexSet.fintype σ
+  letI : DecidableEq (fixedVertexSet σ) := Subtype.instDecidableEq
+  let φ : autFixedInducedGraph Γ σ ≃g petersenGraph :=
+    Classical.choice (h_unique (autFixedInducedGraph Γ σ) h_srg)
+  petersenFixedData_of_iso_to_petersen φ
 
 end Moore57

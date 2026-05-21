@@ -53,6 +53,7 @@ import Moore57.Moore57Graph.BranchFiber.Matching
 import Moore57.D19OnMoore57.BranchFiber.Partition
 import Moore57.D19OnMoore57.Fixed.CommonNeighbors
 import Moore57.D19OnMoore57.Fixed.NeighborCounts
+import Moore57.Foundations.GraphTheory.PetersenUniqueness
 import Moore57.Foundations.GraphTheory.StrongZeroOne
 import Moore57.Foundations.GroupTheory.D19LinearCharacter
 import Moore57.Foundations.GroupTheory.SmallGroup625_12
