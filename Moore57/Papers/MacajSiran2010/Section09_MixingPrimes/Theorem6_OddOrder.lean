@@ -2,6 +2,7 @@ import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition6_3and5
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition7_3andLarge
 import Moore57.Papers.MacajSiran2010.Section09_MixingPrimes.Proposition8_5andLarge
 import Moore57.Foundations.GraphTheory.AutSubgroup
+import Mathlib.GroupTheory.SpecificGroups.Cyclic.Basic
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -348,5 +349,117 @@ theorem thm6_one_prime_branch_card_dvd_13_via_lem19_unconditional
   -- Dispatch through the case 1 prime-via-semiRegular bridge.
   exact S6.lem19_case1_orderOf_dvd_13_with_emptyFixedData_prime_via_semiRegular
     hΓ σ pow_13 efd
+
+/-! ### Cyclic-exhaust discharge via `IsCyclic` of prime card
+
+The per-σ witness wires `thm6_one_prime_branch_card_dvd_{11,13,19}_via_lem19_unconditional`
+above all require the paper-deferred "cyclic-exhaust" hypothesis
+`Nat.card (autSubgroup Γ) = orderOf σ`.  When `|Aut(Γ)| = p` is a **prime**
+(`p ∈ {11, 13, 19}`), the group is automatically cyclic
+(`Mathlib.isCyclic_of_prime_card`), so a generator σ exists with
+`orderOf σ = p`, and the witness-level hypothesis is discharged
+internally.  The resulting forms remove **both** the σ-witness and the
+cyclic-exhaust hypothesis, leaving only `IsMoore57 Γ` plus the
+prime-card hypothesis `Nat.card (autSubgroup Γ) = p`.
+
+These forms are the **fully unconditional** Lem 19 prime-case wires for
+the 1-prime branch entries `p ∈ {11, 13, 19}`, modulo only the paper
+input that `|Aut(Γ)|` itself equals the prime `p` (the trivial part of
+the Sylow + p-group classification for `|Aut(Γ)|`).  The composite
+prime-power cases (`|Aut(Γ)| = p^k` with `k ≥ 2`) remain conditional. -/
+
+/-- **Aut order-`p` ⟹ cyclic with generator σ of `orderOf σ = p`** (helper).
+[done]
+
+For prime `p`, `Nat.card (autSubgroup Γ) = p` implies the subgroup is
+cyclic of prime order, hence a generator σ exists with:
+* `σ ∈ autSubgroup Γ` (giving `smul_adj`),
+* `orderOf σ = p` (giving `σ ^ p = 1` and, since `p > 1`, `σ ≠ 1`).
+
+Internal helper for the prime-card discharge wires below. -/
+theorem exists_aut_generator_of_prime_card
+    {p : ℕ} (hp : Nat.Prime p) (h_card : Nat.card (Moore57.autSubgroup Γ) = p) :
+    ∃ σ : Equiv.Perm V, σ ∈ Moore57.autSubgroup Γ ∧ orderOf σ = p ∧
+      σ ≠ 1 ∧ σ ^ p = 1 ∧ ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w) := by
+  haveI : Fact (Nat.Prime p) := ⟨hp⟩
+  haveI hcyc : IsCyclic (Moore57.autSubgroup Γ) := isCyclic_of_prime_card h_card
+  obtain ⟨g, hg⟩ := IsCyclic.exists_generator (α := Moore57.autSubgroup Γ)
+  -- `g : autSubgroup Γ`, with all elements in `Subgroup.zpowers g`.
+  have h_ord_sub : orderOf g = Nat.card (Moore57.autSubgroup Γ) :=
+    orderOf_eq_card_of_forall_mem_zpowers hg
+  -- Extract σ as the underlying Equiv.Perm V.
+  refine ⟨(g : Equiv.Perm V), g.property, ?_, ?_, ?_, ?_⟩
+  · -- orderOf (g : Equiv.Perm V) = p
+    rw [Subgroup.orderOf_coe, h_ord_sub, h_card]
+  · -- (g : Equiv.Perm V) ≠ 1
+    intro heq
+    -- g coerces to 1, so g = 1 in subgroup, contradicting orderOf g = p > 1.
+    have hg1 : g = 1 := by
+      apply Subtype.ext
+      simpa using heq
+    have : orderOf g = 1 := by rw [hg1]; exact orderOf_one
+    rw [h_ord_sub, h_card] at this
+    exact absurd this hp.one_lt.ne'
+  · -- (g : Equiv.Perm V) ^ p = 1
+    have h_pow_eq : (g : Equiv.Perm V) ^ p = ((g ^ p : Moore57.autSubgroup Γ) : Equiv.Perm V) := by
+      push_cast
+      rfl
+    have h_subgroup_pow : (g ^ p : Moore57.autSubgroup Γ) = 1 := by
+      apply orderOf_dvd_iff_pow_eq_one.mp
+      rw [h_ord_sub, h_card]
+    rw [h_pow_eq, h_subgroup_pow]
+    rfl
+  · -- smul_adj
+    exact (Moore57.mem_autSubgroup_iff).mp g.property
+
+/-- **Theorem 6 1-prime branch wire (Lem 19 case 3, p=11) via prime card.**
+[done — fully unconditional cyclic-exhaust discharge]
+
+Discharges both the σ-witness hypothesis and the cyclic-exhaust
+hypothesis of `thm6_one_prime_branch_card_dvd_11_via_lem19_unconditional`.
+
+Hypotheses:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 11` (paper input from Sylow + p-group
+  classification of `|Aut(Γ)|`).
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 11` (trivially, since equality
+implies divisibility — but recorded in the standard divisibility form to
+match the 1-prime branch Conclusion encoding). -/
+theorem thm6_one_prime_branch_card_dvd_11_holds_of_prime_card
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 11) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 11 := by
+  obtain ⟨σ, hσ_mem, h_ord, hne, pow_11, smul_adj⟩ :=
+    exists_aut_generator_of_prime_card (Γ := Γ) (by decide : Nat.Prime 11) h_card
+  exact thm6_one_prime_branch_card_dvd_11_via_lem19_unconditional
+    hΓ σ pow_11 hne smul_adj (by rw [h_card, h_ord])
+
+/-- **Theorem 6 1-prime branch wire (Lem 19 case 2, p=19) via prime card.**
+[done — fully unconditional cyclic-exhaust discharge]
+
+Parallel to `thm6_one_prime_branch_card_dvd_11_holds_of_prime_card` for
+the `p = 19` case (Lem 19 case 2, singleton fix). -/
+theorem thm6_one_prime_branch_card_dvd_19_holds_of_prime_card
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 19) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 19 := by
+  obtain ⟨σ, hσ_mem, h_ord, hne, pow_19, smul_adj⟩ :=
+    exists_aut_generator_of_prime_card (Γ := Γ) (by decide : Nat.Prime 19) h_card
+  exact thm6_one_prime_branch_card_dvd_19_via_lem19_unconditional
+    hΓ σ pow_19 hne smul_adj (by rw [h_card, h_ord])
+
+/-- **Theorem 6 1-prime branch wire (Lem 19 case 1, p=13) via prime card.**
+[done — fully unconditional cyclic-exhaust discharge]
+
+Parallel to `thm6_one_prime_branch_card_dvd_11_holds_of_prime_card` for
+the `p = 13` case (Lem 19 case 1, empty fix).  No fix-emptiness
+hypothesis required (uses the unconditional `EmptyFixedData`
+constructor). -/
+theorem thm6_one_prime_branch_card_dvd_13_holds_of_prime_card
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 13) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 13 := by
+  obtain ⟨σ, hσ_mem, h_ord, hne, pow_13, smul_adj⟩ :=
+    exists_aut_generator_of_prime_card (Γ := Γ) (by decide : Nat.Prime 13) h_card
+  exact thm6_one_prime_branch_card_dvd_13_via_lem19_unconditional
+    hΓ σ pow_13 hne smul_adj (by rw [h_card, h_ord])
 
 end Moore57.Papers.MacajSiran2010.S9

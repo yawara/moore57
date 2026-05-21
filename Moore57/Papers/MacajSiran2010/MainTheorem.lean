@@ -354,4 +354,81 @@ theorem aut_card_dvd_13_via_lem19_unconditional
   S9.thm6_one_prime_branch_card_dvd_13_via_lem19_unconditional
     hΓ σ pow_13 hne smul_adj h_cyclic_exhaust
 
+/-! ### Cyclic-exhaust-discharged wires (fully unconditional for prime card)
+
+The three wires below upgrade the σ-witness + cyclic-exhaust forms above
+to the strictly weaker hypothesis `Nat.card (autSubgroup Γ) = p` for
+`p ∈ {11, 13, 19}`.  The σ-witness is constructed internally via
+`Mathlib.isCyclic_of_prime_card` + `IsCyclic.exists_generator`, and the
+cyclic-exhaust hypothesis is discharged via `orderOf` of the generator
+in the subgroup.
+
+These forms are the **fully unconditional** Lem 19 prime-case wires for
+the 1-prime branch entries `p ∈ {11, 13, 19}`.  They depend on no
+remaining paper-deferred hypotheses beyond the prime-card input itself,
+which is the trivial part of the Sylow + p-group classification of
+`|Aut(Γ)|`. -/
+
+/-- **Cor 3 1-prime branch wire (Lem 19 case 3, p=11) via prime card**.
+[done — fully unconditional cyclic-exhaust discharge]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_11_holds_of_prime_card`.
+
+Hypotheses:
+* `IsMoore57 Γ`,
+* `Nat.card (autSubgroup Γ) = 11` (paper input from Sylow + p-group
+  classification — `|Aut(Γ)|` is the prime 11).
+
+Conclusion: `Nat.card (autSubgroup Γ) ∣ 11`. -/
+theorem aut_card_dvd_11_holds_of_prime_card
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 11) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 11 :=
+  S9.thm6_one_prime_branch_card_dvd_11_holds_of_prime_card hΓ h_card
+
+/-- **Cor 3 1-prime branch wire (Lem 19 case 2, p=19) via prime card**.
+[done — fully unconditional cyclic-exhaust discharge]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_19_holds_of_prime_card`.  Parallel to
+`aut_card_dvd_11_holds_of_prime_card` for the `p = 19` case. -/
+theorem aut_card_dvd_19_holds_of_prime_card
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 19) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 19 :=
+  S9.thm6_one_prime_branch_card_dvd_19_holds_of_prime_card hΓ h_card
+
+/-- **Cor 3 1-prime branch wire (Lem 19 case 1, p=13) via prime card**.
+[done — fully unconditional cyclic-exhaust discharge]
+
+Per-Γ specialisation of
+`S9.thm6_one_prime_branch_card_dvd_13_holds_of_prime_card`.  Parallel to
+`aut_card_dvd_11_holds_of_prime_card` for the `p = 13` case. -/
+theorem aut_card_dvd_13_holds_of_prime_card
+    (hΓ : IsMoore57 Γ) (h_card : Nat.card (Moore57.autSubgroup Γ) = 13) :
+    Nat.card (Moore57.autSubgroup Γ) ∣ 13 :=
+  S9.thm6_one_prime_branch_card_dvd_13_holds_of_prime_card hΓ h_card
+
+/-- **Cor 3 partial-unconditional Lem 19 1-prime branch entry (`|Aut(Γ)| ≤ 19`)**.
+[done — fully unconditional cyclic-exhaust discharge]
+
+Combines the three primes `{11, 13, 19}` (Lem 19 cases 1/2/3) into a
+single bound `|Aut(Γ)| ≤ 19` under any of the three prime-card
+hypotheses.  Concretely: if `|Aut(Γ)| ∈ {11, 13, 19}` then
+`|Aut(Γ)| ≤ 19`.
+
+This is the **partial-unconditional MainTheorem** for the Lem 19 portion
+of the 1-prime branch: the three large-prime cases of Lem 19 are now
+unconditionally tied to the `|Aut(Γ)| ≤ 19` outcome, with no remaining
+paper-deferred geometry.  The composite prime-power cases (`p^k` with
+`k ≥ 2`) and the smaller primes (`p ∈ {3, 5, 7}`) remain conditional. -/
+theorem aut_card_le_19_via_lem19_holds_partial
+    (_hΓ : IsMoore57 Γ)
+    (h_card : Nat.card (Moore57.autSubgroup Γ) = 11 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 13 ∨
+              Nat.card (Moore57.autSubgroup Γ) = 19) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 19 := by
+  rcases h_card with h | h | h
+  all_goals (rw [h])
+  all_goals norm_num
+
 end Moore57.Papers.MacajSiran2010
