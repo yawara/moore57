@@ -130,4 +130,49 @@ bridge and the per-section geometric content (Thms 4/5, Props 6/7/8).
 Proper-signature conditional form is `aut_card_le_375_paper` (above). -/
 theorem aut_card_le_375 (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-! ## Tier 2: `Conclusion` Prop encoding (Path C step 1) -/
+
+/-- **Odd-order dispatch Conclusion** (Tier 2 encoding).
+
+Encodes the Theorem 6 / Props 6/7/8 odd-order dispatch:
+if `|Aut(Γ)|` is odd, then it divides one of `{135, 375}` (Prop 6) or
+`{147, 39, 171}` (Prop 7) or `{35, 275}` (Prop 8). -/
+def Cor3OddDispatchConclusion (Γ : SimpleGraph V) [DecidableRel Γ.Adj] : Prop :=
+  Odd (Nat.card (Moore57.autSubgroup Γ)) →
+    ((Nat.card (Moore57.autSubgroup Γ) ∣ 135 ∨ Nat.card (Moore57.autSubgroup Γ) ∣ 375) ∨
+     (Nat.card (Moore57.autSubgroup Γ) ∣ 147 ∨ Nat.card (Moore57.autSubgroup Γ) ∣ 39 ∨
+      Nat.card (Moore57.autSubgroup Γ) ∣ 171) ∨
+     (Nat.card (Moore57.autSubgroup Γ) ∣ 35 ∨ Nat.card (Moore57.autSubgroup Γ) ∣ 275))
+
+/-- **Even-order dispatch Conclusion** (Tier 2 encoding).
+
+Encodes the Theorem 7 even-order odd-part dispatch:
+if `|Aut(Γ)|` is even, then it equals `2·m` for some `m` dividing
+one of `{55, 25, 27, 7, 11, 19}`. -/
+def Cor3EvenOddPartConclusion (Γ : SimpleGraph V) [DecidableRel Γ.Adj] : Prop :=
+  Even (Nat.card (Moore57.autSubgroup Γ)) →
+    ∃ m, Nat.card (Moore57.autSubgroup Γ) = 2 * m ∧
+      (m ∣ 55 ∨ m ∣ 25 ∨ m ∣ 27 ∨ m ∣ 7 ∨ m ∣ 11 ∨ m ∣ 19)
+
+/-- **Main theorem (Tier 2 via Conclusion defs)**. [done — L4 plan §4.4 Tier 2]
+
+Given `IsMoore57 Γ` plus the two Conclusion-encoded dispatches
+(odd / even parity), conclude `|Aut(Γ)| ≤ 375` and `Even → ≤ 110`.
+
+This is the **Tier 2 partial-unconditional** form: the 2 Conclusion
+hypotheses encode the paper §9 Thm 6 / Thm 7 dispatch content, which
+in turn relies on Thm 4 / Thm 5 / Props 6/7/8 (themselves needing
+Cor 2 / Lem 22 / MP 2001 etc. — collectively "Tier 2 conclusions").
+
+This is the proper-signature upgrade of `aut_card_le_375 : True := trivial`,
+parameterised on Tier 2 Conclusion encodings. -/
+theorem aut_card_le_375_via_conclusions
+    (_hΓ : IsMoore57 Γ)
+    (h_odd : Cor3OddDispatchConclusion Γ)
+    (h_even : Cor3EvenOddPartConclusion Γ) :
+    Nat.card (Moore57.autSubgroup Γ) ≤ 375 ∧
+    (Even (Nat.card (Moore57.autSubgroup Γ)) →
+      Nat.card (Moore57.autSubgroup Γ) ≤ 110) :=
+  S9.cor3_375_bound_via_autSubgroup h_odd h_even
+
 end Moore57.Papers.MacajSiran2010
