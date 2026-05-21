@@ -214,6 +214,14 @@ Makhnev-Paduchikh 2001:
 - Lem 3 `_paper` (global Fix dispatch)
 - Main `_decomposition_paper` (|Y| ≤ 57 dispatch)
 
+Section 04 (Characters, conditional re-exports):
+- Thm 3 `_rational_classes_paper` (`Theorem3RationalClasses` hypothesis 経由)
+- Prop 2 `_character_system_paper` (`Proposition2CharacterSystem` hypothesis 経由)
+
+Section 05 (Tables, abstract Conclusion instances):
+- Lem 12 `_prime_table_paper` (`Lemma12PrimeTableConclusion` instance)
+- Lem 13 `_prime_squared_table_paper` (`Lemma13PrimeSquaredConclusion` instance)
+
 加えて B4.3 composite trace + Moore57 wire-up (Phase 2.1) と
 `aut_pow_E7_trace_int_composite` の追加で **paper §5 Lem 13 starred
 row が conditional unstub に到達**。
