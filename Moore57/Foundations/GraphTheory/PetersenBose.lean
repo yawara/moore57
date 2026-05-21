@@ -261,4 +261,217 @@ theorem IsPetersenLike.stranger_unique_2path
     ∃! z, z ∈ G.neighborFinset v ∧ G.Adj z u :=
   h.exists_unique_neighbor_witness hu
 
+/-! ### Edge-relative refinements (5-cycle scaffolding)
+
+For an edge `(v, w)`, the strangers of `v` admit a finer decomposition
+indexed by `N(v) = {w, z₁, z₂}`:
+
+* `partnersOf G v w` — the 2 partners-via-`w`, i.e. `N(w) \ {v}`.
+  These are the 2 strangers of `v` that are *adjacent to* `w`.
+* `partnersOf G v z₁`, `partnersOf G v z₂` — the 4 remaining strangers
+  (2 per neighbour), each adjacent to one of `v`'s other two neighbours.
+
+The pieces are disjoint by `μ = 1`, total 6, and the `w`-partners are the
+strangers reachable from `v` through the chosen edge.  This is the
+scaffolding the explicit `K_{3,3}`-minus-a-matching incidence between
+`N(v) \ {w}` and `N(w) \ {v}` rests on, and feeds the 5-cycle existence
+argument: starting from `v – w`, the only way back to `v` in 3 more steps
+is through 2 strangers and one of the `z_i`. -/
+
+/-- **Partners-of-`w` lie inside `N(w)`** (definitional unpack).
+
+Since `partnersOf G v w = (G.neighborFinset w).erase v`, the inclusion
+`partnersOf G v w ⊆ G.neighborFinset w` is `Finset.erase_subset`. -/
+theorem IsPetersenLike.partnersOf_subset_neighborFinset
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (v z : V) :
+    partnersOf G v z ⊆ G.neighborFinset z := by
+  unfold partnersOf
+  exact Finset.erase_subset _ _
+
+/-- **Partners via `w` are exactly the strangers of `v` adjacent to `w`.**
+
+For an edge `(v, w)`, an element `u ∈ partnersOf G v w` iff `u ≠ v` and
+`G.Adj w u`.  In a Petersen-like graph, by `λ = 0`, such `u` is
+automatically not adjacent to `v` (otherwise `v – w – u – v` triangle),
+so `u ∈ strangers G v`.  This lemma packages that characterisation as a
+biconditional. -/
+theorem IsPetersenLike.mem_partnersOf_w_iff_stranger
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w u : V} (hadj : G.Adj v w) :
+    u ∈ partnersOf G v w ↔ u ∈ strangers G v ∧ G.Adj w u := by
+  rw [mem_partnersOf_iff, mem_strangers_iff]
+  constructor
+  · rintro ⟨hne, hwu⟩
+    refine ⟨⟨hne, ?_⟩, hwu⟩
+    intro hvu
+    -- triangle v - w - u with v - u
+    exact h.no_triangle_through_edge hadj u ⟨hvu, hwu⟩
+  · rintro ⟨⟨hne, _⟩, hwu⟩
+    exact ⟨hne, hwu⟩
+
+/-- **Strangers of `v` adjacent to `w` are exactly `partnersOf G v w`.**
+
+The set-theoretic form: `(strangers G v) ∩ (N(w)) = partnersOf G v w`
+when `(v, w)` is an edge.  This is the "row" of the
+`K_{3,3}`-minus-matching at `w` in the Bose 1963 incidence. -/
+theorem IsPetersenLike.strangers_inter_neighborFinset_w
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    (strangers G v) ∩ (G.neighborFinset w) = partnersOf G v w := by
+  ext u
+  rw [Finset.mem_inter, SimpleGraph.mem_neighborFinset,
+      h.mem_partnersOf_w_iff_stranger hadj]
+
+/-- **Cardinality of `w`-partners for an edge `(v, w)`: exactly 2.**
+
+Named restatement of `partnersOf_card` applied at `z = w` for an edge
+`(v, w)`.  Provides a direct numerical form for downstream edge-relative
+counting. -/
+theorem IsPetersenLike.edge_partnersOf_w_card
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    (partnersOf G v w).card = 2 :=
+  h.partnersOf_card hadj
+
+/-- **Each stranger of `v` is in a unique `partnersOf G v z`** (the
+partition's uniqueness of fibres).
+
+For `u ∈ strangers G v`, there exists a unique `z ∈ N(v)` such that
+`u ∈ partnersOf G v z`.  This packages the biUnion of `partnersOf` as a
+**partition** (existence + uniqueness of the index).  The witness `z` is
+the unique common neighbour of `v` and `u` from `μ = 1`. -/
+theorem IsPetersenLike.exists_unique_partnersOf_index
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v u : V} (hu : u ∈ strangers G v) :
+    ∃! z, z ∈ G.neighborFinset v ∧ u ∈ partnersOf G v z := by
+  have hu_copy := hu
+  rw [mem_strangers_iff] at hu_copy
+  obtain ⟨hne_uv, _⟩ := hu_copy
+  obtain ⟨z, ⟨hz_mem, hzu⟩, hunique⟩ := h.exists_unique_neighbor_witness hu
+  refine ⟨z, ⟨hz_mem, ?_⟩, ?_⟩
+  · rw [mem_partnersOf_iff]; exact ⟨hne_uv, hzu⟩
+  · rintro z' ⟨hz'_mem, hz'_part⟩
+    rw [mem_partnersOf_iff] at hz'_part
+    exact hunique z' ⟨hz'_mem, hz'_part.2⟩
+
+/-- **The `partnersOf` 2-path witness coincides with `z` for `u ∈ partnersOf G v z`.**
+
+If `z ∈ N(v)` and `u ∈ partnersOf G v z`, then the unique `μ = 1`
+witness of the 2-path `v – ? – u` is exactly `z`.  This pins down the
+constructive form of `non_neighbor_2path_count` via the partition. -/
+theorem IsPetersenLike.partnersOf_2path_witness_eq
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v z u : V}
+    (hz_mem : z ∈ G.neighborFinset v) (hu_part : u ∈ partnersOf G v z) :
+    ∀ z', z' ∈ G.neighborFinset v ∧ G.Adj z' u → z' = z := by
+  rw [SimpleGraph.mem_neighborFinset] at hz_mem
+  rw [mem_partnersOf_iff] at hu_part
+  obtain ⟨hne_uv, hzu⟩ := hu_part
+  have hu_stranger : u ∈ strangers G v := by
+    rw [mem_strangers_iff]
+    refine ⟨hne_uv, ?_⟩
+    intro hvu
+    exact h.no_triangle_through_edge hvu z ⟨hz_mem, hzu.symm⟩
+  obtain ⟨z₀, ⟨hz₀_mem, hz₀u⟩, hunique⟩ :=
+    h.exists_unique_neighbor_witness hu_stranger
+  intro z' ⟨hz'_mem, hz'u⟩
+  have hz_eq : z = z₀ := by
+    apply hunique
+    refine ⟨?_, hzu⟩
+    rw [SimpleGraph.mem_neighborFinset]; exact hz_mem
+  have hz'_eq : z' = z₀ := hunique z' ⟨hz'_mem, hz'u⟩
+  rw [hz_eq, hz'_eq]
+
+/-- **The `partnersOf` index function (assignment of strangers to N(v)).**
+
+For each stranger `u` of `v`, this returns the unique `z ∈ N(v)` such that
+`u ∈ partnersOf G v z`.  Defined via `Finset.choose` on the unique-existence
+witness `exists_unique_partnersOf_index`. -/
+noncomputable def IsPetersenLike.partnerIndex
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v u : V} (hu : u ∈ strangers G v) : V :=
+  (h.exists_unique_partnersOf_index hu).choose
+
+/-- **Defining property of `partnerIndex`** (membership in `N(v)`). -/
+theorem IsPetersenLike.partnerIndex_mem
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v u : V} (hu : u ∈ strangers G v) :
+    h.partnerIndex hu ∈ G.neighborFinset v :=
+  (h.exists_unique_partnersOf_index hu).choose_spec.1.1
+
+/-- **Defining property of `partnerIndex`** (the stranger is a partner). -/
+theorem IsPetersenLike.partnerIndex_partners
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v u : V} (hu : u ∈ strangers G v) :
+    u ∈ partnersOf G v (h.partnerIndex hu) :=
+  (h.exists_unique_partnersOf_index hu).choose_spec.1.2
+
+/-- **5-cycle existence through any edge** (Petersen girth-5).
+
+For an edge `(v, w)` in a Petersen-like graph, there exists a 5-cycle
+`v – w – u₁ – x – u₂ – v` containing both `v` and `w`.  Concretely:
+
+* Pick `u₁ ∈ partnersOf G v w` (2 choices, both strangers of `v`).
+* By `μ = 1`, `v` and `u₁` share a unique common neighbour `x ∈ N(v)`.
+* The third edge `u₁ – x` then closes the 5-cycle via some `u₂` adjacent
+  to both `x` and `v`.
+
+Here we extract just the **existence of the second leg**: there exists
+`u₁ ∈ strangers G v` adjacent to `w`, which is exactly a 3-path
+`v – w – u₁` extending the edge.  Full 5-cycle existence requires
+chaining two more steps; we leave that for downstream work. -/
+theorem IsPetersenLike.exists_extending_3path
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    ∃ u, u ∈ strangers G v ∧ G.Adj w u ∧ u ≠ v := by
+  have hcard : (partnersOf G v w).card = 2 := h.partnersOf_card hadj
+  have hnonempty : (partnersOf G v w).Nonempty := by
+    rw [← Finset.card_pos]; omega
+  obtain ⟨u, hu⟩ := hnonempty
+  have hu_stranger : u ∈ strangers G v := h.partnersOf_subset_strangers hadj hu
+  rw [mem_partnersOf_iff] at hu
+  refine ⟨u, hu_stranger, hu.2, hu.1⟩
+
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+/-- **Edge endpoint `w` is a neighbour of `v`'s neighbour-finset element.**
+
+A trivial bridge: for an edge `(v, w)`, `w ∈ G.neighborFinset v`. -/
+theorem IsPetersenLike.edge_endpoint_mem_neighborFinset
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {v w : V} (hadj : G.Adj v w) :
+    w ∈ G.neighborFinset v := by
+  rw [SimpleGraph.mem_neighborFinset]; exact hadj
+
+/-- **Stranger `u ∈ partnersOf G v z` is adjacent to its partner index `z`.**
+
+For `u ∈ partnersOf G v z` with `z ∈ N(v)`, by definition `G.Adj z u`.
+This is the "non-`v` neighbour of `z`" property exposed in the
+constructive form needed for the Bose 1963 incidence. -/
+theorem IsPetersenLike.partner_adj_index
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    {v z u : V} (hu : u ∈ partnersOf G v z) : G.Adj z u :=
+  (mem_partnersOf_iff.mp hu).2
+
+/-- **Strangers split via `N(v) = {w} ∪ (N(v) \ {w})` for any edge endpoint `w`.**
+
+For `w ∈ N(v)`, the strangers of `v` decompose as
+`partnersOf G v w` (2 vertices, adjacent to `w`) and the biUnion of
+`partnersOf G v z` over `z ∈ (G.neighborFinset v).erase w` (4 vertices,
+the remaining 2 neighbours' partners).  This is the edge-relative form
+of `strangers_eq_biUnion_partnersOf`. -/
+theorem IsPetersenLike.strangers_eq_partnersOf_w_union_rest
+    {G : SimpleGraph V} [DecidableRel G.Adj]
+    (h : IsPetersenLike G) {v w : V} (hadj : G.Adj v w) :
+    strangers G v =
+      partnersOf G v w ∪
+        ((G.neighborFinset v).erase w).biUnion (partnersOf G v) := by
+  rw [h.strangers_eq_biUnion_partnersOf v]
+  have hw_mem : w ∈ G.neighborFinset v :=
+    IsPetersenLike.edge_endpoint_mem_neighborFinset hadj
+  -- `(G.neighborFinset v).biUnion f = f w ∪ ((neighborFinset v).erase w).biUnion f`.
+  conv_lhs => rw [← Finset.insert_erase hw_mem]
+  rw [Finset.biUnion_insert]
+
 end Moore57
