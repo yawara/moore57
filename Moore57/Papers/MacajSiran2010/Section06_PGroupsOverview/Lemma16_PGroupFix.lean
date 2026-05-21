@@ -1,6 +1,7 @@
 import Moore57.Papers.MacajSiran2010.Section02_StateOfTheArt.Lemma4_OddPrimeFix
 import Moore57.Moore57Graph.Aut.NeighborMod
 import Moore57.Moore57Graph.Aut.FixedCount
+import Moore57.Moore57Graph.Aut.OrderSevenEdgeFix
 
 set_option linter.unusedSectionVars false
 set_option linter.unusedDecidableInType false
@@ -850,5 +851,89 @@ theorem lem16_case3_7group_conclusion_prime_with_fix_count_two_total
     (h_fix_two : Moore57.fixedVertexCount σ = 2) :
     Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
   lem16_case3_7group_conclusion_prime_with_fix_count_two hΓ σ pow_7 h_fix_two
+
+/-! ### EdgeFixedData wire (Foundations commit `9458ea4`)
+
+Foundations now exposes:
+
+* `Moore57.EdgeFixedData Γ σ` — a 2-vertex adjacent σ-fixed subgraph
+  structure (the §6 Lem 16 case (3) `K_2 = K_{1,1}` shape), with
+  `fixedVertexCount_eq_two` field-bridge.
+* `Moore57.aut_order_seven_EdgeFixedData_of_small_fix` — the order-7
+  small-fix constructor: from `σ^7 = 1, smul_adj, |Fix| ≤ 8` produces
+  an `EdgeFixedData Γ σ` (mod-7 forces `|Fix| = 2` and adjacency is
+  derived via the mod-7 fix-neighbour bridge).
+
+The new wires below route the `_via_small_fix` paper Conclusion through
+this richer data layer — same Conclusion, but via the genuine shape
+constructor rather than the bare arithmetic narrowing.  This mirrors
+the `EmptyFixedData` / `SingletonFixedData` wiring pattern from
+Lem 19 case 1 / case 2 (commits `4c1613f`, `0d969af`).
+-/
+
+/-- **Lemma 16 case (3) [p = 7] paper Conclusion via `EdgeFixedData`.**
+[done — partial unconditional, prime case, EdgeFixedData-routed]
+
+Wire of `aut_order_seven_EdgeFixedData_of_small_fix` to the paper
+Conclusion.  Given `σ^7 = 1`, `smul_adj`, and `|Fix(σ)| ≤ 8`, build the
+`EdgeFixedData Γ σ` structure (via the Foundations constructor), then
+read off `fixedVertexCount σ = 2` from its `fixedVertexCount_eq_two`
+field.
+
+This is the structured-data analogue of
+`lem16_case3_7group_conclusion_prime_via_small_fix`: same hypothesis
+shape (`σ^7 = 1` + small bound) but routed through the
+`EdgeFixedData` structure (capturing the two endpoints + adjacency),
+rather than the bare `fixedVertexCount σ = 2` arithmetic narrowing.
+
+Mirrors the `_via_emptyFixedData` / `_via_singletonFixedData` routing
+pattern from Lem 19 case 1 / case 2. -/
+theorem lem16_case3_7group_edgeFixedData_paper_prime
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_7 : σ ^ 7 = 1)
+    (h_small : Moore57.fixedVertexCount σ ≤ 8) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
+  (Moore57.aut_order_seven_EdgeFixedData_of_small_fix hΓ σ smul_adj pow_7
+    h_small).fixedVertexCount_eq_two
+
+/-- **EdgeFixedData extraction from Lem 16 case (3) `_via_small_fix`
+hypotheses.** [done — partial unconditional, prime case, data-extraction]
+
+Companion theorem to `lem16_case3_7group_edgeFixedData_paper_prime`:
+expose the `EdgeFixedData Γ σ` structure itself (rather than only its
+`fixedVertexCount_eq_two` field).  This is the upstream hook for
+downstream §6 work that needs the two endpoints + adjacency data, not
+just the count.
+
+Mirrors `aut_order_nineteen_SingletonFixedData_of_small_fix` / etc.,
+re-exported at the paper layer. -/
+noncomputable def lem16_case3_7group_edgeFixedData_struct_prime
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_7 : σ ^ 7 = 1)
+    (h_small : Moore57.fixedVertexCount σ ≤ 8) :
+    Moore57.EdgeFixedData Γ σ :=
+  Moore57.aut_order_seven_EdgeFixedData_of_small_fix hΓ σ smul_adj pow_7
+    h_small
+
+/-- **Lemma 16 case (3) [p = 7] paper Conclusion via `EdgeFixedData` —
+total form.** [done — partial unconditional, prime case, EdgeFixedData-routed]
+
+Total wrapper of `lem16_case3_7group_edgeFixedData_paper_prime`: same
+hypotheses + Conclusion, packaged under the same shape as the
+`_via_small_fix_total` / `_with_fix_count_two_total` totalising wrappers.
+
+The Conclusion holds *unconditionally on `σ ≠ 1`*: if `σ = 1`, then
+`fixedVertexCount σ = 3250 > 8` (Moore57 has 3250 vertices), so the
+`h_small` hypothesis is contradicted; otherwise the EdgeFixedData
+structure is built and we read off `|Fix| = 2`. -/
+theorem lem16_case3_7group_edgeFixedData_paper_prime_total
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (pow_7 : σ ^ 7 = 1)
+    (h_small : Moore57.fixedVertexCount σ ≤ 8) :
+    Lemma16Case3_7Group_EdgeFix_Conclusion σ :=
+  lem16_case3_7group_edgeFixedData_paper_prime hΓ σ smul_adj pow_7 h_small
 
 end Moore57.Papers.MacajSiran2010.S6
