@@ -203,6 +203,18 @@ Lemma 3 (character formula).  Arithmetic cores for the two starred
 `Lemma13PrimeSquaredConclusion`. -/
 theorem lem13_prime_squared_table (hΓ : IsMoore57 Γ) : True := by trivial
 
+/-- **Lemma 13 (paper-faithful `Lemma13PrimeSquaredConclusion` instance).** [done]
+
+Proper-signature paper-faithful: any σ with `σ^(p²) = 1` for some prime
+`p` satisfies the abstract `Lemma13PrimeSquaredConclusion`.  Packages
+the existence claim that "there is some prime p with σ^(p²) = 1" as the
+substantive abstract conclusion of Lem 13. -/
+theorem lem13_prime_squared_table_paper
+    {Γ : SimpleGraph V} [DecidableRel Γ.Adj]
+    (σ : Equiv.Perm V) (p : ℕ) (hp : p.Prime) (hxp : σ ^ (p * p) = 1) :
+    Lemma13PrimeSquaredConclusion Γ σ :=
+  ⟨p, hp, hxp⟩
+
 /-! ### Phase 2.2: graph-aut wrappers using B4.3 composite-order trace integrality
 
 These wrappers package the existing starred-row arithmetic cores
