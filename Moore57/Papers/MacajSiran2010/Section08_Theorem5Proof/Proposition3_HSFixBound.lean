@@ -756,6 +756,99 @@ def Proposition3Step1To4Conclusion (Γ : SimpleGraph V) : Prop :=
   ∀ (σ : Equiv.Perm V), orderOf σ = 25 → HSFixedData Γ σ →
     ∃ b : Fin 27 → ℕ, (∑ i, b i = 7) ∧ (∑ i, (b i)^2 = 31)
 
+/-- **Sub-task D structural bridge**: given structural inputs (Free orbits
+of cardinality 28, non-empty TraceZero subset, b_fn satisfying eq(7) and
+eq(8) sums on `Free.erase idx_178`), produce the abstract `Fin 27 → ℕ`
+witness.
+
+This bridges A + B + C (orbit infrastructure + per-vertex 2-orbit + Classical
+chooser) with the conclusion form `∃ b : Fin 27 → ℕ, Σ b = 7 ∧ Σ b² = 31`.
+
+The hypothesis `h_sum` / `h_sum_sq` is the SUBSTANTIVE structural content
+(must hold for every choice of trace-0 orbit). This is what `prop3_eq7_arithmetic`
+and `prop3_eq8_arithmetic` (combined with full Moore57 + HSFixedData analysis)
+are designed to produce. -/
+theorem prop3_step1_to_4_witness_b_from_structural
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Free : Finset ι) (h_card : Free.card = 28)
+    (TraceZero : Finset ι) (h_sub : TraceZero ⊆ Free) (h_ne : TraceZero.Nonempty)
+    (b_fn : ι → ℕ)
+    (h_sum : ∀ idx ∈ TraceZero, (Free.erase idx).sum b_fn = 7)
+    (h_sum_sq : ∀ idx ∈ TraceZero,
+                (Free.erase idx).sum (fun i => (b_fn i)^2) = 31) :
+    ∃ b : Fin 27 → ℕ, (∑ i, b i = 7) ∧ (∑ i, (b i)^2 = 31) := by
+  obtain ⟨idx_178, i_free, h_idx, h_image, h_ne_idx, h_inj⟩ :=
+    prop3_choose_trace_0_free_orbit Free h_card TraceZero h_sub h_ne
+  refine ⟨fun j => b_fn (i_free j), ?_, ?_⟩
+  · -- Σ_j b_fn (i_free j) = Σ_{i ∈ Free.erase idx_178} b_fn i = 7
+    -- We use Finset.sum_bij with i_free : Fin 27 → ι and target Free.erase idx_178.
+    have hsum_eq :
+        (∑ j : Fin 27, b_fn (i_free j))
+        = (Free.erase idx_178).sum b_fn := by
+      apply Finset.sum_bij (fun (j : Fin 27) (_ : j ∈ Finset.univ) => i_free j)
+      · intro j _
+        rw [Finset.mem_erase]
+        exact ⟨h_ne_idx j, h_image j⟩
+      · intro a _ b _ hab
+        exact h_inj hab
+      · intro y hy
+        -- y ∈ Free.erase idx_178; show ∃ j, i_free j = y.
+        -- Use card argument: image i_free ⊆ Free.erase idx_178 and both have card 27.
+        have h_image_subset : (Finset.univ : Finset (Fin 27)).image i_free
+            ⊆ Free.erase idx_178 := by
+          intro x hx
+          rw [Finset.mem_image] at hx
+          obtain ⟨j, _, rfl⟩ := hx
+          rw [Finset.mem_erase]
+          exact ⟨h_ne_idx j, h_image j⟩
+        have h_image_card : ((Finset.univ : Finset (Fin 27)).image i_free).card = 27 := by
+          rw [Finset.card_image_of_injective _ h_inj]; simp
+        have h_erase_card : (Free.erase idx_178).card = 27 := by
+          rw [Finset.card_erase_of_mem (h_sub h_idx), h_card]
+        have h_image_eq : (Finset.univ : Finset (Fin 27)).image i_free
+            = Free.erase idx_178 :=
+          Finset.eq_of_subset_of_card_le h_image_subset (by omega)
+        rw [← h_image_eq] at hy
+        rcases Finset.mem_image.mp hy with ⟨j, hj_univ, hj_eq⟩
+        exact ⟨j, hj_univ, hj_eq⟩
+      · intro j _
+        rfl
+    rw [hsum_eq]
+    exact h_sum idx_178 h_idx
+  · -- Σ_j (b_fn (i_free j))^2 = Σ_{i ∈ Free.erase idx_178} (b_fn i)^2 = 31
+    have hsum_eq :
+        (∑ j : Fin 27, (b_fn (i_free j))^2)
+        = (Free.erase idx_178).sum (fun i => (b_fn i)^2) := by
+      apply Finset.sum_bij (fun (j : Fin 27) (_ : j ∈ Finset.univ) => i_free j)
+      · intro j _
+        rw [Finset.mem_erase]
+        exact ⟨h_ne_idx j, h_image j⟩
+      · intro a _ b _ hab
+        exact h_inj hab
+      · intro y hy
+        -- y ∈ Free.erase idx_178; show ∃ j, i_free j = y.
+        have h_image_subset : (Finset.univ : Finset (Fin 27)).image i_free
+            ⊆ Free.erase idx_178 := by
+          intro x hx
+          rw [Finset.mem_image] at hx
+          obtain ⟨j, _, rfl⟩ := hx
+          rw [Finset.mem_erase]
+          exact ⟨h_ne_idx j, h_image j⟩
+        have h_image_card : ((Finset.univ : Finset (Fin 27)).image i_free).card = 27 := by
+          rw [Finset.card_image_of_injective _ h_inj]; simp
+        have h_erase_card : (Free.erase idx_178).card = 27 := by
+          rw [Finset.card_erase_of_mem (h_sub h_idx), h_card]
+        have h_image_eq : (Finset.univ : Finset (Fin 27)).image i_free
+            = Free.erase idx_178 :=
+          Finset.eq_of_subset_of_card_le h_image_subset (by omega)
+        rw [← h_image_eq] at hy
+        rcases Finset.mem_image.mp hy with ⟨j, hj_univ, hj_eq⟩
+        exact ⟨j, hj_univ, hj_eq⟩
+      · intro j _
+        rfl
+    rw [hsum_eq]
+    exact h_sum_sq idx_178 h_idx
+
 /-- **Proposition 3 `|X| ≠ 25` via structural Step 1-4 conclusion**.  [done — bridge]
 
 Combines the deferred `Proposition3Step1To4Conclusion` (witness construction)
