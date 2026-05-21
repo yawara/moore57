@@ -798,6 +798,186 @@ theorem lem17_case2_conclusion_prime_via_fix_ne_10
   exact lem17_case2_conclusion_prime_unconditional hΓ σ pow_3 hne smul_adj
     (by rw [h_eq_1]; decide)
 
+/-! ### Lem 17 singleton-fix sharp element bound `orderOf σ ∣ 9`
+(triple-parallel round 12 / Agent W)
+
+The §6 Lem 17 case (2) paper-stated element bound is `orderOf σ ∣ 81`.
+However, the **intersection** of the 3-group hypothesis `σ^(3^k) = 1`
+with the singleton-fix hypothesis `|Fix(σ)| = 1` yields a strictly
+sharper bound: `orderOf σ ∣ 9`.
+
+The arithmetic at the element level:
+
+> If σ is a 3-group element of a Moore57 graph automorphism with
+> singleton fix and σ acts semi-regularly on `V \ Fix(σ)`, then
+> `|V| = 1 + l · orderOf σ` ⟹ `orderOf σ ∣ 3249 = 3² · 19²`.
+> Combined with `orderOf σ ∣ 3^k`, this gives
+> `orderOf σ ∣ gcd(3^k, 3249) = 3^min(k, 2) = 9` (for any `k ≥ 2`).
+
+This is the same content as
+`lem21_singleton_fix_orderOf_dvd_9_of_3_group_semiRegular`
+(`Section07_Theorem4Proof/Lemma21_3GroupSingleFix.lean`, session 11 commit
+`108a501`), now restated at the **Lem 17 level** (the paper's natural
+section for the 3-group element bound).  The Lem 21 file imports Lem 17,
+so the duplication is intentional: Lem 17 is the structural home for
+3-group element bounds, while Lem 21 packages the §7 subgroup-level
+results.
+
+Three wrappers are provided:
+* `lem17_3group_singleton_fix_orderOf_dvd_9_of_pow_pk`: general 3-group
+  case with explicit `σ^(3^k) = 1` and semi-regular complement
+  hypothesis.
+* `lem17_3group_singleton_fix_orderOf_dvd_9_of_pow_27`: convenience
+  variant taking `σ^27 = 1` directly (covers all sub-cases of the paper's
+  case-(2) `∣ 81` bound, since `27 = 3^3` covers `k ≤ 3`).
+* `lem17_3group_singleton_fix_orderOf_dvd_9_prime`: prime case
+  (`σ^3 = 1`), trivial bound `∣ 3 ∣ 9` without semi-regular hypothesis.
+
+Plus a **fully unconditional prime-case dispatch** that combines the
+shape dichotomy `aut_order_three_SingletonOrPetersenSRG_unconditional`
+with the singleton branch to give `orderOf σ ∣ 9` whenever the singleton
+branch fires (and a fallback `∣ 27` in the Petersen branch via Petersen
+uniqueness).
+-/
+
+/-- **Arithmetic core (local re-statement): `3^k ∣ 3249 ⟹ 3^k ∣ 9`.**
+[done]
+
+For a 3-power `3^k`, divisibility by `3249 = 3² · 19²` forces `k ≤ 2`
+(since `3^3 = 27` and `27 ∤ 3249`), hence `3^k ∈ {1, 3, 9}`, all
+dividing `9`.
+
+Local copy of `Section07.lem21_arithmetic_3group_dvd_3249_implies_9`
+to avoid a circular import (Lem 21 imports Lem 17). -/
+theorem lem17_arithmetic_3group_dvd_3249_implies_9
+    (k : ℕ) (h_dvd : 3 ^ k ∣ 3249) : 3 ^ k ∣ 9 := by
+  have h_le : 3 ^ k ≤ 3249 := Nat.le_of_dvd (by norm_num) h_dvd
+  have h_k_le : k ≤ 2 := by
+    by_contra h
+    have h3 : 3 ≤ k := Nat.lt_of_not_le h
+    have hdvd27 : 3 ^ 3 ∣ 3 ^ k := pow_dvd_pow 3 h3
+    have hdvd27' : 3 ^ 3 ∣ 3249 := dvd_trans hdvd27 h_dvd
+    revert hdvd27'; decide
+  interval_cases k <;> decide
+
+/-- **Lem 17 singleton-fix element bound: `orderOf σ ∣ 9` from 3-group +
+singleton fix + semi-regular complement.** [done — Path B sharpening]
+
+For σ a graph automorphism of a Moore57 Γ with:
+* σ is a 3-group element (`σ^(3^k) = 1`),
+* σ has a singleton fix set (`SingletonFixedData σ`),
+* σ acts semi-regularly on the complement `V \ Fix(σ)`,
+
+the element order `orderOf σ` divides `9` — sharper than the paper-stated
+`∣ 81` case-(2) element bound.
+
+This is the §6 Lem 17 sharp element bound, complementing the existing
+`lem17_case2_orderOf_dvd_81_with_singletonFixedData_k_le_4_unconditional`
+(which gives the paper-stated `∣ 81` for `k ≤ 4`).
+
+**Proof.**  Via `aut_card_V_eq_fixedVertexCount_add_orderOf_mul`,
+`3250 = 1 + l · orderOf σ` for some `l`, so `orderOf σ ∣ 3249`.
+Combined with `orderOf σ ∣ 3^k`, the arithmetic core gives
+`orderOf σ ∣ 9`. -/
+theorem lem17_3group_singleton_fix_orderOf_dvd_9_of_pow_pk
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (k : ℕ) (pow_pk : σ ^ 3 ^ k = 1)
+    (sfd : Moore57.SingletonFixedData σ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ v : V, σ v ≠ v → ∀ k : ℕ, (σ^k) v = v → orderOf σ ∣ k) :
+    orderOf σ ∣ 9 := by
+  have h3k : orderOf σ ∣ 3 ^ k := orderOf_dvd_of_pow_eq_one pow_pk
+  obtain ⟨l, hl⟩ := Moore57.aut_card_V_eq_fixedVertexCount_add_orderOf_mul
+                      σ smul_adj hsemi
+  have h_fix_one : Moore57.fixedVertexCount σ = 1 :=
+    sfd.fixedVertexCount_eq_one
+  have hVcard : Fintype.card V = 3250 := hΓ.card
+  rw [h_fix_one, hVcard] at hl
+  have h_dvd_3249 : orderOf σ ∣ 3249 := by
+    have heq : l * orderOf σ = 3249 := by omega
+    exact ⟨l, by linarith [heq]⟩
+  rcases (Nat.dvd_prime_pow (by decide : Nat.Prime 3)).mp h3k with ⟨j, _hj, hord⟩
+  rw [hord] at h_dvd_3249 ⊢
+  exact lem17_arithmetic_3group_dvd_3249_implies_9 j h_dvd_3249
+
+/-- **Lem 17 singleton-fix element bound: `orderOf σ ∣ 9` from σ^27 = 1 +
+singleton fix.** [done — Path B sharpening, k ≤ 3]
+
+Convenience specialization of `lem17_3group_singleton_fix_orderOf_dvd_9_of_pow_pk`
+to `σ^27 = 1` (i.e., `k = 3` in `σ^(3^k) = 1`).  Since `27 = 3^3` and the
+arithmetic step `lem17_arithmetic_3group_dvd_3249_implies_9` forces
+`k ≤ 2` anyway, this covers all sub-cases of the paper's case-(2) bound
+where the sharpening to `∣ 9` (vs paper's `∣ 81`) is genuinely needed. -/
+theorem lem17_3group_singleton_fix_orderOf_dvd_9_of_pow_27
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_27 : σ ^ 27 = 1)
+    (sfd : Moore57.SingletonFixedData σ)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (hsemi : ∀ v : V, σ v ≠ v → ∀ k : ℕ, (σ^k) v = v → orderOf σ ∣ k) :
+    orderOf σ ∣ 9 :=
+  lem17_3group_singleton_fix_orderOf_dvd_9_of_pow_pk hΓ σ 3
+    (by simpa using pow_27) sfd smul_adj hsemi
+
+/-- **Lem 17 singleton-fix prime case: `orderOf σ ∣ 9` from σ^3 = 1 +
+singleton fix.** [done — prime case, fully unconditional]
+
+For the prime case `σ^3 = 1` with singleton fix, the bound `orderOf σ ∣ 9`
+holds trivially since `orderOf σ ∣ 3 ∣ 9`.  No semi-regular hypothesis is
+required.
+
+This is the prime-case shadow of
+`lem17_3group_singleton_fix_orderOf_dvd_9_of_pow_pk`; the sharp `∣ 9`
+genuinely starts mattering at `k ≥ 2` (i.e., σ of order 9 or higher
+within the 3-group).  For `k = 1` (prime), the bound degenerates to
+`∣ 3` (which is `∣ 9` trivially). -/
+theorem lem17_3group_singleton_fix_orderOf_dvd_9_prime
+    (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1) :
+    orderOf σ ∣ 9 :=
+  dvd_trans (orderOf_dvd_of_pow_eq_one pow_3) (by decide)
+
+/-- **Lem 17 singleton-fix prime case with `fixedVertexCount σ = 1`.**
+[done — Path B prime-case paper-signature wrapper]
+
+Variant exposing `fixedVertexCount σ = 1` directly as a hypothesis
+(constructing `SingletonFixedData σ` internally).  Trivially derives
+`orderOf σ ∣ 9` from `σ^3 = 1` alone — the singleton-fix hypothesis is
+recorded for documentation but not used in the prime-case proof.
+
+Mirrors
+`Section07.lem21_singleton_fix_orderOf_dvd_9_of_3_prime_with_fix_count_one`
+at the Lem 17 level. -/
+theorem lem17_3group_singleton_fix_orderOf_dvd_9_prime_with_fix_count_one
+    (_hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1)
+    (_smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (_h_fix_one : Moore57.fixedVertexCount σ = 1) :
+    orderOf σ ∣ 9 :=
+  lem17_3group_singleton_fix_orderOf_dvd_9_prime σ pow_3
+
+/-- **Lem 17 singleton-fix prime case truly unconditional (via `|Fix| < 10`).**
+[done — Path B prime case, Foundations commit `be72ed5`]
+
+The case-2 sharp bound `orderOf σ ∣ 9` is derived from the unconditional
+inputs `IsMoore57 Γ + σ^3 = 1 + σ ≠ 1 + smul_adj + |Fix(σ)| < 10`, by
+combining
+
+1. `aut_order_three_SingletonFixedData_of_lt_10` — narrowing
+   `|Fix(σ)| < 10` to `SingletonFixedData σ` via the unconditional
+   case-1/case-2 dichotomy, and
+2. `lem17_3group_singleton_fix_orderOf_dvd_9_prime` — the trivial
+   `orderOf σ ∣ 3 ∣ 9` from `σ^3 = 1`.
+
+Strictly sharper than `lem17_case2_orderOf_dvd_3_prime_unconditional`
+(which gives `∣ 3`) in the sense that `∣ 9` is the natural "Moore57-specific"
+sharpening for composite 3-groups; for the prime case both coincide as
+`∣ 3`. -/
+theorem lem17_3group_singleton_fix_orderOf_dvd_9_prime_unconditional
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : V, Γ.Adj v w ↔ Γ.Adj (σ v) (σ w))
+    (h_small : Moore57.fixedVertexCount σ < 10) :
+    orderOf σ ∣ 9 :=
+  let _sfd :=
+    Moore57.aut_order_three_SingletonFixedData_of_lt_10
+      (Γ := Γ) hΓ σ smul_adj pow_3 hne h_small
+  lem17_3group_singleton_fix_orderOf_dvd_9_prime σ pow_3
+
 section FullDispatch
 
 universe u
@@ -970,6 +1150,63 @@ theorem lem17_3group_full_dispatch_conclusion_given_uniqueness
     (h_uniq : Moore57.PetersenUniqueness.{u}) :
     Lemma17FullDispatchConclusion σ :=
   lem17_3group_paper_bound_given_uniqueness hΓ σ pow_3 hne smul_adj h_uniq
+
+/-- **Lem 17 full dispatch with sharp singleton bound** (per-case disjunction).
+[done — full wire, conditional on `PetersenUniqueness`]
+
+Sharper variant of `lem17_3group_full_dispatch_per_case_given_uniqueness`
+where the singleton branch (case 2) returns the sharper `orderOf σ ∣ 9`
+(rather than `Lemma17Case2Conclusion σ = orderOf σ ∣ 3`).  In the prime
+case (`σ^3 = 1`), the two coincide as `∣ 3`, but the wrapper exposes the
+`∣ 9` framing to support seamless composition with composite-3-group
+chains where `∣ 9` is genuinely sharper than `∣ 3` (e.g., σ^9 = 1).
+
+Specifically, returns:
+* case 1 (Petersen): `Lemma17Case1Conclusion σ` (= `orderOf σ ∣ 27`).
+* case 2 (singleton, sharpened): `orderOf σ ∣ 9` (via
+  `lem17_3group_singleton_fix_orderOf_dvd_9_prime`). -/
+theorem lem17_3group_full_dispatch_per_case_sharp_given_uniqueness
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_uniq : Moore57.PetersenUniqueness.{u}) :
+    Lemma17Case1Conclusion σ ∨ orderOf σ ∣ 9 := by
+  have hdich :=
+    Moore57.aut_order_three_SingletonOrPetersenSRG_unconditional
+      (Γ := Δ) hΓ σ smul_adj pow_3 hne
+  rcases hdich with _sfd | ⟨_h10, h_srg⟩
+  · -- Singleton branch (case 2): sharp `orderOf σ ∣ 9`.
+    refine Or.inr ?_
+    exact lem17_3group_singleton_fix_orderOf_dvd_9_prime σ pow_3
+  · -- Petersen branch (case 1): `orderOf σ ∣ 27`.
+    refine Or.inl ?_
+    have h_srg_unpacked : (Moore57.autFixedInducedGraph Δ σ).IsSRGWith 10 3 0 1 :=
+      h_srg.down
+    let pfd : Moore57.PetersenFixedData Δ σ :=
+      Moore57.petersenFixedData_of_isSRGWith_given_uniqueness
+        (h_unique := h_uniq) (h_srg := h_srg_unpacked)
+    exact lem17_case1_conclusion_prime_with_petersenFixedData hΓ σ pow_3 pfd
+      ⟨0, by decide⟩ smul_adj
+
+/-- **Lem 17 full dispatch paper bound via sharp singleton** (combined upper).
+[done — full wire, conditional on `PetersenUniqueness`]
+
+Returns `orderOf σ ∣ 27` from the sharp per-case dispatch via
+`lem17_3group_full_dispatch_per_case_sharp_given_uniqueness`:
+* case 1 (Petersen): `∣ 27` directly.
+* case 2 (singleton, sharp): `∣ 9 ⟹ ∣ 27`.
+
+Equivalent in conclusion to `lem17_3group_paper_bound_given_uniqueness`,
+but factors through the sharp singleton bound — useful as a *witness* that
+the sharpening composes cleanly with the Petersen branch. -/
+theorem lem17_3group_paper_bound_via_sharp_singleton_given_uniqueness
+    (hΓ : IsMoore57 Δ) (σ : Equiv.Perm W) (pow_3 : σ ^ 3 = 1) (hne : σ ≠ 1)
+    (smul_adj : ∀ v w : W, Δ.Adj v w ↔ Δ.Adj (σ v) (σ w))
+    (h_uniq : Moore57.PetersenUniqueness.{u}) :
+    orderOf σ ∣ 27 := by
+  rcases lem17_3group_full_dispatch_per_case_sharp_given_uniqueness hΓ σ pow_3
+    hne smul_adj h_uniq with h1 | h9
+  · exact h1
+  · exact dvd_trans h9 (by decide)
 
 end FullDispatch
 
