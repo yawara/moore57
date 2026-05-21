@@ -306,6 +306,116 @@ formalisable independently; the chain through to `prop3_no_solution_direct`
 is provided as a conditional bridge.
 -/
 
+/-- **Step 1 arithmetic core: orbit decomposition `50 + 100 + 28 = 178`.** [done]
+
+For `|X| = 25 + HSFixedData (|Fix| = 50)`, the semi-regular action of `X`
+on `V \ Fix(X)` (3200 vertices) yields `3200 / 25 = 128` size-25 orbits.
+Of these, `100` are "fix-neighbourhood" orbits (each of the 50 fixed
+vertices has 2 size-25 orbits in `N(a) \ Fix`, pairwise disjoint by
+Moore graph μ=1) and `128 - 100 = 28` are "free" orbits.
+
+Total orbit count: `50 (size 1) + 100 (size 25 fix-N) + 28 (size 25 free) = 178`. -/
+theorem prop3_step1_orbit_decomposition_arithmetic
+    (n_fix n_size25 n_fix_N n_free : ℕ)
+    (h_n_fix : n_fix = 50)
+    (h_size25_count : n_size25 = (3250 - n_fix) / 25)
+    (h_fix_N : n_fix_N = 2 * n_fix)
+    (h_total_orbits : n_fix_N + n_free = n_size25) :
+    n_free = 28 ∧ n_fix + n_fix_N + n_free = 178 := by
+  refine ⟨?_, ?_⟩
+  · subst h_n_fix; subst h_size25_count; subst h_fix_N
+    omega
+  · subst h_n_fix; subst h_size25_count; subst h_fix_N
+    omega
+
+/-- **Eq (7) arithmetic core: degree split for `v ∈ O_{178}` gives `Σb = 7`.** [done]
+
+Each vertex `v ∈ O_{178}` (a "free" orbit) has degree `57` in Γ.
+The 57 neighbours decompose as:
+* `0` in `Fix(X)` (paper assumption: `O_{178}` not connected to Fix)
+* `50` in fix-N orbits (Moore graph μ=1: for each fixed `a`, `v` has
+  exactly 1 neighbour in `O_{50+i} ∪ O_{100+i}`)
+* `0` self-loop within `O_{178}` (paper: `Tr(O_{178}) = 0`)
+* `7` in free orbits ≠ `O_{178}` (the `b_{178, j}` for `j ∈ 151..177`)
+
+So `Σ b_{178, j} (j ∈ 151..177) = 57 - 0 - 50 - 0 = 7`. -/
+theorem prop3_eq7_arithmetic
+    (b_fix_sum b_fix_N_sum b_self b_free_sum : ℕ)
+    (h_degree : b_fix_sum + b_fix_N_sum + b_self + b_free_sum = 57)
+    (h_b_fix : b_fix_sum = 0)
+    (h_b_fix_N : b_fix_N_sum = 50)
+    (h_b_self : b_self = 0) :
+    b_free_sum = 7 := by omega
+
+/-- **Eq (8) arithmetic core: square-sum decomposition gives `Σb² = 31`.** [done]
+
+By Lem 5(5), `(B² + B - 56I)_{178, 178} = s_{178} = 25` (orbit size).
+Decomposing `(B²)_{178, 178} = Σ_l b_{178, l} · b_{l, 178}`:
+* `l ∈ Fix`: `b_{178, l} = 0`, contributes 0
+* `l ∈ fix-N` (100 orbits, indices 51..150): `b_{l, 178} = b_{178, l}`
+  (Lem 5(1), same size 25), and each pair `(50+i, 100+i)` contributes
+  `b² + b'² = b + b' = 1` (since `b, b' ∈ {0, 1}`).  Total: 50.
+* `l = 178`: `b_{178, 178} = 0` (trace), contributes 0
+* `l ∈ 151..177` (free orbits): `Σ b²_{178, l}` (what we want)
+
+So `(B²)_{178, 178} = 0 + 50 + 0 + Σ_{free} b² = 50 + Σ_{free} b²`.
+Substituting into Lem 5(5): `50 + Σ_{free} b² + 0 - 56 = 25`, hence
+`Σ_{free} b² = 31`. -/
+theorem prop3_eq8_arithmetic
+    (b_fix_sq_sum b_fix_N_sq_sum b_self_sq b_free_sq_sum : ℕ)
+    (h_lem5_5 : b_fix_sq_sum + b_fix_N_sq_sum + b_self_sq + b_free_sq_sum
+                = 25 + 56)  -- (B² + B - 56I)_{i,i} = s_i ⟹ (B²)_{i,i} = s_i - b_{i,i} + 56
+    (h_b_fix_sq : b_fix_sq_sum = 0)
+    (h_b_fix_N_sq : b_fix_N_sq_sum = 50)
+    (h_b_self_sq : b_self_sq = 0) :
+    b_free_sq_sum = 31 := by omega
+
+/-- **Step 2 structural core: σ-orbit in `N(a)` is an independent set.**
+[done — Path B Step 2]
+
+For `σ : Equiv.Perm V` automorphism of Moore57 `Γ`, fixed vertex `a`,
+and `v ∈ N(a)`: any two distinct σ-iterates of `v` are non-adjacent.
+
+Equivalently, the σ-orbit `{v, σ v, σ² v, ...}` ⊆ N(a) (which is
+σ-invariant) is an independent set in `Γ`.
+
+**Proof**: distinct `σ^k v, σ^l v` are both in `N(a)` (since `σ a = a`
+implies `σ^n a = a`, and adjacency is preserved by `σ`).  If they
+were adjacent, then `a, σ^k v, σ^l v` would form a triangle,
+contradicting `λ = 0` (Moore57's `no_triangle`). -/
+theorem prop3_step2_orbit_in_N_a_independent
+    (hΓ : IsMoore57 Γ) (σ : Equiv.Perm V) {a : V} (ha : σ a = a)
+    (smul_adj : ∀ x y : V, Γ.Adj x y ↔ Γ.Adj (σ x) (σ y))
+    (v : V) (hv_adj : Γ.Adj a v) (k l : ℕ)
+    (hkl : (σ ^ k) v ≠ (σ ^ l) v) :
+    ¬ Γ.Adj ((σ ^ k) v) ((σ ^ l) v) := by
+  intro h_adj
+  -- σ^k a = a (induction on k)
+  have h_pow_a : ∀ n : ℕ, (σ ^ n) a = a := by
+    intro n
+    induction n with
+    | zero => rfl
+    | succ m ihm => rw [pow_succ, Equiv.Perm.mul_apply, ha, ihm]
+  -- σ^n preserves adjacency (induction on n using smul_adj)
+  have hsmul_pow : ∀ n x y, Γ.Adj x y → Γ.Adj ((σ ^ n) x) ((σ ^ n) y) := by
+    intro n
+    induction n with
+    | zero =>
+        intro x y h; simpa using h
+    | succ m ihm =>
+        intro x y h
+        rw [pow_succ, Equiv.Perm.mul_apply, Equiv.Perm.mul_apply]
+        exact ihm (σ x) (σ y) ((smul_adj x y).mp h)
+  -- a is adjacent to both σ^k v and σ^l v
+  have hk_adj : Γ.Adj a ((σ ^ k) v) := by
+    have := hsmul_pow k a v hv_adj
+    rwa [h_pow_a k] at this
+  have hl_adj : Γ.Adj a ((σ ^ l) v) := by
+    have := hsmul_pow l a v hv_adj
+    rwa [h_pow_a l] at this
+  -- Triangle: a — σ^k v — σ^l v — a, contradicting no_triangle
+  exact hΓ.no_triangle hk_adj h_adj hl_adj.symm
+
 /-- **Step 3 arithmetic core: `Tr(O) ≤ 2 ∧ even ⟹ Tr(O) ∈ {0, 2}`.** [done]
 
 For an orbit `O` of size 25, Lem 6 (3) gives `Tr(O) ≤ 2` (X abelian,
